@@ -1,7 +1,6 @@
 package com.michiwend.spincterremote;
 
 import android.app.Activity;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,16 +10,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class ControllActivity extends Activity implements OnTaskCompleted{
+public class MainActivity extends Activity implements OnTaskCompleted{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_controll);
+        setContentView(R.layout.activity_main);
 
         // FIXME: get WIFI state (am I connected to OpenLab WiFi?)
 
-        final ControllActivity parent = this;
+        final MainActivity parent = this;
 
         Button button_open = (Button) findViewById(R.id.button_open);
 
@@ -77,7 +76,7 @@ public class ControllActivity extends Activity implements OnTaskCompleted{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.controll, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
