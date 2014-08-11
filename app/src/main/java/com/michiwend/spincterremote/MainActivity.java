@@ -1,8 +1,11 @@
 package com.michiwend.spincterremote;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,14 +16,22 @@ import android.widget.ImageView;
 
 public class MainActivity extends Activity implements OnTaskCompleted{
 
+    private OnTaskCompleted listener;
+    private SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // FIXME: get WIFI state (am I connected to OpenLab WiFi?)
 
-        final MainActivity parent = this;
+
+        // FIXME: i think the way listener and sharedPreferences are passed
+        // to SphincterRequestHandler is really dirty. Find a better solution... (for now it works)
+        listener = this;
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         Button button_open = (Button) findViewById(R.id.button_open);
 
@@ -28,7 +39,7 @@ public class MainActivity extends Activity implements OnTaskCompleted{
             @Override
             public void onClick(View view) {
 
-                new SphincterRequestHandler(parent).execute(Action.open_door);
+                new SphincterRequestHandler(listener, prefs).execute(Action.open_door);
 
             }
         });
@@ -39,7 +50,7 @@ public class MainActivity extends Activity implements OnTaskCompleted{
             @Override
             public void onClick(View view) {
 
-                new SphincterRequestHandler(parent).execute(Action.close_door);
+                new SphincterRequestHandler(listener, prefs).execute(Action.close_door);
             }
         });
 
@@ -70,7 +81,7 @@ public class MainActivity extends Activity implements OnTaskCompleted{
         super.onStart();
 
         // FIXME: get WIFI state (am I connected to OpenLab WiFi?) --> update state icon
-        new SphincterRequestHandler(this).execute(Action.update_state);
+        new SphincterRequestHandler(this, prefs).execute(Action.update_state);
 
     }
 
@@ -93,8 +104,8 @@ public class MainActivity extends Activity implements OnTaskCompleted{
             startActivity(i);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
-
 
 }

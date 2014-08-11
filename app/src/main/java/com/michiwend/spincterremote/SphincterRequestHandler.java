@@ -1,6 +1,7 @@
 package com.michiwend.spincterremote;
 
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 
@@ -19,18 +20,33 @@ enum Action {
 
 public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
 
-    private OnTaskCompleted listener;
 
-    public SphincterRequestHandler(OnTaskCompleted listener){
-        this.listener=listener;
+    private OnTaskCompleted listener;
+    private SharedPreferences sharedPreferences;
+
+    public SphincterRequestHandler(OnTaskCompleted l, SharedPreferences p){
+        this.listener = l;
+        this.sharedPreferences = p;
     }
 
     @Override
     protected String doInBackground(Action... params) {
-        // FIXME: Get BaseURL from settings
-        // FIXME: Use URI Class and its methods to build url
+        String url = sharedPreferences.getString("prefURL", "");
 
-        return CallSphincterAPI("http://files.michiwend.com/fakeapi/sphincter");
+        switch (params[0]) {
+            case open_door:
+                url += "?action=open";
+                break;
+            case close_door:
+                url += "?action=close";
+                break;
+            case update_state:
+                url += "?action=state";
+        }
+
+        url += "&token=" + sharedPreferences.getString("prefToken", "");
+
+        return CallSphincterAPI(url);
     }
 
     final String CallSphincterAPI(String urlstr) {
