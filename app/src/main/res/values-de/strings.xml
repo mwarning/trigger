@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Einstellungen</string>
+    <string name="open_button_text">Aufschließen</string>
+    <string name="close_button_text">Abschließen</string>
+</resources>
