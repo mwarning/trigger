@@ -3,4 +3,10 @@
     <string name="action_settings">Einstellungen</string>
     <string name="open_button_text">Aufschließen</string>
     <string name="close_button_text">Abschließen</string>
+
+    <string name="pref_url">URL</string>
+    <string name="pref_url_description">URL zu spincterd</string>
+
+    <string name="pref_token">Token</string>
+    <string name="pref_token_description">Dein Persönliches Zugangstoken</string>
 </resources>

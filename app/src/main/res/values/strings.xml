@@ -6,4 +6,10 @@
     <string name="open_button_text">Lock door</string>
     <string name="close_button_text">Unlcok door</string>
 
+    <string name="pref_url">URL</string>
+    <string name="pref_url_description">URL to sphincterd</string>
+
+    <string name="pref_token">Token</string>
+    <string name="pref_token_description">Your personal access token</string>
+
 </resources>
