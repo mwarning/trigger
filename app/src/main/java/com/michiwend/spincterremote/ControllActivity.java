@@ -1,12 +1,17 @@
 package com.michiwend.spincterremote;
 
 import android.app.Activity;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 
-public class ControllActivity extends Activity {
+public class ControllActivity extends Activity implements OnTaskCompleted{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +19,50 @@ public class ControllActivity extends Activity {
         setContentView(R.layout.activity_controll);
 
         // FIXME: get WIFI state (am I connected to OpenLab WiFi?)
+
+        final ControllActivity parent = this;
+
+        Button button_open = (Button) findViewById(R.id.button_open);
+
+        button_open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new SphincterRequestHandler(parent).execute(Action.open_door);
+
+            }
+        });
+
+        Button button_close = (Button) findViewById(R.id.button_close);
+
+        button_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new SphincterRequestHandler(parent).execute(Action.close_door);
+            }
+        });
+
+    }
+
+    @Override
+    public void onTaskCompleted(String result) {
+
+        Log.i("[GET RESULT]", result);
+
+        ImageView stateIcon = (ImageView) findViewById(R.id.stateIcon);
+
+        if( result.equals("UNLOCKED") ) {
+            // Door unlocked
+            stateIcon.setImageResource(R.drawable.labstate_open);
+        }
+        else if ( result.equals("LOCKED") ) {
+            // Door locked
+            stateIcon.setImageResource(R.drawable.labstate_closed);
+        }
+        else {
+            stateIcon.setImageResource(R.drawable.labstate_unknown);
+        }
     }
 
     @Override
@@ -21,6 +70,7 @@ public class ControllActivity extends Activity {
         super.onStart();
 
         // FIXME: get WIFI state (am I connected to OpenLab WiFi?) --> update state icon
+        new SphincterRequestHandler(this).execute(Action.update_state);
 
     }
 
@@ -42,4 +92,6 @@ public class ControllActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }
