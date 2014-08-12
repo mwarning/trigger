@@ -28,29 +28,10 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
 
     private OnTaskCompleted listener;
     private SharedPreferences sharedPreferences;
-    private TrustManager[] trustAllCerts;
 
     public SphincterRequestHandler(OnTaskCompleted l, SharedPreferences p){
         this.listener = l;
         this.sharedPreferences = p;
-
-
-        // Create a trust manager that does not validate certificate chains
-        // https://www.youtube.com/watch?v=CYfjFb7WjGQ&t=07
-        trustAllCerts = new TrustManager[]{
-            new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            }
-        };
-
 
     }
 
@@ -78,11 +59,7 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
         try {
             URL url = new URL(urlstr);
 
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
             return readStream(con.getInputStream());
         } catch (Exception e) {
