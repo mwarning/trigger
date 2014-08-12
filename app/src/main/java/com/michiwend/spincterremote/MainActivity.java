@@ -1,10 +1,15 @@
 package com.michiwend.spincterremote;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -14,10 +19,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-public class MainActivity extends Activity implements OnTaskCompleted{
+public class MainActivity extends Activity implements OnTaskCompleted {
 
     private OnTaskCompleted listener;
     private SharedPreferences prefs;
+    private WifiManager wm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +31,7 @@ public class MainActivity extends Activity implements OnTaskCompleted{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // FIXME: get WIFI state (am I connected to OpenLab WiFi?)
-
+        wm = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
 
         // FIXME: i think the way listener and sharedPreferences are passed
         // to SphincterRequestHandler is really dirty. Find a better solution... (for now it works)
@@ -54,6 +59,26 @@ public class MainActivity extends Activity implements OnTaskCompleted{
             }
         });
 
+
+        BroadcastReceiver mWifiStateChangedReceiver = new BroadcastReceiver()
+        {
+
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                if ((wm.getWifiState() == WifiManager.WIFI_STATE_ENABLED)) {
+                    // FIXME ping hostname to be sure we have connectivity before updating ui
+                    updateUi(true);
+                }
+                else {
+                    updateUi(false);
+                }
+
+            }
+        };
+
+        this.registerReceiver(mWifiStateChangedReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+
     }
 
     @Override
@@ -80,8 +105,33 @@ public class MainActivity extends Activity implements OnTaskCompleted{
     protected void onStart() {
         super.onStart();
 
-        // FIXME: get WIFI state (am I connected to OpenLab WiFi?) --> update state icon
-        new SphincterRequestHandler(this, prefs).execute(Action.update_state);
+        if (wm.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
+            updateUi(true);
+        }
+
+    }
+
+    private void updateUi(boolean enabled) {
+
+        ImageView stateIcon = (ImageView) findViewById(R.id.stateIcon);
+        Button button_open = (Button) findViewById(R.id.button_open);
+        Button button_close = (Button) findViewById(R.id.button_close);
+
+        if (enabled) {
+
+            new SphincterRequestHandler(this, prefs).execute(Action.update_state);
+
+            button_open.setEnabled(true);
+            button_close.setEnabled(true);
+
+        }
+        else {
+            stateIcon.setImageResource(R.drawable.labstate_wifi);
+
+            button_open.setEnabled(false);
+            button_close.setEnabled(false);
+
+        }
 
     }
 

@@ -11,5 +11,4 @@
 
     <string name="pref_token">Token</string>
     <string name="pref_token_description">Your personal access token</string>
-
 </resources>
