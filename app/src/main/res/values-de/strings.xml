@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Spincter Remote</string>
+
     <string name="action_settings">Einstellungen</string>
-    <string name="open_button_text">Aufschließen</string>
-    <string name="close_button_text">Abschließen</string>
+    <string name="open_button_text">Öffnen</string>
+    <string name="close_button_text">Schließen</string>
 
     <string name="pref_url">URL</string>
     <string name="pref_url_description">URL zu spincterd</string>
