@@ -29,16 +29,30 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/open_button_text"
-            android:id="@+id/button_open"
-            android:layout_gravity="center_vertical" />
+            android:text="@string/close_button_text"
+            android:id="@+id/button_close"
+            android:layout_gravity="center_vertical"
+            android:textSize="20dp" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/close_button_text"
-            android:id="@+id/button_close"
-            android:layout_gravity="center_vertical" />
+            android:text="@string/open_button_text"
+            android:id="@+id/button_open"
+            android:layout_gravity="center_vertical"
+            android:textSize="20dp" />
     </LinearLayout>
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageButton"
+        android:src="@drawable/labstate_open"
+        android:cropToPadding="false"
+        android:scaleType="fitCenter"
+        android:layout_toStartOf="@+id/linearLayout"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/linearLayout"
+        android:layout_alignStart="@+id/linearLayout" />
 
 </RelativeLayout>

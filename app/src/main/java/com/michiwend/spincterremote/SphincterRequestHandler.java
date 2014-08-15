@@ -25,14 +25,12 @@ enum Action {
 
 public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
 
-
     private OnTaskCompleted listener;
     private SharedPreferences sharedPreferences;
 
     public SphincterRequestHandler(OnTaskCompleted l, SharedPreferences p){
         this.listener = l;
         this.sharedPreferences = p;
-
     }
 
     @Override

@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
@@ -19,11 +21,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
+enum UIState {
+    OPEN,
+    CLOSED,
+    UNKNOWN,
+    DISABLED,
+}
+
+
 public class MainActivity extends Activity implements OnTaskCompleted {
 
     private OnTaskCompleted listener;
     private SharedPreferences prefs;
-    private WifiManager wm;
+    private ImageView stateIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +41,28 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        wm = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
 
-        // FIXME: i think the way listener and sharedPreferences are passed
-        // to SphincterRequestHandler is really dirty. Find a better solution... (for now it works)
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if( intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected(context) ) {
+                    new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
+                }
+                else {
+                    changeUI(UIState.DISABLED);
+                }
+            }
+        };
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcastReceiver, intentFilter);
+
+
+        stateIcon = (ImageView) findViewById(R.id.stateIcon);
+
         listener = this;
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -43,9 +71,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         button_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 new SphincterRequestHandler(listener, prefs).execute(Action.open_door);
-
             }
         });
 
@@ -54,30 +80,56 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 new SphincterRequestHandler(listener, prefs).execute(Action.close_door);
             }
         });
 
+    }
 
-        BroadcastReceiver mWifiStateChangedReceiver = new BroadcastReceiver()
-        {
+    private boolean isWifiConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
+        //NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+        NetworkInfo wifiNetInfo = connectivityManager.getNetworkInfo( ConnectivityManager.TYPE_WIFI );
 
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                if ((wm.getWifiState() == WifiManager.WIFI_STATE_ENABLED)) {
-                    // FIXME ping hostname to be sure we have connectivity before updating ui
-                    updateUi(true);
-                }
-                else {
-                    updateUi(false);
-                }
+        Log.i("[WIFI-STATE]", wifiNetInfo.getDetailedState().toString());
 
-            }
-        };
+        if(wifiNetInfo.isConnected()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
-        this.registerReceiver(mWifiStateChangedReceiver,new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+    private void changeUI(UIState state) {
+
+        Button bc = (Button) findViewById(R.id.button_close);
+        Button bo = (Button) findViewById(R.id.button_open);
+
+        switch(state) {
+            case OPEN:
+                stateIcon.setImageResource(R.drawable.labstate_open);
+                break;
+
+            case CLOSED:
+                stateIcon.setImageResource(R.drawable.labstate_closed);
+                break;
+
+            case DISABLED:
+                stateIcon.setImageResource(R.drawable.labstate_wifi);
+                bc.setEnabled(false);
+                bo.setEnabled(false);
+                break;
+
+            case UNKNOWN:
+                stateIcon.setImageResource(R.drawable.labstate_unknown);
+                break;
+        }
+
+        if(state != UIState.DISABLED) {
+            bc.setEnabled(true);
+            bo.setEnabled(true);
+        }
 
     }
 
@@ -86,53 +138,27 @@ public class MainActivity extends Activity implements OnTaskCompleted {
 
         Log.i("[GET RESULT]", result);
 
-        ImageView stateIcon = (ImageView) findViewById(R.id.stateIcon);
-
         if( result.equals("UNLOCKED") ) {
             // Door unlocked
-            stateIcon.setImageResource(R.drawable.labstate_open);
+            changeUI(UIState.OPEN);
         }
         else if ( result.equals("LOCKED") ) {
             // Door locked
-            stateIcon.setImageResource(R.drawable.labstate_closed);
+            changeUI(UIState.CLOSED);
         }
         else {
-            stateIcon.setImageResource(R.drawable.labstate_unknown);
+            changeUI(UIState.UNKNOWN);
         }
     }
+
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        if (wm.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
-            updateUi(true);
+        if(isWifiConnected(this.getApplicationContext())) {
+            new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
         }
-
-    }
-
-    private void updateUi(boolean enabled) {
-
-        ImageView stateIcon = (ImageView) findViewById(R.id.stateIcon);
-        Button button_open = (Button) findViewById(R.id.button_open);
-        Button button_close = (Button) findViewById(R.id.button_close);
-
-        if (enabled) {
-
-            new SphincterRequestHandler(this, prefs).execute(Action.update_state);
-
-            button_open.setEnabled(true);
-            button_close.setEnabled(true);
-
-        }
-        else {
-            stateIcon.setImageResource(R.drawable.labstate_wifi);
-
-            button_open.setEnabled(false);
-            button_close.setEnabled(false);
-
-        }
-
     }
 
     @Override
