@@ -5,12 +5,14 @@
         <EditTextPreference
             android:title="@string/pref_url"
             android:summary="@string/pref_url_description"
-            android:defaultValue="https://labctl.ffa/sphincter/"
-            android:key="prefURL"/>
+            android:defaultValue="https://labctl.openlab-augsburg.de/sphincter/"
+            android:key="prefURL"
+            android:inputType="textUri"/>
 
         <EditTextPreference
             android:title="@string/pref_token"
             android:summary="@string/pref_token_description"
-            android:key="prefToken"/>
+            android:key="prefToken"
+            android:inputType="textVisiblePassword"/>
 
 </PreferenceScreen>
