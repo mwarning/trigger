@@ -58,6 +58,7 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
             URL url = new URL(urlstr);
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setConnectTimeout(2000);
 
             return readStream(con.getInputStream());
         } catch (Exception e) {
