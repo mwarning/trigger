@@ -3,6 +3,8 @@
     <string name="app_name">Spincter Remote</string>
 
     <string name="action_settings">Einstellungen</string>
+    <string name="action_reload">Status aktualisieren</string>
+
     <string name="open_button_text">Öffnen</string>
     <string name="close_button_text">Schließen</string>
 

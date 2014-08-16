@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
     private OnTaskCompleted listener;
     private SharedPreferences prefs;
     private ImageView stateIcon;
+    private boolean enabelRefreshButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +128,10 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         }
 
         if(state != UIState.DISABLED) {
-            bc.setEnabled(true);
-            bo.setEnabled(true);
+            enabelRefreshButton = true;
         }
+        // update action bar menu
+        invalidateOptionsMenu();
 
     }
 
@@ -165,6 +167,16 @@ public class MainActivity extends Activity implements OnTaskCompleted {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
+
+        if(!enabelRefreshButton) {
+            refreshMenuItem.setEnabled(false);
+            refreshMenuItem.getIcon().setAlpha(130);
+        }
+        else {
+            refreshMenuItem.setEnabled(true);
+            refreshMenuItem.getIcon().setAlpha(255);
+        }
         return true;
     }
 
@@ -179,6 +191,9 @@ public class MainActivity extends Activity implements OnTaskCompleted {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
             return true;
+        }
+        if(id == R.id.action_reload) {
+            new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
         }
 
         return super.onOptionsItemSelected(item);
