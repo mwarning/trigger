@@ -107,23 +107,31 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         Button bc = (Button) findViewById(R.id.button_close);
         Button bo = (Button) findViewById(R.id.button_open);
 
+
         switch(state) {
             case OPEN:
                 stateIcon.setImageResource(R.drawable.labstate_open);
+                bc.setEnabled(true);
+                bo.setEnabled(true);
                 break;
 
             case CLOSED:
                 stateIcon.setImageResource(R.drawable.labstate_closed);
+                bc.setEnabled(true);
+                bo.setEnabled(true);
                 break;
 
             case DISABLED:
                 stateIcon.setImageResource(R.drawable.labstate_wifi);
                 bc.setEnabled(false);
                 bo.setEnabled(false);
+                enabelRefreshButton = false;
                 break;
 
             case UNKNOWN:
                 stateIcon.setImageResource(R.drawable.labstate_unknown);
+                bc.setEnabled(false);
+                bo.setEnabled(false);
                 break;
         }
 
