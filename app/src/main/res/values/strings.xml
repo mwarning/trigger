@@ -3,8 +3,8 @@
 
     <string name="app_name">Spincter Remote</string>
     <string name="action_settings">Settings</string>
-    <string name="open_button_text">Lock door</string>
-    <string name="close_button_text">Unlock door</string>
+    <string name="open_button_text">Unlock door</string>
+    <string name="close_button_text">Lock door</string>
 
     <string name="pref_url">URL</string>
     <string name="pref_url_description">URL to sphincterd</string>
