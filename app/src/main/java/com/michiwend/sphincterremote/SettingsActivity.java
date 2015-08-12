@@ -1,4 +1,4 @@
-package com.michiwend.spincterremote;
+package com.michiwend.sphincterremote;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

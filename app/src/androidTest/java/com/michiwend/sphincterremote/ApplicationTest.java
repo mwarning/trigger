@@ -1,4 +1,4 @@
-package com.michiwend.spincterremote;
+package com.michiwend.sphincterremote;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
