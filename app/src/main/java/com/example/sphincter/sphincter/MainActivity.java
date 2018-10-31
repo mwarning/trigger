@@ -1,4 +1,4 @@
-package com.michiwend.sphincterremote;
+package com.example.sphincter;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-
 enum UIState {
     OPEN,
     CLOSED,
@@ -28,13 +27,12 @@ enum UIState {
     DISABLED,
 }
 
-
 public class MainActivity extends Activity implements OnTaskCompleted {
 
     private OnTaskCompleted listener;
     private SharedPreferences prefs;
     private ImageView stateIcon;
-    private boolean enabelRefreshButton;
+    private boolean enableRefreshButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +40,12 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
-                if( intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected(context) ) {
+                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected(context)) {
                     new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
-                }
-                else {
+                } else {
                     changeUI(UIState.DISABLED);
                 }
             }
@@ -60,15 +55,26 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(broadcastReceiver, intentFilter);
-
-
+/*
+        CheckBox checkBoxLab = (CheckBox) findViewById(R.id.checkbox_ignore);
+        checkBoxLab.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                System.out.println(String.format("checkbox changed %b", isChecked));
+                if (isChecked) {
+                    HttpsTrustManager.allowAllSSL();
+                } else {
+                    // TODO: disable
+                }
+            }
+        });
+*/
         stateIcon = (ImageView) findViewById(R.id.stateIcon);
 
         listener = this;
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         Button button_open = (Button) findViewById(R.id.button_open);
-
         button_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +83,6 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         });
 
         Button button_close = (Button) findViewById(R.id.button_close);
-
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,10 +99,9 @@ public class MainActivity extends Activity implements OnTaskCompleted {
 
         Log.i("[WIFI-STATE]", wifiNetInfo.getDetailedState().toString());
 
-        if(wifiNetInfo.isConnected()) {
+        if (wifiNetInfo.isConnected()) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -107,40 +111,40 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         Button bc = (Button) findViewById(R.id.button_close);
         Button bo = (Button) findViewById(R.id.button_open);
 
-
         switch(state) {
             case OPEN:
-                stateIcon.setImageResource(R.drawable.labstate_open);
+                stateIcon.setImageResource(R.drawable.state_open);
                 bc.setEnabled(true);
                 bo.setEnabled(true);
                 break;
 
             case CLOSED:
-                stateIcon.setImageResource(R.drawable.labstate_closed);
+                stateIcon.setImageResource(R.drawable.state_closed);
                 bc.setEnabled(true);
                 bo.setEnabled(true);
                 break;
 
             case DISABLED:
-                stateIcon.setImageResource(R.drawable.labstate_wifi);
+                stateIcon.setImageResource(R.drawable.state_wifi);
                 bc.setEnabled(false);
                 bo.setEnabled(false);
-                enabelRefreshButton = false;
+                enableRefreshButton = false;
                 break;
 
             case UNKNOWN:
-                stateIcon.setImageResource(R.drawable.labstate_unknown);
-                bc.setEnabled(false);
-                bo.setEnabled(false);
+                stateIcon.setImageResource(R.drawable.state_unknown);
+                // Enable, in case the API does not support state queries
+                bc.setEnabled(true);
+                bo.setEnabled(true);
                 break;
         }
 
         if(state != UIState.DISABLED) {
-            enabelRefreshButton = true;
+            enableRefreshButton = true;
         }
+
         // update action bar menu
         invalidateOptionsMenu();
-
     }
 
     @Override
@@ -148,25 +152,22 @@ public class MainActivity extends Activity implements OnTaskCompleted {
 
         Log.i("[GET RESULT]", result);
 
-        if( result.equals("UNLOCKED") ) {
+        if (result.equals("UNLOCKED")) {
             // Door unlocked
             changeUI(UIState.OPEN);
-        }
-        else if ( result.equals("LOCKED") ) {
+        } else if (result.equals("LOCKED")) {
             // Door locked
             changeUI(UIState.CLOSED);
-        }
-        else {
+        } else {
             changeUI(UIState.UNKNOWN);
         }
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        if(isWifiConnected(this.getApplicationContext())) {
+        if (isWifiConnected(this.getApplicationContext())) {
             new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
         }
     }
@@ -177,14 +178,14 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
 
-        if(!enabelRefreshButton) {
+        if (!enableRefreshButton) {
             refreshMenuItem.setEnabled(false);
             refreshMenuItem.getIcon().setAlpha(130);
-        }
-        else {
+        } else {
             refreshMenuItem.setEnabled(true);
             refreshMenuItem.getIcon().setAlpha(255);
         }
+
         return true;
     }
 
@@ -200,11 +201,11 @@ public class MainActivity extends Activity implements OnTaskCompleted {
             startActivity(i);
             return true;
         }
-        if(id == R.id.action_reload) {
+
+        if (id == R.id.action_reload) {
             new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
         }
 
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Sphincter Remote</string>
+    <string name="app_name">Sphincter</string>
     <string name="action_settings">Settings</string>
     <string name="action_reload">Reload state</string>
 
@@ -9,8 +8,17 @@
     <string name="close_button_text">Lock door</string>
 
     <string name="pref_url">URL</string>
-    <string name="pref_url_description">URL to sphincterd</string>
+    <string name="pref_url_description">URL of the door system</string>
 
     <string name="pref_token">Token</string>
     <string name="pref_token_description">Your personal access token</string>
+
+    <string name="pref_ignore">Ignore</string>
+    <string name="pref_ignore_description">Ignore HTTPS certificate errors</string>
+
+    <string name="title_version">Version</string>
+    <string name="summary_version">1.1.0</string>
+
+    <string name="title_website">Website</string>
+    <string name="data_website">https://example.com</string>
 </resources>

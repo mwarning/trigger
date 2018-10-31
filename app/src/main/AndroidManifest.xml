@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.michiwend.sphincterremote" >
+    package="com.example.sphincter" >
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET" />
-
 
     <application
         android:allowBackup="true"
@@ -13,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.michiwend.sphincterremote.MainActivity"
+            android:name="com.example.sphincter.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -23,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.michiwend.sphincterremote.SettingsActivity"
+            android:name="com.example.sphincter.SettingsActivity"
             android:label="@string/action_settings"
             android:screenOrientation="portrait" >
         </activity>

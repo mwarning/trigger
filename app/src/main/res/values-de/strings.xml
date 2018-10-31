@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Spincter Remote</string>
+    <string name="app_name">Spincter</string>
 
     <string name="action_settings">Einstellungen</string>
     <string name="action_reload">Status aktualisieren</string>
@@ -13,4 +13,13 @@
 
     <string name="pref_token">Token</string>
     <string name="pref_token_description">Dein persönliches Zugangstoken</string>
+
+    <string name="pref_ignore">Ignorieren</string>
+    <string name="pref_ignore_description">HTTPS Zertifikatfehler ignorieren</string>
+
+    <string name="title_version">Version</string>
+    <string name="summary_version">1.1.0</string>
+
+    <string name="title_website">Webseite</string>
+    <string name="data_website">https://example.com</string>
 </resources>

@@ -2,10 +2,11 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="Settings">
         <EditTextPreference
             android:title="@string/pref_url"
             android:summary="@string/pref_url_description"
-            android:defaultValue="https://labctl.openlab-augsburg.de/sphincter/"
+            android:defaultValue="https://example.com/sphincter/"
             android:key="prefURL"
             android:inputType="textUri"/>
 
@@ -15,4 +16,27 @@
             android:key="prefToken"
             android:inputType="textVisiblePassword"/>
 
+<!-- add About and Info page -->
+
+        <CheckBoxPreference
+            android:title="@string/pref_ignore"
+            android:summary="@string/pref_ignore_description"
+            android:id="@+id/checkbox_ignore"
+            android:defaultValue="false"
+            android:key="prefIgnore" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:title="@string/title_version"
+            android:summary="@string/summary_version" />
+
+        <Preference
+            android:title="@string/title_website"
+            android:summary="@string/data_website">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/data_website" />
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>

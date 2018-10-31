@@ -1,16 +1,18 @@
-package com.michiwend.sphincterremote;
+package com.example.sphincter;
 
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.net.URL;
+import javax.net.ssl.HttpsURLConnection;
+
 
 enum Action {
     open_door,
@@ -32,6 +34,10 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
     protected String doInBackground(Action... params) {
         String url = sharedPreferences.getString("prefURL", "");
 
+        if (url.isEmpty()) {
+            return "";
+        }
+
         switch (params[0]) {
             case open_door:
                 url += "?action=open";
@@ -47,24 +53,60 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
 
         return CallSphincterAPI(url);
     }
+/*
+    public static void disableCertificateValidation()
+    {
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new TrustAllManager()
+        };
+
+        // Ignore differences between given hostname and certificate hostname
+        HostnameVerifier hv = new TrustAllHostnameVerifier();
+
+        // Install the all-trusting trust manager
+        try
+        {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(hv);
+        } catch (Exception e) {}
+    }
+*/
 
     final String CallSphincterAPI(String urlstr) {
         try {
+            // TODO: call on checkbox press
+            if (sharedPreferences.getBoolean("prefIgnore", false)) {
+                System.out.println("allow all ssl");
+                HttpsTrustManager.allowAllSSL();
+            } //else...
+
             URL url = new URL(urlstr);
+            URLConnection connection =  url.openConnection();
 
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setConnectTimeout(2000);
+            //TODO: remove
+            if (connection instanceof HttpsURLConnection) {
+                System.out.println("is https connection");
+            }
 
-            return readStream(con.getInputStream());
+            if (connection instanceof HttpURLConnection) {
+                HttpURLConnection con = (HttpURLConnection) connection;
+                con.setConnectTimeout(2000);
+                return readStream(con.getInputStream());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return "";
     }
 
     private String readStream(InputStream in) {
         BufferedReader reader = null;
         String result ="";
+
         try {
             reader = new BufferedReader(new InputStreamReader(in));
             String line = "";
@@ -83,6 +125,7 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
                 }
             }
         }
+
         return result;
     }
 

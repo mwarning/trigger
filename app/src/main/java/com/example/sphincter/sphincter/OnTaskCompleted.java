@@ -1,4 +1,4 @@
-package com.michiwend.sphincterremote;
+package com.example.sphincter;
 
 
 public interface OnTaskCompleted {
