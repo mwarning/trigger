@@ -53,27 +53,6 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
 
         return CallSphincterAPI(url);
     }
-/*
-    public static void disableCertificateValidation()
-    {
-        // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[] {
-                new TrustAllManager()
-        };
-
-        // Ignore differences between given hostname and certificate hostname
-        HostnameVerifier hv = new TrustAllHostnameVerifier();
-
-        // Install the all-trusting trust manager
-        try
-        {
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(hv);
-        } catch (Exception e) {}
-    }
-*/
 
     final String CallSphincterAPI(String urlstr) {
         try {
