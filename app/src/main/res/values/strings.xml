@@ -16,9 +16,12 @@
     <string name="pref_ignore">Ignore</string>
     <string name="pref_ignore_description">Ignore HTTPS certificate errors</string>
 
-    <string name="title_version">Version</string>
-    <string name="summary_version">1.1.0</string>
+    <string name="version_title">Version</string>
+    <string name="version_number">1.1.0</string>
 
-    <string name="title_website">Website</string>
-    <string name="data_website">https://example.com</string>
+    <string name="website_title">Website</string>
+    <string name="website_url">https://example.com</string>
+
+    <string name="license_title">License</string>
+    <string name="license_name">GPL-2</string>
 </resources>

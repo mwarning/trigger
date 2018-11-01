@@ -16,8 +16,6 @@
             android:key="prefToken"
             android:inputType="textVisiblePassword"/>
 
-<!-- add About and Info page -->
-
         <CheckBoxPreference
             android:title="@string/pref_ignore"
             android:summary="@string/pref_ignore_description"
@@ -28,15 +26,19 @@
 
     <PreferenceCategory android:title="About">
         <Preference
-            android:title="@string/title_version"
-            android:summary="@string/summary_version" />
+            android:title="@string/version_title"
+            android:summary="@string/version_number" />
 
         <Preference
-            android:title="@string/title_website"
-            android:summary="@string/data_website">
+            android:title="@string/website_title"
+            android:summary="@string/website_url">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="@string/data_website" />
+                android:data="@string/website_url" />
         </Preference>
+
+        <Preference
+            android:title="@string/license_title"
+            android:summary="@string/license_name" />
     </PreferenceCategory>
 </PreferenceScreen>
