@@ -20,7 +20,7 @@
     <string name="version_number">1.1.0</string>
 
     <string name="website_title">Website</string>
-    <string name="website_url">https://example.com</string>
+    <string name="website_url">https://github.com/mwarning/sphincter-remote</string>
 
     <string name="license_title">License</string>
     <string name="license_name">GPL-2</string>
