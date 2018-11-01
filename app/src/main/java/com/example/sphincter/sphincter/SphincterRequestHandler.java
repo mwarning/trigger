@@ -79,23 +79,14 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
         try {
             // TODO: call on checkbox press
             if (sharedPreferences.getBoolean("prefIgnore", false)) {
-                System.out.println("allow all ssl");
                 HttpsTrustManager.allowAllSSL();
             } //else...
 
             URL url = new URL(urlstr);
-            URLConnection connection =  url.openConnection();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setConnectTimeout(2000);
 
-            //TODO: remove
-            if (connection instanceof HttpsURLConnection) {
-                System.out.println("is https connection");
-            }
-
-            if (connection instanceof HttpURLConnection) {
-                HttpURLConnection con = (HttpURLConnection) connection;
-                con.setConnectTimeout(2000);
-                return readStream(con.getInputStream());
-            }
+            return readStream(con.getInputStream());
         } catch (Exception e) {
             e.printStackTrace();
         }
