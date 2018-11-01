@@ -89,7 +89,6 @@ public class MainActivity extends Activity implements OnTaskCompleted {
                 new SphincterRequestHandler(listener, prefs).execute(Action.close_door);
             }
         });
-
     }
 
     private boolean isWifiConnected(Context context) {
@@ -99,11 +98,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
 
         Log.i("[WIFI-STATE]", wifiNetInfo.getDetailedState().toString());
 
-        if (wifiNetInfo.isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
+        return wifiNetInfo.isConnected();
     }
 
     private void changeUI(UIState state) {
@@ -133,7 +128,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
 
             case UNKNOWN:
                 stateIcon.setImageResource(R.drawable.state_unknown);
-                // Enable, in case the API does not support state queries
+                // Enabled, in case the API does not support state queries
                 bc.setEnabled(true);
                 bo.setEnabled(true);
                 break;
@@ -143,7 +138,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
             enableRefreshButton = true;
         }
 
-        // update action bar menu
+        // Update action bar menu
         invalidateOptionsMenu();
     }
 
