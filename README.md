@@ -2,11 +2,13 @@ Sphincter-Remote
 ================
 
 Sphincter-Remote is an Android app to unlock doors via simple HTTPS calls.
-A server side program that works with this app is [Sphincter](https://github.com/openlab-aux/sphincter).
+Hardware schematics for a door mechanism and server software that work with this app can be found [here](https://github.com/openlab-aux/sphincter).
 
 ![image](screenshots.png)
 
 ## Download
+
+See [here](https://github.com/mwarning/sphincter-remote/releases) for APKs.
 
 ## Build from Sources
 
