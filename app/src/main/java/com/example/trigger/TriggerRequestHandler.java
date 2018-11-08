@@ -3,9 +3,11 @@ package com.example.trigger;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -58,14 +60,19 @@ public class TriggerRequestHandler extends AsyncTask<Action, Void, String> {
         try {
             // TODO: call on checkbox press
             if (sharedPreferences.getBoolean("prefIgnore", false)) {
-                HttpsTrustManager.allowAllSSL();
-            } //else...
+                //HttpsTrustManager.allowAllSSL();
+                HttpsTrustManager.setVerificationDisable();
+            } else {
+                HttpsTrustManager.setVerificationEnable();
+            }
 
             URL url = new URL(urlstr);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setConnectTimeout(2000);
 
             return readStream(con.getInputStream());
+        } catch(FileNotFoundException e) {
+            Log.i("[URL-CALL]", "Server responds with error.");
         } catch (Exception e) {
             e.printStackTrace();
         }

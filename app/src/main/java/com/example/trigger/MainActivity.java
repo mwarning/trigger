@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.preference.Preference;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,6 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.net.wifi.WifiInfo;
+
 
 enum UIState {
     OPEN,
@@ -43,7 +49,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected(context)) {
+                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected()) {
                     new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
                 } else {
                     changeUI(UIState.DISABLED);
@@ -91,7 +97,23 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         });
     }
 
-    private boolean isWifiConnected(Context context) {
+    private boolean isWifiConnected() {
+        WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+
+            if (wifiInfo.getNetworkId() == -1) {
+                return false; // Not connected to an access point
+            }
+            return true; // Connected to an access point
+        } else {
+            return false; // Wi-Fi adapter is OFF
+        }
+    }
+/*
+    private boolean isWifiConnected2() {
+        Context context = this.getApplicationContext();
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
         //NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
         NetworkInfo wifiNetInfo = connectivityManager.getNetworkInfo( ConnectivityManager.TYPE_WIFI );
@@ -100,7 +122,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
 
         return wifiNetInfo.isConnected();
     }
-
+*/
     private void changeUI(UIState state) {
 
         Button bc = (Button) findViewById(R.id.button_close);
@@ -162,7 +184,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
     protected void onStart() {
         super.onStart();
 
-        if (isWifiConnected(this.getApplicationContext())) {
+        if (this.isWifiConnected()) {
             new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
         }
     }
