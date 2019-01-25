@@ -1,4 +1,4 @@
-package com.example.sphincter;
+package com.example.trigger;
 
 
 public interface OnTaskCompleted {

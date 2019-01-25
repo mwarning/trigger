@@ -1,4 +1,4 @@
-package com.example.sphincter;
+package com.example.trigger;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

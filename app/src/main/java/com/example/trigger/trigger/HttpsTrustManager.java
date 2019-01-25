@@ -1,4 +1,4 @@
-package com.example.sphincter;
+package com.example.trigger;
 
 import java.security.cert.X509Certificate;
 

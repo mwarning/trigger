@@ -6,7 +6,7 @@
         <EditTextPreference
             android:title="@string/pref_url"
             android:summary="@string/pref_url_description"
-            android:defaultValue="https://example.com/sphincter/"
+            android:defaultValue="https://example.com/trigger/"
             android:key="prefURL"
             android:inputType="textUri"/>
 

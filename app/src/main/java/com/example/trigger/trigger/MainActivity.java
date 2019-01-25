@@ -1,4 +1,4 @@
-package com.example.sphincter;
+package com.example.trigger;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -44,7 +44,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected(context)) {
-                    new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
+                    new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
                 } else {
                     changeUI(UIState.DISABLED);
                 }
@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         button_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SphincterRequestHandler(listener, prefs).execute(Action.open_door);
+                new TriggerRequestHandler(listener, prefs).execute(Action.open_door);
             }
         });
 
@@ -86,7 +86,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SphincterRequestHandler(listener, prefs).execute(Action.close_door);
+                new TriggerRequestHandler(listener, prefs).execute(Action.close_door);
             }
         });
     }
@@ -163,7 +163,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         super.onStart();
 
         if (isWifiConnected(this.getApplicationContext())) {
-            new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
+            new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
         }
     }
 
@@ -198,7 +198,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         }
 
         if (id == R.id.action_reload) {
-            new SphincterRequestHandler(listener, prefs).execute(Action.update_state);
+            new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
         }
 
         return super.onOptionsItemSelected(item);

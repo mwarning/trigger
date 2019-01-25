@@ -1,4 +1,4 @@
-package com.example.sphincter;
+package com.example.trigger;
 
 
 import android.content.SharedPreferences;
@@ -20,12 +20,12 @@ enum Action {
     update_state
 }
 
-public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
+public class TriggerRequestHandler extends AsyncTask<Action, Void, String> {
 
     private OnTaskCompleted listener;
     private SharedPreferences sharedPreferences;
 
-    public SphincterRequestHandler(OnTaskCompleted l, SharedPreferences p){
+    public TriggerRequestHandler(OnTaskCompleted l, SharedPreferences p){
         this.listener = l;
         this.sharedPreferences = p;
     }
@@ -51,10 +51,10 @@ public class SphincterRequestHandler extends AsyncTask<Action, Void, String> {
 
         url += "&token=" + sharedPreferences.getString("prefToken", "");
 
-        return CallSphincterAPI(url);
+        return CallTriggerAPI(url);
     }
 
-    final String CallSphincterAPI(String urlstr) {
+    final String CallTriggerAPI(String urlstr) {
         try {
             // TODO: call on checkbox press
             if (sharedPreferences.getBoolean("prefIgnore", false)) {
