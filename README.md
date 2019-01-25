@@ -18,6 +18,15 @@ On Linux based systems:
 ./gradlew assembleRelease
 ```
 
+## Development
+
+Any help, bugfixes, new features are much welcome.
+
+Feature suggestions:
+- more flexible trigger queries and protocols (ssh?)
+- multiple trigger profiles
+- use specific certificates
+
 ## API
 
 Trigger allows you to set an URL (e.g. `https://example.com/door/`) and a token (e.g. `secret123`). When the open or close button is pressed, a HTTP request will be send. To open a door this might be the following:
