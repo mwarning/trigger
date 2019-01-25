@@ -23,9 +23,12 @@ On Linux based systems:
 Any help, bugfixes, new features are much welcome.
 
 Feature suggestions:
+- translations (only english and german available so far)
 - more flexible trigger queries and protocols (ssh?)
 - multiple trigger profiles
 - use specific certificates
+
+Feel free to fork this project, move it into an organisation or whatever the license allows. :-)
 
 ## API
 
