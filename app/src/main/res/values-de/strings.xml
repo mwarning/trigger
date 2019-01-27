@@ -18,7 +18,7 @@
     <string name="pref_ignore_description">HTTPS Zertifikatfehler ignorieren</string>
 
     <string name="version_title">Version</string>
-    <string name="version_number">1.2.0</string>
+    <string name="version_number">1.2.1</string>
 
     <string name="website_title">Website</string>
     <string name="website_url">https://github.com/mwarning/trigger</string>
