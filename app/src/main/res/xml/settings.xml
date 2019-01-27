@@ -27,11 +27,14 @@
     <PreferenceCategory android:title="About">
         <Preference
             android:title="@string/version_title"
-            android:summary="@string/version_number" />
+            android:summary="@string/version_number"
+            android:selectable="false"
+            android:persistent="false" />
 
         <Preference
             android:title="@string/website_title"
-            android:summary="@string/website_url">
+            android:summary="@string/website_url"
+            android:persistent="false" >
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/website_url" />
@@ -39,6 +42,8 @@
 
         <Preference
             android:title="@string/license_title"
-            android:summary="@string/license_name" />
+            android:summary="@string/license_name"
+            android:selectable="false"
+            android:persistent="false" />
     </PreferenceCategory>
 </PreferenceScreen>

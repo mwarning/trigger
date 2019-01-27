@@ -20,7 +20,7 @@
     <string name="api_documentation">API Dokumentation</string>
 
     <string name="version_title">Version</string>
-    <string name="version_number">1.1.0</string>
+    <string name="version_number">1.2.0</string>
 
     <string name="website_title">Website</string>
     <string name="website_url">https://github.com/mwarning/trigger</string>
