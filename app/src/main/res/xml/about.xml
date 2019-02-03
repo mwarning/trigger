@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:title="@string/version_title"
+            android:summary="unknown"
+            android:key="prefVersion"
+            android:selectable="false"
+            android:persistent="false" />
+        <Preference
+            android:title="@string/website_title"
+            android:summary="@string/website_url"
+            android:persistent="false" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/website_url" />
+        </Preference>
+
+        <Preference
+            android:title="@string/license_title"
+            android:summary="@string/license_name"
+            android:selectable="false"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

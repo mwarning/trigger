@@ -8,6 +8,16 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.Preference;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -25,6 +35,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.net.wifi.WifiInfo;
 
+import java.util.ArrayList;
+
 
 enum UIState {
     OPEN,
@@ -33,48 +45,80 @@ enum UIState {
     DISABLED,
 }
 
-public class MainActivity extends Activity implements OnTaskCompleted {
-
+public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
+    private boolean enableRefreshButton;
     private OnTaskCompleted listener;
     private SharedPreferences prefs;
     private ImageView stateIcon;
-    private boolean enableRefreshButton;
+
+    private Setup getSelectedSetup() {
+        Spinner spinner = (Spinner) findViewById(R.id.selection_spinner);
+        return (Setup) spinner.getSelectedItem();
+    }
+
+    void updateSpinner() {
+        Log.d("MainActivity", "updateSpinner()");
+
+        Context context = this.getApplicationContext();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        ArrayList<Setup> items = Settings.getAllItems(pref);
+        Log.d("updateSpinner", "items.size(): " + items.size());
+        items.add(new SphincterSetup(-1, "New Entry", "", "", false)); // dummy item
+
+        ArrayAdapter<Setup> adapter = new ArrayAdapter<Setup>(this,
+                android.R.layout.simple_spinner_item, items);
+
+        Spinner spinner = (Spinner) findViewById(R.id.selection_spinner);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Setup setup = (Setup) parent.getItemAtPosition(pos);
+                Log.v("MainActivity", "onSelected");
+                new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d("MainActivity:", "onResume");
+        updateSpinner();
+        super.onResume();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Setup setup = getSelectedSetup();
+
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected()) {
-                    new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
+                    new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
                 } else {
                     changeUI(UIState.DISABLED);
                 }
             }
         };
 
+        Log.d("MainActivity", "onCreate()");
+        updateSpinner();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(broadcastReceiver, intentFilter);
-/*
-        CheckBox checkBoxLab = (CheckBox) findViewById(R.id.checkbox_ignore);
-        checkBoxLab.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                System.out.println(String.format("checkbox changed %b", isChecked));
-                if (isChecked) {
-                    HttpsTrustManager.allowAllSSL();
-                } else {
-                    // TODO: disable
-                }
-            }
-        });
-*/
+
         stateIcon = (ImageView) findViewById(R.id.stateIcon);
 
         listener = this;
@@ -84,7 +128,8 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         button_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TriggerRequestHandler(listener, prefs).execute(Action.open_door);
+                Setup setup = getSelectedSetup();
+                new HttpsRequestHandler(listener, prefs).execute(Action.open_door, setup);
             }
         });
 
@@ -92,7 +137,8 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TriggerRequestHandler(listener, prefs).execute(Action.close_door);
+                Setup setup = getSelectedSetup();
+                new HttpsRequestHandler(listener, prefs).execute(Action.close_door, setup);
             }
         });
     }
@@ -111,18 +157,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
             return false; // Wi-Fi adapter is OFF
         }
     }
-/*
-    private boolean isWifiConnected2() {
-        Context context = this.getApplicationContext();
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
-        //NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
-        NetworkInfo wifiNetInfo = connectivityManager.getNetworkInfo( ConnectivityManager.TYPE_WIFI );
 
-        Log.i("[WIFI-STATE]", wifiNetInfo.getDetailedState().toString());
-
-        return wifiNetInfo.isConnected();
-    }
-*/
     private void changeUI(UIState state) {
 
         Button bc = (Button) findViewById(R.id.button_close);
@@ -160,7 +195,7 @@ public class MainActivity extends Activity implements OnTaskCompleted {
             enableRefreshButton = true;
         }
 
-        // Update action bar menu
+        // update action bar menu
         invalidateOptionsMenu();
     }
 
@@ -170,10 +205,10 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         Log.i("[GET RESULT]", result);
 
         if (result.equals("UNLOCKED")) {
-            // Door unlocked
+            // door unlocked
             changeUI(UIState.OPEN);
         } else if (result.equals("LOCKED")) {
-            // Door locked
+            // door locked
             changeUI(UIState.CLOSED);
         } else {
             changeUI(UIState.UNKNOWN);
@@ -185,7 +220,8 @@ public class MainActivity extends Activity implements OnTaskCompleted {
         super.onStart();
 
         if (this.isWifiConnected()) {
-            new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
+            Setup setup = getSelectedSetup();
+            new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
         }
     }
 
@@ -207,22 +243,35 @@ public class MainActivity extends Activity implements OnTaskCompleted {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem menu_item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            // Launch settings activity
-            Intent i = new Intent(this, SettingsActivity.class);
+        int id = menu_item.getItemId();
+        if (id == R.id.action_edit) {
+            // launch settings activity (also for "New Entry" dummy entry)
+            Setup setup = getSelectedSetup();
+            Log.d("onOptionsItemSelected", "pos: " + setup.getId());
+            if (setup != null) {
+                Intent i = new Intent(this, EditActivity.class);
+                i.putExtra("setup_id", setup.getId());
+                startActivity(i);
+                return true;
+            }
+        }
+
+        if (id == R.id.action_about) {
+            // launch about activity
+            Intent i = new Intent(this, AboutActivity.class);
             startActivity(i);
             return true;
         }
 
         if (id == R.id.action_reload) {
-            new TriggerRequestHandler(listener, prefs).execute(Action.update_state);
+            Setup setup = getSelectedSetup();
+            new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(menu_item);
     }
 }

@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
+import java.net.URLEncoder;
 
 
 enum Action {
@@ -22,25 +23,36 @@ enum Action {
     update_state
 }
 
-public class TriggerRequestHandler extends AsyncTask<Action, Void, String> {
-
+public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
+    private SharedPreferences pref;
     private OnTaskCompleted listener;
-    private SharedPreferences sharedPreferences;
 
-    public TriggerRequestHandler(OnTaskCompleted l, SharedPreferences p){
+    public HttpsRequestHandler(OnTaskCompleted l, SharedPreferences p){
         this.listener = l;
-        this.sharedPreferences = p;
+        this.pref = p;
     }
 
     @Override
-    protected String doInBackground(Action... params) {
-        String url = sharedPreferences.getString("prefURL", "");
-
-        if (url.isEmpty()) {
+    protected String doInBackground(Object... params) {
+        if (params.length != 2) {
+            Log.e("HttpsRequestHandler.doInBackGround", "Unexpected number of params.");
             return "";
         }
 
-        switch (params[0]) {
+    	Action action = (Action) params[0];
+        SphincterSetup setup = (SphincterSetup) params[1];
+
+        if (setup == null || action == null) {
+            Log.e("HttpsRequestHandler.doInBackGround", "Unexpected type objects in params.");
+        	return "";
+        }
+
+        if (setup.url.isEmpty() || setup.getId() < 0) {
+            return "";
+        }
+
+        String url = setup.url;
+        switch (action) {
             case open_door:
                 url += "?action=open";
                 break;
@@ -51,28 +63,28 @@ public class TriggerRequestHandler extends AsyncTask<Action, Void, String> {
                 url += "?action=state";
         }
 
-        url += "&token=" + sharedPreferences.getString("prefToken", "");
+        url += "&token=" + URLEncoder.encode(setup.token);
 
-        return CallTriggerAPI(url);
-    }
-
-    final String CallTriggerAPI(String urlstr) {
         try {
-            // TODO: call on checkbox press
-            if (sharedPreferences.getBoolean("prefIgnore", false)) {
-                //HttpsTrustManager.allowAllSSL();
+            if (setup.ignore) {
                 HttpsTrustManager.setVerificationDisable();
             } else {
                 HttpsTrustManager.setVerificationEnable();
             }
 
-            URL url = new URL(urlstr);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
             con.setConnectTimeout(2000);
 
             return readStream(con.getInputStream());
         } catch(FileNotFoundException e) {
+        	// server responds, but with 404 or other error
             Log.i("[URL-CALL]", "Server responds with error.");
+        } catch (java.net.SocketTimeoutException ste) {
+        	// sever not reachable
+            Log.i("[URL-CALL]", "SocketTimeoutException: " + ste.toString());
+        } catch (java.net.SocketException se) {
+        	// not connected to network
+        	Log.i("[URL-CALL]", "SocketException: " + se.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

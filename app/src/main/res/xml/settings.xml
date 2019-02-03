@@ -1,49 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
     <PreferenceCategory android:title="Settings">
         <EditTextPreference
+            android:id="@+id/prefName"
+            android:title="@string/pref_name"
+            android:summary="@string/pref_name_description"
+            android:defaultValue=""
+            android:key="prefName"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:id="@+id/prefUrl"
             android:title="@string/pref_url"
             android:summary="@string/pref_url_description"
             android:defaultValue="https://example.com/trigger/"
-            android:key="prefURL"
+            android:key="prefUrl"
             android:inputType="textUri"/>
 
         <EditTextPreference
+            android:id="@+id/prefToken"
             android:title="@string/pref_token"
             android:summary="@string/pref_token_description"
             android:key="prefToken"
             android:inputType="textVisiblePassword"/>
 
         <CheckBoxPreference
+            android:id="@+id/prefIgnore"
             android:title="@string/pref_ignore"
             android:summary="@string/pref_ignore_description"
-            android:id="@+id/checkbox_ignore"
             android:defaultValue="false"
             android:key="prefIgnore" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="About">
-        <Preference
-            android:title="@string/version_title"
-            android:summary="@string/version_number"
-            android:selectable="false"
-            android:persistent="false" />
-
-        <Preference
-            android:title="@string/website_title"
-            android:summary="@string/website_url"
-            android:persistent="false" >
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/website_url" />
-        </Preference>
-
-        <Preference
-            android:title="@string/license_title"
-            android:summary="@string/license_name"
-            android:selectable="false"
-            android:persistent="false" />
     </PreferenceCategory>
 </PreferenceScreen>

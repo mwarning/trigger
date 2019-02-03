@@ -10,7 +10,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppCompatTheme" >
         <activity
             android:name="com.example.trigger.MainActivity"
             android:label="@string/app_name"
@@ -21,11 +21,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.trigger.SettingsActivity"
-            android:label="@string/action_settings"
+            android:name="com.example.trigger.EditActivity"
+            android:label="@string/action_edit"
             android:screenOrientation="portrait" >
         </activity>
-
+        <activity
+            android:name="com.example.trigger.AboutActivity"
+            android:label="@string/action_about"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>
