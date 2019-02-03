@@ -1,28 +1,15 @@
 package com.example.trigger;
 
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.preference.EditTextPreference;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.Map;
-
-import static com.example.trigger.Settings.*;
 
 
 public class EditActivity extends PreferenceActivity {
@@ -57,7 +44,7 @@ public class EditActivity extends PreferenceActivity {
             Log.d("EditActivity.onSafeButtonClicked", "valid name: " + name + ", type: " + type);
             if (type == "sphincter") {
                 Log.d("EditActivity.onSafeButtonClicked", "save entry: " + name);
-                safeItem(pref, new SphincterSetup(
+                Settings.safeItem(pref, new SphincterSetup(
                     setup_id,
                     name,
                     pref.getString("prefUrl", ""),
@@ -107,7 +94,7 @@ public class EditActivity extends PreferenceActivity {
         Context context = this.getApplicationContext();
         pref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        ArrayList<Integer> ids = get_all_ids(pref);
+        ArrayList<Integer> ids = Settings.get_all_ids(pref);
         if (ids.contains(id)) {
             setup_id = id;
             Log.d("onCreate", "old entry: " + setup_id);
