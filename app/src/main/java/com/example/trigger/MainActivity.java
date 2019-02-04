@@ -109,9 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Setup setup = (Setup) parent.getItemAtPosition(pos);
-                Log.v("MainActivity", "onSelected");
-                new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
+                callRequestHandler(Action.update_state);
             }
 
             @Override
@@ -143,8 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected()) {
                     updateSpinner(); // auto select possible entry
-                    Setup setup = getSelectedSetup();
-                    new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
+                    callRequestHandler(Action.update_state);
                 } else {
                     changeUI(UIState.DISABLED);
                 }
@@ -168,8 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         button_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Setup setup = getSelectedSetup();
-                new HttpsRequestHandler(listener, prefs).execute(Action.open_door, setup);
+                callRequestHandler(Action.open_door);
             }
         });
 
@@ -177,8 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         button_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Setup setup = getSelectedSetup();
-                new HttpsRequestHandler(listener, prefs).execute(Action.close_door, setup);
+                callRequestHandler(Action.close_door);
             }
         });
     }
@@ -267,13 +262,19 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
+    private void callRequestHandler(Action action) {
+        Setup setup = getSelectedSetup();
+        if (!(setup instanceof DummySetup)) {
+            new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
 
         if (this.isWifiConnected()) {
-            Setup setup = getSelectedSetup();
-            new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
+            callRequestHandler(Action.update_state);
         }
     }
 
@@ -337,9 +338,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
 
         if (id == R.id.action_reload) {
-            Setup setup = getSelectedSetup();
-            Log.d("MainActivity", "call " + setup.getName());
-            new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
+            callRequestHandler(Action.update_state);
         }
 
         return super.onOptionsItemSelected(menu_item);
