@@ -25,6 +25,12 @@
             android:key="prefToken"
             android:inputType="textVisiblePassword"/>
 
+        <EditTextPreference
+            android:id="@+id/prefSSIDs"
+            android:title="@string/pref_ssids"
+            android:summary="@string/pref_ssids_description"
+            android:key="prefSSIDs" />
+
         <CheckBoxPreference
             android:id="@+id/prefIgnore"
             android:title="@string/pref_ignore"

@@ -1,7 +1,5 @@
 package com.example.trigger;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.Preference;
@@ -12,16 +10,6 @@ import android.util.Log;
 
 
 public class AboutActivity extends PreferenceActivity {
-    private String getVersion() {
-        try {
-            Context context = this.getApplicationContext();
-            PackageInfo info = context.getPackageManager().getPackageInfo(getPackageName(), 0);
-            return info.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +19,7 @@ public class AboutActivity extends PreferenceActivity {
 
         Context context = this.getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        String version = getVersion();
+        String version = Settings.get_version();
         if (version.length() > 0) {
             SharedPreferences.Editor e = pref.edit();
             e.putString("prefVersion", version);

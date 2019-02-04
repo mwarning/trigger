@@ -24,6 +24,9 @@ import android.preference.PreferenceManager;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 enum UIState {
@@ -44,21 +47,65 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         return (Setup) spinner.getSelectedItem();
     }
 
-    void updateSpinner() {
+    private int getPreferredSpinnerIndex(ArrayList<Setup> items, Setup current) {
+        String ssid = getWifiSSID();
+        Log.d("getPreferredSpinnerIndex", "ssid: '" + ssid + "'");
+
+        // Select by ssid
+        if (ssid.length() > 0) {
+            for (int i = 0; i < items.size(); i += 1) {
+                Setup setup = items.get(i);
+                String ssids = setup.getSSIDs();
+                Log.d("getPreferredSpinnerIndex", "compare '" + ssid + "' == '" + ssids + "'");
+                if (Arrays.asList(ssids.trim().split("\\s*,\\s*")).contains(ssid)) {
+                    Log.d("getPreferredSpinnerIndex", "matched: " + items.get(i).getName());
+                    return i;
+                }
+            }
+        }
+
+        // Keep previous selection
+        if (current != null) {
+            for (int i = 0; i < items.size(); i += 1) {
+                if (current.getId() == items.get(i).getId()) {
+                    return i;
+                }
+            }
+        }
+
+        // Select first item
+        if (items.size() > 0) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
+    private void updateSpinner() {
         Log.d("MainActivity", "updateSpinner()");
 
-        Context context = this.getApplicationContext();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        ArrayList<Setup> setups = Settings.all_setups();
+        Collections.sort(setups, new Comparator<Setup>() {
+            @Override public int compare(Setup s1, Setup s2) {
+                return s1.getName().compareTo(s2.getName());
+            }
+        });
 
-        ArrayList<Setup> items = Settings.getAllItems(pref);
-        Log.d("updateSpinner", "items.size(): " + items.size());
-        items.add(new SphincterSetup(-1, "New Entry", "", "", false)); // dummy item
+        setups.add(new DummySetup("New Entry"));
+
+        for (Setup setup : setups) {
+            Log.d("updateSpinner", "item type: " + setup.getType());
+        }
 
         ArrayAdapter<Setup> adapter = new ArrayAdapter<Setup>(this,
-                android.R.layout.simple_spinner_item, items);
+            android.R.layout.simple_spinner_item, setups);
 
+        Log.d("updateSpinner", "items.size(): " + setups.size());
+
+        Setup current = getSelectedSetup();
         Spinner spinner = (Spinner) findViewById(R.id.selection_spinner);
         spinner.setAdapter(adapter);
+        spinner.setSelection(getPreferredSpinnerIndex(setups, current));
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -69,8 +116,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
+                // nothing to do
             }
+
         });
     }
 
@@ -86,12 +134,16 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Context context = this.getApplicationContext();
+        Settings.load(this.getApplicationContext());
+
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Setup setup = getSelectedSetup();
 
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected()) {
+                    updateSpinner(); // auto select possible entry
+                    Setup setup = getSelectedSetup();
                     new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
                 } else {
                     changeUI(UIState.DISABLED);
@@ -131,6 +183,20 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         });
     }
 
+    private String getWifiSSID() {
+        // From android 8.0 only available if GPS on?!
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifiManager.getConnectionInfo();
+        String ssid = info.getSSID();
+        if (ssid.length() >= 2 && ssid.startsWith("\"") && ssid.endsWith("\"")) {
+            // quoted string
+            return ssid.substring(1, ssid.length() - 1);
+        } else {
+            // hexadecimal string...
+            return ssid;
+        }
+    }
+
     private boolean isWifiConnected() {
         WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
@@ -147,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private void changeUI(UIState state) {
-
         Button bc = (Button) findViewById(R.id.button_close);
         Button bo = (Button) findViewById(R.id.button_open);
 
@@ -189,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     @Override
     public void onTaskCompleted(String result) {
-
         Log.i("[GET RESULT]", result);
 
         if (result.equals("UNLOCKED")) {
@@ -211,6 +275,23 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             Setup setup = getSelectedSetup();
             new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
         }
+    }
+
+    @Override
+    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+        if (menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Method m = menu.getClass().getDeclaredMethod(
+                            "setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true);
+                    m.invoke(menu, true);
+                } catch (Exception e) {
+                    Log.e(getClass().getSimpleName(), "onMenuOpened...unable to set icons for overflow menu", e);
+                }
+            }
+        }
+        return super.onPrepareOptionsPanel(view, menu);
     }
 
     @Override
@@ -257,6 +338,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         if (id == R.id.action_reload) {
             Setup setup = getSelectedSetup();
+            Log.d("MainActivity", "call " + setup.getName());
             new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
         }
 

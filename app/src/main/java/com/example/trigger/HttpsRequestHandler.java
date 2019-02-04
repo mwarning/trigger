@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -36,15 +37,21 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
             return "";
         }
 
-    	Action action = (Action) params[0];
-        SphincterSetup setup = (SphincterSetup) params[1];
-
-        if (setup == null || action == null) {
-            Log.e("HttpsRequestHandler.doInBackGround", "Unexpected type objects in params.");
-        	return "";
+        if (params[1] instanceof DummySetup) {
+            // ignore
+            return "";
         }
 
+        if (!(params[0] instanceof Action && params[1] instanceof SphincterSetup)) {
+            Log.e("HttpsRequestHandler.doInBackGround", "Invalid type of params.");
+            return "";
+        }
+
+        Action action = (Action) params[0];
+        SphincterSetup setup = (SphincterSetup) params[1];
+
         if (setup.url.isEmpty() || setup.getId() < 0) {
+            Log.e("HttpsRequestHandler", "invalid url for id:  " + setup.getId());
             return "";
         }
 
@@ -61,6 +68,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
         }
 
         url += "&token=" + URLEncoder.encode(setup.token);
+        Log.d("HttpsRequest", "url: " + url);
 
         try {
             if (setup.ignore) {
@@ -73,15 +81,17 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
             con.setConnectTimeout(2000);
 
             return readStream(con.getInputStream());
-        } catch(FileNotFoundException e) {
+        } catch (MalformedURLException mue) {
+            Log.d("[URL-CALL]", "Malformed url.");
+        } catch (FileNotFoundException e) {
         	// server responds, but with 404 or other error
-            Log.i("[URL-CALL]", "Server responds with error.");
+            Log.d("[URL-CALL]", "Server responds with error.");
         } catch (java.net.SocketTimeoutException ste) {
         	// sever not reachable
-            Log.i("[URL-CALL]", "SocketTimeoutException: " + ste.toString());
+            Log.d("[URL-CALL]", "SocketTimeoutException: " + ste.toString());
         } catch (java.net.SocketException se) {
-        	// not connected to network
-        	Log.i("[URL-CALL]", "SocketException: " + se.toString());
+            // not connected to network
+            Log.d("[URL-CALL]", "SocketException: " + se.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

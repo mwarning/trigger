@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import java.util.ArrayList;
 
 
 public class EditActivity extends PreferenceActivity {
@@ -25,33 +24,37 @@ public class EditActivity extends PreferenceActivity {
         builder.show();
     }
 
-    private boolean validateName(String name) {
-        if (name == null || name.length() == 0) {
-            showErrorMessage("Invalid Name", "Name is not set.");
-            return false;
-        } else if (Settings.name_exists(pref, name)) {
-           showErrorMessage("Invalid Name", "Name already exists.");
-           return false;
-        }
-        return true;
-    }
-
     public void onSaveButtonClicked(View v) {
         String name = pref.getString("prefName", "");
         Log.d("EditActivity", "onSafeButtonClicked: name: " + name);
 
-        if (validateName(name)) {
-            Log.d("EditActivity.onSafeButtonClicked", "valid name: " + name + ", type: " + type);
-            if (type == "sphincter") {
-                Log.d("EditActivity.onSafeButtonClicked", "save entry: " + name);
-                Settings.safeItem(pref, new SphincterSetup(
-                    setup_id,
-                    name,
-                    pref.getString("prefUrl", ""),
-                    pref.getString("prefToken", ""),
-                    pref.getBoolean("prefIgnore", false))
-                );
-            }
+        if (name == null || name.length() == 0) {
+            showErrorMessage("Invalid Name", "Name is not set.");
+            return;
+        }
+
+        // duplicate entry
+        if (Settings.id_exists(setup_id) && Settings.name_exists(name)) {
+           showErrorMessage("Entry Exists", "Name already exists.");
+           return;
+        }
+
+        Log.d("EditActivity.onSafeButtonClicked", "valid name: " + name + ", type: " + type);
+        if (type == "sphincter") {
+            Log.d("EditActivity.onSafeButtonClicked", "save entry: " + name);
+            // remove any existing entry (does not exist for new entries)
+            Settings.remove_setup(setup_id);
+            Settings.add_setup(new SphincterSetup(
+                setup_id,
+                name,
+                pref.getString("prefUrl", ""),
+                pref.getString("prefToken", ""),
+                pref.getString("prefSSIDs", ""),
+                pref.getBoolean("prefIgnore", false))
+            );
+            Settings.store();
+        } else {
+            showErrorMessage("Unknown Setup Type", "Cannot store setup.");
         }
     }
 
@@ -65,7 +68,8 @@ public class EditActivity extends PreferenceActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Log.d("onDeleteButtonClicked", "onClick Yes");
-                Settings.deleteItem(pref, setup_id);
+                Settings.remove_setup(setup_id);
+                Settings.store();
                 // close this dialog and settings
                 EditActivity.this.finish();
             }
@@ -94,25 +98,25 @@ public class EditActivity extends PreferenceActivity {
         Context context = this.getApplicationContext();
         pref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        ArrayList<Integer> ids = Settings.get_all_ids(pref);
-        if (ids.contains(id)) {
+        if (Settings.id_exists(id)) {
             setup_id = id;
             Log.d("onCreate", "old entry: " + setup_id);
             
-            Setup item = Settings.getItem(pref, setup_id);
+            Setup item = Settings.find_setup(setup_id);
             if (item instanceof SphincterSetup) {
                 SphincterSetup obj = (SphincterSetup) item;
                 SharedPreferences.Editor e = pref.edit();
                 e.putString("prefName", obj.name);
                 e.putString("prefUrl", obj.url);
                 e.putString("prefToken", obj.token);
+                e.putString("prefSSIDs", obj.ssids);
                 e.putBoolean("prefIgnore", obj.ignore);
                 e.commit();
             } else {
                 Log.d("onCreate", "No setup found for id " + setup_id);
             }
         } else {
-            setup_id = Settings.newId(pref);
+            setup_id = Settings.id_new();
             Log.d("onCreate", "new entry: " + setup_id);
             // Set all field empty
             SharedPreferences.Editor e = pref.edit();
@@ -126,17 +130,5 @@ public class EditActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
         setContentView(R.layout.activity_settings);
-    }
-
-    @Override
-    public void onResume() {
-        Log.d("EditActivity", "onResume()");
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.d("EditActivity", "onDestroy");
-        super.onDestroy();
     }
 }

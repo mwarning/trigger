@@ -18,6 +18,9 @@
     <string name="pref_token">Token</string>
     <string name="pref_token_description">Dein persönliches Zugangstoken</string>
 
+    <string name="pref_ssids">SSIDs</string>
+    <string name="pref_ssids_description">Auto-Auswahl wenn verbunden mit einem Netzwerk</string>
+
     <string name="pref_ignore">Ignorieren</string>
     <string name="pref_ignore_description">HTTPS Zertifikatfehler ignorieren</string>
 

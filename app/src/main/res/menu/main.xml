@@ -18,5 +18,5 @@
         android:title="@string/action_about"
         android:orderInCategory="0"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_action_refresh" />
+        android:icon="@drawable/ic_action_about" />
 </menu>
