@@ -49,16 +49,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private int getPreferredSpinnerIndex(ArrayList<Setup> items, Setup current) {
         String ssid = getWifiSSID();
-        Log.d("getPreferredSpinnerIndex", "ssid: '" + ssid + "'");
 
         // Select by ssid
         if (ssid.length() > 0) {
             for (int i = 0; i < items.size(); i += 1) {
                 Setup setup = items.get(i);
                 String ssids = setup.getSSIDs();
-                Log.d("getPreferredSpinnerIndex", "compare '" + ssid + "' == '" + ssids + "'");
                 if (Arrays.asList(ssids.trim().split("\\s*,\\s*")).contains(ssid)) {
-                    Log.d("getPreferredSpinnerIndex", "matched: " + items.get(i).getName());
                     return i;
                 }
             }
@@ -82,8 +79,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private void updateSpinner() {
-        Log.d("MainActivity", "updateSpinner()");
-
         ArrayList<Setup> setups = Settings.all_setups();
         Collections.sort(setups, new Comparator<Setup>() {
             @Override public int compare(Setup s1, Setup s2) {
@@ -93,14 +88,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         setups.add(new DummySetup("New Entry"));
 
-        for (Setup setup : setups) {
-            Log.d("updateSpinner", "item type: " + setup.getType());
-        }
-
         ArrayAdapter<Setup> adapter = new ArrayAdapter<Setup>(this,
             android.R.layout.simple_spinner_item, setups);
-
-        Log.d("updateSpinner", "items.size(): " + setups.size());
 
         Setup current = getSelectedSetup();
         Spinner spinner = (Spinner) findViewById(R.id.selection_spinner);
@@ -122,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     @Override
     protected void onResume() {
-        Log.d("MainActivity:", "onResume");
         updateSpinner();
         super.onResume();
     }
@@ -148,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         };
 
-        Log.d("MainActivity", "onCreate()");
         updateSpinner();
 
         IntentFilter intentFilter = new IntentFilter();
@@ -321,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         if (id == R.id.action_edit) {
             // launch settings activity (also for "New Entry" dummy entry)
             Setup setup = getSelectedSetup();
-            Log.d("onOptionsItemSelected", "pos: " + setup.getId());
             if (setup != null) {
                 Intent i = new Intent(this, EditActivity.class);
                 i.putExtra("setup_id", setup.getId());

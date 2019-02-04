@@ -43,7 +43,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof SphincterSetup)) {
-            Log.e("HttpsRequestHandler.doInBackGround", "Invalid type of params.");
+            Log.e("HttpsRequestHandler.doInBackground", "Invalid type of params.");
             return "";
         }
 
@@ -51,7 +51,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
         SphincterSetup setup = (SphincterSetup) params[1];
 
         if (setup.url.isEmpty() || setup.getId() < 0) {
-            Log.e("HttpsRequestHandler", "invalid url for id:  " + setup.getId());
+            Log.e("HttpsRequestHandler.doInBackground", "Invalid url for id:  " + setup.getId());
             return "";
         }
 
@@ -68,7 +68,6 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
         }
 
         url += "&token=" + URLEncoder.encode(setup.token);
-        Log.d("HttpsRequest", "url: " + url);
 
         try {
             if (setup.ignore) {

@@ -96,7 +96,6 @@ public class Settings {
 
             String prefix = String.format("item_%03d_", id);
             String type = sharedPreferences.getString(prefix + "type", "");
-            //Log.i("Settings.getItem", "prefix: " + prefix + ", type: " + type);
 
             if (type.equals("sphincter")) {
                 String name = sharedPreferences.getString(prefix + "name", "");
@@ -141,7 +140,6 @@ public class Settings {
 
             if (setup instanceof SphincterSetup) {
                 SphincterSetup obj = (SphincterSetup) setup;
-                Log.d("Settings", "safeItem: prefix: " + prefix + ", name: " + obj.name);
 
                 // fill settings into preference view
                 e.putString(prefix + "type", "sphincter");
@@ -186,9 +184,9 @@ public class Settings {
         }
 
         if (find_setup(setup.getId()) != null) {
-            Log.d("Settings.add_setup", "id not found: " + setup.getId());
             return;
         }
+
         sharedSetups.add(setup);
     }
 

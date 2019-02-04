@@ -26,7 +26,6 @@ public class EditActivity extends PreferenceActivity {
 
     public void onSaveButtonClicked(View v) {
         String name = pref.getString("prefName", "");
-        Log.d("EditActivity", "onSafeButtonClicked: name: " + name);
 
         if (name == null || name.length() == 0) {
             showErrorMessage("Invalid Name", "Name is not set.");
@@ -39,9 +38,7 @@ public class EditActivity extends PreferenceActivity {
            return;
         }
 
-        Log.d("EditActivity.onSafeButtonClicked", "valid name: " + name + ", type: " + type);
         if (type == "sphincter") {
-            Log.d("EditActivity.onSafeButtonClicked", "save entry: " + name);
             // remove any existing entry (does not exist for new entries)
             Settings.remove_setup(setup_id);
             Settings.add_setup(new SphincterSetup(
@@ -59,15 +56,12 @@ public class EditActivity extends PreferenceActivity {
     }
 
     public void onDeleteButtonClicked(View v) {
-        Log.d("EditActivity", "onDeleteButtonClicked()");
-
         builder.setTitle("Confirm");
         builder.setMessage("Really remove item?");
         builder.setCancelable(false); // not necessary
 
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Log.d("onDeleteButtonClicked", "onClick Yes");
                 Settings.remove_setup(setup_id);
                 Settings.store();
                 // close this dialog and settings
@@ -77,7 +71,6 @@ public class EditActivity extends PreferenceActivity {
 
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Log.d("onDeleteButtonClicked", "onClick No");
                 // close this dialog
                 dialog.cancel();
             }
@@ -90,7 +83,6 @@ public class EditActivity extends PreferenceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("EditActivity", "onCreate()");
         int id = getIntent().getIntExtra("setup_id", -1);
         builder = new AlertDialog.Builder(this);
         type = "sphincter";
@@ -100,7 +92,6 @@ public class EditActivity extends PreferenceActivity {
 
         if (Settings.id_exists(id)) {
             setup_id = id;
-            Log.d("onCreate", "old entry: " + setup_id);
             
             Setup item = Settings.find_setup(setup_id);
             if (item instanceof SphincterSetup) {
@@ -113,11 +104,10 @@ public class EditActivity extends PreferenceActivity {
                 e.putBoolean("prefIgnore", obj.ignore);
                 e.commit();
             } else {
-                Log.d("onCreate", "No setup found for id " + setup_id);
+                Log.e("onCreate", "No setup found for id " + setup_id);
             }
         } else {
             setup_id = Settings.id_new();
-            Log.d("onCreate", "new entry: " + setup_id);
             // Set all field empty
             SharedPreferences.Editor e = pref.edit();
             e.putString("prefName", "");

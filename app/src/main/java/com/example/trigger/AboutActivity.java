@@ -13,7 +13,6 @@ public class AboutActivity extends PreferenceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d("AboutActivity", "onCreate()");
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.about);
 
