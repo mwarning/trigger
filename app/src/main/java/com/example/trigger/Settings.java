@@ -38,7 +38,7 @@ public class Settings {
     static String get_version() {
         if (!init_done) {
             Log.e("Settings", "not loaded");
-            return;
+            return null;
         }
         return app_version;
     }
@@ -159,7 +159,7 @@ public class Settings {
     static ArrayList<Setup> all_setups() {
         if (!init_done) {
             Log.e("Settings", "not loaded");
-            return;
+            return null;
         }
 
         return (ArrayList<Setup>) sharedSetups.clone();
@@ -168,7 +168,7 @@ public class Settings {
     static Setup find_setup(int id) {
         if (!init_done) {
             Log.e("Settings", "not loaded");
-            return;
+            return null;
         }
 
         for (Setup setup : sharedSetups) {
@@ -210,7 +210,7 @@ public class Settings {
     static boolean id_exists(int id) {
         if (!init_done) {
             Log.e("Settings", "not loaded");
-            return;
+            return false;
         }
 
         for (Setup setup : sharedSetups) {
@@ -224,7 +224,7 @@ public class Settings {
     static int id_new() {
         if (!init_done) {
             Log.e("Settings", "not loaded");
-            return;
+            return -1;
         }
 
         int n = 0;
@@ -239,7 +239,7 @@ public class Settings {
     static boolean name_exists(String name) {
         if (!init_done) {
             Log.e("Settings", "not loaded");
-            return;
+            return false;
         }
 
         for (Setup setup : sharedSetups) {
