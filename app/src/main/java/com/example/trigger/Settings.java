@@ -36,13 +36,17 @@ public class Settings {
     }
 
     static String get_version() {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
         return app_version;
     }
 
     // update database format
     private static void update_db_format() {
         if (db_version == "1.2.0" && db_version != app_version) {
-            Log.i("Settings", "update database format from '" + db_version + "'' to " + app_version);
+            Log.i("Settings", "update database format from " + db_version + " to " + app_version);
 
             String name = sharedPreferences.getString("prefName", "");
             String url = sharedPreferences.getString("prefUrl", "");
@@ -110,6 +114,11 @@ public class Settings {
     }
 
     static void store() {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         SharedPreferences.Editor e = sharedPreferences.edit();
         Map<String,?> keys = sharedPreferences.getAll();
 
@@ -148,10 +157,20 @@ public class Settings {
     }
 
     static ArrayList<Setup> all_setups() {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         return (ArrayList<Setup>) sharedSetups.clone();
     }
 
     static Setup find_setup(int id) {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         for (Setup setup : sharedSetups) {
             if (setup.getId() == id) {
                 return setup;
@@ -161,6 +180,11 @@ public class Settings {
     }
 
     static void add_setup(Setup setup) {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         if (find_setup(setup.getId()) != null) {
             Log.d("Settings.add_setup", "id not found: " + setup.getId());
             return;
@@ -170,6 +194,11 @@ public class Settings {
 
 
     static void remove_setup(int id) {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         for (int i = 0; i < sharedSetups.size(); i += 1) {
             if (sharedSetups.get(i).getId() == id) {
                 sharedSetups.remove(i);
@@ -179,6 +208,11 @@ public class Settings {
     }
 
     static boolean id_exists(int id) {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         for (Setup setup : sharedSetups) {
             if (setup.getId() == id) {
                 return true;
@@ -188,6 +222,11 @@ public class Settings {
     }
 
     static int id_new() {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         int n = 0;
         while (true) {
             if (!id_exists(n)) {
@@ -198,6 +237,11 @@ public class Settings {
     }
 
     static boolean name_exists(String name) {
+        if (!init_done) {
+            Log.e("Settings", "not loaded");
+            return;
+        }
+
         for (Setup setup : sharedSetups) {
             if (setup.getName() == name) {
                return true;
