@@ -32,4 +32,7 @@
 
     <string name="license_title">Lizenz</string>
     <string name="license_name">GPL-2</string>
+
+    <string name="save_button">Speichern</string>
+    <string name="delete_button">Löschen</string>
 </resources>
