@@ -15,7 +15,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 
-public class EditActivity extends PreferenceActivity {
+public class SetupActivity extends PreferenceActivity {
     private AlertDialog.Builder builder;
     private int setup_id;
     private String type;
@@ -68,7 +68,7 @@ public class EditActivity extends PreferenceActivity {
                 Settings.remove_setup(setup_id);
                 Settings.store();
                 // close this dialog and settings
-                EditActivity.this.finish();
+                SetupActivity.this.finish();
             }
         });
 
@@ -90,7 +90,7 @@ public class EditActivity extends PreferenceActivity {
         if (pc != null) {
             pc.setTitle(prefix + ": " + name);
         } else {
-            Log.e("EditActivity.setTitle", "Cannot find prefCategory");
+            Log.e("SetupActivity.setTitle", "Cannot find prefCategory");
         }
     }
 
@@ -99,7 +99,7 @@ public class EditActivity extends PreferenceActivity {
         if (etp != null) {
             etp.setText(text);
         } else {
-            Log.e("EditActivity.setText", "Cannot find " + key);
+            Log.e("SetupActivity.setText", "Cannot find " + key);
         }
     }
 
@@ -108,7 +108,7 @@ public class EditActivity extends PreferenceActivity {
         if (etp != null) {
             return etp.getText();
         } else {
-            Log.e("EditActivity.setText", "Cannot find " + key);
+            Log.e("SetupActivity.setText", "Cannot find " + key);
             return "";
         }
     }
@@ -118,7 +118,7 @@ public class EditActivity extends PreferenceActivity {
         if (cbp != null) {
             cbp.setChecked(checked);
         } else {
-            Log.e("EditActivity.setChecked", "Cannot find " + key);
+            Log.e("SetupActivity.setChecked", "Cannot find " + key);
         }
     }
 
@@ -127,7 +127,7 @@ public class EditActivity extends PreferenceActivity {
         if (cbp != null) {
             return cbp.isChecked();
         } else {
-            Log.e("EditActivity.setChecked", "Cannot find " + key);
+            Log.e("SetupActivity.setChecked", "Cannot find " + key);
             return false;
         }
     }

@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.trigger.EditActivity"
+            android:name="com.example.trigger.SetupActivity"
             android:label="@string/action_edit"
             android:screenOrientation="portrait" >
         </activity>

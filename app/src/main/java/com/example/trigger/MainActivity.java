@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             // launch settings activity (also for "New Entry" dummy entry)
             Setup setup = getSelectedSetup();
             if (setup != null) {
-                Intent i = new Intent(this, EditActivity.class);
+                Intent i = new Intent(this, SetupActivity.class);
                 i.putExtra("setup_id", setup.getId());
                 startActivity(i);
                 return true;
