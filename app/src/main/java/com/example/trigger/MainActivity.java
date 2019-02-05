@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         }
 
-        // Keep previous selection
-        if (current != null) {
+        // Keep previous selection except for the the DummySetup
+        if (current != null && !(current instanceof DummySetup)) {
             for (int i = 0; i < items.size(); i += 1) {
                 if (current.getId() == items.get(i).getId()) {
                     return i;
