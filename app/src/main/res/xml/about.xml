@@ -8,6 +8,7 @@
             android:key="prefVersion"
             android:selectable="false"
             android:persistent="false" />
+
         <Preference
             android:title="@string/website_title"
             android:summary="@string/website_url"
