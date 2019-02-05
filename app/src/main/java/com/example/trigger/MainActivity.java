@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         if (items.size() > 0) {
             return 0;
         } else {
+            Log.w("MainActivity.getPreferredSpinnerIndex", "spinner list empty - should not happen");
             return -1;
         }
     }

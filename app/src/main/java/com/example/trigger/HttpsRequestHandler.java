@@ -51,7 +51,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
         SphincterSetup setup = (SphincterSetup) params[1];
 
         if (setup.url.isEmpty() || setup.getId() < 0) {
-            Log.e("HttpsRequestHandler.doInBackground", "Invalid url for id:  " + setup.getId());
+            Log.w("HttpsRequestHandler.doInBackground", "Invalid url for id:  " + setup.getId());
             return "";
         }
 
