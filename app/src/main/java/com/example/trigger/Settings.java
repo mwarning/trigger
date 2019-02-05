@@ -22,7 +22,7 @@ public class Settings {
 
     private static String get_db_version(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("db_version", "1.2.0");
+        return prefs.getString("db_version", "1.2.1");
     }
 
     private static String get_app_version(Context context) {
@@ -45,7 +45,7 @@ public class Settings {
 
     // update database format
     private static void update_db_format() {
-        if (db_version == "1.2.0" && db_version != app_version) {
+        if (db_version == "1.2.1" && db_version != app_version) {
             Log.i("Settings", "update database format from " + db_version + " to " + app_version);
 
             // Recover setup from 1.2.0
