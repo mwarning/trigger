@@ -140,8 +140,8 @@ public class SetupActivity extends PreferenceActivity {
         //PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.settings);
-        setContentView(R.layout.activity_settings);
+        addPreferencesFromResource(R.xml.setup);
+        setContentView(R.layout.activity_setup);
 
         int id = getIntent().getIntExtra("setup_id", -1);
         builder = new AlertDialog.Builder(this);
