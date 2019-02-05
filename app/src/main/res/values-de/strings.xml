@@ -9,6 +9,9 @@
     <string name="open_button_text">Öffnen</string>
     <string name="close_button_text">Schließen</string>
 
+    <string name="new_entry">Neuer Eintrag</string>
+    <string name="pref_settings">Einstellungen</string>
+
     <string name="pref_name">Name</string>
     <string name="pref_name_description">Name der Einstellung</string>
 

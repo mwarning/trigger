@@ -9,6 +9,9 @@
     <string name="open_button_text">Unlock door</string>
     <string name="close_button_text">Lock door</string>
 
+    <string name="new_entry">New Entry</string>
+    <string name="pref_settings">Settings</string>
+
     <string name="pref_name">Name</string>
     <string name="pref_name_description">Name of this setting</string>
 
@@ -19,7 +22,7 @@
     <string name="pref_token_description">Your personal access token</string>
 
     <string name="pref_ssids">SSIDs</string>
-    <string name="pref_ssids_description">Auto-Select when connected to specific nework</string>
+    <string name="pref_ssids_description">Auto-Select when connected to a specific network</string>
 
     <string name="pref_ignore">Ignore</string>
     <string name="pref_ignore_description">Ignore HTTPS certificate errors</string>
