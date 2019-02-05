@@ -45,7 +45,7 @@ public class Settings {
 
     // update database format
     private static void update_db_format() {
-        if (db_version == "1.2.1" && db_version != app_version) {
+        if (db_version.equals("1.2.1") && !db_version.equals(app_version)) {
             Log.i("Settings", "update database format from " + db_version + " to " + app_version);
 
             // Recover setup from 1.2.0
@@ -91,14 +91,13 @@ public class Settings {
             }
 
             int id = Integer.parseInt(m.group(1));
-            if (id < 0 && id_exists(id)) {
+            if (id < 0 || id_exists(id)) {
                 continue;
             }
-
             String prefix = String.format("item_%03d_", id);
             String type = sharedPreferences.getString(prefix + "type", "");
 
-            if (type == SphincterSetup.type) {
+            if (type.equals(SphincterSetup.type)) {
                 String name = sharedPreferences.getString(prefix + "name", "");
                 String url = sharedPreferences.getString(prefix + "url", "");
                 String token = sharedPreferences.getString(prefix + "token", "");
@@ -141,7 +140,6 @@ public class Settings {
 
             if (setup instanceof SphincterSetup) {
                 SphincterSetup obj = (SphincterSetup) setup;
-
                 // fill settings into preference view
                 e.putString(prefix + "type", obj.type);
                 e.putString(prefix + "name", obj.name);
@@ -242,7 +240,7 @@ public class Settings {
         }
 
         for (Setup setup : sharedSetups) {
-            if (setup.getName() == name) {
+            if (setup.getName().equals(name)) {
                return true;
             }
         }

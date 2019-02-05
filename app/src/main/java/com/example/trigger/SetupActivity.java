@@ -36,12 +36,12 @@ public class SetupActivity extends PreferenceActivity {
         }
 
         // duplicate entry
-        if (Settings.id_exists(setup_id) && Settings.name_exists(name)) {
+        if (!Settings.id_exists(setup_id) && Settings.name_exists(name)) {
            showErrorMessage("Entry Exists", "Name already exists.");
            return;
         }
 
-        if (type == SphincterSetup.type) {
+        if (type.equals(SphincterSetup.type)) {
             // remove any existing entry (does not exist for new entries)
             Settings.remove_setup(setup_id);
             Settings.add_setup(new SphincterSetup(
