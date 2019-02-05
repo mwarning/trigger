@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         });
 
-        setups.add(new DummySetup("New Entry"));
+        setups.add(new DummySetup(getResources().getString(R.string.new_entry)));
 
         ArrayAdapter<Setup> adapter = new ArrayAdapter<Setup>(this,
             android.R.layout.simple_spinner_item, setups);
