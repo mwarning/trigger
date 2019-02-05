@@ -41,7 +41,7 @@ public class SetupActivity extends PreferenceActivity {
            return;
         }
 
-        if (type == "sphincter") {
+        if (type == SphincterSetup.type) {
             // remove any existing entry (does not exist for new entries)
             Settings.remove_setup(setup_id);
             Settings.add_setup(new SphincterSetup(
@@ -145,7 +145,7 @@ public class SetupActivity extends PreferenceActivity {
 
         int id = getIntent().getIntExtra("setup_id", -1);
         builder = new AlertDialog.Builder(this);
-        type = "sphincter";
+        type = SphincterSetup.type;
 
         if (Settings.id_exists(id)) {
             setup_id = id;
