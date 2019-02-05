@@ -2,9 +2,13 @@ package com.example.trigger;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceCategory;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.preference.PreferenceManager;
@@ -12,10 +16,9 @@ import android.util.Log;
 
 
 public class EditActivity extends PreferenceActivity {
+    private AlertDialog.Builder builder;
     private int setup_id;
     private String type;
-    private SharedPreferences pref;
-    private AlertDialog.Builder builder;
 
     private void showErrorMessage(String title, String message) {
         builder.setTitle(title);
@@ -25,7 +28,7 @@ public class EditActivity extends PreferenceActivity {
     }
 
     public void onSaveButtonClicked(View v) {
-        String name = pref.getString("prefName", "");
+        String name = getText("prefName");
 
         if (name == null || name.length() == 0) {
             showErrorMessage("Invalid Name", "Name is not set.");
@@ -44,10 +47,10 @@ public class EditActivity extends PreferenceActivity {
             Settings.add_setup(new SphincterSetup(
                 setup_id,
                 name,
-                pref.getString("prefUrl", ""),
-                pref.getString("prefToken", ""),
-                pref.getString("prefSSIDs", ""),
-                pref.getBoolean("prefIgnore", false))
+                getText("prefUrl"),
+                getText("prefToken"),
+                getText("prefSSIDs"),
+                getChecked("prefIgnore"))
             );
             Settings.store();
         } else {
@@ -81,14 +84,68 @@ public class EditActivity extends PreferenceActivity {
         alert.show();
     }
 
+    private void setTitle(String name) {
+        String prefix = getResources().getString(R.string.pref_settings);
+        PreferenceCategory pc = (PreferenceCategory) findPreference("prefCategory");
+        if (pc != null) {
+            pc.setTitle(prefix + ": " + name);
+        } else {
+            Log.e("EditActivity.setTitle", "Cannot find prefCategory");
+        }
+    }
+
+    private void setText(String key, String text) {
+        EditTextPreference etp = (EditTextPreference) findPreference(key);
+        if (etp != null) {
+            etp.setText(text);
+        } else {
+            Log.e("EditActivity.setText", "Cannot find " + key);
+        }
+    }
+
+    private String getText(String key) {
+        EditTextPreference etp = (EditTextPreference) findPreference(key);
+        if (etp != null) {
+            return etp.getText();
+        } else {
+            Log.e("EditActivity.setText", "Cannot find " + key);
+            return "";
+        }
+    }
+
+    private void setChecked(String key, boolean checked) {
+        CheckBoxPreference cbp = (CheckBoxPreference) findPreference(key);
+        if (cbp != null) {
+            cbp.setChecked(checked);
+        } else {
+            Log.e("EditActivity.setChecked", "Cannot find " + key);
+        }
+    }
+
+    private boolean getChecked(String key) {
+        CheckBoxPreference cbp = (CheckBoxPreference) findPreference(key);
+        if (cbp != null) {
+            return cbp.isChecked();
+        } else {
+            Log.e("EditActivity.setChecked", "Cannot find " + key);
+            return false;
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Context context = this.getApplicationContext();
+
+        // Set all field to default values - does not work?
+        //PreferenceManager.setDefaultValues(context, R.xml.settings, false);
+
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.settings);
+        setContentView(R.layout.activity_settings);
+
         int id = getIntent().getIntExtra("setup_id", -1);
         builder = new AlertDialog.Builder(this);
         type = "sphincter";
-
-        Context context = this.getApplicationContext();
-        pref = PreferenceManager.getDefaultSharedPreferences(context);
 
         if (Settings.id_exists(id)) {
             setup_id = id;
@@ -96,29 +153,25 @@ public class EditActivity extends PreferenceActivity {
             Setup item = Settings.find_setup(setup_id);
             if (item instanceof SphincterSetup) {
                 SphincterSetup obj = (SphincterSetup) item;
-                SharedPreferences.Editor e = pref.edit();
-                e.putString("prefName", obj.name);
-                e.putString("prefUrl", obj.url);
-                e.putString("prefToken", obj.token);
-                e.putString("prefSSIDs", obj.ssids);
-                e.putBoolean("prefIgnore", obj.ignore);
-                e.commit();
+                setTitle(obj.name);
+                setText("prefName", obj.name);
+                setText("prefUrl", obj.url);
+                setText("prefToken", obj.token);
+                setText("prefSSIDs", obj.ssids);
+                setChecked("prefIgnore", obj.ignore);
             } else {
                 Log.e("onCreate", "No setup found for id " + setup_id);
+                // close activity
+                finish();
             }
         } else {
             setup_id = Settings.id_new();
-            // Set all field empty
-            SharedPreferences.Editor e = pref.edit();
-            e.putString("prefName", "");
-            e.putString("prefUrl", "");
-            e.putString("prefToken", "");
-            e.putBoolean("prefIgnore", false);
-            e.commit();
+            setTitle(getResources().getString(R.string.new_entry));
+            setText("prefName", "");
+            setText("prefUrl", "");
+            setText("prefToken", "");
+            setText("prefSSIDs", "");
+            setChecked("prefIgnore", false);
         }
-
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.settings);
-        setContentView(R.layout.activity_settings);
     }
 }

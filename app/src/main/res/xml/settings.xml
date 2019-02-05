@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Settings">
+    <PreferenceCategory
+            android:title="@string/pref_settings"
+            android:key="prefCategory"
+            android:persistent="false" >
+
         <EditTextPreference
             android:id="@+id/prefName"
             android:title="@string/pref_name"
             android:summary="@string/pref_name_description"
             android:defaultValue=""
             android:key="prefName"
+            android:persistent="false"
             android:inputType="text" />
 
         <EditTextPreference
@@ -16,26 +21,33 @@
             android:summary="@string/pref_url_description"
             android:defaultValue="https://example.com/trigger/"
             android:key="prefUrl"
+            android:persistent="false"
             android:inputType="textUri"/>
 
         <EditTextPreference
             android:id="@+id/prefToken"
             android:title="@string/pref_token"
             android:summary="@string/pref_token_description"
+            android:defaultValue=""
             android:key="prefToken"
+            android:persistent="false"
             android:inputType="textVisiblePassword"/>
 
         <EditTextPreference
             android:id="@+id/prefSSIDs"
             android:title="@string/pref_ssids"
             android:summary="@string/pref_ssids_description"
-            android:key="prefSSIDs" />
+            android:defaultValue=""
+            android:key="prefSSIDs"
+            android:persistent="false"
+            android:inputType="text" />
 
         <CheckBoxPreference
             android:id="@+id/prefIgnore"
             android:title="@string/pref_ignore"
             android:summary="@string/pref_ignore_description"
             android:defaultValue="false"
+            android:persistent="false"
             android:key="prefIgnore" />
     </PreferenceCategory>
 </PreferenceScreen>
