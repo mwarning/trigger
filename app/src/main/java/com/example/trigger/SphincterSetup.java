@@ -2,6 +2,7 @@ package com.example.trigger;
 
 
 public class SphincterSetup implements Setup {
+    static String type = "sphincter";
     int id;
     String name;
     String url;
@@ -20,26 +21,26 @@ public class SphincterSetup implements Setup {
 
     @Override
     public String toString() {
-        return this.name;
+        return name;
     }
 
     @Override
     public int getId() {
-        return this.id;
+        return id;
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     @Override
     public String getSSIDs() {
-        return this.ssids;
+        return ssids;
     }
 
     @Override
     public String getType() {
-        return "sphincter";
+        return type;
     }
 }

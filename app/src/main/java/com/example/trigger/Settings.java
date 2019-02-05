@@ -98,7 +98,7 @@ public class Settings {
             String prefix = String.format("item_%03d_", id);
             String type = sharedPreferences.getString(prefix + "type", "");
 
-            if (type.equals("sphincter")) {
+            if (type == SphincterSetup.type) {
                 String name = sharedPreferences.getString(prefix + "name", "");
                 String url = sharedPreferences.getString(prefix + "url", "");
                 String token = sharedPreferences.getString(prefix + "token", "");
@@ -143,7 +143,7 @@ public class Settings {
                 SphincterSetup obj = (SphincterSetup) setup;
 
                 // fill settings into preference view
-                e.putString(prefix + "type", "sphincter");
+                e.putString(prefix + "type", obj.type);
                 e.putString(prefix + "name", obj.name);
                 e.putString(prefix + "url", obj.url);
                 e.putString(prefix + "token", obj.token);
