@@ -10,22 +10,22 @@
     <string name="close_button_text">Schließen</string>
 
     <string name="new_entry">Neuer Eintrag</string>
-    <string name="pref_settings">Einstellungen</string>
+    <string name="setup_title">Setup</string>
 
-    <string name="pref_name">Name</string>
-    <string name="pref_name_description">Name der Einstellung</string>
+    <string name="setup_name">Name</string>
+    <string name="setup_name_description">Name der Einstellung</string>
 
-    <string name="pref_url">URL</string>
-    <string name="pref_url_description">URL zu spincterd</string>
+    <string name="setup_url">URL</string>
+    <string name="setup_url_description">URL zu spincterd</string>
 
-    <string name="pref_token">Token</string>
-    <string name="pref_token_description">Dein persönliches Zugangstoken</string>
+    <string name="setup_token">Token</string>
+    <string name="setup_token_description">Dein persönliches Zugangstoken</string>
 
-    <string name="pref_ssids">SSIDs</string>
-    <string name="pref_ssids_description">Auto-Auswahl wenn verbunden mit einem Netzwerk</string>
+    <string name="setup_ssids">SSIDs</string>
+    <string name="setup_ssids_description">Auto-Auswahl wenn verbunden mit einem Netzwerk</string>
 
-    <string name="pref_ignore">Ignorieren</string>
-    <string name="pref_ignore_description">HTTPS Zertifikatfehler ignorieren</string>
+    <string name="setup_ignore">Ignorieren</string>
+    <string name="setup_ignore_description">HTTPS Zertifikatfehler ignorieren</string>
 
     <string name="version_title">Version</string>
     <string name="version_number">Unknown</string>

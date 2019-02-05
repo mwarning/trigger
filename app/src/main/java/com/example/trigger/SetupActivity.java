@@ -28,7 +28,7 @@ public class SetupActivity extends PreferenceActivity {
     }
 
     public void onSaveButtonClicked(View v) {
-        String name = getText("prefName");
+        String name = getText("setupName");
 
         if (name == null || name.length() == 0) {
             showErrorMessage("Invalid Name", "Name is not set.");
@@ -47,10 +47,10 @@ public class SetupActivity extends PreferenceActivity {
             Settings.add_setup(new SphincterSetup(
                 setup_id,
                 name,
-                getText("prefUrl"),
-                getText("prefToken"),
-                getText("prefSSIDs"),
-                getChecked("prefIgnore"))
+                getText("setupUrl"),
+                getText("setupToken"),
+                getText("setupSSIDs"),
+                getChecked("setupIgnore"))
             );
             Settings.store();
         } else {
@@ -85,12 +85,12 @@ public class SetupActivity extends PreferenceActivity {
     }
 
     private void setTitle(String name) {
-        String prefix = getResources().getString(R.string.pref_settings);
-        PreferenceCategory pc = (PreferenceCategory) findPreference("prefCategory");
+        String prefix = getResources().getString(R.string.setup_title);
+        PreferenceCategory pc = (PreferenceCategory) findPreference("setupCategory");
         if (pc != null) {
             pc.setTitle(prefix + ": " + name);
         } else {
-            Log.e("SetupActivity.setTitle", "Cannot find prefCategory");
+            Log.e("SetupActivity.setTitle", "Cannot find setupCategory");
         }
     }
 
@@ -154,11 +154,11 @@ public class SetupActivity extends PreferenceActivity {
             if (item instanceof SphincterSetup) {
                 SphincterSetup obj = (SphincterSetup) item;
                 setTitle(obj.name);
-                setText("prefName", obj.name);
-                setText("prefUrl", obj.url);
-                setText("prefToken", obj.token);
-                setText("prefSSIDs", obj.ssids);
-                setChecked("prefIgnore", obj.ignore);
+                setText("setupName", obj.name);
+                setText("setupUrl", obj.url);
+                setText("setupToken", obj.token);
+                setText("setupSSIDs", obj.ssids);
+                setChecked("setupIgnore", obj.ignore);
             } else {
                 Log.e("onCreate", "No setup found for id " + setup_id);
                 // close activity
@@ -167,11 +167,11 @@ public class SetupActivity extends PreferenceActivity {
         } else {
             setup_id = Settings.id_new();
             setTitle(getResources().getString(R.string.new_entry));
-            setText("prefName", "");
-            setText("prefUrl", "");
-            setText("prefToken", "");
-            setText("prefSSIDs", "");
-            setChecked("prefIgnore", false);
+            setText("setupName", "");
+            setText("setupUrl", "");
+            setText("setupToken", "");
+            setText("setupSSIDs", "");
+            setChecked("setupIgnore", false);
         }
     }
 }

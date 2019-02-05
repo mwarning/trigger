@@ -2,52 +2,53 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-            android:title="@string/pref_settings"
-            android:key="prefCategory"
+            android:title="@string/setup_title"
+            android:key="setupCategory"
             android:persistent="false" >
 
         <EditTextPreference
-            android:id="@+id/prefName"
-            android:title="@string/pref_name"
-            android:summary="@string/pref_name_description"
+            android:id="@+id/setupName"
+            android:title="@string/setup_name"
+            android:summary="@string/setup_name_description"
             android:defaultValue=""
-            android:key="prefName"
+            android:key="setupName"
             android:persistent="false"
             android:inputType="text" />
 
         <EditTextPreference
-            android:id="@+id/prefUrl"
-            android:title="@string/pref_url"
-            android:summary="@string/pref_url_description"
+            android:id="@+id/setupUrl"
+            android:title="@string/setup_url"
+            android:summary="@string/setup_url_description"
             android:defaultValue="https://example.com/trigger/"
-            android:key="prefUrl"
+            android:key="setupUrl"
             android:persistent="false"
-            android:inputType="textUri"/>
+            android:inputType="textUri" />
 
         <EditTextPreference
-            android:id="@+id/prefToken"
-            android:title="@string/pref_token"
-            android:summary="@string/pref_token_description"
+            android:id="@+id/setupToken"
+            android:title="@string/setup_token"
+            android:summary="@string/setup_token_description"
             android:defaultValue=""
-            android:key="prefToken"
+            android:key="setupToken"
             android:persistent="false"
-            android:inputType="textVisiblePassword"/>
+            android:inputType="textVisiblePassword" />
 
         <EditTextPreference
-            android:id="@+id/prefSSIDs"
-            android:title="@string/pref_ssids"
-            android:summary="@string/pref_ssids_description"
+            android:id="@+id/setupSSIDs"
+            android:title="@string/setup_ssids"
+            android:summary="@string/setup_ssids_description"
             android:defaultValue=""
-            android:key="prefSSIDs"
+            android:key="setupSSIDs"
             android:persistent="false"
             android:inputType="text" />
 
         <CheckBoxPreference
-            android:id="@+id/prefIgnore"
-            android:title="@string/pref_ignore"
-            android:summary="@string/pref_ignore_description"
+            android:id="@+id/setupIgnore"
+            android:title="@string/setup_ignore"
+            android:summary="@string/setup_ignore_description"
             android:defaultValue="false"
             android:persistent="false"
-            android:key="prefIgnore" />
+            android:key="setupIgnore" />
     </PreferenceCategory>
+
 </PreferenceScreen>
