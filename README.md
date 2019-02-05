@@ -4,7 +4,7 @@ Trigger
 Trigger is an Android App to unlock doors or trigger other events via simple HTTPS calls.
 Hardware schematics for a door mechanism and server software that work with this app can be found [here](https://github.com/openlab-aux/sphincter).
 
-[<img src="fdroid.png" alt="Get it on F-Droid">](https://f-droid.org/packages/com.example.trigger/)
+[<img src="fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
 
 ![image](screenshots.png)
 
