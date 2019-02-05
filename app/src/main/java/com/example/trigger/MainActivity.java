@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         setContentView(R.layout.activity_main);
 
         Context context = this.getApplicationContext();
-        Settings.load(this.getApplicationContext());
+        Settings.load(context);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
