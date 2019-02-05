@@ -19,17 +19,8 @@ public class AboutActivity extends PreferenceActivity {
         Context context = this.getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         String version = Settings.get_version();
-        if (version.length() > 0) {
-            SharedPreferences.Editor e = pref.edit();
-            e.putString("prefVersion", version);
-            e.commit();
-        }
 
-        Preference editTextPref = findPreference("prefVersion");
-        if (editTextPref != null) {
-            editTextPref.setSummary(version);
-        } else {
-            Log.e("AboutActivity", "prefVersion is null");
-        }
+        Preference versionPref = findPreference("prefVersion");
+        versionPref.setSummary(version);
     }
 }
