@@ -48,6 +48,7 @@ public class Settings {
         if (db_version == "1.2.0" && db_version != app_version) {
             Log.i("Settings", "update database format from " + db_version + " to " + app_version);
 
+            // Recover setup from 1.2.0
             String name = sharedPreferences.getString("prefName", "");
             String url = sharedPreferences.getString("prefUrl", "");
             String token = sharedPreferences.getString("prefToken", "");
