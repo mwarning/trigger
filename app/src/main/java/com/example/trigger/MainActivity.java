@@ -252,7 +252,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private void callRequestHandler(Action action) {
         Setup setup = getSelectedSetup();
-        if (!(setup instanceof DummySetup)) {
+        if (setup instanceof DummySetup) {
+            changeUI(UIState.DISABLED);
+        } else {
             new HttpsRequestHandler(listener, prefs).execute(Action.update_state, setup);
         }
     }
