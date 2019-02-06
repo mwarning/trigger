@@ -1,7 +1,7 @@
 Trigger
 =======
 
-Trigger is an Android App to unlock doors or trigger other events via simple HTTPS calls.
+Trigger is an Android App to unlock doors or trigger other events via HTTPS calls.Profiles can be auto selected depending on the connected WiFi name.
 Hardware schematics for a door mechanism and server software that work with this app can be found [here](https://github.com/openlab-aux/sphincter).
 
 [<img src="fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
@@ -27,7 +27,6 @@ Any help, bugfixes, new features are much welcome.
 Feature suggestions:
 - translations (only english and german available so far)
 - more flexible trigger queries and protocols (ssh?)
-- multiple trigger profiles
 - use specific certificates
 
 Feel free to fork this project, move it into an organisation or whatever the license allows. :-)
