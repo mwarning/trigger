@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.view.View;
 import android.view.Menu;
@@ -237,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     @Override
     public void onTaskCompleted(String result) {
-        Log.i("[GET RESULT]", result);
+        Log.i("[RESULT]", result);
 
         if (result.equals("UNLOCKED")) {
             // door unlocked
@@ -247,6 +248,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             changeUI(UIState.CLOSED);
         } else {
             changeUI(UIState.UNKNOWN);
+        }
+
+        // Limit message and display
+        if (result.length() > 0) {
+            // limit message length
+            String message = result.substring(0, Math.min(result.length(), 32));
+            Context context = getApplicationContext();
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
 

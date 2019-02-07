@@ -52,7 +52,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
 
         if (setup.url.isEmpty() || setup.getId() < 0) {
             Log.w("HttpsRequestHandler.doInBackground", "Invalid url for id:  " + setup.getId());
-            return "";
+            return "Empty URL.";
         }
 
         String url = setup.url;
@@ -81,21 +81,18 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
 
             return readStream(con.getInputStream());
         } catch (MalformedURLException mue) {
-            Log.d("[URL-CALL]", "Malformed url.");
+            return "Malformed URL.";
         } catch (FileNotFoundException e) {
-        	// server responds, but with 404 or other error
-            Log.d("[URL-CALL]", "Server responds with error.");
+            return "Server responds with an error.";
         } catch (java.net.SocketTimeoutException ste) {
-        	// sever not reachable
-            Log.d("[URL-CALL]", "SocketTimeoutException: " + ste.toString());
+            return "Server not reachable.";
         } catch (java.net.SocketException se) {
-            // not connected to network
-            Log.d("[URL-CALL]", "SocketException: " + se.toString());
+            // not connected to a network
+            return "";
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            return "Unknown Error: " + e.toString();
         }
-
-        return "";
     }
 
     private String readStream(InputStream in) {
