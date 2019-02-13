@@ -1,9 +1,5 @@
 package com.example.trigger;
 
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -12,86 +8,82 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
+
+import android.os.AsyncTask;
+import android.util.Log;
+
+import static com.example.trigger.Utils.*;
 
 
-enum Action {
-    open_door,
-    close_door,
-    update_state
-}
-
-public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
-    private SharedPreferences pref;
+public class HttpsRequestHandler extends AsyncTask<Object, Void, TaskResult> {
     private OnTaskCompleted listener;
 
-    public HttpsRequestHandler(OnTaskCompleted l, SharedPreferences p){
-        this.listener = l;
-        this.pref = p;
+    public HttpsRequestHandler(OnTaskCompleted listener){
+        this.listener = listener;
     }
 
     @Override
-    protected String doInBackground(Object... params) {
+    protected TaskResult doInBackground(Object... params) {
         if (params.length != 2) {
             Log.e("HttpsRequestHandler.doInBackGround", "Unexpected number of params.");
-            return "";
+            return TaskResult.error("Internal Error");
         }
 
-        if (params[1] instanceof DummySetup) {
-            // ignore
-            return "";
-        }
-
-        if (!(params[0] instanceof Action && params[1] instanceof SphincterSetup)) {
+        if (!(params[0] instanceof Action && params[1] instanceof HttpsDoorSetup)) {
             Log.e("HttpsRequestHandler.doInBackground", "Invalid type of params.");
-            return "";
+            return TaskResult.error("Internal Error");
         }
 
         Action action = (Action) params[0];
-        SphincterSetup setup = (SphincterSetup) params[1];
+        HttpsDoorSetup setup = (HttpsDoorSetup) params[1];
 
-        if (setup.url.isEmpty() || setup.getId() < 0) {
-            Log.w("HttpsRequestHandler.doInBackground", "Invalid url for id:  " + setup.getId());
-            return "Empty URL.";
+        if (setup.getId() < 0) {
+            return TaskResult.error("Internal Error");
         }
 
-        String url = setup.url;
+        String command = "";
+
         switch (action) {
             case open_door:
-                url += "?action=open";
+                command = setup.getOpenQuery();
                 break;
             case close_door:
-                url += "?action=close";
+                command = setup.getCloseQuery();
                 break;
             case update_state:
-                url += "?action=state";
+                command = setup.getStatusQuery();
+                break;
         }
 
-        url += "&token=" + URLEncoder.encode(setup.token);
+        if (command.isEmpty()) {
+            // ignore
+            return TaskResult.empty();
+        }
 
         try {
-            if (setup.ignore) {
+            if (setup.ignoreCertErrors()) {
                 HttpsTrustManager.setVerificationDisable();
             } else {
                 HttpsTrustManager.setVerificationEnable();
             }
 
-            HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
+            URL url = new URL(command);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setConnectTimeout(2000);
 
-            return readStream(con.getInputStream());
+            String result = readStream(con.getInputStream());
+            return TaskResult.msg(result);
         } catch (MalformedURLException mue) {
-            return "Malformed URL.";
+            return TaskResult.error("Malformed URL.");
         } catch (FileNotFoundException e) {
-            return "Server responds with an error.";
+            return TaskResult.error("Server responds with an error.");
         } catch (java.net.SocketTimeoutException ste) {
-            return "Server not reachable.";
+            return TaskResult.error("Server not reachable.");
         } catch (java.net.SocketException se) {
-            // not connected to a network
-            return "";
+            return TaskResult.error("Not connected to network.");
         } catch (Exception e) {
             //e.printStackTrace();
-            return "Unknown Error: " + e.toString();
+            return TaskResult.error("Unknown Error: " + e.toString());
         }
     }
 
@@ -118,10 +110,11 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, String> {
             }
         }
 
-        return result;
+        // strip HTML from response
+        return android.text.Html.fromHtml(result).toString().trim();
     }
 
-    protected void onPostExecute(String result) {
-        listener.onTaskCompleted(result.trim());
+    protected void onPostExecute(TaskResult result) {
+        listener.onTaskCompleted(result);
     }
 }

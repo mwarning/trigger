@@ -3,52 +3,133 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
             android:title="@string/setup_title"
-            android:key="setupCategory"
+            android:key="main_category"
             android:persistent="false" >
 
         <EditTextPreference
-            android:id="@+id/setupName"
             android:title="@string/setup_name"
             android:summary="@string/setup_name_description"
             android:defaultValue=""
-            android:key="setupName"
+            android:key="name"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <ListPreference
+            android:key="type"
+            android:title="Door Type"
+            android:summary="Type of the door mechanism."
+            android:entries="@array/SetupTypes"
+            android:entryValues="@array/SetupTypeValues" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="HTTPS Settings"
+            android:key="HttpsDoorSetup"
+            android:persistent="false" >
+
+        <EditTextPreference
+            android:title="Open URL"
+            android:key="open_query"
+            android:summary="Called to open the door."
             android:persistent="false"
             android:inputType="text" />
 
         <EditTextPreference
-            android:id="@+id/setupUrl"
-            android:title="@string/setup_url"
-            android:summary="@string/setup_url_description"
-            android:defaultValue="https://example.com/trigger/"
-            android:key="setupUrl"
+            android:title="Close URL"
+            android:key="close_query"
+            android:summary="Called to close the door."
             android:persistent="false"
-            android:inputType="textUri" />
+            android:inputType="text" />
 
         <EditTextPreference
-            android:id="@+id/setupToken"
-            android:title="@string/setup_token"
-            android:summary="@string/setup_token_description"
-            android:defaultValue=""
-            android:key="setupToken"
+            android:title="Status URL"
+            android:key="status_query"
+            android:summary="Called to request the door status."
             android:persistent="false"
-            android:inputType="textVisiblePassword" />
+            android:inputType="text" />
 
         <EditTextPreference
-            android:id="@+id/setupSSIDs"
             android:title="@string/setup_ssids"
             android:summary="@string/setup_ssids_description"
             android:defaultValue=""
-            android:key="setupSSIDs"
+            android:key="ssids"
             android:persistent="false"
             android:inputType="text" />
 
         <CheckBoxPreference
-            android:id="@+id/setupIgnore"
             android:title="@string/setup_ignore"
             android:summary="@string/setup_ignore_description"
             android:defaultValue="false"
             android:persistent="false"
-            android:key="setupIgnore" />
+            android:key="ignore_cert" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="SSH Settings"
+            android:key="SshDoorSetup"
+            android:persistent="false" >
+
+        <EditTextPreference
+            android:title="Key File"
+            android:key="keypath"
+            android:summary="SSH keyfile."
+            android:persistent="false"
+            android:inputType="text"
+            android:onClick="selectFile" />
+
+        <EditTextPreference
+            android:title="Host"
+            android:key="host"
+            android:summary="Server address."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Port"
+            android:key="port"
+            android:summary="SSH port."
+            android:persistent="false"
+            android:inputType="text"
+            android:digits="0123456789" />
+
+        <EditTextPreference
+            android:title="User"
+            android:key="user"
+            android:summary="Login name."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Open Command"
+            android:key="open_command"
+            android:summary="Execute after login to open door."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Close Command"
+            android:key="close_command"
+            android:summary="Execute after login to close door."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="State Command"
+            android:key="state_command"
+            android:summary="Execute after login to query door status."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="@string/setup_ssids"
+            android:summary="@string/setup_ssids_description"
+            android:defaultValue=""
+            android:key="ssids"
+            android:persistent="false"
+            android:inputType="text" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,6 +1,7 @@
 package com.example.trigger;
 
+import static com.example.trigger.Utils.*;
 
 public interface OnTaskCompleted {
-    void onTaskCompleted(String result);
+    void onTaskCompleted(TaskResult result);
 }

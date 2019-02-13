@@ -11,9 +11,9 @@
     android:orientation="vertical">
 
     <Spinner
-      android:id="@+id/selection_spinner"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content" />
+        android:id="@+id/selection_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="54dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -21,31 +21,43 @@
         android:id="@+id/stateIcon"
         android:src="@drawable/state_open"
         android:layout_gravity="center"
-        android:layout_weight="2" />
+        android:layout_weight="2"
+        android:onClick="onUpdateState" />
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
-        android:layout_marginBottom="30dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
-        android:layout_weight="0">
+        android:layout_marginBottom="30dp"
+        android:layout_weight="0"
+        android:orientation="horizontal">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/close_button_text"
-            android:id="@+id/button_close"
-            android:layout_gravity="center_vertical"
-            android:textSize="20dp" />
+        <ImageButton
+            android:id="@+id/Lock"
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundcorners"
+            android:onClick="onLock"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_lock" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/open_button_text"
-            android:id="@+id/button_open"
-            android:layout_gravity="center_vertical"
-            android:textSize="20dp" />
+        <ImageButton
+            android:id="@+id/Unlock"
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundcorners"
+            android:onClick="onUnlock"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_unlock" />
+
     </LinearLayout>
 </LinearLayout>

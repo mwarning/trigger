@@ -6,7 +6,6 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 
 public class AboutActivity extends PreferenceActivity {
@@ -18,7 +17,7 @@ public class AboutActivity extends PreferenceActivity {
 
         Context context = this.getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        String version = Settings.get_version();
+        String version = Settings.getVersion();
 
         Preference versionPref = findPreference("prefVersion");
         versionPref.setSummary(version);

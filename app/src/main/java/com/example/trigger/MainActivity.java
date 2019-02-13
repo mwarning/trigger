@@ -4,30 +4,29 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.net.ConnectivityManager;
-import android.preference.PreferenceManager;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+
+import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
+import static com.example.trigger.Utils.*;
 
 
 enum UIState {
@@ -38,63 +37,90 @@ enum UIState {
 }
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
-    private boolean enableRefreshButton;
+    private boolean enableRefreshButton = false;
+    private boolean enableEditButton = false;
     private OnTaskCompleted listener;
-    private SharedPreferences prefs;
     private ImageView stateIcon;
+    private Spinner spinner;
+    private Wifi wifi;
 
-    private Setup getSelectedSetup() {
-        Spinner spinner = (Spinner) findViewById(R.id.selection_spinner);
-        return (Setup) spinner.getSelectedItem();
+    // helper class for spinner
+    private static class SpinnerItem {
+        public final int id;
+        public final String name;
+
+        public SpinnerItem(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
-    private int getPreferredSpinnerIndex(ArrayList<Setup> items, Setup current) {
-        String ssid = getWifiSSID();
+    private int getPreferredSpinnerIndex(ArrayList<Setup> setups, Setup current) {
+        String ssid = wifi.getCurrentSSID();
 
-        // Select by ssid
+        // select by ssid
         if (ssid.length() > 0) {
-            for (int i = 0; i < items.size(); i += 1) {
-                Setup setup = items.get(i);
+            for (int i = 0; i < setups.size(); i += 1) {
+                Setup setup = setups.get(i);
                 String ssids = setup.getSSIDs();
-                if (Arrays.asList(ssids.trim().split("\\s*,\\s*")).contains(ssid)) {
+                if (splitCommaSeparated(ssids).contains(ssid)) {
                     return i;
                 }
             }
         }
 
-        // Keep previous selection except for the the DummySetup
-        if (current != null && !(current instanceof DummySetup)) {
-            for (int i = 0; i < items.size(); i += 1) {
-                if (current.getId() == items.get(i).getId()) {
+        // keep previous selection
+        if (current != null) {
+            for (int i = 0; i < setups.size(); i += 1) {
+                if (current.getId() == setups.get(i).getId()) {
                     return i;
                 }
             }
         }
 
-        // Select first item
-        if (items.size() > 0) {
+        // select first item
+        if (setups.size() > 0) {
             return 0;
         } else {
-            Log.w("MainActivity.getPreferredSpinnerIndex", "spinner list empty - should not happen");
             return -1;
         }
     }
 
+    Setup getSelectedSetup() {
+        Log.d("MainActivity", "getSelectedSetup");
+        SpinnerItem item = (SpinnerItem) spinner.getSelectedItem();
+        if (item != null) {
+            return Settings.getSetup(item.id);
+        } else {
+            return null;
+        }
+    }
+
     private void updateSpinner() {
-        ArrayList<Setup> setups = Settings.all_setups();
-        Collections.sort(setups, new Comparator<Setup>() {
-            @Override public int compare(Setup s1, Setup s2) {
-                return s1.getName().compareTo(s2.getName());
+        ArrayList<Setup> setups = Settings.getAllSetups();
+        ArrayList<SpinnerItem> items = new ArrayList();
+
+        for (Setup setup : setups) {
+            items.add(new SpinnerItem(setup.getId(), setup.getName()));
+            //Log.d("updateSpinner", "id: " + setup.getId() + ", toString: " + setup.toString() + ", type: " + setup.getType());
+        }
+
+        // sort setups by name
+        Collections.sort(items, new Comparator<SpinnerItem>() {
+            @Override public int compare(SpinnerItem s1, SpinnerItem s2) {
+                return s1.name.compareTo(s2.name);
             }
         });
 
-        setups.add(new DummySetup(getResources().getString(R.string.new_entry)));
-
-        ArrayAdapter<Setup> adapter = new ArrayAdapter<Setup>(this,
-            android.R.layout.simple_spinner_item, setups);
+        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(this,
+            android.R.layout.simple_spinner_item, items);
 
         Setup current = getSelectedSetup();
-        Spinner spinner = (Spinner) findViewById(R.id.selection_spinner);
         spinner.setAdapter(adapter);
         spinner.setSelection(getPreferredSpinnerIndex(setups, current));
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -107,8 +133,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             public void onNothingSelected(AdapterView<?> parent) {
                 // nothing to do
             }
-
         });
+
+        // something is selected
+        if (spinner.getSelectedItemPosition() != INVALID_POSITION) {
+            enableEditButton = true;
+        }
     }
 
     @Override
@@ -123,13 +153,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         setContentView(R.layout.activity_main);
 
         Context context = this.getApplicationContext();
-        Settings.load(context);
+        this.wifi = new Wifi(context);
+        Settings.init(context);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
-                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && isWifiConnected()) {
+                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && wifi.isConnected()) {
                     updateSpinner(); // auto select possible entry
                     callRequestHandler(Action.update_state);
                 } else {
@@ -138,6 +168,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         };
 
+        spinner = (Spinner) findViewById(R.id.selection_spinner);
+        stateIcon = (ImageView) findViewById(R.id.stateIcon);
+
         updateSpinner();
 
         IntentFilter intentFilter = new IntentFilter();
@@ -145,60 +178,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(broadcastReceiver, intentFilter);
 
-        stateIcon = (ImageView) findViewById(R.id.stateIcon);
-
         listener = this;
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Button button_open = (Button) findViewById(R.id.button_open);
-        button_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callRequestHandler(Action.open_door);
-            }
-        });
-
-        Button button_close = (Button) findViewById(R.id.button_close);
-        button_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                callRequestHandler(Action.close_door);
-            }
-        });
     }
 
-    private String getWifiSSID() {
-        // From android 8.0 only available if GPS on?!
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = wifiManager.getConnectionInfo();
-        String ssid = info.getSSID();
-        if (ssid.length() >= 2 && ssid.startsWith("\"") && ssid.endsWith("\"")) {
-            // quoted string
-            return ssid.substring(1, ssid.length() - 1);
-        } else {
-            // hexadecimal string...
-            return ssid;
-        }
+    public void onUnlock(View view) {
+        callRequestHandler(Action.open_door);
     }
 
-    private boolean isWifiConnected() {
-        WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+    public void onUpdateState(View view) {
+        callRequestHandler(Action.update_state);
+    }
 
-        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
-            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-
-            if (wifiInfo.getNetworkId() == -1) {
-                return false; // Not connected to an access point
-            }
-            return true; // Connected to an access point
-        } else {
-            return false; // Wi-Fi adapter is OFF
-        }
+    public void onLock(View view) {
+        callRequestHandler(Action.close_door);
     }
 
     private void changeUI(UIState state) {
-        Button bc = (Button) findViewById(R.id.button_close);
-        Button bo = (Button) findViewById(R.id.button_open);
+        ImageButton bc = (ImageButton) findViewById(R.id.Lock);
+        ImageButton bo = (ImageButton) findViewById(R.id.Unlock);
 
         switch(state) {
             case OPEN:
@@ -237,34 +234,41 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     @Override
-    public void onTaskCompleted(String result) {
-        Log.i("[RESULT]", result);
+    public void onTaskCompleted(TaskResult r) {
+        Log.i("MainActivity.onTaskCompleted", "message: " + r.message);
 
-        if (result.equals("UNLOCKED")) {
+        if (!r.is_error && r.message.contains("UNLOCKED")) {
             // door unlocked
             changeUI(UIState.OPEN);
-        } else if (result.equals("LOCKED")) {
+        } else if (!r.is_error && r.message.contains("LOCKED")) {
             // door locked
             changeUI(UIState.CLOSED);
         } else {
             changeUI(UIState.UNKNOWN);
         }
 
-        // Limit message and display
-        if (result.length() > 0) {
+        // display message
+        if (r.message.length() > 0) {
             // limit message length
-            String message = result.substring(0, Math.min(result.length(), 32));
+            String msg = r.message;
+            if (msg.length() > 32) {
+                msg = msg.substring(0, 32) + "...";
+            }
             Context context = getApplicationContext();
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void callRequestHandler(Action action) {
         Setup setup = getSelectedSetup();
-        if (setup instanceof DummySetup) {
-            changeUI(UIState.DISABLED);
+        if (setup instanceof HttpsDoorSetup) {
+            HttpsDoorSetup httpsSetup = (HttpsDoorSetup) setup;
+            new HttpsRequestHandler(listener).execute(action, httpsSetup);
+        } else if (setup instanceof SshDoorSetup) {
+            SshDoorSetup sshSetup = (SshDoorSetup) setup;
+            new SshRequestHandler(listener).execute(action, sshSetup);
         } else {
-            new HttpsRequestHandler(listener, prefs).execute(action, setup);
+            changeUI(UIState.DISABLED);
         }
     }
 
@@ -272,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     protected void onStart() {
         super.onStart();
 
-        if (this.isWifiConnected()) {
+        if (wifi.isConnected()) {
             callRequestHandler(Action.update_state);
         }
     }
@@ -281,17 +285,40 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
 
-        if (!enableRefreshButton) {
-            refreshMenuItem.setEnabled(false);
-            refreshMenuItem.getIcon().setAlpha(130);
+        MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
+        MenuItem editMenuItem = menu.findItem(R.id.action_edit);
+
+        if (enableEditButton) {
+            editMenuItem.setEnabled(true);
+            editMenuItem.getIcon().setAlpha(255);
         } else {
+            editMenuItem.setEnabled(false);
+            editMenuItem.getIcon().setAlpha(130);
+        }
+
+        if (enableRefreshButton) {
             refreshMenuItem.setEnabled(true);
             refreshMenuItem.getIcon().setAlpha(255);
+        } else {
+            refreshMenuItem.setEnabled(false);
+            refreshMenuItem.getIcon().setAlpha(130);
         }
 
         return true;
+    }
+
+    private void connectNextWifi() {
+        // collect app configured SSIDs
+        ArrayList<Setup> setups = Settings.getAllSetups();
+        ArrayList<String> ssids = new ArrayList();
+
+        for (Setup setup : setups) {
+            ssids.addAll(splitCommaSeparated(setup.getSSIDs()));
+        }
+
+        wifi.connectBestOf(ssids);
+        updateSpinner();
     }
 
     @Override
@@ -300,19 +327,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = menu_item.getItemId();
+
         if (id == R.id.action_edit) {
-            // launch settings activity (also for "New Entry" dummy entry)
             Setup setup = getSelectedSetup();
-            if (setup != null) {
-                Intent i = new Intent(this, SetupActivity.class);
-                i.putExtra("setup_id", setup.getId());
-                startActivity(i);
-                return true;
-            }
+            int setup_id = (setup != null) ? setup.getId() : -1;
+            Intent i = new Intent(this, SetupActivity.class);
+            i.putExtra("setup_id", setup_id);
+            startActivity(i);
+            return true;
+        }
+
+        if (id == R.id.action_new) {
+            Intent i = new Intent(this, SetupActivity.class);
+            i.putExtra("setup_id", -1);
+            startActivity(i);
+            return true;
         }
 
         if (id == R.id.action_about) {
-            // launch about activity
             Intent i = new Intent(this, AboutActivity.class);
             startActivity(i);
             return true;
@@ -320,6 +352,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         if (id == R.id.action_reload) {
             callRequestHandler(Action.update_state);
+        }
+
+        if (id == R.id.action_connect) {
+            connectNextWifi();
         }
 
         return super.onOptionsItemSelected(menu_item);
