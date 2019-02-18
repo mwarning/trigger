@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Trigger</string>
+    <string name="SetupTypes">Setup Typen</string>
+    <string name="SetupTypeValues">Setup Typwerte</string>
 
     <string name="action_edit">Verändern</string>
     <string name="action_new">Neu</string>
