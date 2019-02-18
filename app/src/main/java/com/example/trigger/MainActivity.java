@@ -117,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         });
 
-        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(this,
-            android.R.layout.simple_spinner_item, items);
+        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(this, R.layout.main_spinner, items);
 
         Setup current = getSelectedSetup();
         spinner.setAdapter(adapter);

@@ -5,4 +5,7 @@
     <style name="AppCompatTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
+    <style name="MainSpinnerLook" parent="@android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:textSize">22sp</item>
+    </style>
 </resources>
