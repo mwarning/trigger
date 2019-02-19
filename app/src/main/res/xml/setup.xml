@@ -71,13 +71,11 @@
             android:key="SshDoorSetup"
             android:persistent="false" >
 
-        <EditTextPreference
+        <com.example.trigger.ssh.KeyPairPreference
+            android:key="keypair"
             android:title="Key File"
-            android:key="keypath"
-            android:summary="SSH keyfile."
             android:persistent="false"
-            android:inputType="text"
-            android:onClick="selectFile" />
+            android:defaultValue="false" />
 
         <EditTextPreference
             android:title="Host"

@@ -6,8 +6,8 @@ android {
         applicationId 'com.example.trigger'
         minSdkVersion 25
         targetSdkVersion 25
-        versionCode 140
-        versionName "1.4.0"
+        versionCode 160
+        versionName "1.6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -27,6 +27,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:preference-v7:25.0.0'
     implementation 'com.android.support:appcompat-v7:25.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.jcraft:jsch:0.1.52'

@@ -1,5 +1,13 @@
 package com.example.trigger;
 
+import android.net.Uri;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,5 +40,22 @@ public class Utils {
             this.key = key;
             this.value = value;
         }
+    }
+
+    public static byte[] readAllBytes(File file) {
+        int size = (int) file.length();
+        Log.d("Utils.readAllBytes", "length: "  + size + ", path: " + file.getPath());
+        byte[] bytes = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+            return bytes;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

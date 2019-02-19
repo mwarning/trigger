@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,13 +27,6 @@ import java.util.Comparator;
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 import static com.example.trigger.Utils.*;
 
-
-enum UIState {
-    OPEN,
-    CLOSED,
-    UNKNOWN,
-    DISABLED,
-}
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean enableRefreshButton = false;
@@ -92,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     Setup getSelectedSetup() {
-        Log.d("MainActivity", "getSelectedSetup");
         SpinnerItem item = (SpinnerItem) spinner.getSelectedItem();
         if (item != null) {
             return Settings.getSetup(item.id);
@@ -107,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         for (Setup setup : setups) {
             items.add(new SpinnerItem(setup.getId(), setup.getName()));
-            //Log.d("updateSpinner", "id: " + setup.getId() + ", toString: " + setup.toString() + ", type: " + setup.getType());
         }
 
         // sort setups by name
@@ -162,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                     updateSpinner(); // auto select possible entry
                     callRequestHandler(Action.update_state);
                 } else {
-                    changeUI(UIState.DISABLED);
+                    changeUI(StateCode.DISABLED);
                 }
             }
         };
@@ -192,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         callRequestHandler(Action.close_door);
     }
 
-    private void changeUI(UIState state) {
+    private void changeUI(StateCode state) {
         ImageButton bc = (ImageButton) findViewById(R.id.Lock);
         ImageButton bo = (ImageButton) findViewById(R.id.Unlock);
 
@@ -224,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 break;
         }
 
-        if(state != UIState.DISABLED) {
+        if(state != StateCode.DISABLED) {
             enableRefreshButton = true;
         }
 
@@ -233,28 +223,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     @Override
-    public void onTaskCompleted(TaskResult r) {
+    public void onTaskCompleted(DoorReply r) {
         Log.i("MainActivity.onTaskCompleted", "message: " + r.message);
 
-        if (!r.is_error && r.message.contains("UNLOCKED")) {
-            // door unlocked
-            changeUI(UIState.OPEN);
-        } else if (!r.is_error && r.message.contains("LOCKED")) {
-            // door locked
-            changeUI(UIState.CLOSED);
-        } else {
-            changeUI(UIState.UNKNOWN);
+        Setup setup = getSelectedSetup();
+        if (setup == null) {
+            // should not happen
+            return;
         }
 
+        DoorState state = setup.parseReply(r);
+
+        // change state image
+        changeUI(state.code);
+
         // display message
-        if (r.message.length() > 0) {
-            // limit message length
-            String msg = r.message;
-            if (msg.length() > 32) {
-                msg = msg.substring(0, 32) + "...";
-            }
+        if (state.message.length() > 0) {
             Context context = getApplicationContext();
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, r.message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -267,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             SshDoorSetup sshSetup = (SshDoorSetup) setup;
             new SshRequestHandler(listener).execute(action, sshSetup);
         } else {
-            changeUI(UIState.DISABLED);
+            changeUI(StateCode.DISABLED);
         }
     }
 

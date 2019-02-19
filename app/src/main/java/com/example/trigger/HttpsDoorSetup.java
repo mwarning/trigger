@@ -14,7 +14,6 @@ public class HttpsDoorSetup implements Setup {
     String status_query;
     String ssids;
     Boolean ignore_cert;
-    Boolean enable_status;
 
     public HttpsDoorSetup(int id, String name) {
         this.id = id;
@@ -46,6 +45,31 @@ public class HttpsDoorSetup implements Setup {
         return type;
     }
 
+    @Override
+    public DoorState parseReply(DoorReply reply) {
+        // strip HTML from response
+        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
+
+        switch (reply.code) {
+            case LOCAL_ERROR:
+            case REMOTE_ERROR:
+                return new DoorState(StateCode.UNKNOWN, msg);
+            case SUCCESS:
+                if (msg.equals("UNLOCKED")) {
+                    // door unlocked
+                    return new DoorState(StateCode.OPEN, "");
+                } else if (msg.equals("LOCKED")) {
+                    // door locked
+                    return new DoorState(StateCode.CLOSED, "");
+                } else {
+                    return new DoorState(StateCode.UNKNOWN, msg);
+                }
+            default:
+                // should not happen
+                return new DoorState(StateCode.UNKNOWN, msg);
+        }
+    }
+
     public String getOpenQuery() {
         return open_query;
     }
@@ -60,29 +84,5 @@ public class HttpsDoorSetup implements Setup {
 
     public Boolean ignoreCertErrors() {
         return ignore_cert;
-    }
-
-    @Override
-    public void getAllSettings(ArrayList<Pair> ps) {
-        ps.add(pair("name", name));
-        ps.add(pair("open_query", open_query));
-        ps.add(pair("close_query", close_query));
-        ps.add(pair("status_query", status_query));
-        ps.add(pair("ssids", ssids));
-        ps.add(pair("ignore_cert", ignore_cert));
-    }
-
-    @Override
-    public void setAllSettings(ArrayList<Pair> ps) {
-        for (Pair p : ps) {
-            switch (p.key) {
-                case "name": name = (String) p.value; break;
-                case "open_query": open_query = (String) p.value; break;
-                case "close_query": close_query = (String) p.value; break;
-                case "status_query": status_query = (String) p.value; break;
-                case "ssids": ssids = (String) p.value; break;
-                case "ignore_cert": ignore_cert = (Boolean) p.value; break;
-            }
-        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.trigger;
 
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.content.Context;
@@ -14,10 +15,12 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import static com.example.trigger.Utils.*;
-
+import com.example.trigger.ssh.KeyPairPreference;
+import com.jcraft.jsch.KeyPair;
 
 
 public class SetupActivity extends PreferenceActivity {
@@ -47,8 +50,6 @@ public class SetupActivity extends PreferenceActivity {
     }
 
     private void showGroup(String key) {
-        Log.d("SetupActivity.showGroup()", "show: " + key);
-
         // hide all groups
         for (int i = 0; i < setupGroups.size(); i += 1) {
             getPreferenceScreen().removePreference(setupGroups.get(i));
@@ -62,17 +63,15 @@ public class SetupActivity extends PreferenceActivity {
                 return;
             }
         }
+
         Log.e("SetupActivity.showGroup()", "PreferenceGroup not found: " + key);
     }
 
     public void onSaveButtonClicked(View v) {
-        Log.d("SetupActivity.onSaveButtonClicked", "called");
         storeSetup();
     }
 
     public void onDeleteButtonClicked(View v) {
-        Log.d("SetupActivity.onDeleteButtonClicked", "called");
-
         builder.setTitle("Confirm");
         builder.setMessage("Really remove item?");
         builder.setCancelable(false); // not necessary
@@ -97,6 +96,28 @@ public class SetupActivity extends PreferenceActivity {
         alert.show();
     }
 
+    // a recursive method to find a preference by key
+    private Preference findAnyPreference(String key, PreferenceGroup group) {
+        if (group == null) {
+            group = getPreferenceScreen();
+        }
+
+        int count = group.getPreferenceCount();
+        for (int i = 0; i < count; i += 1) {
+            Preference pref = group.getPreference(i);
+            if (pref.getKey().equals(key)) {
+                return pref;
+            } else if (pref instanceof PreferenceGroup) {
+                pref = findAnyPreference(key, (PreferenceGroup) pref);
+                if (pref != null) {
+                    return pref;
+                }
+            }
+        }
+
+        return null;
+    }
+
     private void setMainGroupTitle(String name) {
         PreferenceCategory pc = (PreferenceCategory) findPreference("main_category");
         if (pc != null) {
@@ -111,8 +132,8 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private static void setText(PreferenceGroup group, String key, String text) {
-        EditTextPreference etp = (EditTextPreference) group.findPreference(key);
+    private void setText(String key, String text) {
+        EditTextPreference etp = (EditTextPreference) findAnyPreference(key, null);
         if (etp != null) {
             etp.setText(text);
         } else {
@@ -120,8 +141,8 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private static String getText(PreferenceGroup group, String key) {
-        EditTextPreference etp = (EditTextPreference) group.findPreference(key);
+    private String getText(String key) {
+        EditTextPreference etp = (EditTextPreference) findAnyPreference(key, null);
         if (etp != null) {
             return etp.getText();
         } else {
@@ -130,8 +151,8 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private static void setChecked(PreferenceGroup group, String key, boolean checked) {
-        CheckBoxPreference cbp = (CheckBoxPreference) group.findPreference(key);
+    private void setChecked(String key, boolean checked) {
+        CheckBoxPreference cbp = (CheckBoxPreference) findAnyPreference(key, null);
         if (cbp != null) {
             cbp.setChecked(checked);
         } else {
@@ -139,8 +160,8 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private static boolean getChecked(PreferenceGroup group, String key) {
-        CheckBoxPreference cbp = (CheckBoxPreference) group.findPreference(key);
+    private boolean getChecked(String key) {
+        CheckBoxPreference cbp = (CheckBoxPreference) findAnyPreference(key, null);
         if (cbp != null) {
             return cbp.isChecked();
         } else {
@@ -149,12 +170,31 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
+    private KeyPair getKeyPair(String key) {
+        KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
+        if (kpp != null) {
+            return kpp.getKeyPair();
+        } else {
+            Log.e("SetupActivity.getKeyPair", "Cannot find key: " + key);
+            return null;
+        }
+    }
+
+    private void setKeyPair(String key, KeyPair keypair) {
+        KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
+        if (kpp != null) {
+            kpp.setKeyPair(keypair);
+        } else {
+            Log.e("SetupActivity.setKeyPair", "Cannot find key: " + key);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Context context = this.getApplicationContext();
 
         // Set all field to default values - does not work?
-        //PreferenceManager.setDefaultValues(context, R.xml.settings, false);
+        // PreferenceManager.setDefaultValues(context, R.xml.settings, false);
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.setup);
         setContentView(R.layout.activity_setup);
@@ -165,7 +205,6 @@ public class SetupActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String type = newValue.toString();
-                Log.d("SetupActivity", "onPreferenceChange: " + type);
 
                 if (type.equals(setup.getType())) {
                     // no door type change
@@ -201,16 +240,12 @@ public class SetupActivity extends PreferenceActivity {
 
         int id = getIntent().getIntExtra("setup_id", -1);
 
-        Log.d("SetupActivity", "id: " + id);
         if (Settings.idExists(id)) {
-            Log.d("SetupActivity", "idExists");
             setup = Settings.getSetup(id);
         } else {
             setup = new HttpsDoorSetup(Settings.getNewID(), "");
-            Log.d("SetupActivity", "create new setup: " + setup.getId());
         }
 
-        //Log.d("class name", "" + setup.getClass().getSimpleName());
         // init type selection
         list_field.setValue(setup.getType());
         loadSetup();
@@ -220,33 +255,35 @@ public class SetupActivity extends PreferenceActivity {
         return (PreferenceGroup) getPreferenceScreen().findPreference(key);
     }
 
-    // settings that are not to be displayed in the sub category
-    private boolean ignoredSetting(String key) {
-        return key.equals("type") || key.equals("id");
-    }
-
     void loadSetup() {
-        String type = setup.getType();
-        showGroup(type);
+        showGroup(setup.getType());
 
-        // get setup settings
-        ArrayList<Pair> pairs = new ArrayList();
-        this.setup.getAllSettings(pairs);
+        Field[] fields = this.setup.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                String name = field.getName();
+                Class<?> type = field.getType();
+                Object value = field.get(setup);
 
-        // set settings in GUI
-        PreferenceGroup group = findPreferenceGroup(type);
-        for (Pair pair : pairs) {
-            Log.d("SetupActivity.show", "entry: " + pair.key + ": " + pair.value.toString());
-            if (pair.key.equals("name")) {
-                setText(getPreferenceScreen(), "name", (String) pair.value);
-            } else if (ignoredSetting(pair.key)) {
-                // ignore - already displayed in main group
-            } else if (pair.value instanceof String) {
-                setText(group, pair.key, (String) pair.value);
-            } else if (pair.value instanceof Boolean) {
-                setChecked(group, pair.key, (Boolean) pair.value);
-            } else {
-                Log.e("SetupActivity", "Unknown value type for " + type + "." + pair.key);
+                if (name.equals("type") || name.equals("id")) {
+                    // ignore for display in preference field
+                } else if (type == String.class) {
+                    setText(name, (String) value);
+                } else if (type == Integer.class) {
+                    setText(name, value.toString());
+                } else if (type == int.class) {
+                    setText(name, value.toString());
+                } else if (type == Boolean.class) {
+                    setChecked(name, (Boolean) value);
+                } else if (type == boolean.class) {
+                    setChecked(name, (boolean) value);
+                } else if (type == KeyPair.class) {
+                    setKeyPair(name, (KeyPair) value);
+                } else {
+                    Log.e("SetupActivity", "Unhandled type " + type.getSimpleName() + " of field " + name);
+                }
+            } catch (Exception ex) {
+                Log.e("SetupActivity", "loadSetup: " + ex.toString());
             }
         }
 
@@ -254,40 +291,44 @@ public class SetupActivity extends PreferenceActivity {
         setMainGroupTitle(setup.getName());
     }
 
+    // apply preference to setup object
     void storeSetup() {
-        String name = getText(getPreferenceScreen(), "name");
-        Log.d("SetupActivity", "storeSetup: name: " + name);
-
-        if (name == null || name.length() == 0) {
-            showErrorMessage("Invalid Name", "Name is not set.");
-            return;
-        }
-
         // duplicate entry
-        if (!Settings.idExists(setup.getId()) && Settings.nameExists(name)) {
+        if (!Settings.idExists(setup.getId()) && Settings.nameExists(setup.getName())) {
            showErrorMessage("Entry Exists", "Name already exists.");
            return;
         }
 
-        // get settings
-        ArrayList<Pair> pairs = new ArrayList();
-        this.setup.getAllSettings(pairs);
+        Field[] fields = setup.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            String name = field.getName();
+            Class<?> type = field.getType();
 
-        String type = this.setup.getType();
-        PreferenceGroup group = findPreferenceGroup(type);
-        for (Pair pair : pairs) {
-            if (pair.key == "name") {
-                pair.value = getText(getPreferenceScreen(), "name");
-            } else if (pair.value instanceof String) {
-                pair.value = getText(group, pair.key);
-            } else if (pair.value instanceof Boolean) {
-                pair.value = getChecked(group, pair.key);
-            } else {
-                Log.e("SetupActivity", "Unknown value type for " + type + "." + pair.key);
+            try {
+                if (name.equals("id") || name.equals("type")) {
+                    // ignore - id is not displayed and type is read only field
+                } else if (type == String.class) {
+                    field.set(setup, getText(name));
+                } else if (type == Boolean.class) {
+                    field.set(setup, getChecked(name));
+                } else if (type == Integer.class) {
+                    // TODO
+                } else if (type == int.class) {
+                    // TODO
+                } else if (type == KeyPair.class) {
+                    field.set(setup, getKeyPair(name));
+                } else {
+                    Log.e("SetupActivity", "storeSetup: Unhandled type for " + name + ": " + type.toString());
+                }
+            } catch (Exception ex) {
+                Log.e("SetupActivity", "storeSetup: field: " + name + ", error: " + ex.toString());
             }
         }
 
-        this.setup.setAllSettings(pairs);
-        Settings.saveSetup(this.setup);
+        if (setup.getName() == null || setup.getName().length() == 0) {
+            showErrorMessage("Invalid Name", "Name is not set.");
+        } else {
+            Settings.saveSetup(this.setup);
+        }
     }
 }

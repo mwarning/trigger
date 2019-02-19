@@ -1,5 +1,8 @@
 package com.example.trigger;
 
+import com.example.trigger.ssh.SshTools;
+import com.jcraft.jsch.KeyPair;
+
 import java.util.ArrayList;
 
 import static com.example.trigger.Utils.*;
@@ -9,7 +12,7 @@ public class SshDoorSetup implements Setup {
     static final String type = "SshDoorSetup";
     int id;
     String name;
-    String keypath;
+    KeyPair keypair;
     String user;
     String host;
     String port;
@@ -21,7 +24,7 @@ public class SshDoorSetup implements Setup {
     public SshDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
-        this.keypath = "";
+        this.keypair = null;
         this.user = "";
         this.host = "";
         this.port = "22";
@@ -46,8 +49,23 @@ public class SshDoorSetup implements Setup {
         return type;
     }
 
-    public String getKeyPath() {
-        return host;
+    @Override
+    public DoorState parseReply(DoorReply reply) {
+        // TODO: This is probably not the expected way to parse the reply.
+        // It probably needs to be made configurable (setting with regex?)
+        if (reply.message.contains("UNLOCKED")) {
+            // door unlocked
+            return new DoorState(StateCode.OPEN, "");
+        } else if (reply.message.contains("LOCKED")) {
+            // door locked
+            return new DoorState(StateCode.CLOSED, "");
+        } else {
+            return new DoorState(StateCode.UNKNOWN, reply.message);
+        }
+    }
+
+    public KeyPair getKeyPair() {
+        return keypair;
     }
 
     public String getHost() {
@@ -76,35 +94,5 @@ public class SshDoorSetup implements Setup {
 
     public String getSSIDs() {
         return ssids;
-    }
-
-    @Override
-    public void getAllSettings(ArrayList<Pair> ps) {
-        ps.add(pair("name", name));
-        ps.add(pair("keypath", keypath));
-        ps.add(pair("host", host));
-        ps.add(pair("port", port));
-        ps.add(pair("user", user));
-        ps.add(pair("open_command", open_command));
-        ps.add(pair("close_command", close_command));
-        ps.add(pair("state_command", state_command));
-        ps.add(pair("ssids", ssids));
-    }
-
-    @Override
-    public void setAllSettings(ArrayList<Pair> ps) {
-        for (Pair p : ps) {
-            switch (p.key) {
-                case "name": name = (String) p.value; break;
-                case "keypath": keypath = (String) p.value; break;
-                case "host": host = (String) p.value; break;
-                case "port": port = (String) p.value; break;
-                case "user": user = (String) p.value; break;
-                case "open_command": open_command = (String) p.value; break;
-                case "close_command": close_command = (String) p.value; break;
-                case "state_command": state_command = (String) p.value; break;
-                case "ssids": ssids = (String) p.value; break;
-            }
-        }
     }
 }

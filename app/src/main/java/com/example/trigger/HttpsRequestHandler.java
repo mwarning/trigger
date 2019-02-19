@@ -12,10 +12,8 @@ import java.net.URL;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import static com.example.trigger.Utils.*;
 
-
-public class HttpsRequestHandler extends AsyncTask<Object, Void, TaskResult> {
+public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
     private OnTaskCompleted listener;
 
     public HttpsRequestHandler(OnTaskCompleted listener){
@@ -23,22 +21,22 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, TaskResult> {
     }
 
     @Override
-    protected TaskResult doInBackground(Object... params) {
+    protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
             Log.e("HttpsRequestHandler.doInBackGround", "Unexpected number of params.");
-            return TaskResult.error("Internal Error");
+            return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof HttpsDoorSetup)) {
             Log.e("HttpsRequestHandler.doInBackground", "Invalid type of params.");
-            return TaskResult.error("Internal Error");
+            return DoorReply.internal_error();
         }
 
         Action action = (Action) params[0];
         HttpsDoorSetup setup = (HttpsDoorSetup) params[1];
 
         if (setup.getId() < 0) {
-            return TaskResult.error("Internal Error");
+            return DoorReply.internal_error();
         }
 
         String command = "";
@@ -57,7 +55,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, TaskResult> {
 
         if (command.isEmpty()) {
             // ignore
-            return TaskResult.empty();
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
         }
 
         try {
@@ -72,18 +70,18 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, TaskResult> {
             con.setConnectTimeout(2000);
 
             String result = readStream(con.getInputStream());
-            return TaskResult.msg(result);
+            return new DoorReply(ReplyCode.SUCCESS, result);
         } catch (MalformedURLException mue) {
-            return TaskResult.error("Malformed URL.");
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Malformed URL.");
         } catch (FileNotFoundException e) {
-            return TaskResult.error("Server responds with an error.");
+            return new DoorReply(ReplyCode.REMOTE_ERROR, "Server responds with an error.");
         } catch (java.net.SocketTimeoutException ste) {
-            return TaskResult.error("Server not reachable.");
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Server not reachable.");
         } catch (java.net.SocketException se) {
-            return TaskResult.error("Not connected to network.");
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Not connected to network.");
         } catch (Exception e) {
             //e.printStackTrace();
-            return TaskResult.error("Unknown Error: " + e.toString());
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Unknown Error: " + e.toString());
         }
     }
 
@@ -110,11 +108,10 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, TaskResult> {
             }
         }
 
-        // strip HTML from response
-        return android.text.Html.fromHtml(result).toString().trim();
+        return result;
     }
 
-    protected void onPostExecute(TaskResult result) {
+    protected void onPostExecute(DoorReply result) {
         listener.onTaskCompleted(result);
     }
 }
