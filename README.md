@@ -10,6 +10,10 @@ Features:
 
 ![image](screenshots.png)
 
+## Status
+
+Https calls work. SSH support is completely untested.
+
 ## Download
 
 [<img src="fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
