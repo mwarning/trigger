@@ -45,11 +45,9 @@ public class Settings {
 
     // update database format
     private static void upgradeDB() {
-        printAll(sharedPreferences);
-
         // update from 1.2.1 to 1.3.0
         if (db_version.equals("1.2.1")) {
-            Log.i("Settings", "update database format from " + db_version + " to " + app_version);
+            Log.i("Settings", "update database format from " + db_version + " to 1.3.1");
 
             // Recover setup from 1.2.0
             String name = sharedPreferences.getString("prefName", "");
@@ -77,7 +75,7 @@ public class Settings {
 
         // update from 1.3.0/1.3.1 to 1.4.0
         if (db_version.equals("1.3.0") || db_version.equals("1.3.1")) {
-            Log.i("Settings", "update database format from " + db_version + " to " + app_version);
+            Log.i("Settings", "update database format from " + db_version + " to 1.4.0");
 
             for (int id = 0; id < 10; id += 1) {
                 String prefix = String.format("item_%03d_", id);
@@ -98,6 +96,19 @@ public class Settings {
                     } else {
                         removeSetup(id);
                     }
+                }
+            }
+            db_version = "1.4.0";
+        }
+
+        if (db_version.equals("1.4.0")) {
+            Log.i("Settings", "update database format from " + db_version + " to " + app_version);
+            for (int id = 0; id < 10; id += 1) {
+                String prefix = String.format("item_%03d_", id);
+                // change type of entry
+                if (sharedPreferences.contains(prefix + "ignore_cert")) {
+                    Boolean ignore_cert = sharedPreferences.getBoolean(prefix + "ignore_cert", false);
+                    sharedPreferences.edit().putString(prefix + "ignore_cert", ignore_cert.toString()).commit();
                 }
             }
             sharedPreferences.edit().putString("db_version", app_version).commit();
