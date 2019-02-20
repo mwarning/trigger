@@ -112,7 +112,7 @@ public class KeyPairActivity extends AppCompatActivity {
                     writeExternalFile(getApplicationContext(), path_uri, "id_rsa", data.prvkey);
 
                     // report all done
-                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Done exporting files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     showErrorMessage("Error", e.toString());
                 }
@@ -134,7 +134,7 @@ public class KeyPairActivity extends AppCompatActivity {
                     JSch jsch = new JSch();
                     KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
 
-                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Done importing files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     showErrorMessage("Error", "Error occured while processing key file: " + e.toString());
                 }
