@@ -1,6 +1,13 @@
 package com.example.trigger;
 
 
+enum StateCode {
+    OPEN,
+    CLOSED,
+    UNKNOWN,
+    DISABLED,
+}
+
 // parsed door reply
 public class DoorState {
     final StateCode code;

@@ -21,11 +21,19 @@ import android.util.Log;
 import android.net.ConnectivityManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
+
+enum Action {
+    open_door,
+    close_door,
+    update_state
+}
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean enableRefreshButton = false;
@@ -51,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
+    private static List<String> splitCommaSeparated(String str) {
+        return Arrays.asList(str.trim().split("\\s*,\\s*"));
+    }
+
     private int getPreferredSpinnerIndex(ArrayList<Setup> setups, Setup current) {
         String ssid = wifi.getCurrentSSID();
 
@@ -59,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             for (int i = 0; i < setups.size(); i += 1) {
                 Setup setup = setups.get(i);
                 String ssids = setup.getSSIDs();
-                if (Utils.splitCommaSeparated(ssids).contains(ssid)) {
+                if (splitCommaSeparated(ssids).contains(ssid)) {
                     return i;
                 }
             }
@@ -298,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         ArrayList<String> ssids = new ArrayList();
 
         for (Setup setup : setups) {
-            ssids.addAll(Utils.splitCommaSeparated(setup.getSSIDs()));
+            ssids.addAll(splitCommaSeparated(setup.getSSIDs()));
         }
 
         wifi.connectBestOf(ssids);

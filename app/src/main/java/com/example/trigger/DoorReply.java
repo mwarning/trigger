@@ -1,6 +1,12 @@
 package com.example.trigger;
 
 
+enum ReplyCode {
+    LOCAL_ERROR, // could establish a connection for some reason
+    REMOTE_ERROR, // the door send some error
+    SUCCESS, // the door send some message that has yet to be parsed
+}
+
 // reply from door
 public class DoorReply {
     final ReplyCode code;
