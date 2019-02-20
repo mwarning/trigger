@@ -27,15 +27,14 @@ import static com.example.trigger.ssh.SshTools.keypairToBytes;
 
 
 public class KeyPairActivity extends AppCompatActivity {
-    // hack
-    private KeyPairPreference preference;
+    private KeyPairPreference preference; // hack
     private AlertDialog.Builder builder;
     private Button createButton;
     private Button importButton;
     private Button exportButton;
     private Button cancelButton;
     private Button okButton;
-    private TextView keyInfo;
+    private TextView fingerprint;
     private TextView publicKey;
     private TextView pathSelection;
     private KeyPair keypair;
@@ -53,8 +52,7 @@ public class KeyPairActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keypair);
 
-        // hack!
-        this.preference = KeyPairPreference.self;
+        this.preference = KeyPairPreference.self; // hack, TODO: pass serialized key in bundle
         this.keypair = this.preference.getKeyPair();
 
         builder = new AlertDialog.Builder(this);
@@ -63,7 +61,7 @@ public class KeyPairActivity extends AppCompatActivity {
         exportButton = (Button) findViewById(R.id.ExportButton);
         okButton = (Button) findViewById(R.id.OkButton);
         cancelButton = (Button) findViewById(R.id.CancelButton);
-        keyInfo = (TextView) findViewById(R.id.KeyInfo);
+        fingerprint = (TextView) findViewById(R.id.Fingerprint);
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
 
@@ -144,17 +142,17 @@ public class KeyPairActivity extends AppCompatActivity {
 
     void updateKeyInfo() {
         if (this.keypair == null) {
-            this.keyInfo.setText("<no key loaded>");
+            this.fingerprint.setText("<no key loaded>");
             this.publicKey.setText("<no key loaded>");
         } else {
             SshTools.KeyPairData data = keypairToBytes(this.keypair);
 
-            this.keyInfo.setText(this.keypair.getFingerPrint());
+            this.fingerprint.setText(this.keypair.getFingerPrint());
             this.publicKey.setText(new String(data.pubkey));
         }
     }
 
-    void createNewSshIdentity() {
+    private void createNewSshIdentity() {
         try {
             JSch jsch = new JSch();
             keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 2048);
@@ -217,13 +215,17 @@ public class KeyPairActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST:
-            case READ_EXTERNAL_STORAGE_PERMISSION_REQUEST:
-                if(grantResults.length > 0
-                        && PackageManager.PERMISSION_GRANTED == grantResults[0]
-                        && PackageManager.PERMISSION_GRANTED == grantResults[1]) {
+                if(grantResults.length > 0 && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
                     // permissions granted
                 } else {
-                    showErrorMessage("Read Permissions Required", "External storage read/write permissions are required for this action.");
+                    showErrorMessage("Write Permissions Required", "External storage write permissions are required for this action.");
+                }
+                break;
+            case READ_EXTERNAL_STORAGE_PERMISSION_REQUEST:
+                if(grantResults.length > 0 && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
+                    // permissions granted
+                } else {
+                    showErrorMessage("Read Permissions Required", "External storage read permissions are required for this action.");
                 }
                 break;
             case CAMERA_PERMISSION_REQUEST:

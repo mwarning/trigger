@@ -14,7 +14,7 @@ import com.jcraft.jsch.KeyPair;
 * On click, the file chooser opens.
 */
 public class KeyPairPreference extends SwitchPreference {
-    private KeyPair keyPair;
+    private KeyPair keypair;
     private Context context;
     static KeyPairPreference self;
 /*
@@ -34,16 +34,23 @@ public class KeyPairPreference extends SwitchPreference {
         // tell the superclass that we handle the value on out own!
         setPersistent(false);
 
+        if (this.keypair == null) {
+            setChecked(false);
+        } else {
+            setChecked(true);
+        }
+
         Log.d("KeyPairPreference", "onload");
         this.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Log.d("KeyPairPreference", "onPreferenceChange");
-                //KeyPairPreference p = (KeyPairPreference) preference; 
-                // Here you can enable/disable whatever you need to
-                // open selection here and store result here, then turn switch
-                // take code from SetupActivity...
-                //p.startFileSelection();
+                KeyPairPreference p = (KeyPairPreference) preference;
+
+                if (p.keypair == null) {
+                    p.setChecked(false);
+                } else {
+                    p.setChecked(true);
+                }
                 
                 return false;
             }
@@ -54,37 +61,32 @@ public class KeyPairPreference extends SwitchPreference {
             public boolean onPreferenceClick(Preference preference) {
                 Log.d("KeyPairPreference", "onPreferenceClick");
                 KeyPairPreference p = (KeyPairPreference) preference;
-                // Here you can enable/disable whatever you need to
-                // open selection here and store result here, then turn switch
-                // take code from SetupActivity...
-                p.setChecked(true);
+
                 // hack!
                 KeyPairPreference.self = KeyPairPreference.this;
                 Intent i = new Intent(p.context, KeyPairActivity.class);
                 //i.putExtra("setup_id", setup_id);
                 //SetupActivity needs to implement onActivityResult and set this preference ??
                 //((SetupActivity)p.context).startActivityForResult(i, 42);
-                p.context.startActivity(i);
 
+                p.context.startActivity(i);
                 return false;
             }
         });
     }
 
-    public void setKeyPair(KeyPair keyPair) {
-        Log.d("KeyPairPreference", "setKeyPair");
+    public void setKeyPair(KeyPair keypair) {
+        this.keypair = keypair;
 
-        if (keyPair == null) {
+        if (this.keypair == null) {
             setChecked(false);
         } else {
             setChecked(true);
         }
-
-        this.keyPair = keyPair;
     }
 
     public KeyPair getKeyPair() {
-        return keyPair;
+        return keypair;
     }
 
 /*
