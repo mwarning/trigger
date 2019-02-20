@@ -199,11 +199,11 @@ public class Settings {
         for (Field field : fields) {
             String name = field.getName();
             Class<?> type = field.getType();
-
             String key = String.format("item_%03d_%s", id, name);
-            String value = sharedPreferences.getString(key, "");
 
             try {
+                String value = sharedPreferences.getString(key, "");
+
                 if (name.equals("type")) {
                     // ignore, object field is read only
                 } else if (type == String.class) {
