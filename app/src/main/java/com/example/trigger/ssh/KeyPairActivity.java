@@ -1,8 +1,8 @@
 package com.example.trigger.ssh;
 
-
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -16,7 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.example.trigger.R;
 import com.jcraft.jsch.JSch;
@@ -62,6 +65,10 @@ public class KeyPairActivity extends AppCompatActivity {
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
 
+        // only active after path was selected
+        exportButton.setEnabled(false);
+        importButton.setEnabled(false);
+
         pathSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,8 +97,9 @@ public class KeyPairActivity extends AppCompatActivity {
                 }
 
                 try {
-                    SshTools.writeKeyFiles(path_uri.getPath(), KeyPairActivity.this.keypair);
-                    showErrorMessage("Success", "Wrote id_rsa/id_rsa.pub into.");
+                    SshTools.KeyPairData data = SshTools.keypairToBytes(KeyPairActivity.this.keypair);
+                    writeExternalFile(getApplicationContext(), path_uri, "id_rsa.pub", data.pubkey);
+                    writeExternalFile(getApplicationContext(), path_uri, "id_rsa", data.prvkey);
                 } catch (Exception e) {
                     showErrorMessage("Error", e.toString());
                 }
@@ -107,8 +115,12 @@ public class KeyPairActivity extends AppCompatActivity {
                 }
 
                 try {
+                    //TODO: check if folder + append file name
+                    byte[] prvkey = readExternalFile(getApplicationContext(), path_uri, "id_rsa");
+                    byte[] pubkey = readExternalFile(getApplicationContext(), path_uri, "id_rsa.pub");
+
                     JSch jsch = new JSch();
-                    KeyPairActivity.this.keypair = KeyPair.load(jsch, path_uri.toString());
+                    KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
                 } catch (Exception e) {
                     showErrorMessage("Error", "Error occured while processing key file: " + e.toString());
                 }
@@ -137,6 +149,42 @@ public class KeyPairActivity extends AppCompatActivity {
         updateKeyInfo();
     }
 
+    // write file to external storage
+    private static void writeExternalFile(Context context, Uri dirUri, String filename, byte[] data) throws IOException {
+        String path = dirUri.toString();
+        dirUri = Uri.parse(path.substring(0, path.lastIndexOf("%2F")));
+        Uri fileUri = Uri.withAppendedPath(dirUri, filename);
+
+        // Create a new file and write into it
+        OutputStream out = context.getContentResolver().openOutputStream(fileUri);
+        out.write(data);
+        out.close();
+    }
+
+    // read file from external storage
+    private static byte[] readExternalFile(Context context, Uri dirUri, String filename) throws IOException {
+        String path = dirUri.toString();
+        dirUri = Uri.parse(path.substring(0, path.lastIndexOf("%2F")));
+        Uri fileUri = Uri.withAppendedPath(dirUri, filename);
+
+        InputStream input = context.getContentResolver().openInputStream(dirUri);
+
+        if (input == null) {
+            throw new IOException("File not found.");
+        }
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        int size;
+
+        while ((length = input.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+        }
+
+        return result.toByteArray();
+    }
+
     void updateKeyInfo() {
         if (this.keypair == null) {
             this.fingerprint.setText("<no key loaded>");
@@ -154,14 +202,13 @@ public class KeyPairActivity extends AppCompatActivity {
             JSch jsch = new JSch();
             keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 2048);
         } catch (Exception e) {
-            Log.e("KeyPairActivity", "createNewSshIdentity: error in SshRequestHandler.generateNewIdentity: " + e.toString());
+            Log.e("KeyPairActivity", "createNewSshIdentity: " + e.toString());
         }
 
         updateKeyInfo();
     }
 
-    private static final int SELECT_TOKEN_FILE_ACTIVITY_REQUEST = 0x1;
-    private static final int SCAN_TOKEN_ACTIVITY_REQUEST = 0x2;
+    private static final int SELECT_PATH_ACTIVITY_REQUEST = 0x1;
 
     private static final int READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0x1;
     private static final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0x2;
@@ -171,7 +218,7 @@ public class KeyPairActivity extends AppCompatActivity {
         Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         documentIntent.setType("*/*");
         documentIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(documentIntent, SELECT_TOKEN_FILE_ACTIVITY_REQUEST);
+        startActivityForResult(documentIntent, SELECT_PATH_ACTIVITY_REQUEST);
     }
 
     @Override
@@ -181,7 +228,7 @@ public class KeyPairActivity extends AppCompatActivity {
         }
 
         switch (requestCode) {
-            case SELECT_TOKEN_FILE_ACTIVITY_REQUEST:
+            case SELECT_PATH_ACTIVITY_REQUEST:
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                     || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                     ) {
@@ -190,18 +237,15 @@ public class KeyPairActivity extends AppCompatActivity {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
                 } else {
-                    // TODO: cannot access files yet - permissions..
                     path_uri = data.getData();
                     if (path_uri == null) {
                         pathSelection.setText("none");
+                        exportButton.setEnabled(false);
+                        importButton.setEnabled(false);
                     } else {
                         pathSelection.setText(path_uri.toString());
-
-                        // test to see if we can access the file
-                        if (!(new File(path_uri.toString())).exists()) {
-                            showErrorMessage("File Not Found", "Private key file not found: " + path_uri.toString());
-                            break;
-                        }
+                        exportButton.setEnabled(true);
+                        importButton.setEnabled(true);
                     }
                 }
                 break;
