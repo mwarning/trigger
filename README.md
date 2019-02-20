@@ -10,9 +10,13 @@ Features:
 
 ![image](screenshots.png)
 
+## Usage
+
+The status of the door is determined if the https query or ssh command returns some string `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
+
 ## Status
 
-Https calls work. SSH support is completely untested.
+Https calls work. SSH support is completely untested. The `Connect` menu item does not work yet.
 
 ## Download
 
