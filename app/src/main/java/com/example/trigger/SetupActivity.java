@@ -208,11 +208,11 @@ public class SetupActivity extends PreferenceActivity {
                     // no door type change
                     return true;
                 } else if (type.equals(HttpsDoorSetup.type)) {
-                    setup = new HttpsDoorSetup(setup.getId(), setup.getName());
+                    setup = new HttpsDoorSetup(setup.getId(), getText("name"));
                     loadSetup();
                     return true;
                 } else if (type.equals(SshDoorSetup.type)) {
-                    setup = new SshDoorSetup(setup.getId(), setup.getName());
+                    setup = new SshDoorSetup(setup.getId(), getText("name"));
                     loadSetup();
                     return true;
                 } else {
@@ -310,16 +310,17 @@ public class SetupActivity extends PreferenceActivity {
                 } else if (type == Boolean.class) {
                     field.set(setup, getChecked(name));
                 } else if (type == Integer.class) {
-                    // TODO
+                    field.set(setup, new Integer(Integer.parseInt(getText(name))));
                 } else if (type == int.class) {
-                    // TODO
+                   field.set(setup, Integer.parseInt(getText(name)));
                 } else if (type == KeyPair.class) {
                     field.set(setup, getKeyPair(name));
                 } else {
                     Log.e("SetupActivity", "storeSetup: Unhandled type for " + name + ": " + type.toString());
                 }
             } catch (Exception ex) {
-                Log.e("SetupActivity", "storeSetup: field: " + name + ", error: " + ex.toString());
+                showErrorMessage("Error", "Input for '" + name + "' caused an error: " + ex.toString());
+                return;
             }
         }
 

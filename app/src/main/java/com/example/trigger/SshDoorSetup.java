@@ -10,7 +10,7 @@ public class SshDoorSetup implements Setup {
     KeyPair keypair;
     String user;
     String host;
-    String port;
+    int port;
     String open_command;
     String close_command;
     String state_command;
@@ -22,7 +22,7 @@ public class SshDoorSetup implements Setup {
         this.keypair = null;
         this.user = "";
         this.host = "";
-        this.port = "22";
+        this.port = 22;
         this.open_command = "";
         this.close_command = "";
         this.state_command = "";
@@ -71,7 +71,7 @@ public class SshDoorSetup implements Setup {
         return user;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
