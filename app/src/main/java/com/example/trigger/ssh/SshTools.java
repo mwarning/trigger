@@ -16,7 +16,7 @@ import java.io.Serializable;
 
 
 public class SshTools {
-    // helper class that holds the content of id_rsa/id_rsa.pub file content
+    // helper class that holds the content of id_rsa/id_rsa.pub file content (PEM format)
     public static class KeyPairData implements Serializable {
         public final byte[] prvkey;
         public final byte[] pubkey;

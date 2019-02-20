@@ -1,7 +1,5 @@
 package com.example.trigger;
 
-import java.util.ArrayList;
-import static com.example.trigger.Utils.*;
 
 public interface Setup {
     public abstract int getId();

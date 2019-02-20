@@ -17,20 +17,11 @@ public class KeyPairPreference extends SwitchPreference {
     private KeyPair keypair;
     private Context context;
     static KeyPairPreference self;
-/*
-    KeyPairPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        onload();
-    }
 
-    KeyPairPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        onload();
-    }
-*/
     public KeyPairPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+
         // tell the superclass that we handle the value on out own!
         setPersistent(false);
 
@@ -59,7 +50,6 @@ public class KeyPairPreference extends SwitchPreference {
         this.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Log.d("KeyPairPreference", "onPreferenceClick");
                 KeyPairPreference p = (KeyPairPreference) preference;
 
                 // hack!
@@ -89,19 +79,9 @@ public class KeyPairPreference extends SwitchPreference {
         return keypair;
     }
 
-/*
-    @Override
-    protected Object onGetDefaultValue(TypedArray a, int index) {
-        return 
-    }
-*/
-
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         Log.d("KeyPairPreference", "onSetInitialValue");
         super.onSetInitialValue(restorePersistedValue, defaultValue);
-        // If the value can be restored, do it. If not, use the default value.
-        //setTime(restorePersistedValue ?
-        //        getPersistedInt(mTime) : (int) defaultValue);
     }
 }

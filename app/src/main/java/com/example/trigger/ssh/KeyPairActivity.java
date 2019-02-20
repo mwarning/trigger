@@ -22,9 +22,6 @@ import com.example.trigger.R;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 
-import static com.example.trigger.Utils.*;
-import static com.example.trigger.ssh.SshTools.keypairToBytes;
-
 
 public class KeyPairActivity extends AppCompatActivity {
     private KeyPairPreference preference; // hack
@@ -145,7 +142,7 @@ public class KeyPairActivity extends AppCompatActivity {
             this.fingerprint.setText("<no key loaded>");
             this.publicKey.setText("<no key loaded>");
         } else {
-            SshTools.KeyPairData data = keypairToBytes(this.keypair);
+            SshTools.KeyPairData data = SshTools.keypairToBytes(this.keypair);
 
             this.fingerprint.setText(this.keypair.getFingerPrint());
             this.publicKey.setText(new String(data.pubkey));

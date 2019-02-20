@@ -144,7 +144,7 @@ public class SetupActivity extends PreferenceActivity {
         if (etp != null) {
             return etp.getText();
         } else {
-            Log.e("SetupActivity.setText", "Cannot find key: " + key);
+            Log.e("SetupActivity.getText", "Cannot find key: " + key);
             return "";
         }
     }
@@ -163,7 +163,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             return cbp.isChecked();
         } else {
-            Log.e("SetupActivity.setChecked", "Cannot find key: " + key);
+            Log.e("SetupActivity.getChecked", "Cannot find key: " + key);
             return false;
         }
     }

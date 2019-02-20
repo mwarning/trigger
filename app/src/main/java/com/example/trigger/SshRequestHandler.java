@@ -62,7 +62,6 @@ public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
         try {
             return connectAndExecute(setup.getKeyPair(), setup.getUser(), setup.getHost(), setup.getPort(), command);
         } catch (Exception e) {
-            //e.printStackTrace();
             return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
         }
     }

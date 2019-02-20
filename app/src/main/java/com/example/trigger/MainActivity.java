@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
-import static com.example.trigger.Utils.*;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             for (int i = 0; i < setups.size(); i += 1) {
                 Setup setup = setups.get(i);
                 String ssids = setup.getSSIDs();
-                if (splitCommaSeparated(ssids).contains(ssid)) {
+                if (Utils.splitCommaSeparated(ssids).contains(ssid)) {
                     return i;
                 }
             }
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         ImageButton bc = (ImageButton) findViewById(R.id.Lock);
         ImageButton bo = (ImageButton) findViewById(R.id.Unlock);
 
-        switch(state) {
+        switch (state) {
             case OPEN:
                 stateIcon.setImageResource(R.drawable.state_open);
                 bc.setEnabled(true);
@@ -299,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         ArrayList<String> ssids = new ArrayList();
 
         for (Setup setup : setups) {
-            ssids.addAll(splitCommaSeparated(setup.getSSIDs()));
+            ssids.addAll(Utils.splitCommaSeparated(setup.getSSIDs()));
         }
 
         wifi.connectBestOf(ssids);
