@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     @Override
     public void onTaskCompleted(DoorReply r) {
-        Log.i("MainActivity.onTaskCompleted", "message: " + r.message);
+        //Log.d("MainActivity.onTaskCompleted", "message: " + r.message);
 
         Setup setup = getSelectedSetup();
         if (setup == null) {
