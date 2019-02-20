@@ -46,12 +46,6 @@
             android:text="Import/Export Path:"
             android:textStyle="bold" />
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="0dp"
-            android:background="?android:attr/dividerVertical" />
-
         <TextView
             android:id="@+id/PathSelection"
             style="?android:attr/listSeparatorTextViewStyle"
