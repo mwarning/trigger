@@ -1,7 +1,5 @@
 package com.example.trigger;
 
-import android.util.Log;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,31 +16,12 @@ enum Action {
 }
 
 public class Utils {
-    static <T> T[] array(T... elems) {
-        return elems;
-    }
-
-    static Pair pair(String a, Object b) {
-        return new Pair(a, b);
-    }
-
     static List<String> splitCommaSeparated(String str) {
         return Arrays.asList(str.trim().split("\\s*,\\s*"));
     }
 
-    static class Pair {
-        final String key;
-        Object value;
-
-        Pair(String key, Object value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
     public static byte[] readAllBytes(File file) {
         int size = (int) file.length();
-        Log.d("Utils.readAllBytes", "length: "  + size + ", path: " + file.getPath());
         byte[] bytes = new byte[size];
         try {
             BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
