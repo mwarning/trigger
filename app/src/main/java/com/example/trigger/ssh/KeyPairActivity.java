@@ -67,6 +67,13 @@ public class KeyPairActivity extends AppCompatActivity {
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
 
+        pathSelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFileSelectActivity();
+            }
+        });
+
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +111,12 @@ public class KeyPairActivity extends AppCompatActivity {
                     return;
                 }
 
-                startFileSelectActivity();
+                try {
+                    JSch jsch = new JSch();
+                    KeyPairActivity.this.keypair = KeyPair.load(jsch, path_uri.toString());
+                } catch (Exception e) {
+                    showErrorMessage("Error", "Error occured while processing key file: " + e.toString());
+                }
             }
         });
 
@@ -167,32 +179,6 @@ public class KeyPairActivity extends AppCompatActivity {
         startActivityForResult(documentIntent, SELECT_TOKEN_FILE_ACTIVITY_REQUEST);
     }
 
-    // called from onActivityResult
-    private void importKeyFile() {
-        if (path_uri == null) {
-            Log.d("KeyPairActivity", "importKeyFile: path_uri is null");
-            return;
-        } else {
-            Log.d("KeyPairActivity", "importKeyFile: " + path_uri.toString());
-        }
-
-        byte[] array = readAllBytes(new File(getFilesDir(), "id_rsa.pub"));
-        if (array == null) {
-            Log.e("KeyPairActivity", "array is null");
-        } else {
-            Log.d("KeyPairActivity", "file content: " + new String(array));
-        }
-
-        try {
-            JSch jsch = new JSch();
-            this.keypair = KeyPair.load(jsch, path_uri.toString());
-        } catch (Exception e) {
-            showErrorMessage("Error", "Error occured while processing key file: " + e.toString());
-        }
-
-        updateKeyInfo();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Activity.RESULT_CANCELED == resultCode) {
@@ -222,7 +208,6 @@ public class KeyPairActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    importKeyFile();
                 }
                 break;
         }
@@ -237,7 +222,6 @@ public class KeyPairActivity extends AppCompatActivity {
                         && PackageManager.PERMISSION_GRANTED == grantResults[0]
                         && PackageManager.PERMISSION_GRANTED == grantResults[1]) {
                     // permissions granted
-                    importKeyFile();
                 } else {
                     showErrorMessage("Read Permissions Required", "External storage read/write permissions are required for this action.");
                 }
