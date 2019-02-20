@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,7 +80,16 @@ public class KeyPairActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createNewSshIdentity();
+                try {
+                    JSch jsch = new JSch();
+                    keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 2048);
+
+                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Log.e("KeyPairActivity", e.toString());
+                }
+
+                updateKeyInfo();
             }
         });
 
@@ -100,6 +110,9 @@ public class KeyPairActivity extends AppCompatActivity {
                     SshTools.KeyPairData data = SshTools.keypairToBytes(KeyPairActivity.this.keypair);
                     writeExternalFile(getApplicationContext(), path_uri, "id_rsa.pub", data.pubkey);
                     writeExternalFile(getApplicationContext(), path_uri, "id_rsa", data.prvkey);
+
+                    // report all done
+                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     showErrorMessage("Error", e.toString());
                 }
@@ -121,6 +134,8 @@ public class KeyPairActivity extends AppCompatActivity {
 
                     JSch jsch = new JSch();
                     KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
+
+                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     showErrorMessage("Error", "Error occured while processing key file: " + e.toString());
                 }
@@ -195,17 +210,6 @@ public class KeyPairActivity extends AppCompatActivity {
             this.fingerprint.setText(this.keypair.getFingerPrint());
             this.publicKey.setText(new String(data.pubkey));
         }
-    }
-
-    private void createNewSshIdentity() {
-        try {
-            JSch jsch = new JSch();
-            keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 2048);
-        } catch (Exception e) {
-            Log.e("KeyPairActivity", "createNewSshIdentity: " + e.toString());
-        }
-
-        updateKeyInfo();
     }
 
     private static final int SELECT_PATH_ACTIVITY_REQUEST = 0x1;

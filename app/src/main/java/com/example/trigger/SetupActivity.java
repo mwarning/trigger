@@ -13,6 +13,7 @@ import android.preference.PreferenceGroup;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -328,6 +329,9 @@ public class SetupActivity extends PreferenceActivity {
             showErrorMessage("Invalid Name", "Name is not set.");
         } else {
             Settings.saveSetup(this.setup);
+
+            // report all done
+            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
         }
     }
 }
