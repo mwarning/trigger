@@ -128,7 +128,6 @@ public class KeyPairActivity extends AppCompatActivity {
                 }
 
                 try {
-                    //TODO: check if folder + append file name
                     byte[] prvkey = readExternalFile(getApplicationContext(), path_uri, "id_rsa");
                     byte[] pubkey = readExternalFile(getApplicationContext(), path_uri, "id_rsa.pub");
 
