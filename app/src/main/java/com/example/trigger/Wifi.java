@@ -85,7 +85,7 @@ public class Wifi {
         WifiConfiguration config;
         List<ScanResult> scanned;
 
-        if (wifiManager != null) {
+        if (wifiManager == null) {
             return;
         }
 

@@ -60,7 +60,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private static List<String> splitCommaSeparated(String str) {
-        return Arrays.asList(str.trim().split("\\s*,\\s*"));
+        ArrayList<String> ret = new ArrayList();
+        for (String element : str.split(",")) {
+            String e = element.trim();
+            if (e.length() > 0) {
+                ret.add(e);
+            }
+        }
+        return ret;
     }
 
     private int getPreferredSpinnerIndex(ArrayList<Setup> setups, Setup current) {
