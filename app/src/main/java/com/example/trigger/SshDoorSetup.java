@@ -1,11 +1,6 @@
 package com.example.trigger;
 
-import com.example.trigger.ssh.SshTools;
 import com.jcraft.jsch.KeyPair;
-
-import java.util.ArrayList;
-
-import static com.example.trigger.Utils.*;
 
 
 public class SshDoorSetup implements Setup {

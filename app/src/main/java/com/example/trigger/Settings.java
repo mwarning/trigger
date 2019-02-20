@@ -11,13 +11,10 @@ import com.example.trigger.ssh.SshTools;
 import com.jcraft.jsch.KeyPair;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.example.trigger.Utils.*;
 
 
 public class Settings {

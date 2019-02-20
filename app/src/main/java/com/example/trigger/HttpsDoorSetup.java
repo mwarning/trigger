@@ -1,9 +1,5 @@
 package com.example.trigger;
 
-import java.util.ArrayList;
-
-import static com.example.trigger.Utils.*;
-
 
 public class HttpsDoorSetup implements Setup {
     static final String type = "HttpsDoorSetup";

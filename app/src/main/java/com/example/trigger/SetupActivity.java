@@ -1,6 +1,5 @@
 package com.example.trigger;
 
-
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.content.Context;
@@ -18,7 +17,6 @@ import android.view.View;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import static com.example.trigger.Utils.*;
 import com.example.trigger.ssh.KeyPairPreference;
 import com.jcraft.jsch.KeyPair;
 
