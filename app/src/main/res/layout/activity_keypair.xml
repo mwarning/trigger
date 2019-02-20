@@ -1,123 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/root"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Fingerprint:"
-        android:textStyle="bold" />
-
-   <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_weight="2"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/KeyInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fingerprint:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/Fingerprint"
+            style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:text=""
-            style="?android:attr/listSeparatorTextViewStyle" />
-    </TableRow>
+            android:textIsSelectable="true" />
 
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Public Key:"
-        android:textStyle="bold" />
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Public Key:"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/PublicKey"
+            style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
             android:text=""
-            style="?android:attr/listSeparatorTextViewStyle" />
-    </TableRow>
+            android:textIsSelectable="true" />
 
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Import/Export:"
-        android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Import/Export Path:"
+            android:textStyle="bold" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="0dp"
+            android:background="?android:attr/dividerVertical" />
 
         <TextView
             android:id="@+id/PathSelection"
+            style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textIsSelectable="true"
+            android:clickable="true"
+            android:onClick="onClick"
             android:text=""
-            style="?android:attr/listSeparatorTextViewStyle" />
-    </TableRow>
+            android:textIsSelectable="true" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="0dp"
-        android:background="?android:attr/dividerVertical" /> 
+    </LinearLayout>
 
     <LinearLayout
         style="?android:attr/buttonBarStyle"
-        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="0"
         android:layout_width="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/ImportButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.2"
+            android:layout_weight="1"
             android:text="Import" />
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/ExportButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.2"
+            android:layout_weight="1"
             android:text="Export" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_gravity="center"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/CreateButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.2"
+            android:layout_weight="1"
             android:text="Create" />
 
-       <Button
-            style="?android:attr/buttonBarButtonStyle"
+        <Button
             android:id="@+id/CancelButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.2"
+            android:layout_weight="1"
             android:text="Cancel" />
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/OkButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="0.2"
+            android:layout_weight="1"
             android:text="Ok" />
 
     </LinearLayout>
