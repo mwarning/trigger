@@ -12,11 +12,11 @@ Features:
 
 ## Usage
 
-The status of the door is determined if the https query or ssh command returns some string `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
+The status of the door is determined if the https query or ssh command returns the strings `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
 
 ## Status
 
-Https calls work. SSH support is completely untested. The `Connect` menu item does not work yet.
+Https/SSH calls work. The `Connect` menu item does not work yet. Sending the ssh public key as a registration mechanism is missing. The ssh key pair cannot be removed right now (but overwritten).
 
 ## Download
 
