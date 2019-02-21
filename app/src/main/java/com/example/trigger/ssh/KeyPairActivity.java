@@ -1,12 +1,13 @@
 package com.example.trigger.ssh;
 
+import com.github.isabsent.filepicker.SimpleFilePickerDialog;
+import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
+
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,29 +18,35 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import com.example.trigger.R;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 
+import org.apache.commons.io.IOUtils;
 
-public class KeyPairActivity extends AppCompatActivity {
+
+public class KeyPairActivity extends AppCompatActivity implements
+        SimpleFilePickerDialog.InteractionListenerString,SimpleFilePickerDialog.InteractionListenerInt {
+    private static final String SELECT_PATH_REQUEST_STR = "SELECT_PATH_REQUEST";
+    private static final int SELECT_PATH_REQUEST_INT = 0x01;
     private KeyPairPreference preference; // hack
     private AlertDialog.Builder builder;
     private Button createButton;
     private Button importButton;
     private Button exportButton;
     private Button cancelButton;
+    private Button selectButton;
     private Button okButton;
     private TextView fingerprint;
     private TextView publicKey;
     private TextView pathSelection;
     private KeyPair keypair;
-    private Uri path_uri;
+    private String selected_path;
 
     private void showErrorMessage(String title, String message) {
         builder.setTitle(title);
@@ -55,23 +62,20 @@ public class KeyPairActivity extends AppCompatActivity {
 
         this.preference = KeyPairPreference.self; // hack, TODO: pass serialized key in bundle
         this.keypair = this.preference.getKeyPair();
+        //this.keypair = SshTools.deserializeKeyPair(
+        //    getIntent().getStringExtra("keypair")
+        //);
 
         builder = new AlertDialog.Builder(this);
         createButton = (Button) findViewById(R.id.CreateButton);
         importButton = (Button) findViewById(R.id.ImportButton);
         exportButton = (Button) findViewById(R.id.ExportButton);
-        okButton = (Button) findViewById(R.id.OkButton);
         cancelButton = (Button) findViewById(R.id.CancelButton);
+        selectButton = (Button) findViewById(R.id.SelectButton);
+        okButton = (Button) findViewById(R.id.OkButton);
         fingerprint = (TextView) findViewById(R.id.Fingerprint);
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
-
-        pathSelection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startFileSelectActivity();
-            }
-        });
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,51 +93,34 @@ public class KeyPairActivity extends AppCompatActivity {
             }
         });
 
+        selectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] permissions = new String[] {
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                };
+
+                if (hasPermissions(permissions)) {
+                    final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    showListItemDialog("Pick Directory", rootPath, FOLDER_ONLY_SINGLE_CHOICE, SELECT_PATH_REQUEST_STR);
+                } else {
+                    ActivityCompat.requestPermissions(KeyPairActivity.this, permissions, SELECT_PATH_REQUEST_INT);
+                }
+            }
+        });
+
         exportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (KeyPairActivity.this.keypair == null) {
-                    showErrorMessage("No Key", "No key loaded to export.");
-                    return;
-                }
-
-                if (path_uri == null) {
-                    showErrorMessage("Missing Target", "No output folder was selected.");
-                    return;
-                }
-
-                try {
-                    SshTools.KeyPairData data = SshTools.keypairToBytes(KeyPairActivity.this.keypair);
-                    writeExternalFile(getApplicationContext(), path_uri, "id_rsa.pub", data.pubkey);
-                    writeExternalFile(getApplicationContext(), path_uri, "id_rsa", data.prvkey);
-
-                    // report all done
-                    Toast.makeText(getApplicationContext(), "Done exporting files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    showErrorMessage("Error", e.toString());
-                }
+                exportKeys();
             }
         });
 
         importButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (path_uri == null) {
-                    showErrorMessage("Missing Target", "No public key file was selected.");
-                    return;
-                }
-
-                try {
-                    byte[] prvkey = readExternalFile(getApplicationContext(), path_uri, "id_rsa");
-                    byte[] pubkey = readExternalFile(getApplicationContext(), path_uri, "id_rsa.pub");
-
-                    JSch jsch = new JSch();
-                    KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
-
-                    Toast.makeText(getApplicationContext(), "Done importing files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    showErrorMessage("Error", "Error occured while processing key file: " + e.toString());
-                }
+                importKeys();
             }
         });
 
@@ -160,40 +147,90 @@ public class KeyPairActivity extends AppCompatActivity {
         updatePathInfo();
     }
 
-    // write file to external storage
-    private static void writeExternalFile(Context context, Uri dirUri, String filename, byte[] data) throws IOException {
-        String path = dirUri.toString();
-        dirUri = Uri.parse(path.substring(0, path.lastIndexOf("%2F")));
-        Uri fileUri = Uri.withAppendedPath(dirUri, filename);
+    private void exportKeys() {
+        if (selected_path == null) {
+            showErrorMessage("No Directory Selected", "No directory for export selected.");
+        } else if (keypair == null) {
+            showErrorMessage("No Key Pair", "No keys loaded to export.");
+        } else try {
+            SshTools.KeyPairData data = SshTools.keypairToBytes(KeyPairActivity.this.keypair);
 
-        // Create a new file and write into it
-        OutputStream out = context.getContentResolver().openOutputStream(fileUri);
-        out.write(data);
-        out.close();
+            writeExternalFile(selected_path + "/id_rsa.pub", data.pubkey);
+            writeExternalFile(selected_path + "/id_rsa", data.prvkey);
+
+            Toast.makeText(getApplicationContext(), "Done exporting files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            showErrorMessage("Error", e.getMessage());
+        }
+    }
+
+    private void importKeys() {
+        if (selected_path == null) {
+            showErrorMessage("No Directory Selected", "No directory for import selected.");
+        } else try {
+            byte[] prvkey = readExternalFile(selected_path + "/id_rsa");
+            byte[] pubkey = readExternalFile(selected_path + "/id_rsa.pub");
+
+            JSch jsch = new JSch();
+            KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
+
+            Toast.makeText(getApplicationContext(), "Done importing files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            showErrorMessage("Error", e.getMessage());
+        }
+    }
+
+    @Override
+    public void showListItemDialog(int titleResId, String folderPath, SimpleFilePickerDialog.CompositeMode mode, String dialogTag){
+        SimpleFilePickerDialog.build(folderPath, mode)
+                .title(titleResId)
+                .show(this, dialogTag);
+    }
+
+    // path picker
+    @Override
+    public void showListItemDialog(String title, String folderPath, SimpleFilePickerDialog.CompositeMode mode, String dialogTag){
+        SimpleFilePickerDialog.build(folderPath, mode)
+                .title(title)
+                .show(this, dialogTag);
+    }
+
+    @Override
+    public boolean onResult(@NonNull String dialogTag, int which, @NonNull Bundle extras) {
+        switch (dialogTag) {
+            case SELECT_PATH_REQUEST_STR:
+                if (extras.containsKey(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)) {
+                    String selectedSinglePath = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH);
+                    this.selected_path = selectedSinglePath;
+                    updatePathInfo();
+                }
+                break;
+        }
+        return false;
+    }
+
+    // write file to external storage
+    private static void writeExternalFile(String filepath, byte[] data) throws IOException {
+        File file = new File(filepath);
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IOException("Failed to delete existing file: " + filepath);
+            }
+        }
+        file.createNewFile();
+        FileOutputStream fos = new FileOutputStream(file);
+        IOUtils.write(data, fos);
+        fos.close();
     }
 
     // read file from external storage
-    private static byte[] readExternalFile(Context context, Uri dirUri, String filename) throws IOException {
-        String path = dirUri.toString();
-        dirUri = Uri.parse(path.substring(0, path.lastIndexOf("%2F")));
-        Uri fileUri = Uri.withAppendedPath(dirUri, filename);
-
-        InputStream input = context.getContentResolver().openInputStream(dirUri);
-
-        if (input == null) {
-            throw new IOException("File not found.");
+    private static byte[] readExternalFile(String filepath) throws IOException {
+        File file = new File(filepath);
+        if (!file.exists()) {
+            throw new IOException("File does not exist: " + filepath);
         }
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        int size;
-
-        while ((length = input.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-
-        return result.toByteArray();
+        FileInputStream fis = new FileInputStream(file);
+        return IOUtils.toByteArray(fis);
     }
 
     private void updateKeyInfo() {
@@ -209,75 +246,44 @@ public class KeyPairActivity extends AppCompatActivity {
     }
 
     private void updatePathInfo() {
-        if (path_uri == null) {
+        if (selected_path == null) {
             pathSelection.setText("<none selected>");
             exportButton.setEnabled(false);
             importButton.setEnabled(false);
         } else {
-            pathSelection.setText(path_uri.getPath());
+            pathSelection.setText(this.selected_path);
             exportButton.setEnabled(true);
             importButton.setEnabled(true);
         }
     }
 
-    private static final int SELECT_PATH_ACTIVITY_REQUEST = 0x1;
-
-    private static final int READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0x1;
-    private static final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST = 0x2;
-    private static final int CAMERA_PERMISSION_REQUEST = 0x3;
-
-    private void startFileSelectActivity() {
-        Intent documentIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        documentIntent.setType("*/*");
-        documentIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(documentIntent, SELECT_PATH_ACTIVITY_REQUEST);
+    private boolean hasPermissions(String[] permissions) {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (Activity.RESULT_CANCELED == resultCode) {
-            return;
+    private boolean allGranted(int[] grantResults) {
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
         }
-
-        switch (requestCode) {
-            case SELECT_PATH_ACTIVITY_REQUEST:
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                    || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                    ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
-                } else {
-                    path_uri = data.getData();
-                    updatePathInfo();
-                }
-                break;
-        }
+        return true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST:
-                if(grantResults.length > 0 && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
+            case SELECT_PATH_REQUEST_INT:
+                if (allGranted(grantResults)) {
                     // permissions granted
+                    Toast.makeText(getApplicationContext(), "Permissions granted - please try again.", Toast.LENGTH_SHORT).show();
                 } else {
-                    showErrorMessage("Write Permissions Required", "External storage write permissions are required for this action.");
-                }
-                break;
-            case READ_EXTERNAL_STORAGE_PERMISSION_REQUEST:
-                if(grantResults.length > 0 && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
-                    // permissions granted
-                } else {
-                    showErrorMessage("Read Permissions Required", "External storage read permissions are required for this action.");
-                }
-                break;
-            case CAMERA_PERMISSION_REQUEST:
-                if(grantResults.length > 0 && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
-                    // permissions granted
-                } else {
-                    showErrorMessage("Camera Permissions Required", "Camera access permissions for external storage are required for this action.");
+                    //showErrorMessage("Write Permissions Required", "External storage write permissions are required for this action.");
                 }
                 break;
         }
