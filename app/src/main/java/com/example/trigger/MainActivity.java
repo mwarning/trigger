@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         // display message
         if (state.message.length() > 0) {
             Context context = getApplicationContext();
-            Toast.makeText(context, r.message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show();
         }
     }
 
