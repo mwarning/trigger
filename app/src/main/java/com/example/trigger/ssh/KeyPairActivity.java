@@ -66,10 +66,6 @@ public class KeyPairActivity extends AppCompatActivity {
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
 
-        // only active after path was selected
-        exportButton.setEnabled(false);
-        importButton.setEnabled(false);
-
         pathSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +157,7 @@ public class KeyPairActivity extends AppCompatActivity {
         });
 
         updateKeyInfo();
+        updatePathInfo();
     }
 
     // write file to external storage
@@ -199,15 +196,27 @@ public class KeyPairActivity extends AppCompatActivity {
         return result.toByteArray();
     }
 
-    void updateKeyInfo() {
-        if (this.keypair == null) {
-            this.fingerprint.setText("<no key loaded>");
-            this.publicKey.setText("<no key loaded>");
+    private void updateKeyInfo() {
+        if (keypair == null) {
+            fingerprint.setText("<no key loaded>");
+            publicKey.setText("<no key loaded>");
         } else {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(this.keypair);
+            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
 
-            this.fingerprint.setText(this.keypair.getFingerPrint());
-            this.publicKey.setText(new String(data.pubkey));
+            fingerprint.setText(keypair.getFingerPrint());
+            publicKey.setText(new String(data.pubkey));
+        }
+    }
+
+    private void updatePathInfo() {
+        if (path_uri == null) {
+            pathSelection.setText("<none selected>");
+            exportButton.setEnabled(false);
+            importButton.setEnabled(false);
+        } else {
+            pathSelection.setText(path_uri.getPath());
+            exportButton.setEnabled(true);
+            importButton.setEnabled(true);
         }
     }
 
@@ -241,15 +250,7 @@ public class KeyPairActivity extends AppCompatActivity {
                         READ_EXTERNAL_STORAGE_PERMISSION_REQUEST);
                 } else {
                     path_uri = data.getData();
-                    if (path_uri == null) {
-                        pathSelection.setText("none");
-                        exportButton.setEnabled(false);
-                        importButton.setEnabled(false);
-                    } else {
-                        pathSelection.setText(path_uri.toString());
-                        exportButton.setEnabled(true);
-                        importButton.setEnabled(true);
-                    }
+                    updatePathInfo();
                 }
                 break;
         }
