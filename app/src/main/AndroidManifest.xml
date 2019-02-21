@@ -40,7 +40,7 @@
         </activity>
         <activity
             android:name=".ssh.KeyPairActivity"
-            android:label="Key Pair Activity Label"
+            android:label="Manage Key Pair"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name=".ssh.KeyPairActivity" />
