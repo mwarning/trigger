@@ -9,6 +9,7 @@ public class SshDoorSetup implements Setup {
     String name;
     KeyPair keypair;
     String user;
+    String password;
     String host;
     int port;
     String open_command;
@@ -21,6 +22,7 @@ public class SshDoorSetup implements Setup {
         this.name = name;
         this.keypair = null;
         this.user = "";
+        this.password = "";
         this.host = "";
         this.port = 22;
         this.open_command = "";
@@ -45,49 +47,23 @@ public class SshDoorSetup implements Setup {
     }
 
     @Override
+    public String getSSIDs() {
+        return ssids;
+    }
+
+    @Override
     public DoorState parseReply(DoorReply reply) {
         // TODO: This is probably not the expected way to parse the reply.
         // It probably needs to be made configurable (setting with regex?)
-        if (reply.message.contains("UNLOCKED")) {
+        String msg = reply.message.trim();
+        if (msg.contains("UNLOCKED")) {
             // door unlocked
-            return new DoorState(StateCode.OPEN, "");
+            return new DoorState(StateCode.OPEN, msg);
         } else if (reply.message.contains("LOCKED")) {
             // door locked
-            return new DoorState(StateCode.CLOSED, "");
+            return new DoorState(StateCode.CLOSED, msg);
         } else {
-            return new DoorState(StateCode.UNKNOWN, reply.message);
+            return new DoorState(StateCode.UNKNOWN, msg);
         }
-    }
-
-    public KeyPair getKeyPair() {
-        return keypair;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public String getOpenCommand() {
-        return open_command;
-    }
-
-    public String getCloseCommand() {
-        return close_command;
-    }
-
-    public String getStateCommand() {
-        return state_command;
-    }
-
-    public String getSSIDs() {
-        return ssids;
     }
 }

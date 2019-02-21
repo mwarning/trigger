@@ -100,6 +100,13 @@
             android:inputType="text" />
 
         <EditTextPreference
+            android:title="Password"
+            android:key="password"
+            android:summary="Login password."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
             android:title="Open Command"
             android:key="open_command"
             android:summary="Execute after login to open door."

@@ -40,27 +40,25 @@ public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
         if (setup.getId() < 0) {
             return DoorReply.internal_error();
         }
-
         String command = "";
 
         switch (action) {
             case open_door:
-                command = setup.getOpenCommand();
+                command = setup.open_command;
                 break;
             case close_door:
-                command = setup.getCloseCommand();
+                command = setup.close_command;
                 break;
             case update_state:
-                command = setup.getStateCommand();
+                command = setup.state_command;
                 break;
-        }
-
-        if (command.isEmpty()) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
         }
 
         try {
-            return connectAndExecute(setup.getKeyPair(), setup.getUser(), setup.getHost(), setup.getPort(), command);
+            return connectAndExecute(
+                setup.keypair, setup.user, setup.password,
+                setup.host, setup.port, command
+            );
         } catch (Exception e) {
             return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
         }
@@ -70,30 +68,51 @@ public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
         listener.onTaskCompleted(result);
     }
 
-    private static final DoorReply connectAndExecute(KeyPair keypair, String user, String host, int port, String command)
+    private static final DoorReply connectAndExecute(KeyPair keypair, String user, String password, String host, int port, String command)
             throws Exception {
+
+        if (command.isEmpty()) {
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+        }
+
+        if (host.isEmpty()) {
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Host is empty.");
+        }
+
+        // fallback
+        if (user.isEmpty()) {
+            user = "root";
+        }
+
         JSch jsch = new JSch();
 
-        SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
+        if (keypair != null) {
+            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
+            byte passphrase[] = new byte[0];
 
-        byte passphrase[] = new byte[0];
-
-        jsch.addIdentity("authkey", data.prvkey, data.pubkey, passphrase);
+            jsch.addIdentity("authkey", data.prvkey, data.pubkey, passphrase);
+        }
 
         Session session = jsch.getSession(user, host, port);
+
+        if (password.length() > 0) {
+            session.setPassword(password);
+        }
+
         session.setConfig("StrictHostKeyChecking", "no");
-        //java.util.Properties config = new java.util.Properties();
-        //config.put("StrictHostKeyChecking", "no");
-        //session.setConfig(config);
+
         StringBuilder outputBuffer = new StringBuilder();
 
         try {
-            session.connect();
+            session.connect(5000); // 5sec timeout
 
             Channel channel = session.openChannel("exec");
+
             ((ChannelExec) channel).setCommand(command);
             InputStream commandOutput = channel.getInputStream();
+
             channel.connect();
+
             int readByte = commandOutput.read();
 
             while (readByte != 0xffffffff) {

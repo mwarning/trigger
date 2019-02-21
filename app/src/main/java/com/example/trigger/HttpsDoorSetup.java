@@ -32,13 +32,13 @@ public class HttpsDoorSetup implements Setup {
     }
 
     @Override
-    public String getSSIDs() {
-        return ssids;
+    public String getType() {
+        return type;
     }
 
     @Override
-    public String getType() {
-        return type;
+    public String getSSIDs() {
+        return ssids;
     }
 
     @Override
@@ -53,10 +53,10 @@ public class HttpsDoorSetup implements Setup {
             case SUCCESS:
                 if (msg.equals("UNLOCKED")) {
                     // door unlocked
-                    return new DoorState(StateCode.OPEN, "");
+                    return new DoorState(StateCode.OPEN, msg);
                 } else if (msg.equals("LOCKED")) {
                     // door locked
-                    return new DoorState(StateCode.CLOSED, "");
+                    return new DoorState(StateCode.CLOSED, msg);
                 } else {
                     return new DoorState(StateCode.UNKNOWN, msg);
                 }
@@ -64,21 +64,5 @@ public class HttpsDoorSetup implements Setup {
                 // should not happen
                 return new DoorState(StateCode.UNKNOWN, msg);
         }
-    }
-
-    public String getOpenQuery() {
-        return open_query;
-    }
-
-    public String getCloseQuery() {
-        return close_query;
-    }
-
-    public String getStatusQuery() {
-        return status_query;
-    }
-
-    public Boolean ignoreCertErrors() {
-        return ignore_cert;
     }
 }

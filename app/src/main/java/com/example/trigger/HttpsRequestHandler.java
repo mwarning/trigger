@@ -43,13 +43,13 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
 
         switch (action) {
             case open_door:
-                command = setup.getOpenQuery();
+                command = setup.open_query;
                 break;
             case close_door:
-                command = setup.getCloseQuery();
+                command = setup.close_query;
                 break;
             case update_state:
-                command = setup.getStatusQuery();
+                command = setup.status_query;
                 break;
         }
 
@@ -59,7 +59,8 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
         }
 
         try {
-            if (setup.ignoreCertErrors()) {
+            if (setup.ignore_cert) {
+                // ignore cert errors
                 HttpsTrustManager.setVerificationDisable();
             } else {
                 HttpsTrustManager.setVerificationEnable();
