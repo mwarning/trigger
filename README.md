@@ -8,7 +8,8 @@ Features:
  - multiple door profiles
  - auto select profiles by connected WiFi
 
-![image](screenshots.png)
+![image](screenshot_states.png)
+![image](screenshot_settings.png)
 
 ## Usage
 
