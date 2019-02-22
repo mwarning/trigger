@@ -311,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         return true;
     }
 
+/*
     private void connectNextWifi() {
         // collect app configured SSIDs
         ArrayList<Setup> setups = Settings.getAllSetups();
@@ -323,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         wifi.connectBestOf(ssids);
         updateSpinner();
     }
+*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menu_item) {
@@ -355,10 +357,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         if (id == R.id.action_reload) {
             callRequestHandler(Action.update_state);
-        }
-
-        if (id == R.id.action_connect) {
-            connectNextWifi();
         }
 
         return super.onOptionsItemSelected(menu_item);

@@ -6,7 +6,6 @@
     <string name="action_edit">Verändern</string>
     <string name="action_new">Neu</string>
     <string name="action_reload">Aktualisieren</string>
-    <string name="action_connect">Verbinden</string>
     <string name="action_about">Über</string>
 
     <string name="new_entry">Neuer Eintrag</string>
