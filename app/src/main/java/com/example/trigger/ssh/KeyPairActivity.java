@@ -31,7 +31,7 @@ import org.apache.commons.io.IOUtils;
 
 
 public class KeyPairActivity extends AppCompatActivity implements
-        SimpleFilePickerDialog.InteractionListenerString,SimpleFilePickerDialog.InteractionListenerInt {
+        SimpleFilePickerDialog.InteractionListenerString {
     private static final String SELECT_PATH_REQUEST_STR = "SELECT_PATH_REQUEST";
     private static final int SELECT_PATH_REQUEST_INT = 0x01;
     private KeyPairPreference preference; // hack
@@ -178,13 +178,6 @@ public class KeyPairActivity extends AppCompatActivity implements
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
-    }
-
-    @Override
-    public void showListItemDialog(int titleResId, String folderPath, SimpleFilePickerDialog.CompositeMode mode, String dialogTag){
-        SimpleFilePickerDialog.build(folderPath, mode)
-                .title(titleResId)
-                .show(this, dialogTag);
     }
 
     // path picker
