@@ -19,7 +19,9 @@ The status of the door is determined if the https query or ssh command returns t
 
 ## Status
 
-Https/SSH calls work. Sending the ssh public key as a registration mechanism is missing. The ssh key pair cannot be removed right now (but overwritten).
+- Https/SSH calls work.
+- Sending the ssh public key as a registration mechanism is missing.
+- The ssh key pair cannot be explicitly removed right now (but replaced).
 
 ## Download
 
