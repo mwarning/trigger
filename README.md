@@ -11,6 +11,8 @@ Features:
 ![image](screenshot_states.png)
 ![image](screenshot_settings.png)
 
+Any help, bugfixes, new features, translations are much welcome.
+
 ## Usage
 
 The status of the door is determined if the https query or ssh command returns the strings `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
@@ -32,17 +34,6 @@ On Linux based systems:
 ```
 ./gradlew assembleRelease
 ```
-
-## Development
-
-Any help, bugfixes, new features are much welcome.
-
-Feature suggestions:
-- translations (only english and german available so far)
-- more flexible trigger queries and protocols (ssh?)
-- use specific certificates
-
-Feel free to fork this project, move it into an organisation or whatever the license allows. :-)
 
 ## Related Projects
 
