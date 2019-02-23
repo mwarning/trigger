@@ -9,7 +9,12 @@ Features:
  - auto select profiles by connected WiFi
 
 ![image](screenshot_states.png)
+
+(door status open/closed/unknown/disabled)
+
 ![image](screenshot_settings.png)
+
+(https setup, ssh setup, ssh key pair management)
 
 Any help, bugfixes, new features, translations are much welcome.
 
