@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 
 public class Settings {
-    private static ArrayList<Setup> sharedSetups;
     private static SharedPreferences sharedPreferences;
     private static String app_version; // stored in program
     private static String db_version; // stored in database
@@ -118,7 +117,6 @@ public class Settings {
 
     static void init(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedSetups = new ArrayList<Setup>();
 
         app_version = getApplicationVersion(context);
         db_version = getDatabaseVersion(context);
