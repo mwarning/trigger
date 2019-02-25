@@ -1,68 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-            android:title="@string/setup_title"
-            android:key="main_category"
-            android:persistent="false" >
+        android:key="main_category"
+        android:persistent="false"
+        android:title="@string/setup_title">
 
         <EditTextPreference
-            android:title="@string/setup_name"
-            android:summary="@string/setup_name_description"
             android:defaultValue=""
+            android:inputType="text"
             android:key="name"
             android:persistent="false"
-            android:inputType="text" />
+            android:summary="@string/setup_name_description"
+            android:title="@string/setup_name" />
 
         <ListPreference
-            android:key="type"
-            android:title="Door Type"
-            android:summary="Type of the door mechanism."
             android:entries="@array/SetupTypes"
-            android:entryValues="@array/SetupTypeValues" />
+            android:entryValues="@array/SetupTypeValues"
+            android:key="type"
+            android:summary="Type of the door mechanism."
+            android:title="Door Type" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:title="HTTPS Settings"
-            android:key="HttpsDoorSetup"
-            android:persistent="false" >
+        android:key="HttpsDoorSetup"
+        android:persistent="false"
+        android:title="HTTPS Settings">
 
         <EditTextPreference
-            android:title="Open URL"
+            android:inputType="text"
             android:key="open_query"
+            android:persistent="false"
             android:summary="Called to open the door."
-            android:persistent="false"
-            android:inputType="text" />
+            android:title="Open URL" />
 
         <EditTextPreference
-            android:title="Close URL"
+            android:inputType="text"
             android:key="close_query"
+            android:persistent="false"
             android:summary="Called to close the door."
-            android:persistent="false"
-            android:inputType="text" />
+            android:title="Close URL" />
 
         <EditTextPreference
-            android:title="Status URL"
+            android:inputType="text"
             android:key="status_query"
-            android:summary="Called to request the door status."
             android:persistent="false"
-            android:inputType="text" />
+            android:summary="Called to request the door status."
+            android:title="Status URL" />
 
         <EditTextPreference
-            android:title="@string/setup_ssids"
-            android:summary="@string/setup_ssids_description"
             android:defaultValue=""
+            android:inputType="text"
             android:key="ssids"
             android:persistent="false"
-            android:inputType="text" />
+            android:summary="@string/setup_ssids_description"
+            android:title="@string/setup_ssids" />
 
         <CheckBoxPreference
-            android:title="@string/setup_ignore"
-            android:summary="@string/setup_ignore_description"
             android:defaultValue="false"
+            android:key="ignore_cert"
             android:persistent="false"
-            android:key="ignore_cert" />
+            android:summary="@string/setup_ignore_description"
+            android:title="@string/setup_ignore" />
 
     </PreferenceCategory>
 
