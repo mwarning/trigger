@@ -34,6 +34,8 @@ The status of the door is determined if the https query or ssh command returns t
 
 Alternatively, you can download packages (apk) in the [release](https://github.com/mwarning/trigger/releases) section.
 
+Note minimum Android version is 7.1.
+
 ## Build from Sources
 
 On Linux based systems:
