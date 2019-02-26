@@ -1,4 +1,4 @@
-package com.example.trigger;
+package com.example.trigger.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,13 +6,18 @@ import java.io.InputStream;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.trigger.ssh.SshTools;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
+
+import com.example.trigger.MainActivity.Action;
+import com.example.trigger.SshDoorSetup;
+import com.example.trigger.DoorReply;
+import com.example.trigger.DoorReply.ReplyCode;
+import com.example.trigger.OnTaskCompleted;
 
 
 public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {

@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Wifi {
+public class WifiTools {
     private WifiManager wifiManager;
 
-	Wifi(Context context) {
+	WifiTools(Context context) {
 		 this.wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 	}
 

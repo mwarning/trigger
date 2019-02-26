@@ -1,15 +1,19 @@
 package com.example.trigger;
 
+import com.example.trigger.DoorState;
+import com.example.trigger.DoorState.StateCode;
+
 
 public class HttpsDoorSetup implements Setup {
     static final String type = "HttpsDoorSetup";
     int id;
     String name;
-    String open_query;
-    String close_query;
-    String status_query;
-    String ssids;
-    Boolean ignore_cert;
+    public String open_query;
+    public String close_query;
+    public String status_query;
+    public String ssids;
+    public String certificate;
+    public Boolean ignore_cert;
 
     public HttpsDoorSetup(int id, String name) {
         this.id = id;

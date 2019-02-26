@@ -1,4 +1,4 @@
-package com.example.trigger;
+package com.example.trigger.https;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +11,12 @@ import java.net.URL;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.trigger.MainActivity.Action;
+import com.example.trigger.HttpsDoorSetup;
+import com.example.trigger.DoorReply;
+import com.example.trigger.DoorReply.ReplyCode;
+import com.example.trigger.OnTaskCompleted;
 
 
 public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {

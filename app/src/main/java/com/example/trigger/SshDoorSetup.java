@@ -2,20 +2,22 @@ package com.example.trigger;
 
 import com.jcraft.jsch.KeyPair;
 
+import com.example.trigger.DoorState.StateCode;
+
 
 public class SshDoorSetup implements Setup {
     static final String type = "SshDoorSetup";
     int id;
     String name;
-    KeyPair keypair;
-    String user;
-    String password;
-    String host;
-    int port;
-    String open_command;
-    String close_command;
-    String state_command;
-    String ssids;
+    public KeyPair keypair;
+    public String user;
+    public String password;
+    public String host;
+    public int port;
+    public String open_command;
+    public String close_command;
+    public String state_command;
+    public String ssids;
 
     public SshDoorSetup(int id, String name) {
         this.id = id;

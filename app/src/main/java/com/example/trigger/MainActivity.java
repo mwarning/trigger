@@ -19,6 +19,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.net.ConnectivityManager;
+import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +27,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
+import com.example.trigger.DoorState;
+import com.example.trigger.DoorState.StateCode;
+import com.example.trigger.https.HttpsRequestHandler;
+import com.example.trigger.ssh.SshRequestHandler;
 
-
-enum Action {
-    open_door,
-    close_door,
-    update_state
-}
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean enableRefreshButton = false;
@@ -41,7 +39,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private OnTaskCompleted listener;
     private ImageView stateIcon;
     private Spinner spinner;
-    private Wifi wifi;
+    private WifiTools wifi;
+
+    public enum Action {
+        open_door,
+        close_door,
+        update_state
+    }
 
     // helper class for spinner
     private static class SpinnerItem {
@@ -160,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         setContentView(R.layout.activity_main);
 
         Context context = this.getApplicationContext();
-        this.wifi = new Wifi(context);
+        this.wifi = new WifiTools(context);
         Settings.init(context);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
