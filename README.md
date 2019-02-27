@@ -24,6 +24,8 @@ Any help, bugfixes, new features, translations are much welcome.
 
 Alternatively, you can download packages (apk) in the [release](https://github.com/mwarning/trigger/releases) section.
 
+Note minimum Android version is 7.1.
+
 ## Usage
 
 The status of the door is determined if the https query or ssh command returns the strings `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
