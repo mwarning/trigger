@@ -18,6 +18,12 @@ Features:
 
 Any help, bugfixes, new features, translations are much welcome.
 
+## Download
+
+[<img src="fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
+
+Alternatively, you can download packages (apk) in the [release](https://github.com/mwarning/trigger/releases) section.
+
 ## Usage
 
 The status of the door is determined if the https query or ssh command returns the strings `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
@@ -27,12 +33,6 @@ The status of the door is determined if the https query or ssh command returns t
 - Https/SSH calls work.
 - Sending the ssh public key as a registration mechanism is missing.
 - The ssh key pair cannot be explicitly removed right now (but replaced).
-
-## Download
-
-[<img src="fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
-
-Alternatively, you can download packages (apk) in the [release](https://github.com/mwarning/trigger/releases) section.
 
 ## Build from Sources
 
