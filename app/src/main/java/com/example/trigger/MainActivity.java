@@ -4,7 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -38,8 +42,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean enableEditButton = false;
     private OnTaskCompleted listener;
     private ImageView stateIcon;
+    private ImageButton lock;
+    private ImageButton unlock;
     private Spinner spinner;
     private WifiTools wifi;
+    private Animation pressed;
 
     public enum Action {
         open_door,
@@ -181,6 +188,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         spinner = (Spinner) findViewById(R.id.selection_spinner);
         stateIcon = (ImageView) findViewById(R.id.stateIcon);
+        lock = (ImageButton) findViewById(R.id.Lock);
+        unlock = (ImageButton) findViewById(R.id.Unlock);
+        pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
         updateSpinner();
 
@@ -192,51 +202,50 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         listener = this;
     }
 
-    public void onUnlock(View view) {
-        callRequestHandler(Action.open_door);
-    }
-
     public void onUpdateState(View view) {
         callRequestHandler(Action.update_state);
     }
 
+    public void onUnlock(View view) {
+        unlock.startAnimation(pressed);
+        callRequestHandler(Action.open_door);
+    }
+
     public void onLock(View view) {
+        lock.startAnimation(pressed);
         callRequestHandler(Action.close_door);
     }
 
     private void changeUI(StateCode state) {
-        ImageButton bc = (ImageButton) findViewById(R.id.Lock);
-        ImageButton bo = (ImageButton) findViewById(R.id.Unlock);
-
         switch (state) {
             case OPEN:
                 stateIcon.setImageResource(R.drawable.state_open);
-                bc.setEnabled(true);
-                bo.setEnabled(true);
+                lock.setEnabled(true);
+                unlock.setEnabled(true);
                 break;
 
             case CLOSED:
                 stateIcon.setImageResource(R.drawable.state_closed);
-                bc.setEnabled(true);
-                bo.setEnabled(true);
+                lock.setEnabled(true);
+                unlock.setEnabled(true);
                 break;
 
             case DISABLED:
                 stateIcon.setImageResource(R.drawable.state_wifi);
-                bc.setEnabled(false);
-                bo.setEnabled(false);
+                lock.setEnabled(false);
+                unlock.setEnabled(false);
                 enableRefreshButton = false;
                 break;
 
             case UNKNOWN:
                 stateIcon.setImageResource(R.drawable.state_unknown);
                 // Enabled, in case the API does not support state queries
-                bc.setEnabled(true);
-                bo.setEnabled(true);
+                lock.setEnabled(true);
+                unlock.setEnabled(true);
                 break;
         }
 
-        if(state != StateCode.DISABLED) {
+        if (state != StateCode.DISABLED) {
             enableRefreshButton = true;
         }
 
