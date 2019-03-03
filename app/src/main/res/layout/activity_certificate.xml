@@ -53,6 +53,14 @@
             android:textAlignment="center" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Certificate URL"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/CertificateUrl"
             style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
