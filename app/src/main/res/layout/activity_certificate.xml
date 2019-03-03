@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/CertificateInfo"
-            android:layout_height="wrap_content"
+            android:layout_height="300sp"
             android:text=""
             android:scrollHorizontally="true"
             android:scrollbars="horizontal"
