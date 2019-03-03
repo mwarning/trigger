@@ -45,6 +45,7 @@ public class CertificateActivity extends AppCompatActivity implements
     private TextView pathSelection;
     private Certificate certificate;
     private String fetch_url;
+    private String selected_path;
 
     @Override
     public void onTaskCompleted(CertificateFetchHandler.Result r) {
@@ -74,7 +75,7 @@ public class CertificateActivity extends AppCompatActivity implements
         //this.certificate = SshTools.deserializeKeyPair(
         //    getIntent().getStringExtra("certificate")
         //);
-        String fetch_url = getIntent().getStringExtra("fetch_url");
+        this.fetch_url = getIntent().getStringExtra("fetch_url");
 
         builder = new AlertDialog.Builder(this);
         importButton = (Button) findViewById(R.id.ImportButton);
@@ -86,8 +87,6 @@ public class CertificateActivity extends AppCompatActivity implements
         certificateUrl = (TextView) findViewById(R.id.CertificateUrl);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
         fetchButton = (Button) findViewById(R.id.FetchButton);
-
-        certificateUrl.setText(fetch_url);
 
         selectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +118,7 @@ public class CertificateActivity extends AppCompatActivity implements
         fetchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = certificateUrl.getText().toString();
+                String url = fetch_url;
                 if (url == null || url.isEmpty()) {
                     showErrorMessage("Empty URL", "No URL set to fetch a certificate from.");
                 } else {
@@ -149,63 +148,38 @@ public class CertificateActivity extends AppCompatActivity implements
 
         updateCertificateInfo();
         updatePathInfo();
+        updateFetchUrl();
     }
 
     private void exportCertificateFile() {
-        String path = pathSelection.getText().toString();
+        String path = this.selected_path;
         if (path == null || path.isEmpty()) {
             showErrorMessage("No Directory Selected", "No directory for export selected.");
         } else if (certificate == null) {
-            showErrorMessage("No Key Pair", "No keys loaded to export.");
+            showErrorMessage("No Certificate", "No Certificate loaded to export.");
         } else if (!hasWritePermission()) {
             requestWritePermission(REQUEST_PERMISSION);
         } else try {
-            //SshTools.KeyPairData data = SshTools.certificateToBytes(CertificateActivity.this.certificate);
+            writeExternalFile(path + "/cert.pem", HttpsTools.serializeCertificate(certificate).getBytes());
 
-            //writeExternalFile(selected_path + "/id_rsa.pub", data.toByteArray());
-
-            Toast.makeText(getApplicationContext(), "Done. Wrote files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Done. Wrote file 'cert.pem'.", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
     }
 
-    /*
-    private void fetchCertificate() {
-        try {
-            URL url = new URL("https://2.2.2.1");
-            HttpsTools.disableDefaultHostnameVerifier();
-            HttpsTools.disableDefaultCertificateValidation();
-            
-            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            //con.setSSLSocketFactory(context.getSocketFactory());
-            con.connect();
-            Certificate[] certificates = con.getServerCertificates();
-            con.disconnect();
-            if (certificates.length > 0) {
-                this.certificate = certificates[0];
-                updateCertificateInfo();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    */
-
     private void importCertificateFile() {
-        String path = pathSelection.getText().toString();
+        String path = this.selected_path;
         if (path == null || path.isEmpty()) {
             showErrorMessage("No Directory Selected", "No directory for import selected.");
         } else if (!hasReadPermission()) {
             requestReadPermission(REQUEST_PERMISSION);
         } else try {
-            //byte[] prvkey = readExternalFile(selected_path + "/id_rsa");
-            //byte[] pubkey = readExternalFile(selected_path + "/id_rsa.pub");
+            byte[] cert = readExternalFile(selected_path + "/cert.pem");
 
-            //JSch jsch = new JSch();
-            //CertificateActivity.this.certificate = KeyPair.load(jsch, prvkey, pubkey);
+            certificate = HttpsTools.deserializeCertificate(new String(cert));
 
-            Toast.makeText(getApplicationContext(), "Done. Read 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Done. Read 'cert.pem'.", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
@@ -225,7 +199,7 @@ public class CertificateActivity extends AppCompatActivity implements
             case SELECT_FILE_REQUEST:
                 if (extras.containsKey(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)) {
                     String selectedSinglePath = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH);
-                    this.pathSelection.setText(selectedSinglePath);
+                    this.selected_path = selectedSinglePath;
                     updatePathInfo();
                 }
                 break;
@@ -290,15 +264,22 @@ public class CertificateActivity extends AppCompatActivity implements
     }
 
     private void updatePathInfo() {
-        String path = this.pathSelection.getText().toString();
-        if (path == null || path.isEmpty()) {
+        if (selected_path == null || selected_path.isEmpty()) {
             pathSelection.setText("<none selected>");
             exportButton.setEnabled(false);
             importButton.setEnabled(false);
         } else {
-            pathSelection.setText(path);
+            pathSelection.setText(selected_path);
             exportButton.setEnabled(true);
             importButton.setEnabled(true);
+        }
+    }
+
+    private void updateFetchUrl() {
+        if (fetch_url == null || fetch_url.isEmpty()) {
+            certificateUrl.setText("<no url selected>");
+        } else {
+            certificateUrl.setText(fetch_url);
         }
     }
 
