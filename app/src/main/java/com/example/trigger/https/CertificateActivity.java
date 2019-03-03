@@ -48,7 +48,6 @@ public class CertificateActivity extends AppCompatActivity implements
 
     @Override
     public void onTaskCompleted(CertificateFetchHandler.Result r) {
-        Log.d("CertificateActivity.onTaskCompleted", "message: " + r.error);
         if (r.certificate != null) {
             this.certificate = r.certificate;
             Toast.makeText(getApplicationContext(), "Done.", Toast.LENGTH_SHORT).show();
