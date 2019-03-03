@@ -48,6 +48,28 @@ public class HttpsDoorSetup implements Setup {
         return ssids;
     }
 
+    private static String stripUrls(String... urls) {
+        // remove path
+        String prefix = "https://";
+        for (String url : urls) {
+            if (url.startsWith(prefix)) {
+                int i = url.indexOf('/', prefix.length());
+                if (i > 0) {
+                    url = url.substring(0, i);
+                }
+            }
+            return url;
+        }
+
+        return "";
+    }
+
+    @Override
+    public String getRegisterUrl() {
+        // extract from known urls
+        return stripUrls(open_query, close_query, status_query);
+    }
+
     @Override
     public DoorState parseReply(DoorReply reply) {
         // strip HTML from response

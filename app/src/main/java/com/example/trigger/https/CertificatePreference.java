@@ -53,7 +53,7 @@ public class CertificatePreference extends SwitchPreference {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 CertificatePreference p = CertificatePreference.this;
-                String fetch_url = ((SetupActivity) p.context).getAnyHttpsUrl();
+                String fetch_url = ((SetupActivity) p.context).getRegisterUrl();
 
                 // store in public static member - hack!
                 CertificatePreference.self = p;

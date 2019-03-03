@@ -54,6 +54,11 @@ public class SshDoorSetup implements Setup {
     }
 
     @Override
+    public String getRegisterUrl() {
+        return "ssh://" + host + ":" + port;
+    }
+
+    @Override
     public DoorState parseReply(DoorReply reply) {
         // TODO: This is probably not the expected way to parse the reply.
         // It probably needs to be made configurable (setting with regex?)

@@ -209,31 +209,8 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    // Get an URL to fetch a https certificate from
-    public String getAnyHttpsUrl() {
-        String prefix = "https://";
-        String url = "";
-
-        if (setup instanceof HttpsDoorSetup) {
-            HttpsDoorSetup s = (HttpsDoorSetup) setup;
-            if (s.open_query.startsWith(prefix)) {
-                url = s.open_query;
-            } else if (s.close_query.startsWith(prefix)) {
-                url = s.close_query;
-            } else if (s.status_query.startsWith(prefix)) {
-                url = s.status_query;
-            }
-        }
-
-        // remove path
-        if (url.startsWith(prefix)) {
-            int i = url.indexOf('/', prefix.length());
-            if (i > 0) {
-                url = url.substring(0, i);
-            }
-        }
-
-        return url;
+    public String getRegisterUrl() {
+        return setup.getRegisterUrl();
     }
 
     @Override
