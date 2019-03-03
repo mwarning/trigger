@@ -3,6 +3,8 @@ package com.example.trigger;
 import com.example.trigger.DoorState;
 import com.example.trigger.DoorState.StateCode;
 
+import java.security.cert.Certificate;
+
 
 public class HttpsDoorSetup implements Setup {
     static final String type = "HttpsDoorSetup";
@@ -12,8 +14,8 @@ public class HttpsDoorSetup implements Setup {
     public String close_query;
     public String status_query;
     public String ssids;
-    public String certificate;
-    public Boolean ignore_cert;
+    public Certificate certificate;
+    public Boolean ignore_hostname_mismatch;
 
     public HttpsDoorSetup(int id, String name) {
         this.id = id;
@@ -22,7 +24,8 @@ public class HttpsDoorSetup implements Setup {
         this.close_query = "";
         this.status_query = "";
         this.ssids = "";
-        this.ignore_cert = false;
+        this.certificate = null;
+        this.ignore_hostname_mismatch = false;
     }
 
     @Override

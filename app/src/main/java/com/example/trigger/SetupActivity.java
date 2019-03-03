@@ -16,8 +16,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 
+import com.example.trigger.https.CertificatePreference;
 import com.example.trigger.ssh.KeyPairPreference;
 import com.jcraft.jsch.KeyPair;
 
@@ -188,6 +190,52 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
+    private Certificate getCertificate(String key) {
+        CertificatePreference cp = (CertificatePreference) findAnyPreference(key, null);
+        if (cp != null) {
+            return cp.getCertificate();
+        } else {
+            Log.e("SetupActivity.getCertificate", "Cannot find key: " + key);
+            return null;
+        }
+    }
+
+    private void setCertificate(String key, Certificate certificate) {
+        CertificatePreference cp = (CertificatePreference) findAnyPreference(key, null);
+        if (cp != null) {
+            cp.setCertificate(certificate);
+        } else {
+            Log.e("SetupActivity.setCertificate", "Cannot find key: " + key);
+        }
+    }
+
+    // Get an URL to fetch a https certificate from
+    public String getAnyHttpsUrl() {
+        String prefix = "https://";
+        String url = "";
+
+        if (setup instanceof HttpsDoorSetup) {
+            HttpsDoorSetup s = (HttpsDoorSetup) setup;
+            if (s.open_query.startsWith(prefix)) {
+                url = s.open_query;
+            } else if (s.close_query.startsWith(prefix)) {
+                url = s.close_query;
+            } else if (s.status_query.startsWith(prefix)) {
+                url = s.status_query;
+            }
+        }
+
+        // remove path
+        if (url.startsWith(prefix)) {
+            int i = url.indexOf('/', prefix.length());
+            if (i > 0) {
+                url = url.substring(0, i);
+            }
+        }
+
+        return url;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Context context = this.getApplicationContext();
@@ -228,7 +276,7 @@ public class SetupActivity extends PreferenceActivity {
         name_field.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                String name = newValue.toString();
+                final String name = newValue.toString();
                 setMainGroupTitle(name);
                 return true;
             }
@@ -278,6 +326,8 @@ public class SetupActivity extends PreferenceActivity {
                     setChecked(name, (boolean) value);
                 } else if (type == KeyPair.class) {
                     setKeyPair(name, (KeyPair) value);
+                } else if (type == Certificate.class) {
+                    setCertificate(name, (Certificate) value);
                 } else {
                     Log.e("SetupActivity", "Unhandled type " + type.getSimpleName() + " of field " + name);
                 }
@@ -316,6 +366,8 @@ public class SetupActivity extends PreferenceActivity {
                    field.set(setup, Integer.parseInt(getText(name)));
                 } else if (type == KeyPair.class) {
                     field.set(setup, getKeyPair(name));
+                } else if (type == Certificate.class) {
+                    field.set(setup, getCertificate(name));
                 } else {
                     Log.e("SetupActivity", "storeSetup: Unhandled type for " + name + ": " + type.toString());
                 }

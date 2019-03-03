@@ -59,12 +59,18 @@
             android:summary="@string/setup_ssids_description"
             android:title="@string/setup_ssids" />
 
+        <com.example.trigger.https.CertificatePreference
+            android:key="certificate"
+            android:title="Certificate"
+            android:persistent="false"
+            android:defaultValue="false" />
+
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="ignore_cert"
+            android:key="ignore_hostname_mismatch"
             android:persistent="false"
-            android:summary="@string/setup_ignore_description"
-            android:title="@string/setup_ignore" />
+            android:summary="Warning: This disables security"
+            android:title="Disable hostname verification" />
 
     </PreferenceCategory>
 

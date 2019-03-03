@@ -1,4 +1,4 @@
-package com.example.trigger.ssh;
+package com.example.trigger.https;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,25 +7,28 @@ import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.jcraft.jsch.KeyPair;
+import java.security.cert.Certificate;
+
+import com.example.trigger.SetupActivity;
+
 
 /*
 * Stores a string in preference. Indicated the presence of data with a switch.
 * On click, the file chooser opens.
 */
-public class KeyPairPreference extends SwitchPreference {
-    private KeyPair keypair;
+public class CertificatePreference extends SwitchPreference {
+    private Certificate certificate;
     private Context context;
-    static KeyPairPreference self;
+    static CertificatePreference self;
 
-    public KeyPairPreference(Context context, AttributeSet attrs) {
+    public CertificatePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
 
         // tell the superclass that we handle the value on out own!
         setPersistent(false);
 
-        if (this.keypair == null) {
+        if (this.certificate == null) {
             setChecked(false);
         } else {
             setChecked(true);
@@ -34,9 +37,9 @@ public class KeyPairPreference extends SwitchPreference {
         this.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                KeyPairPreference p = (KeyPairPreference) preference;
+                CertificatePreference p = (CertificatePreference) preference;
 
-                if (p.keypair == null) {
+                if (p.certificate == null) {
                     p.setChecked(false);
                 } else {
                     p.setChecked(true);
@@ -49,14 +52,14 @@ public class KeyPairPreference extends SwitchPreference {
         this.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                KeyPairPreference p = (KeyPairPreference) preference;
+                CertificatePreference p = CertificatePreference.this;
+                String fetch_url = ((SetupActivity) p.context).getAnyHttpsUrl();
 
-                // hack!
-                KeyPairPreference.self = KeyPairPreference.this;
-                Intent i = new Intent(p.context, KeyPairActivity.class);
-                //i.putExtra("setup_id", setup_id);
-                //SetupActivity needs to implement onActivityResult and set this preference ??
-                //((SetupActivity)p.context).startActivityForResult(i, 42);
+                // store in public static member - hack!
+                CertificatePreference.self = p;
+
+                Intent i = new Intent(p.context, CertificateActivity.class);
+                i.putExtra("fetch_url", fetch_url);
 
                 p.context.startActivity(i);
                 return false;
@@ -64,23 +67,23 @@ public class KeyPairPreference extends SwitchPreference {
         });
     }
 
-    public void setKeyPair(KeyPair keypair) {
-        this.keypair = keypair;
+    public void setCertificate(Certificate certificate) {
+        this.certificate = certificate;
 
-        if (this.keypair == null) {
+        if (this.certificate == null) {
             setChecked(false);
         } else {
             setChecked(true);
         }
     }
 
-    public KeyPair getKeyPair() {
-        return keypair;
+    public Certificate getCertificate() {
+        return certificate;
     }
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        if (keypair == null) {
+        if (certificate == null) {
             super.onSetInitialValue(restorePersistedValue, false);
         } else {
             super.onSetInitialValue(restorePersistedValue, true);

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="SetupTypes">
-    <item>HTTPS Door</item>
-    <item>SSH Door</item>
-</string-array>
-<string-array name="SetupTypeValues">
-    <item>HttpsDoorSetup</item>
-    <item>SshDoorSetup</item>
-</string-array>
+    <string-array name="SetupTypes">
+        <item>HTTPS Door</item>
+        <item>SSH Door</item>
+    </string-array>
+    <string-array name="SetupTypeValues">
+        <item>HttpsDoorSetup</item>
+        <item>SshDoorSetup</item>
+    </string-array>
 </resources>

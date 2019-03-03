@@ -40,7 +40,6 @@ import com.example.trigger.ssh.SshRequestHandler;
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean enableRefreshButton = false;
     private boolean enableEditButton = false;
-    private OnTaskCompleted listener;
     private ImageView stateIcon;
     private ImageButton lock;
     private ImageButton unlock;
@@ -198,8 +197,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(broadcastReceiver, intentFilter);
-
-        listener = this;
     }
 
     public void onUpdateState(View view) {
@@ -279,10 +276,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         Setup setup = getSelectedSetup();
         if (setup instanceof HttpsDoorSetup) {
             HttpsDoorSetup httpsSetup = (HttpsDoorSetup) setup;
-            new HttpsRequestHandler(listener).execute(action, httpsSetup);
+            new HttpsRequestHandler(this).execute(action, httpsSetup);
         } else if (setup instanceof SshDoorSetup) {
             SshDoorSetup sshSetup = (SshDoorSetup) setup;
-            new SshRequestHandler(listener).execute(action, sshSetup);
+            new SshRequestHandler(this).execute(action, sshSetup);
         } else {
             changeUI(StateCode.DISABLED);
         }

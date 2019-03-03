@@ -40,10 +40,19 @@
         </activity>
         <activity
             android:name=".ssh.KeyPairActivity"
-            android:label="Manage Key Pair"
+            android:label="Manage SSH Key Pairs"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name=".ssh.KeyPairActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".https.CertificateActivity"
+            android:label="Manage HTTPS Certificates"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name=".https.CertificateActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

@@ -7,10 +7,12 @@ import android.content.pm.PackageInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.example.trigger.https.HttpsTools;
 import com.example.trigger.ssh.SshTools;
 import com.jcraft.jsch.KeyPair;
 
 import java.lang.reflect.Field;
+import java.security.cert.Certificate;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -46,7 +48,7 @@ public class Settings {
     private static void upgradeDB() {
         // update from 1.2.1 to 1.3.0
         if (db_version.equals("1.2.1")) {
-            Log.i("Settings", "update database format from " + db_version + " to 1.3.1");
+            Log.i("Settings", "Update database format from " + db_version + " to 1.3.1");
 
             // Recover setup from 1.2.0
             String name = sharedPreferences.getString("prefName", "");
@@ -58,7 +60,9 @@ public class Settings {
                 setup.open_query = url + "?action=open&token=" + token;
                 setup.close_query = url + "?action=close&token=" + token;
                 setup.status_query = url + "?action=status&token=" + token;
-                setup.ignore_cert = ignore;
+                if (ignore) {
+                    setup.ignore_hostname_mismatch = true;
+                }
                 saveSetup(setup);
             }
             // remove old entries
@@ -74,7 +78,7 @@ public class Settings {
 
         // update from 1.3.0/1.3.1 to 1.4.0
         if (db_version.equals("1.3.0") || db_version.equals("1.3.1")) {
-            Log.i("Settings", "update database format from " + db_version + " to 1.4.0");
+            Log.i("Settings", "Update database format from " + db_version + " to 1.4.0");
 
             for (int id = 0; id < 10; id += 1) {
                 String prefix = String.format("item_%03d_", id);
@@ -90,7 +94,9 @@ public class Settings {
                         setup.close_query = url + "?action=close&token=" + token;
                         setup.status_query = url + "?action=status&token=" + token;
                         setup.ssids = ssids;
-                        setup.ignore_cert = ignore;
+                        if (ignore) {
+                            setup.ignore_hostname_mismatch = true;
+                        }
                         saveSetup(setup);
                     } else {
                         removeSetup(id);
@@ -101,7 +107,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.4.0")) {
-            Log.i("Settings", "update database format from " + db_version + " to " + app_version);
+            Log.i("Settings", "Update database format from " + db_version + " to 1.6.0");
             for (int id = 0; id < 10; id += 1) {
                 String prefix = String.format("item_%03d_", id);
                 // change type of entry
@@ -110,6 +116,26 @@ public class Settings {
                     sharedPreferences.edit().putString(prefix + "ignore_cert", ignore_cert.toString()).commit();
                 }
             }
+            sharedPreferences.edit().putString("db_version", "1.6.0").commit();
+            db_version = "1.6.0";
+        }
+
+        if (db_version.equals("1.6.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.7.0");
+            for (int id = 0; id < 10; id += 1) {
+                String prefix = String.format("item_%03d_", id);
+                // change type of entry
+                if (sharedPreferences.contains(prefix + "ignore_cert")) {
+                    String ignore_cert = sharedPreferences.getString(prefix + "ignore_cert", (new Boolean(false)).toString());
+                    if (new Boolean(ignore_cert)) {
+                        SharedPreferences.Editor e = sharedPreferences.edit();
+                        e.putString(prefix + "ignore_hostname_mismatch", (new Boolean(true).toString()));
+                        e.remove(prefix + "ignore_cert");
+                        e.commit();
+                    }
+                }
+            }
+
             sharedPreferences.edit().putString("db_version", app_version).commit();
             db_version = app_version;
         }
@@ -158,6 +184,8 @@ public class Settings {
                     e.putString(prefix + name, value.toString());
                 } else if (type == KeyPair.class) {
                     e.putString(prefix + name, SshTools.serializeKeyPair((KeyPair) value));
+                } else if (type == Certificate.class) {
+                    e.putString(prefix + name, HttpsTools.serializeCertificate((Certificate) value));
                 } else {
                     Log.e("Settings", "saveSetup: Unhandled type for " + name + ": " + type.toString());
                 }
@@ -216,6 +244,8 @@ public class Settings {
                     field.set(setup, Integer.parseInt(value));
                 } else if (type == KeyPair.class) {
                     field.set(setup, SshTools.deserializeKeyPair(value));
+                } else if (type == Certificate.class) {
+                    field.set(setup, HttpsTools.deserializeCertificate(value));
                 } else {
                     Log.e("Settings", "getSetup: Unhandled type for " + name + ": " + type.toString());
                 }
