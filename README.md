@@ -25,7 +25,7 @@ Any help, bugfixes, new features, translations are much welcome.
 
 Alternatively, you can download packages (apk) in the [release](https://github.com/mwarning/trigger/releases) section.
 
-Note minimum Android version is 7.1.
+The minimum supported Android version is 5.0.
 
 ## Usage
 
