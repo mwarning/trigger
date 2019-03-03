@@ -29,11 +29,11 @@ The minimum supported Android version is 5.0.
 
 ## Usage
 
-The status of the door is determined if the https query or ssh command returns the strings `LOCKED`, `UNLOCKED` or some other output. The return message is displayed in the App for a short period.
+The status of the door is determined if the https query or ssh command returns the strings `LOCKED` (closed door), `UNLOCKED` (open door) or some other output (unknown door state). The return message is displayed in the App for a short period.
 
 ## Status
 
-- Https/SSH calls work.
+- HTTPS/SSH calls work.
 - Sending the ssh public key as a registration mechanism is missing.
 - The ssh key pair and certificate cannot be explicitly removed right now (but replaced).
 
