@@ -49,7 +49,7 @@ import com.example.trigger.OnTaskCompleted;
 public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
     private OnTaskCompleted listener;
 
-    public HttpsRequestHandler(OnTaskCompleted listener){
+    public HttpsRequestHandler(OnTaskCompleted listener) {
         this.listener = listener;
     }
 

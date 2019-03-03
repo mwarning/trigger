@@ -43,7 +43,7 @@ public class CertificateFetchHandler extends AsyncTask<Object, Void, Certificate
             int port = (url.getPort() > 0) ? url.getPort() : url.getDefaultPort();
             url = new URL("https", url.getHost(), port, "");
 
-            //disable all certification checks
+            // disable all certification checks
             HttpsTools.disableDefaultHostnameVerifier();
             HttpsTools.disableDefaultCertificateValidation();
 
