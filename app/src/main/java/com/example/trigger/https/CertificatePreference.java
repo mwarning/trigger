@@ -24,6 +24,7 @@ public class CertificatePreference extends SwitchPreference {
     public CertificatePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        final CertificatePreference self = this;
 
         // tell the superclass that we handle the value on out own!
         setPersistent(false);
@@ -37,12 +38,10 @@ public class CertificatePreference extends SwitchPreference {
         this.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                CertificatePreference p = (CertificatePreference) preference;
-
-                if (p.certificate == null) {
-                    p.setChecked(false);
+                if (self.certificate == null) {
+                    self.setChecked(false);
                 } else {
-                    p.setChecked(true);
+                    self.setChecked(true);
                 }
                 
                 return false;
@@ -52,16 +51,15 @@ public class CertificatePreference extends SwitchPreference {
         this.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                CertificatePreference p = CertificatePreference.this;
-                String fetch_url = ((SetupActivity) p.context).getRegisterUrl();
+                String register_url = ((SetupActivity) self.context).getRegisterUrl();
 
                 // store in public static member - hack!
-                CertificatePreference.self = p;
+                CertificatePreference.self = self;
 
-                Intent i = new Intent(p.context, CertificateActivity.class);
-                i.putExtra("fetch_url", fetch_url);
+                Intent intent = new Intent(self.context, CertificateActivity.class);
+                intent.putExtra("register_url", register_url);
 
-                p.context.startActivity(i);
+                self.context.startActivity(intent);
                 return false;
             }
         });

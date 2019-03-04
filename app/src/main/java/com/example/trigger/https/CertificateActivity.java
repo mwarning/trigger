@@ -35,7 +35,7 @@ public class CertificateActivity extends AppCompatActivity implements
     private TextView certificateUrl;
     private TextView pathSelection;
     private Certificate certificate;
-    private String fetch_url;
+    private String register_url;
     private String selected_path;
 
     @Override
@@ -66,7 +66,7 @@ public class CertificateActivity extends AppCompatActivity implements
         //this.certificate = HttpsTools.deserializeCertififcate(
         //    getIntent().getStringExtra("certificate")
         //);
-        this.fetch_url = getIntent().getStringExtra("fetch_url");
+        this.register_url = getIntent().getStringExtra("register_url");
 
         builder = new AlertDialog.Builder(this);
         importButton = (Button) findViewById(R.id.ImportButton);
@@ -110,7 +110,7 @@ public class CertificateActivity extends AppCompatActivity implements
         fetchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = fetch_url;
+                String url = register_url;
                 if (url == null || url.isEmpty()) {
                     showErrorMessage("Empty URL", "No URL set to fetch a certificate from.");
                 } else {
@@ -236,10 +236,10 @@ public class CertificateActivity extends AppCompatActivity implements
     }
 
     private void updateFetchUrl() {
-        if (fetch_url == null || fetch_url.isEmpty()) {
+        if (register_url == null || register_url.isEmpty()) {
             certificateUrl.setText("<no url selected>");
         } else {
-            certificateUrl.setText(fetch_url);
+            certificateUrl.setText(register_url);
         }
     }
 

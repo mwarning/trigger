@@ -353,9 +353,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         if (id == R.id.action_edit) {
             Setup setup = getSelectedSetup();
             int setup_id = (setup != null) ? setup.getId() : -1;
-            Intent i = new Intent(this, SetupActivity.class);
-            i.putExtra("setup_id", setup_id);
-            startActivity(i);
+            Intent intent = new Intent(this, SetupActivity.class);
+            intent.putExtra("setup_id", setup_id);
+            startActivity(intent);
             return true;
         }
 

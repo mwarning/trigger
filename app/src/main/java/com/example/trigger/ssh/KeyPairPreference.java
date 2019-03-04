@@ -7,6 +7,7 @@ import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.example.trigger.SetupActivity;
 import com.jcraft.jsch.KeyPair;
 
 /*
@@ -21,6 +22,7 @@ public class KeyPairPreference extends SwitchPreference {
     public KeyPairPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        final KeyPairPreference self = this;
 
         // tell the superclass that we handle the value on out own!
         setPersistent(false);
@@ -34,12 +36,10 @@ public class KeyPairPreference extends SwitchPreference {
         this.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                KeyPairPreference p = (KeyPairPreference) preference;
-
-                if (p.keypair == null) {
-                    p.setChecked(false);
+                if (self.keypair == null) {
+                    self.setChecked(false);
                 } else {
-                    p.setChecked(true);
+                    self.setChecked(true);
                 }
                 
                 return false;
