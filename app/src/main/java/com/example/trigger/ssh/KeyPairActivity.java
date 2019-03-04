@@ -1,15 +1,12 @@
 package com.example.trigger.ssh;
 
+import com.example.trigger.Utils;
 import com.github.isabsent.filepicker.SimpleFilePickerDialog;
 import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,17 +15,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import com.example.trigger.R;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
-
-import org.apache.commons.io.IOUtils;
 
 
 public class KeyPairActivity extends AppCompatActivity implements
@@ -77,6 +66,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         fingerprint = (TextView) findViewById(R.id.Fingerprint);
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
+        final KeyPairActivity self = this;
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,12 +87,12 @@ public class KeyPairActivity extends AppCompatActivity implements
         selectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (hasReadPermission()) {
+                if (Utils.hasReadPermission(self)) {
                     final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                     showListItemDialog("Pick Directory", rootPath, FOLDER_ONLY_SINGLE_CHOICE, SELECT_PATH_REQUEST);
                 } else {
-                    requestReadPermission(REQUEST_PERMISSION);
-                    requestWritePermission(REQUEST_PERMISSION);
+                    Utils.requestReadPermission(self, REQUEST_PERMISSION);
+                    Utils.requestWritePermission(self, REQUEST_PERMISSION);
                 }
             }
         });
@@ -125,10 +115,10 @@ public class KeyPairActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // persist your value here
-                if (KeyPairActivity.this.keypair != null) {
-                    preference.setKeyPair(KeyPairActivity.this.keypair);
+                if (self.keypair != null) {
+                    preference.setKeyPair(self.keypair);
                 }
-                KeyPairActivity.this.finish();
+                self.finish();
             }
         });
 
@@ -136,7 +126,7 @@ public class KeyPairActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // persist your value here
-                KeyPairActivity.this.finish();
+                self.finish();
             }
         });
 
@@ -149,13 +139,13 @@ public class KeyPairActivity extends AppCompatActivity implements
             showErrorMessage("No Directory Selected", "No directory for export selected.");
         } else if (keypair == null) {
             showErrorMessage("No Key Pair", "No keys loaded to export.");
-        } else if (!hasWritePermission()) {
-            requestWritePermission(REQUEST_PERMISSION);
+        } else if (!Utils.hasWritePermission(this)) {
+            Utils.requestWritePermission(this, REQUEST_PERMISSION);
         } else try {
             SshTools.KeyPairData data = SshTools.keypairToBytes(KeyPairActivity.this.keypair);
 
-            writeExternalFile(selected_path + "/id_rsa.pub", data.pubkey);
-            writeExternalFile(selected_path + "/id_rsa", data.prvkey);
+            Utils.writeExternalFile(selected_path + "/id_rsa.pub", data.pubkey);
+            Utils.writeExternalFile(selected_path + "/id_rsa", data.prvkey);
 
             Toast.makeText(getApplicationContext(), "Done. Wrote files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -166,11 +156,11 @@ public class KeyPairActivity extends AppCompatActivity implements
     private void importKeys() {
         if (selected_path == null) {
             showErrorMessage("No Directory Selected", "No directory for import selected.");
-        } else if (!hasReadPermission()) {
-            requestReadPermission(REQUEST_PERMISSION);
+        } else if (!Utils.hasReadPermission(this)) {
+            Utils.requestReadPermission(this, REQUEST_PERMISSION);
         } else try {
-            byte[] prvkey = readExternalFile(selected_path + "/id_rsa");
-            byte[] pubkey = readExternalFile(selected_path + "/id_rsa.pub");
+            byte[] prvkey = Utils.readExternalFile(selected_path + "/id_rsa");
+            byte[] pubkey = Utils.readExternalFile(selected_path + "/id_rsa.pub");
 
             JSch jsch = new JSch();
             KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
@@ -203,38 +193,6 @@ public class KeyPairActivity extends AppCompatActivity implements
         return false;
     }
 
-    // write file to external storage
-    private static void writeExternalFile(String filepath, byte[] data) throws IOException {
-        File file = new File(filepath);
-        if (file.exists()) {
-            if (!file.delete()) {
-                throw new IOException("Failed to delete existing file: " + filepath);
-            }
-        }
-        file.createNewFile();
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(data);
-        fos.close();
-    }
-
-    // read file from external storage
-    private static byte[] readExternalFile(String filepath) throws IOException {
-        File file = new File(filepath);
-        if (!file.exists()) {
-            throw new IOException("File does not exist: " + filepath);
-        }
-        FileInputStream fis = new FileInputStream(file);
-
-        int nRead;
-        byte[] data = new byte[16384];
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        while ((nRead = fis.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        return buffer.toByteArray();
-    }
-
     private void updateKeyInfo() {
         if (keypair == null) {
             fingerprint.setText("<no key loaded>");
@@ -259,40 +217,11 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean hasReadPermission() {
-        return (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-    }
-
-    private boolean hasWritePermission() {
-        return (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-    }
-
-    private void requestReadPermission(int request_code) {
-        ActivityCompat.requestPermissions(KeyPairActivity.this, new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE }, request_code);
-    }
-
-    private void requestWritePermission(int request_code) {
-        ActivityCompat.requestPermissions(KeyPairActivity.this, new String[] {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE }, request_code);
-    }
-
-    private static boolean allGranted(int[] grantResults) {
-        for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION:
-                if (allGranted(grantResults)) {
+                if (Utils.allGranted(grantResults)) {
                     // permissions granted
                     Toast.makeText(getApplicationContext(), "Permissions granted - please try again.", Toast.LENGTH_SHORT).show();
                 } else {
