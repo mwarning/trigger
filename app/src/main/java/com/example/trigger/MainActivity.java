@@ -80,25 +80,33 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         return ret;
     }
 
-    private int getPreferredSpinnerIndex(ArrayList<Setup> setups, Setup current) {
+    private static int getItemIndex(ArrayList<SpinnerItem> items, int id) {
+        for (int i = 0; i < items.size(); i += 1) {
+            if (items.get(i).id == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getPreferredSpinnerIndex(ArrayList<SpinnerItem> items, ArrayList<Setup> setups, Setup current) {
         String ssid = wifi.getCurrentSSID();
 
         // select by ssid
         if (ssid.length() > 0) {
-            for (int i = 0; i < setups.size(); i += 1) {
-                Setup setup = setups.get(i);
+            for (Setup setup : setups) {
                 String ssids = setup.getSSIDs();
                 if (splitCommaSeparated(ssids).contains(ssid)) {
-                    return i;
+                    return getItemIndex(items, setup.getId());
                 }
             }
         }
 
         // keep previous selection
         if (current != null) {
-            for (int i = 0; i < setups.size(); i += 1) {
-                if (current.getId() == setups.get(i).getId()) {
-                    return i;
+            for (Setup setup : setups) {
+                if (current.getId() == setup.getId()) {
+                    return getItemIndex(items, setup.getId());
                 }
             }
         }
@@ -135,11 +143,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         });
 
-        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(this, R.layout.main_spinner, items);
-
         Setup current = getSelectedSetup();
+        ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(this, R.layout.main_spinner, items);
         spinner.setAdapter(adapter);
-        spinner.setSelection(getPreferredSpinnerIndex(setups, current));
+        spinner.setSelection(getPreferredSpinnerIndex(items, setups, current));
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
