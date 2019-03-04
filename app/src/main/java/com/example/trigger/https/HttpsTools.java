@@ -45,7 +45,7 @@ public class HttpsTools {
         try {
             return "-----BEGIN CERTIFICATE-----\n"
                 + Base64.encodeToString(cert.getEncoded(), Base64.DEFAULT)
-                + "\n-----END CERTIFICATE-----";
+                + "\n-----END CERTIFICATE-----\n";
         } catch (Exception e) {
             Log.e("HttpsTools.serializeCertificate", e.toString());
         }
