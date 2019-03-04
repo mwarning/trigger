@@ -144,6 +144,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setConnectTimeout(2000);
+            con.setRequestMethod ("GET");
 
             String result = readStream(con.getInputStream());
 
