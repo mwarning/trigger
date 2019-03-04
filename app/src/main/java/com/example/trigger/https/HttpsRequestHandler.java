@@ -115,15 +115,18 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
             if (setup.ignore_hostname_mismatch) {
                 HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
                     @Override
-                    public boolean verify(String arg0, SSLSession arg1) {
+                    public boolean verify(String hostname, SSLSession session) {
                         // ignore hostname mismatch
                         return true;
                     }
                 });
             } else {
-                HttpsURLConnection.setDefaultHostnameVerifier(
-                    HttpsURLConnection.getDefaultHostnameVerifier()
-                );
+                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return false;
+                    }
+                });
             }
 
             // certificate verification
@@ -135,7 +138,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
             } else {
                 // system certificate
                 HttpsURLConnection.setDefaultSSLSocketFactory(
-                    HttpsURLConnection.getDefaultSSLSocketFactory()
+                    SSLContext.getDefault().getSocketFactory()
                 );
             }
 
