@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 public class Utils {
@@ -73,5 +76,23 @@ public class Utils {
         }
 
         return buffer.toByteArray();
+    }
+
+    // parse "1.2.3.4" / "1.2.3.4:80" / "::1" / "[::1]:80"
+    public static InetSocketAddress parseSocketAddress(String addr, int default_port)
+            throws URISyntaxException {
+        URI uri = new URI("my://" + addr);
+        String host = uri.getHost();
+        int port = uri.getPort();
+        if (port == -1) {
+            port = default_port;
+        }
+
+        if (host == null || port == -1) {
+            throw new URISyntaxException(uri.toString(), "URI must have host and port parts");
+        }
+
+      // validation succeeded
+      return new InetSocketAddress(host, port);
     }
 }

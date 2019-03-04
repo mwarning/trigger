@@ -49,16 +49,15 @@ public class KeyPairPreference extends SwitchPreference {
         this.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                KeyPairPreference p = (KeyPairPreference) preference;
+                String register_url = ((SetupActivity) self.context).getRegisterUrl();
 
-                // hack!
+                // store in public static member - hack!
                 KeyPairPreference.self = KeyPairPreference.this;
-                Intent i = new Intent(p.context, KeyPairActivity.class);
-                //i.putExtra("setup_id", setup_id);
-                //SetupActivity needs to implement onActivityResult and set this preference ??
-                //((SetupActivity)p.context).startActivityForResult(i, 42);
 
-                p.context.startActivity(i);
+                Intent intent = new Intent(self.context, KeyPairActivity.class);
+                intent.putExtra("register_url", register_url);
+                self.context.startActivity(intent);
+
                 return false;
             }
         });

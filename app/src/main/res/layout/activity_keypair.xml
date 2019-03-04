@@ -70,6 +70,22 @@
             android:text=""
             android:textAlignment="center" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register Address"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/RegisterAddress"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textAlignment="center" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -106,6 +122,15 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:text="Export" />
+
+        <Button
+            android:id="@+id/RegisterButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Register" />
 
     </LinearLayout>
 

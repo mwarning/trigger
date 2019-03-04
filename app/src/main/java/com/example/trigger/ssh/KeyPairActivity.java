@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,12 +32,15 @@ public class KeyPairActivity extends AppCompatActivity implements
     private Button exportButton;
     private Button cancelButton;
     private Button selectButton;
+    private Button registerButton;
     private Button okButton;
     private TextView fingerprint;
     private TextView publicKey;
     private TextView pathSelection;
+    private EditText registerAddress;
     private KeyPair keypair;
     private String selected_path;
+    private String register_url;
 
     private void showErrorMessage(String title, String message) {
         builder.setTitle(title);
@@ -52,9 +56,7 @@ public class KeyPairActivity extends AppCompatActivity implements
 
         this.preference = KeyPairPreference.self; // hack, TODO: pass serialized key in bundle
         this.keypair = this.preference.getKeyPair();
-        //this.keypair = SshTools.deserializeKeyPair(
-        //    getIntent().getStringExtra("keypair")
-        //);
+        this.register_url = getIntent().getStringExtra("register_url");
 
         builder = new AlertDialog.Builder(this);
         createButton = (Button) findViewById(R.id.CreateButton);
@@ -62,18 +64,36 @@ public class KeyPairActivity extends AppCompatActivity implements
         exportButton = (Button) findViewById(R.id.ExportButton);
         cancelButton = (Button) findViewById(R.id.CancelButton);
         selectButton = (Button) findViewById(R.id.SelectButton);
+        registerButton = (Button) findViewById(R.id.RegisterButton);
         okButton = (Button) findViewById(R.id.OkButton);
         fingerprint = (TextView) findViewById(R.id.Fingerprint);
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
+        registerAddress = (EditText) findViewById(R.id.RegisterAddress);
         final KeyPairActivity self = this;
+
+        registerAddress.setText(register_url);
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String address = registerAddress.getText().toString();
+                if (address == null || address.length() == 0) {
+                    showErrorMessage("Address Empty", "Address and port needed to send public key to destination.");
+                } else if (keypair == null) {
+                    showErrorMessage("Key Pair Empty", "No public key available to register.");
+                } else {
+                    new RegisterIdentityTask(getApplicationContext()).execute(address, keypair);
+                }
+            }
+        });
 
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     JSch jsch = new JSch();
-                    keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 2048);
+                    keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 4096);
 
                     Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
