@@ -31,12 +31,6 @@ The minimum supported Android version is 5.0.
 
 The status of the door is determined if the https query or ssh command returns the strings `LOCKED` (door closed), `UNLOCKED` (door open) or some other output (unknown door state). The return message is displayed in the App for a short period.
 
-## Status
-
-- HTTPS/SSH calls work.
-- Sending the ssh public key as a registration mechanism is missing.
-- The ssh key pair and certificate cannot be explicitly removed right now (but replaced).
-
 ## Build from Sources
 
 On Linux based systems:
@@ -47,13 +41,14 @@ On Linux based systems:
 
 ## Related Projects
 
+* [Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote)
 * [D00r](https://github.com/h42i/d00r-app)
 * [labadoor](https://github.com/ToLABaki/labadoor)
-* [Sphincter](https://github.com/openlab-aux/sphincter)/[Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote)
 * [Krautschlüssel](https://gitlab.com/fiveop/krautschluessel)
-
-Icons: [Googles Material Design](https://material.io/tools/icons/)
+* [MetalabDoorWidget](https://github.com/zoff99/MetalabDoorWidget)
 
 ## License
 
-This work is licenced under the GNU General Public License version 2 (GPLv2).
+This work is licenced under the GNU General Public License version 2 or later (GPLv2).
+
+Icons: [Googles Material Design](https://material.io/tools/icons/)
