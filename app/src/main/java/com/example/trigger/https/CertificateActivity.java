@@ -5,6 +5,7 @@ import com.example.trigger.Utils;
 import com.github.isabsent.filepicker.SimpleFilePickerDialog;
 import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -30,6 +31,7 @@ public class CertificateActivity extends AppCompatActivity implements
     private Button cancelButton;
     private Button selectButton;
     private Button okButton;
+    private Button deleteButton;
     private Button fetchButton;
     private TextView certificateInfo;
     private TextView certificateUrl;
@@ -74,6 +76,7 @@ public class CertificateActivity extends AppCompatActivity implements
         selectButton = (Button) findViewById(R.id.SelectPathButton);
         cancelButton = (Button) findViewById(R.id.CancelButton);
         okButton = (Button) findViewById(R.id.OkButton);
+        deleteButton = (Button) findViewById(R.id.DeleteButton);
         certificateInfo = (TextView) findViewById(R.id.CertificateInfo);
         certificateUrl = (TextView) findViewById(R.id.CertificateUrl);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
@@ -127,6 +130,33 @@ public class CertificateActivity extends AppCompatActivity implements
                     preference.setCertificate(CertificateActivity.this.certificate);
                 }
                 CertificateActivity.this.finish();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                builder.setTitle("Confirm");
+                builder.setMessage("Really remove certificate?");
+                builder.setCancelable(false); // not necessary
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        CertificateActivity.this.certificate = null;
+                        updateCertificateInfo();
+                        dialog.cancel();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+                // create dialog box
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
@@ -203,8 +233,10 @@ public class CertificateActivity extends AppCompatActivity implements
         String text = "";
         try {
             if (certificate == null) {
+                deleteButton.setEnabled(false);
                 text = "<no certificate>";
             } else {
+                deleteButton.setEnabled(true);
                 if (certificate instanceof X509Certificate) {
                     X509Certificate c = (X509Certificate) certificate;
                     if (!HttpsTools.isValid(c)) {

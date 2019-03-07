@@ -4,6 +4,7 @@ import com.example.trigger.Utils;
 import com.github.isabsent.filepicker.SimpleFilePickerDialog;
 import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -34,6 +35,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     private Button selectButton;
     private Button registerButton;
     private Button okButton;
+    private Button deleteButton;
     private TextView fingerprint;
     private TextView publicKey;
     private TextView pathSelection;
@@ -66,6 +68,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         selectButton = (Button) findViewById(R.id.SelectButton);
         registerButton = (Button) findViewById(R.id.RegisterButton);
         okButton = (Button) findViewById(R.id.OkButton);
+        deleteButton = (Button) findViewById(R.id.DeleteButton);
         fingerprint = (TextView) findViewById(R.id.Fingerprint);
         publicKey = (TextView) findViewById(R.id.PublicKey);
         pathSelection = (TextView) findViewById(R.id.PathSelection);
@@ -135,10 +138,35 @@ public class KeyPairActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // persist your value here
-                if (self.keypair != null) {
-                    preference.setKeyPair(self.keypair);
-                }
+                preference.setKeyPair(self.keypair);
                 self.finish();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                builder.setTitle("Confirm");
+                builder.setMessage("Really remove key pair?");
+                builder.setCancelable(false); // not necessary
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        KeyPairActivity.this.keypair = null;
+                        updateKeyInfo();
+                        dialog.cancel();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+                // create dialog box
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
@@ -215,11 +243,13 @@ public class KeyPairActivity extends AppCompatActivity implements
 
     private void updateKeyInfo() {
         if (keypair == null) {
+            deleteButton.setEnabled(false);
             fingerprint.setText("<no key loaded>");
             publicKey.setText("<no key loaded>");
         } else {
             SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
 
+            deleteButton.setEnabled(true);
             fingerprint.setText(keypair.getFingerPrint());
             publicKey.setText(new String(data.pubkey));
         }
