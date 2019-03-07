@@ -55,7 +55,7 @@ public class SshDoorSetup implements Setup {
 
     @Override
     public String getRegisterUrl() {
-        return host + ":" + port;
+        return "";
     }
 
     @Override
