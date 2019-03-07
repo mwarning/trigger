@@ -81,7 +81,7 @@
 
         <com.example.trigger.ssh.KeyPairPreference
             android:key="keypair"
-            android:title="Key File"
+            android:title="Key Pair"
             android:persistent="false"
             android:defaultValue="false" />
 
