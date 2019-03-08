@@ -15,7 +15,7 @@ Features:
 
 ![image](screenshot_settings.png)
 
-(https setup, ssh setup, ssh key pair management)
+(ssh setup and key pair management, https setup and certificate management)
 
 Any help, bugfixes, new features, translations are much welcome.
 
