@@ -30,6 +30,12 @@
         android:persistent="false"
         android:title="HTTPS Settings">
 
+        <com.example.trigger.https.CertificatePreference
+            android:key="certificate"
+            android:title="Certificate"
+            android:persistent="false"
+            android:defaultValue="false" />
+
         <EditTextPreference
             android:inputType="text"
             android:key="open_query"
@@ -58,12 +64,6 @@
             android:persistent="false"
             android:summary="@string/setup_ssids_description"
             android:title="@string/setup_ssids" />
-
-        <com.example.trigger.https.CertificatePreference
-            android:key="certificate"
-            android:title="Certificate"
-            android:persistent="false"
-            android:defaultValue="false" />
 
         <CheckBoxPreference
             android:defaultValue="false"

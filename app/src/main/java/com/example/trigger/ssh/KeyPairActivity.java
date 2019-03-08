@@ -23,7 +23,9 @@ import com.jcraft.jsch.KeyPair;
 
 
 public class KeyPairActivity extends AppCompatActivity implements
-        SimpleFilePickerDialog.InteractionListenerString {
+        SimpleFilePickerDialog.InteractionListenerString,
+        RegisterIdentityTask.OnTaskCompleted,
+        GenerateIdentityTask.OnTaskCompleted {
     private static final String SELECT_PATH_REQUEST = "SELECT_PATH_REQUEST";
     private static final int REQUEST_PERMISSION = 0x01;
     private KeyPairPreference preference; // hack
@@ -42,7 +44,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     private EditText registerAddress;
     private KeyPair keypair;
     private String selected_path;
-    private String register_url;
+    private boolean keyGenInProgress = false;
 
     private void showErrorMessage(String title, String message) {
         builder.setTitle(title);
@@ -58,24 +60,25 @@ public class KeyPairActivity extends AppCompatActivity implements
 
         this.preference = KeyPairPreference.self; // hack, TODO: pass serialized key in bundle
         this.keypair = this.preference.getKeyPair();
-        this.register_url = getIntent().getStringExtra("register_url");
 
         builder = new AlertDialog.Builder(this);
-        createButton = (Button) findViewById(R.id.CreateButton);
-        importButton = (Button) findViewById(R.id.ImportButton);
-        exportButton = (Button) findViewById(R.id.ExportButton);
-        cancelButton = (Button) findViewById(R.id.CancelButton);
-        selectButton = (Button) findViewById(R.id.SelectButton);
-        registerButton = (Button) findViewById(R.id.RegisterButton);
-        okButton = (Button) findViewById(R.id.OkButton);
-        deleteButton = (Button) findViewById(R.id.DeleteButton);
-        fingerprint = (TextView) findViewById(R.id.Fingerprint);
-        publicKey = (TextView) findViewById(R.id.PublicKey);
-        pathSelection = (TextView) findViewById(R.id.PathSelection);
-        registerAddress = (EditText) findViewById(R.id.RegisterAddress);
+        createButton = findViewById(R.id.CreateButton);
+        importButton = findViewById(R.id.ImportButton);
+        exportButton = findViewById(R.id.ExportButton);
+        cancelButton = findViewById(R.id.CancelButton);
+        selectButton = findViewById(R.id.SelectButton);
+        registerButton = findViewById(R.id.RegisterButton);
+        okButton = findViewById(R.id.OkButton);
+        deleteButton = findViewById(R.id.DeleteButton);
+        fingerprint = findViewById(R.id.Fingerprint);
+        publicKey = findViewById(R.id.PublicKey);
+        pathSelection = findViewById(R.id.PathSelection);
+        registerAddress = findViewById(R.id.RegisterAddress);
         final KeyPairActivity self = this;
 
-        registerAddress.setText(register_url);
+        registerAddress.setText(
+            getIntent().getStringExtra("register_url")
+        );
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +89,7 @@ public class KeyPairActivity extends AppCompatActivity implements
                 } else if (keypair == null) {
                     showErrorMessage("Key Pair Empty", "No public key available to register.");
                 } else {
-                    new RegisterIdentityTask(getApplicationContext()).execute(address, keypair);
+                    new RegisterIdentityTask(self).execute(address, keypair);
                 }
             }
         });
@@ -94,16 +97,12 @@ public class KeyPairActivity extends AppCompatActivity implements
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    JSch jsch = new JSch();
-                    keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, 4096);
-
-                    Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Log.e("KeyPairActivity", e.toString());
+                if (keyGenInProgress) {
+                    showErrorMessage("In Progress", "Key generation already in progress. Please wait.");
+                } else {
+                    keyGenInProgress = true;
+                    new GenerateIdentityTask(self).execute(4096);
                 }
-
-                updateKeyInfo();
             }
         });
 
@@ -180,6 +179,23 @@ public class KeyPairActivity extends AppCompatActivity implements
 
         updateKeyInfo();
         updatePathInfo();
+    }
+
+    @Override
+    public void onGenerateIdentityTaskCompleted(String message, KeyPair keypair) {
+        if (keypair != null) {
+            // only set if successful
+            this.keypair = keypair;
+        }
+
+        this.keyGenInProgress = false;
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        updateKeyInfo();
+    }
+
+    @Override
+    public void onRegisterIdentityTaskCompleted(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void exportKeys() {

@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -26,12 +24,10 @@ import android.net.ConnectivityManager;
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.example.trigger.DoorState;
 import com.example.trigger.DoorState.StateCode;
 import com.example.trigger.https.HttpsRequestHandler;
 import com.example.trigger.ssh.SshRequestHandler;

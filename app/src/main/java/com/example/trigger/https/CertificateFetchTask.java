@@ -8,11 +8,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 
-public class CertificateFetchHandler extends AsyncTask<Object, Void, CertificateFetchHandler.Result> {
+public class CertificateFetchTask extends AsyncTask<Object, Void, CertificateFetchTask.Result> {
     private OnTaskCompleted listener;
 
-    public static interface OnTaskCompleted {
-        void onTaskCompleted(Result result);
+    public interface OnTaskCompleted {
+        void onCertificateFetchTaskCompleted(Result result);
     }
 
     public static class Result {
@@ -25,14 +25,14 @@ public class CertificateFetchHandler extends AsyncTask<Object, Void, Certificate
         }
     }
 
-    public CertificateFetchHandler(CertificateFetchHandler.OnTaskCompleted listener){
+    public CertificateFetchTask(CertificateFetchTask.OnTaskCompleted listener){
         this.listener = listener;
     }
 
     @Override
     protected Result doInBackground(Object... params) {
         if (params.length != 1) {
-            Log.e("CertificateFetchHandler.doInBackGround", "Unexpected number of params.");
+            Log.e("CertificateFetchTask.doInBackGround", "Unexpected number of params.");
             return new Result(null, "Internal Error");
         }
 
@@ -65,6 +65,6 @@ public class CertificateFetchHandler extends AsyncTask<Object, Void, Certificate
     }
 
     protected void onPostExecute(Result result) {
-        listener.onTaskCompleted(result);
+        listener.onCertificateFetchTaskCompleted(result);
     }
 }

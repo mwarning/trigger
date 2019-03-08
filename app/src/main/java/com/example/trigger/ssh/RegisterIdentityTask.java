@@ -5,19 +5,21 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import com.example.trigger.Utils;
 import com.jcraft.jsch.KeyPair;
 
 
 class RegisterIdentityTask extends AsyncTask<Object, Void, String> {
-    private Context context;
+    private OnTaskCompleted listener;
 
-    public RegisterIdentityTask(Context context){
-        this.context = context;
+    public interface OnTaskCompleted {
+        void onRegisterIdentityTaskCompleted(String message);
+    }
+
+    public RegisterIdentityTask(OnTaskCompleted listener){
+        this.listener = listener;
     }
 
     @Override
@@ -37,15 +39,15 @@ class RegisterIdentityTask extends AsyncTask<Object, Void, String> {
             out.close();
 
             client.close();
-            Toast.makeText(context, "Done.", Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
-            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            return e.toString();
         }
         
-        return null;
+        return "Done";
     }
     
     @Override
-    protected void onPostExecute(String str) {
+    protected void onPostExecute(String message) {
+        listener.onRegisterIdentityTaskCompleted(message);
     }
 }

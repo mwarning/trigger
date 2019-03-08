@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,7 @@ import java.security.cert.X509Certificate;
 
 
 public class CertificateActivity extends AppCompatActivity implements
-        SimpleFilePickerDialog.InteractionListenerString, CertificateFetchHandler.OnTaskCompleted {
+        SimpleFilePickerDialog.InteractionListenerString, CertificateFetchTask.OnTaskCompleted {
     private static final String SELECT_FILE_REQUEST = "SELECT_FILE_REQUEST";
     private static final int REQUEST_PERMISSION = 0x01;
     private CertificatePreference preference; // hack
@@ -34,14 +35,13 @@ public class CertificateActivity extends AppCompatActivity implements
     private Button deleteButton;
     private Button fetchButton;
     private TextView certificateInfo;
-    private TextView certificateUrl;
+    private EditText certificateUrl;
     private TextView pathSelection;
     private Certificate certificate;
-    private String register_url;
     private String selected_path;
 
     @Override
-    public void onTaskCompleted(CertificateFetchHandler.Result r) {
+    public void onCertificateFetchTaskCompleted(CertificateFetchTask.Result r) {
         if (r.certificate != null) {
             this.certificate = r.certificate;
             Toast.makeText(getApplicationContext(), "Done.", Toast.LENGTH_SHORT).show();
@@ -68,20 +68,23 @@ public class CertificateActivity extends AppCompatActivity implements
         //this.certificate = HttpsTools.deserializeCertififcate(
         //    getIntent().getStringExtra("certificate")
         //);
-        this.register_url = getIntent().getStringExtra("register_url");
 
         builder = new AlertDialog.Builder(this);
-        importButton = (Button) findViewById(R.id.ImportButton);
-        exportButton = (Button) findViewById(R.id.ExportButton);
-        selectButton = (Button) findViewById(R.id.SelectPathButton);
-        cancelButton = (Button) findViewById(R.id.CancelButton);
-        okButton = (Button) findViewById(R.id.OkButton);
-        deleteButton = (Button) findViewById(R.id.DeleteButton);
-        certificateInfo = (TextView) findViewById(R.id.CertificateInfo);
-        certificateUrl = (TextView) findViewById(R.id.CertificateUrl);
-        pathSelection = (TextView) findViewById(R.id.PathSelection);
-        fetchButton = (Button) findViewById(R.id.FetchButton);
+        importButton = findViewById(R.id.ImportButton);
+        exportButton = findViewById(R.id.ExportButton);
+        selectButton = findViewById(R.id.SelectPathButton);
+        cancelButton = findViewById(R.id.CancelButton);
+        okButton = findViewById(R.id.OkButton);
+        deleteButton = findViewById(R.id.DeleteButton);
+        certificateInfo = findViewById(R.id.CertificateInfo);
+        certificateUrl = findViewById(R.id.CertificateUrl);
+        pathSelection = findViewById(R.id.PathSelection);
+        fetchButton = findViewById(R.id.FetchButton);
         final CertificateActivity self = this;
+
+        certificateUrl.setText(
+                getIntent().getStringExtra("register_url")
+        );
 
         selectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,11 +116,11 @@ public class CertificateActivity extends AppCompatActivity implements
         fetchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = register_url;
+                String url = certificateUrl.getText().toString();
                 if (url == null || url.isEmpty()) {
                     showErrorMessage("Empty URL", "No URL set to fetch a certificate from.");
                 } else {
-                    new CertificateFetchHandler(CertificateActivity.this).execute(url);
+                    new CertificateFetchTask(CertificateActivity.this).execute(url);
                 }
             }
         });
@@ -170,7 +173,6 @@ public class CertificateActivity extends AppCompatActivity implements
 
         updateCertificateInfo();
         updatePathInfo();
-        updateFetchUrl();
     }
 
     private void exportCertificateFile() {
@@ -264,14 +266,6 @@ public class CertificateActivity extends AppCompatActivity implements
             pathSelection.setText(selected_path);
             exportButton.setEnabled(true);
             importButton.setEnabled(true);
-        }
-    }
-
-    private void updateFetchUrl() {
-        if (register_url == null || register_url.isEmpty()) {
-            certificateUrl.setText("<no url selected>");
-        } else {
-            certificateUrl.setText(register_url);
         }
     }
 
