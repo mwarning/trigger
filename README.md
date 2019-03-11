@@ -22,8 +22,7 @@ Any help, bugfixes, new features, translations are much welcome.
 ## Download
 
 [<img src="fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
-
-Alternatively, you can download packages (apk) in the [release](https://github.com/mwarning/trigger/releases) section.
+[<img src="apk.png" alt="Get it on GitHub" height="90">](https://github.com/mwarning/trigger/releases)
 
 The minimum supported Android version is 5.0.
 
