@@ -21,8 +21,11 @@
         <Preference
             android:title="@string/license_title"
             android:summary="@string/license_name"
-            android:selectable="false"
-            android:persistent="false" />
+            android:persistent="false" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/license_url" />
+        </Preference>
 
     </PreferenceCategory>
 </PreferenceScreen>

@@ -33,6 +33,7 @@
 
     <string name="license_title">License</string>
     <string name="license_name">GPL-2</string>
+    <string name="license_url">https://www.gnu.de/documents/gpl-2.0.en.html</string>
 
     <string name="save_button">Save</string>
     <string name="delete_button">Delete</string>
