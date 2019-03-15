@@ -145,4 +145,55 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+            android:title="Bluetooth Settings"
+            android:key="BluetoothDoorSetup"
+            android:persistent="false" >
+
+        <EditTextPreference
+            android:title="Server Address"
+            android:key="server_address"
+            android:summary="Server MAC address"
+            android:persistent="false"
+            android:inputType="text" />
+<!--
+        <EditTextPreference
+            android:title="Server Port"
+            android:key="server_port"
+            android:summary="Server UUID port"
+            android:default="00001101-0000-1000-8000-00805F9B34F"
+            android:persistent="false"
+            android:inputType="text" />
+-->
+        <EditTextPreference
+            android:title="Open Command"
+            android:key="open_query"
+            android:summary="Open Door"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Close Command"
+            android:key="close_query"
+            android:summary="Close door."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="State Command"
+            android:key="status_query"
+            android:summary="Query door status."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="@string/setup_ssids"
+            android:summary="@string/setup_ssids_description"
+            android:defaultValue=""
+            android:key="ssids"
+            android:persistent="false"
+            android:inputType="text" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -222,6 +222,8 @@ public class Settings {
                 setup = new HttpsDoorSetup(id, "");
             } else if (type.equals(SshDoorSetup.type)) {
                 setup = new SshDoorSetup(id, "");
+            } else if (type.equals(BluetoothDoorSetup.type)) {
+                setup = new BluetoothDoorSetup(id, "");
             } else {
                 Log.e("Settings.getSetup", "Found unknown setup type: " + type);
                 return null;

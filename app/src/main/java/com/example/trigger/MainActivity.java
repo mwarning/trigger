@@ -31,6 +31,7 @@ import java.util.List;
 import com.example.trigger.DoorState.StateCode;
 import com.example.trigger.https.HttpsRequestHandler;
 import com.example.trigger.ssh.SshRequestHandler;
+import com.example.trigger.bluetooth.BluetoothRequestHandler;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
@@ -283,6 +284,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         } else if (setup instanceof SshDoorSetup) {
             SshDoorSetup sshSetup = (SshDoorSetup) setup;
             new SshRequestHandler(this).execute(action, sshSetup);
+        } else if (setup instanceof BluetoothRequestHandler) {
+            BluetoothDoorSetup bluetoothSetup = (BluetoothDoorSetup) setup;
+            new BluetoothRequestHandler(this).execute(action, bluetoothSetup);
         } else {
             changeUI(StateCode.DISABLED);
         }

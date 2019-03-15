@@ -3,9 +3,11 @@
     <string-array name="SetupTypes">
         <item>HTTPS Door</item>
         <item>SSH Door</item>
+        <item>Bluetooth Door</item>
     </string-array>
     <string-array name="SetupTypeValues">
         <item>HttpsDoorSetup</item>
         <item>SshDoorSetup</item>
+        <item>BluetoothDoorSetup</item>
     </string-array>
 </resources>
