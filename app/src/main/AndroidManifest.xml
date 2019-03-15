@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.trigger.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -24,17 +24,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.trigger.SetupActivity"
+            android:name=".SetupActivity"
             android:label="@string/action_edit"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.example.trigger.AboutActivity"
+            android:name=".AboutActivity"
             android:label="@string/action_about"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.example.trigger.preferences.SomeActivity"
+            android:name=".preferences.SomeActivity"
             android:label="@string/action_about"
             android:screenOrientation="portrait" >
         </activity>
