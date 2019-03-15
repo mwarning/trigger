@@ -70,7 +70,7 @@
             android:key="ignore_hostname_mismatch"
             android:persistent="false"
             android:summary="Warning: This disables security"
-            android:title="Disable hostname verification" />
+            android:title="Disable Certificate Hostname Check" />
 
     </PreferenceCategory>
 
