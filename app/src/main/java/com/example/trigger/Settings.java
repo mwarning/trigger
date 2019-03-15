@@ -11,8 +11,12 @@ import com.example.trigger.https.HttpsTools;
 import com.example.trigger.ssh.SshTools;
 import com.jcraft.jsch.KeyPair;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Field;
 import java.security.cert.Certificate;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -99,7 +103,7 @@ public class Settings {
                         }
                         saveSetup(setup);
                     } else {
-                        removeSetup(id);
+                        removeSetup_pre_172(id);
                     }
                 }
             }
@@ -146,6 +150,19 @@ public class Settings {
             sharedPreferences.edit().putString("db_version", app_version).commit();
             db_version = app_version;
         }
+
+        if (db_version.equals("1.7.1")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.7.2");
+            // convert settings from key based scheme to json
+            ArrayList<Setup> setups = getAllSetups_pre_172();
+            for (Setup setup : setups) {
+                removeSetup_pre_172(setup.getId());
+                saveSetup(setup);
+            }
+
+            sharedPreferences.edit().putString("db_version", app_version).commit();
+            db_version = app_version;
+        }
     }
 
     static void init(Context context) {
@@ -158,53 +175,154 @@ public class Settings {
         upgradeDB();
     }
 
-    static void saveSetup(Setup setup) {
-        if (setup.getId() < 0) {
-            return;
-        }
-
-        // remove first, in case the type has changed
-        removeSetup(setup.getId());
-
-        // store new setup data
-        String prefix = String.format("item_%03d_", setup.getId());
-        SharedPreferences.Editor e = sharedPreferences.edit();
+    static JSONObject toJsonObject(Setup setup) { 
+        JSONObject obj = new JSONObject();
 
         Field[] fields = setup.getClass().getDeclaredFields();
         for (Field field : fields) {
-            String name = field.getName();
-            Class<?> type = field.getType();
-            Object value = new String();
-
             try {
-                value = field.get(setup);
+                String name = field.getName();
+                Class<?> type = field.getType();
+                Object value = field.get(setup);
 
                 if (type == String.class) {
-                    e.putString(prefix + name, value.toString());
+                    obj.put(name, (String) value);
                 } else if (type == Boolean.class) {
-                    e.putString(prefix + name, value.toString());
+                    obj.put(name, (Boolean) value);
                 } else if (type == boolean.class) {
-                    e.putString(prefix + name, value.toString());
+                    obj.put(name, (boolean) value);
                 } else if (type == Integer.class) {
-                    e.putString(prefix + name, value.toString());
+                    obj.put(name, (Integer) value);
                 } else if (type == int.class) {
-                    e.putString(prefix + name, value.toString());
+                    obj.put(name, (int) value);
                 } else if (type == KeyPair.class) {
-                    e.putString(prefix + name, SshTools.serializeKeyPair((KeyPair) value));
+                    obj.put(name, SshTools.serializeKeyPair((KeyPair) value));
                 } else if (type == Certificate.class) {
-                    e.putString(prefix + name, HttpsTools.serializeCertificate((Certificate) value));
+                    obj.put(name, HttpsTools.serializeCertificate((Certificate) value));
                 } else {
-                    Log.e("Settings", "saveSetup: Unhandled type for " + name + ": " + type.toString());
+                    Log.e("Settings", "toJsonObject: Unhandled type for " + name + ": " + type.toString());
                 }
-            } catch (Exception ex) {
-                Log.e("Settings", "saveSetup: " + ex.toString());
+            } catch (Exception e) {
+                Log.e("Settings", "toJsonObject: " + e.toString());
+                return null;
             }
         }
 
-        e.commit();
+        Log.d("Settings", "toJsonObject: " + obj.toString());
+
+        return obj;
     }
 
-    static Setup getSetup(int id) {
+    /*
+    * Initialize setup object fields from json object fields.
+    */
+    private static void setSetupField(Setup setup, JSONObject object, String name)
+            throws JSONException, IllegalAccessException {
+        Object value = object.get(name);
+        Class<?> value_type = value.getClass();
+
+        Field[] fields = setup.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().equals(name)) {
+	            Class<?> type = field.getType();
+	            if (type == String.class && value_type == String.class) {
+	                field.set(setup, value);
+	            } else if (type == Boolean.class && value_type == Boolean.class) {
+	                field.set(setup, (Boolean) value);
+	            } else if (type == boolean.class && value_type == boolean.class) {
+	                field.set(setup, (boolean) value);
+	            } else if (type == Integer.class && value_type == Integer.class) {
+	                field.set(setup, (Integer) value);
+	            } else if (type == int.class && (value_type == int.class || value_type == Integer.class)) {
+	                field.set(setup, (int) value);
+	            } else if (type == KeyPair.class && value_type == String.class) {
+	                field.set(setup, SshTools.deserializeKeyPair((String) value));
+	            } else if (type == Certificate.class && value_type == String.class) {
+	                field.set(setup, HttpsTools.deserializeCertificate((String) value));
+	            } else {
+	                // show warning?
+	                Log.e("Settings", "setField: Unhandled type for " + name + ": " + type.toString());
+	            }
+	            break;
+	        }
+        }
+    }
+
+    static Setup fromJsonObject(JSONObject obj)
+            throws JSONException, IllegalAccessException {
+        Setup setup = null;
+        String type = obj.getString("type");
+        int id = Settings.getNewID();
+
+        // get empty setup object to fill
+        if (type.equals(HttpsDoorSetup.type)) {
+            setup = new HttpsDoorSetup(id, "");
+        } else if (type.equals(SshDoorSetup.type)) {
+            setup = new SshDoorSetup(id, "");
+        } else if (type.equals(BluetoothDoorSetup.type)) {
+            setup = new BluetoothDoorSetup(id, "");
+        } else {
+            Log.e("Settings.loadSetup", "Found unknown setup type: " + type);
+            return null;
+        }
+
+        Iterator<String> keys = obj.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if (!key.equals("type")) {
+                setSetupField(setup, obj, key);
+            }
+        }
+
+        return setup;
+    }
+
+    static Setup loadSetup(int id) {
+        Setup setup = null;
+
+        if (id < 0) {
+            return null;
+        }
+
+        String key = String.format("item_%03d", id);
+        String json = sharedPreferences.getString(key, null);
+
+        if (json == null) {
+            return null;
+        }
+
+        try {
+            JSONObject obj = new JSONObject(json);
+            return fromJsonObject(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    static void saveSetup(Setup setup) {
+        if (setup == null || setup.getId() < 0) {
+            return;
+        }
+
+        JSONObject json = toJsonObject(setup);
+
+        if (json == null) {
+            return;
+        }
+
+        String key = String.format("item_%03d", setup.getId());
+
+        sharedPreferences.edit().putString(key, json.toString()).commit();
+    }
+
+   static void removeSetup(int id) {
+        String key = String.format("item_%03d", id);
+        sharedPreferences.edit().remove(key).commit();
+    }
+
+    private static Setup loadSetup_pre_172(int id) {
         Setup setup = null;
 
         if (id < 0) {
@@ -214,8 +332,12 @@ public class Settings {
         {
             // get type
             String type = sharedPreferences.getString(
-                String.format("item_%03d_type", id), ""
+                String.format("item_%03d_type", id), null
             );
+
+            if (type == null) {
+                return null;
+            }
 
             // get empty setup object to fill
             if (type.equals(HttpsDoorSetup.type)) {
@@ -225,7 +347,7 @@ public class Settings {
             } else if (type.equals(BluetoothDoorSetup.type)) {
                 setup = new BluetoothDoorSetup(id, "");
             } else {
-                Log.e("Settings.getSetup", "Found unknown setup type: " + type);
+                Log.e("Settings.loadSetup", "Found unknown setup type: " + type);
                 return null;
             }
         }
@@ -256,17 +378,17 @@ public class Settings {
                 } else if (type == Certificate.class) {
                     field.set(setup, HttpsTools.deserializeCertificate(value));
                 } else {
-                    Log.e("Settings", "getSetup: Unhandled type for " + name + ": " + type.toString());
+                    Log.e("Settings", "loadSetup: Unhandled type for " + name + ": " + type.toString());
                 }
             } catch (Exception ex) {
-                Log.e("Settings", "getSetup: " + ex.toString());
+                Log.e("Settings", "loadSetup: " + ex.toString());
             }
         }
 
         return setup;
     }
 
-    static ArrayList<Setup> getAllSetups() {
+    private static ArrayList<Setup> getAllSetups_pre_172() {
         ArrayList<Setup> setups = new ArrayList();
         Map<String,?> keys = sharedPreferences.getAll();
         Pattern p = Pattern.compile("^item_(\\d{3})_type$");
@@ -279,7 +401,7 @@ public class Settings {
             }
 
             int id = Integer.parseInt(m.group(1));
-            Setup setup = getSetup(id);
+            Setup setup = loadSetup_pre_172(id);
             if (setup != null) {
                 setups.add(setup);
             }
@@ -288,7 +410,7 @@ public class Settings {
         return setups;
     }
 
-    static void removeSetup(int id) {
+    private static void removeSetup_pre_172(int id) {
         String prefix = String.format("item_%03d_", id);
         SharedPreferences.Editor e = sharedPreferences.edit();
 
@@ -304,8 +426,30 @@ public class Settings {
         e.commit();
     }
 
+    static ArrayList<Setup> getAllSetups() {
+        ArrayList<Setup> setups = new ArrayList();
+        Map<String,?> keys = sharedPreferences.getAll();
+        Pattern p = Pattern.compile("^item_(\\d{3})$");
+
+        for (Map.Entry<String,?> entry : keys.entrySet()) {
+            String key = entry.getKey();
+            Matcher m = p.matcher(key);
+            if (!m.find()) {
+                continue;
+            }
+
+            int id = Integer.parseInt(m.group(1));
+            Setup setup = loadSetup(id);
+            if (setup != null) {
+                setups.add(setup);
+            }
+        }
+
+        return setups;
+    }
+
     static boolean idExists(int id) {
-        return sharedPreferences.contains(String.format("item_%03d_type", id));
+        return sharedPreferences.contains(String.format("item_%03d", id));
     }
 
     static int getNewID() {
@@ -319,21 +463,12 @@ public class Settings {
     }
 
     static boolean nameExists(String name) {
-        Map<String,?> keys = sharedPreferences.getAll();
-        Pattern p = Pattern.compile("^item_(\\d{3})_name$");
-
-        for (Map.Entry<String,?> entry : keys.entrySet()) {
-            String key = entry.getKey();
-            Matcher m = p.matcher(key);
-            if (!m.find()) {
-                continue;
-            }
-
-            if (name.equals(entry.getValue())) {
+        ArrayList<Setup> setups = getAllSetups();
+        for (Setup setup : setups) {
+            if (setup.getName().equals(name)) {
                 return true;
             }
         }
-
         return false;
     }
 

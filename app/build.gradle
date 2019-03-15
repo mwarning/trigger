@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 171
-        versionName "1.7.1"
+        versionName "1.7.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,6 +30,8 @@ dependencies {
     implementation 'com.android.support:preference-v7:27.1.1'
     implementation 'com.jcraft:jsch:0.1.52'
     implementation 'com.github.isabsent:filepicker:1.1.01'
+    implementation 'com.google.zxing:core:3.2.0'
+    implementation('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

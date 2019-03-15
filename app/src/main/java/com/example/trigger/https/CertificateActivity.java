@@ -82,6 +82,7 @@ public class CertificateActivity extends AppCompatActivity implements
         fetchButton = findViewById(R.id.FetchButton);
         final CertificateActivity self = this;
 
+        // initialize with url for registering
         certificateUrl.setText(
                 getIntent().getStringExtra("register_url")
         );
@@ -143,7 +144,7 @@ public class CertificateActivity extends AppCompatActivity implements
                 builder.setMessage("Really remove certificate?");
                 builder.setCancelable(false); // not necessary
 
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         CertificateActivity.this.certificate = null;
                         updateCertificateInfo();
@@ -151,7 +152,7 @@ public class CertificateActivity extends AppCompatActivity implements
                     }
                 });
 
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }

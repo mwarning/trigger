@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="SetupTypes">Setup Typen</string>
-    <string name="SetupTypeValues">Setup Typwerte</string>
-
     <string name="action_edit">Verändern</string>
     <string name="action_new">Neu</string>
     <string name="action_reload">Aktualisieren</string>
+    <string name="action_scan_qr">QR Scan</string>
+    <string name="action_show_qr">QR Show</string>
     <string name="action_about">Über</string>
+
+    <string name="action_export">Export</string>
+    <string name="action_import">Import</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="really_remove_item">Wirklich löschen?</string>
 
     <string name="new_entry">Neuer Eintrag</string>
     <string name="setup_title">Setup</string>

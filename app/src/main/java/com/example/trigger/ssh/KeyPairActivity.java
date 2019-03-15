@@ -149,7 +149,7 @@ public class KeyPairActivity extends AppCompatActivity implements
                 builder.setMessage("Really remove key pair?");
                 builder.setCancelable(false); // not necessary
 
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         KeyPairActivity.this.keypair = null;
                         updateKeyInfo();
@@ -157,7 +157,7 @@ public class KeyPairActivity extends AppCompatActivity implements
                     }
                 });
 
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }

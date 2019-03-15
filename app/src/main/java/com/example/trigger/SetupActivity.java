@@ -19,9 +19,10 @@ import java.lang.reflect.Field;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 
+import com.jcraft.jsch.KeyPair;
+
 import com.example.trigger.https.CertificatePreference;
 import com.example.trigger.ssh.KeyPairPreference;
-import com.jcraft.jsch.KeyPair;
 
 
 public class SetupActivity extends PreferenceActivity {
@@ -74,10 +75,10 @@ public class SetupActivity extends PreferenceActivity {
 
     public void onDeleteButtonClicked(View v) {
         builder.setTitle("Confirm");
-        builder.setMessage("Really remove item?");
+        builder.setMessage(R.string.really_remove_item);
         builder.setCancelable(false); // not necessary
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 Settings.removeSetup(setup.getId());
                 // close this dialog and settings
@@ -85,7 +86,7 @@ public class SetupActivity extends PreferenceActivity {
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // close this dialog
                 dialog.cancel();
@@ -122,11 +123,10 @@ public class SetupActivity extends PreferenceActivity {
     private void setMainGroupTitle(String name) {
         PreferenceCategory pc = (PreferenceCategory) findPreference("main_category");
         if (pc != null) {
-            //String prefix = getResources().getString(R.string.setup_title);
             if (name.length() > 0) {
                 pc.setTitle(name);
             } else {
-                pc.setTitle(getResources().getString(R.string.new_entry));
+                pc.setTitle(R.string.new_entry);
             }
         } else {
             Log.e("SetupActivity.setTitle", "Cannot find main_category");
@@ -269,8 +269,9 @@ public class SetupActivity extends PreferenceActivity {
         int id = getIntent().getIntExtra("setup_id", -1);
 
         if (Settings.idExists(id)) {
-            setup = Settings.getSetup(id);
+            setup = Settings.loadSetup(id);
         } else {
+            // default setup
             setup = new HttpsDoorSetup(Settings.getNewID(), "");
         }
 

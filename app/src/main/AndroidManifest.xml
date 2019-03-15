@@ -36,10 +36,14 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".preferences.SomeActivity"
-            android:label="@string/action_about"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:name=".QRShowActivity"
+            android:exported="true"
+            android:label="@string/action_export"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".QRScanActivity"
+            android:label="@string/action_import"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ssh.KeyPairActivity"
             android:label="Manage SSH Key Pair"

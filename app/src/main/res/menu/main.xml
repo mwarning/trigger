@@ -20,6 +20,18 @@
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_refresh" />
 
+    <item android:id="@+id/action_scan_qr"
+        android:title="@string/action_scan_qr"
+        android:orderInCategory="4"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_scan_qr" />
+
+    <item android:id="@+id/action_show_qr"
+        android:title="@string/action_show_qr"
+        android:orderInCategory="4"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_show_qr" />
+
     <item android:id="@+id/action_about"
         android:title="@string/action_about"
         android:orderInCategory="4"

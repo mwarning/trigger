@@ -33,10 +33,12 @@ import com.example.trigger.https.HttpsRequestHandler;
 import com.example.trigger.ssh.SshRequestHandler;
 import com.example.trigger.bluetooth.BluetoothRequestHandler;
 
+import org.json.JSONException;
+
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
-    private boolean enableRefreshButton = false;
-    private boolean enableEditButton = false;
+    private boolean enableRefreshItem = false;
+    private boolean enableMenuItems = false;
     private ImageView stateIcon;
     private ImageButton lock;
     private ImageButton unlock;
@@ -119,9 +121,18 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     Setup getSelectedSetup() {
         SpinnerItem item = (SpinnerItem) spinner.getSelectedItem();
         if (item != null) {
-            return Settings.getSetup(item.id);
+            return Settings.loadSetup(item.id);
         } else {
             return null;
+        }
+    }
+
+    int getSelectedSetupId() {
+        SpinnerItem item = (SpinnerItem) spinner.getSelectedItem();
+        if (item != null) {
+            return item.id;
+        } else {
+            return -1;
         }
     }
 
@@ -158,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         // something is selected
         if (spinner.getSelectedItemPosition() != INVALID_POSITION) {
-            enableEditButton = true;
+            enableMenuItems = true;
         }
     }
 
@@ -218,24 +229,27 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private void changeUI(StateCode state) {
+
         switch (state) {
             case OPEN:
                 stateIcon.setImageResource(R.drawable.state_open);
                 lock.setEnabled(true);
                 unlock.setEnabled(true);
+                enableRefreshItem = true;
                 break;
 
             case CLOSED:
                 stateIcon.setImageResource(R.drawable.state_closed);
                 lock.setEnabled(true);
                 unlock.setEnabled(true);
+                enableRefreshItem = true;
                 break;
 
             case DISABLED:
                 stateIcon.setImageResource(R.drawable.state_wifi);
                 lock.setEnabled(false);
                 unlock.setEnabled(false);
-                enableRefreshButton = false;
+                enableRefreshItem = false;
                 break;
 
             case UNKNOWN:
@@ -243,11 +257,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 // Enabled, in case the API does not support state queries
                 lock.setEnabled(true);
                 unlock.setEnabled(true);
+                enableRefreshItem = true;
                 break;
-        }
-
-        if (state != StateCode.DISABLED) {
-            enableRefreshButton = true;
         }
 
         // update action bar menu
@@ -308,16 +319,23 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
         MenuItem editMenuItem = menu.findItem(R.id.action_edit);
+        MenuItem showQrMenuItem = menu.findItem(R.id.action_show_qr);
 
-        if (enableEditButton) {
+        if (enableMenuItems) {
             editMenuItem.setEnabled(true);
             editMenuItem.getIcon().setAlpha(255);
+
+            showQrMenuItem.setEnabled(true);
+            showQrMenuItem.getIcon().setAlpha(255);
         } else {
             editMenuItem.setEnabled(false);
             editMenuItem.getIcon().setAlpha(130);
+
+            showQrMenuItem.setEnabled(false);
+            showQrMenuItem.getIcon().setAlpha(130);
         }
 
-        if (enableRefreshButton) {
+        if (enableRefreshItem) {
             refreshMenuItem.setEnabled(true);
             refreshMenuItem.getIcon().setAlpha(255);
         } else {
@@ -351,11 +369,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         int id = menu_item.getItemId();
 
         if (id == R.id.action_edit) {
-            Setup setup = getSelectedSetup();
-            int setup_id = (setup != null) ? setup.getId() : -1;
-            Intent intent = new Intent(this, SetupActivity.class);
-            intent.putExtra("setup_id", setup_id);
-            startActivity(intent);
+            int setup_id = getSelectedSetupId();
+            Intent i = new Intent(this, SetupActivity.class);
+            i.putExtra("setup_id", setup_id);
+            startActivity(i);
             return true;
         }
 
@@ -368,6 +385,22 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         if (id == R.id.action_about) {
             Intent i = new Intent(this, AboutActivity.class);
+            startActivity(i);
+            return true;
+        }
+
+        if (id == R.id.action_scan_qr) {
+            int setup_id = getSelectedSetupId();
+            Intent i = new Intent(this, QRScanActivity.class);
+            i.putExtra("setup_id", setup_id);
+            startActivity(i);
+            return true;
+        }
+
+        if (id == R.id.action_show_qr) {
+            int setup_id = getSelectedSetupId();
+            Intent i = new Intent(this, QRShowActivity.class);
+            i.putExtra("setup_id", setup_id);
             startActivity(i);
             return true;
         }
