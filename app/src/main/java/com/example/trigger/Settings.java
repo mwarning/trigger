@@ -251,8 +251,8 @@ public class Settings {
     static Setup fromJsonObject(JSONObject obj)
             throws JSONException, IllegalAccessException {
         Setup setup = null;
+        int id = obj.getInt("id");
         String type = obj.getString("type");
-        int id = Settings.getNewID();
 
         // get empty setup object to fill
         if (type.equals(HttpsDoorSetup.type)) {
