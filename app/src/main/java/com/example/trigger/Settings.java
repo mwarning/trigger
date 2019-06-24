@@ -208,8 +208,6 @@ public class Settings {
             }
         }
 
-        Log.d("Settings", "toJsonObject: " + obj.toString());
-
         return obj;
     }
 
@@ -453,12 +451,12 @@ public class Settings {
     }
 
     static int getNewID() {
-        int n = 0;
+        int id = 0;
         while (true) {
-            if (!idExists(n)) {
-                return n;
+            if (!idExists(id)) {
+                return id;
             }
-            n += 1;
+            id += 1;
         }
     }
 
