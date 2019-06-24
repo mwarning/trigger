@@ -5,6 +5,7 @@
     <string name="action_reload">Aktualisieren</string>
     <string name="action_scan_qr">QR Scan</string>
     <string name="action_show_qr">QR Show</string>
+    <string name="action_clone">Klonen</string>
     <string name="action_about">Über</string>
 
     <string name="action_export">Export</string>

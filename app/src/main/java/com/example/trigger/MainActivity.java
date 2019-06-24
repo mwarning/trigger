@@ -34,6 +34,7 @@ import com.example.trigger.ssh.SshRequestHandler;
 import com.example.trigger.bluetooth.BluetoothRequestHandler;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
@@ -320,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
         MenuItem editMenuItem = menu.findItem(R.id.action_edit);
         MenuItem showQrMenuItem = menu.findItem(R.id.action_show_qr);
+        MenuItem cloneMenuItem = menu.findItem(R.id.action_clone);
 
         if (enableMenuItems) {
             editMenuItem.setEnabled(true);
@@ -327,12 +329,18 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             showQrMenuItem.setEnabled(true);
             showQrMenuItem.getIcon().setAlpha(255);
+
+            cloneMenuItem.setEnabled(true);
+            cloneMenuItem.getIcon().setAlpha(255);
         } else {
             editMenuItem.setEnabled(false);
             editMenuItem.getIcon().setAlpha(130);
 
             showQrMenuItem.setEnabled(false);
             showQrMenuItem.getIcon().setAlpha(130);
+
+            cloneMenuItem.setEnabled(false);
+            cloneMenuItem.getIcon().setAlpha(130);
         }
 
         if (enableRefreshItem) {
@@ -402,6 +410,23 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             Intent i = new Intent(this, QRShowActivity.class);
             i.putExtra("setup_id", setup_id);
             startActivity(i);
+            return true;
+        }
+
+        if (id == R.id.action_clone) {
+            try {
+                Setup setup = getSelectedSetup();
+                JSONObject obj = Settings.toJsonObject(setup);
+                int new_id = Settings.getNewID();
+                String new_name = setup.getName().split("~")[0] + "~" + new_id;
+                obj.put("id", new_id);
+                obj.put("name", new_name);
+                setup = Settings.fromJsonObject(obj);
+                Settings.saveSetup(setup);
+                updateSpinner();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return true;
         }
 

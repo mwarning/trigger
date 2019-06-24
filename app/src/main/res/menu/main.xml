@@ -28,13 +28,19 @@
 
     <item android:id="@+id/action_show_qr"
         android:title="@string/action_show_qr"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_show_qr" />
 
+    <item android:id="@+id/action_clone"
+        android:title="@string/action_clone"
+        android:orderInCategory="6"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_about" />
+
     <item android:id="@+id/action_about"
         android:title="@string/action_about"
-        android:orderInCategory="4"
+        android:orderInCategory="7"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_about" />
 </menu>
