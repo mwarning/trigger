@@ -22,12 +22,13 @@ public class QRShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrshow);
-        int setup_id = getIntent().getIntExtra("setup_id", -1);
 
+        int setup_id = getIntent().getIntExtra("setup_id", -1);
         Setup setup = Settings.loadSetup(setup_id);
-        setTitle(getTitle() + ": " + setup.getName());
 
         if (setup != null) {
+           setTitle(getTitle() + ": " + setup.getName());
+
             try {
                 generateQR(setup);
             } catch (Exception e) {
