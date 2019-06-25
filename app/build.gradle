@@ -6,7 +6,7 @@ android {
         applicationId 'com.example.trigger'
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 171
+        versionCode 172
         versionName "1.7.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
