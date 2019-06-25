@@ -45,13 +45,17 @@ public class QRShowActivity extends AppCompatActivity {
         json.remove("id");
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        int data_length = 0;
         try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(json.toString(), BarcodeFormat.QR_CODE, 1080, 1080);
+            String data = json.toString();
+            data_length = data.getBytes().length;
+            BitMatrix bitMatrix = multiFormatWriter.encode(data, BarcodeFormat.QR_CODE, 1080, 1080);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             ((ImageView) findViewById(R.id.QRView)).setImageBitmap(bitmap);
         } catch (WriterException e) {
-            e.printStackTrace();
+            Toast.makeText(this, e.getMessage() + " (" + data_length + " Bytes)", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 }
