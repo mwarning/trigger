@@ -141,14 +141,14 @@ public class Settings {
             }
 
             sharedPreferences.edit().putString("db_version", "1.7.0").commit();
-            db_version = app_version;
+            db_version = "1.7.0";
         }
 
         if (db_version.equals("1.7.0")) {
             Log.i("Settings", "Update database format from " + db_version + " to 1.7.1");
             // nothing to change
             sharedPreferences.edit().putString("db_version", app_version).commit();
-            db_version = app_version;
+            db_version = "1.7.1";
         }
 
         if (db_version.equals("1.7.1")) {
@@ -161,7 +161,7 @@ public class Settings {
             }
 
             sharedPreferences.edit().putString("db_version", app_version).commit();
-            db_version = app_version;
+            db_version = "1.7.2";
         }
     }
 
