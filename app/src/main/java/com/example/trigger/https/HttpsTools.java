@@ -47,7 +47,7 @@ public class HttpsTools {
                 + Base64.encodeToString(cert.getEncoded(), Base64.DEFAULT)
                 + "\n-----END CERTIFICATE-----\n";
         } catch (Exception e) {
-            Log.e("HttpsTools.serializeCertificate", e.toString());
+            Log.e("HttpsTools", e.toString());
         }
 
         return "";
@@ -63,7 +63,7 @@ public class HttpsTools {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509"); //KeyStore.getDefaultType() => "BKS"
             return certificateFactory.generateCertificate(derInputStream);
         } catch (Exception e) {
-            Log.e("HttpsTools.deserializeCertificate", e.toString());
+            Log.e("HttpsTools", e.toString());
         }
 
         return null;

@@ -32,7 +32,7 @@ public class CertificateFetchTask extends AsyncTask<Object, Void, CertificateFet
     @Override
     protected Result doInBackground(Object... params) {
         if (params.length != 1) {
-            Log.e("CertificateFetchTask.doInBackGround", "Unexpected number of params.");
+            Log.e("CertificateFetchTask", "Unexpected number of params.");
             return new Result(null, "Internal Error");
         }
 

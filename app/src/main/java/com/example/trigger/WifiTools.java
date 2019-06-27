@@ -77,7 +77,7 @@ public class WifiTools {
         }
         return null;
     }
-
+/*
     // connect to the best wifi that is configured by this app and system
     void connectBestOf(ArrayList<String> ssids) {
         String current_ssid = this.getCurrentSSID();
@@ -110,7 +110,7 @@ public class WifiTools {
             }
         }
     }
-
+*/
     boolean isConnected() {
         if (wifiManager != null && wifiManager.isWifiEnabled()) {
             // Wi-Fi adapter is ON

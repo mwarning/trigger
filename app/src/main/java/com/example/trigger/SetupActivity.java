@@ -66,7 +66,7 @@ public class SetupActivity extends PreferenceActivity {
             }
         }
 
-        Log.e("SetupActivity.showGroup()", "PreferenceGroup not found: " + key);
+        Log.e("SetupActivity", "PreferenceGroup not found: " + key);
     }
 
     public void onSaveButtonClicked(View v) {
@@ -147,7 +147,7 @@ public class SetupActivity extends PreferenceActivity {
         if (etp != null) {
             return etp.getText();
         } else {
-            Log.e("SetupActivity.getText", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
             return "";
         }
     }
@@ -157,7 +157,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             cbp.setChecked(checked);
         } else {
-            Log.e("SetupActivity.setChecked", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
         }
     }
 
@@ -166,7 +166,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             return cbp.isChecked();
         } else {
-            Log.e("SetupActivity.getChecked", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
             return false;
         }
     }
@@ -176,7 +176,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             return kpp.getKeyPair();
         } else {
-            Log.e("SetupActivity.getKeyPair", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
             return null;
         }
     }
@@ -186,7 +186,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             kpp.setKeyPair(keypair);
         } else {
-            Log.e("SetupActivity.setKeyPair", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
         }
     }
 
@@ -195,7 +195,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cp != null) {
             return cp.getCertificate();
         } else {
-            Log.e("SetupActivity.getCertificate", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
             return null;
         }
     }
@@ -205,7 +205,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cp != null) {
             cp.setCertificate(certificate);
         } else {
-            Log.e("SetupActivity.setCertificate", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find key: " + key);
         }
     }
 

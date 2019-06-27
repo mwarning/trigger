@@ -73,12 +73,12 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("HttpsRequestHandler.doInBackGround", "Unexpected number of params.");
+            Log.e("HttpsRequestHandler", "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof HttpsDoorSetup)) {
-            Log.e("HttpsRequestHandler.doInBackground", "Invalid type of params.");
+            Log.e("HttpsRequestHandler", "Invalid type of params.");
             return DoorReply.internal_error();
         }
 

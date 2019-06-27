@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:key="main_category"
@@ -9,7 +8,6 @@
         android:title="@string/setup_title">
 
         <EditTextPreference
-            android:defaultValue=""
             android:inputType="text"
             android:key="name"
             android:persistent="false"
@@ -58,7 +56,6 @@
             android:title="Status URL" />
 
         <EditTextPreference
-            android:defaultValue=""
             android:inputType="text"
             android:key="ssids"
             android:persistent="false"
@@ -138,7 +135,6 @@
         <EditTextPreference
             android:title="@string/setup_ssids"
             android:summary="@string/setup_ssids_description"
-            android:defaultValue=""
             android:key="ssids"
             android:persistent="false"
             android:inputType="text" />
@@ -189,7 +185,6 @@
         <EditTextPreference
             android:title="@string/setup_ssids"
             android:summary="@string/setup_ssids_description"
-            android:defaultValue=""
             android:key="ssids"
             android:persistent="false"
             android:inputType="text" />

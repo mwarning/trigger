@@ -82,7 +82,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
             startScan();
         } else {
-            Toast.makeText(this, "Camera permissons required for QR code scan.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Camera permissions required for QR code scan.", Toast.LENGTH_LONG).show();
             finish();
         }
     }

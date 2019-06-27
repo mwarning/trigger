@@ -36,7 +36,7 @@ class GenerateIdentityTask extends AsyncTask<Object, Void, String> {
     @Override
     protected String doInBackground(Object... params) {
         if (params.length != 1) {
-            Log.e("GenerateIdentityTask.doInBackGround", "Unexpected number of params.");
+            Log.e("GenerateIdentityTask", "Unexpected number of params.");
             return "Internal Error";
         }
 

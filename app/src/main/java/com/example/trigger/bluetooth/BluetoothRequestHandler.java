@@ -28,12 +28,12 @@ public class BluetoothRequestHandler extends AsyncTask<Object, Void, DoorReply> 
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("BluetoothRequestHandler.doInBackGround", "Unexpected number of params.");
+            Log.e("BluetoothRequestHandler", "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof BluetoothDoorSetup)) {
-            Log.e("BluetoothRequestHandler.doInBackground", "Invalid type of params.");
+            Log.e("BluetoothRequestHandler", "Invalid type of params.");
             return DoorReply.internal_error();
         }
 

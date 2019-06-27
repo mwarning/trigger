@@ -30,12 +30,12 @@ public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("SshRequestHandler.doInBackGround", "Unexpected number of params.");
+            Log.e("SshRequestHandler", "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof SshDoorSetup)) {
-            Log.e("SshRequestHandler.doInBackground", "Invalid type of params.");
+            Log.e("SshRequestHandler", "Invalid type of params.");
             return DoorReply.internal_error();
         }
 
