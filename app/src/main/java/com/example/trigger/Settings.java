@@ -152,7 +152,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.7.1")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.7.2");
+            Log.i("Settings", "Update database format from " + db_version + " to 1.8.0");
             // convert settings from key based scheme to json
             ArrayList<Setup> setups = getAllSetups_pre_172();
             for (Setup setup : setups) {
@@ -160,8 +160,8 @@ public class Settings {
                 saveSetup(setup);
             }
 
-            sharedPreferences.edit().putString("db_version", "1.7.2").commit();
-            db_version = "1.7.2";
+            sharedPreferences.edit().putString("db_version", "1.8.0").commit();
+            db_version = "1.8.0";
         }
     }
 
