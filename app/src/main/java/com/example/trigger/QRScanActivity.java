@@ -96,7 +96,8 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
             obj.put("id", Settings.getNewID());
 
             Setup setup = Settings.fromJsonObject(obj);
-            Settings.saveSetup(setup);
+            Settings.addSetup(setup);
+            Toast.makeText(this, "Added " + setup.getName(), Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_LONG).show();

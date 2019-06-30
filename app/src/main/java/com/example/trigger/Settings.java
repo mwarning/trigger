@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 public class Settings {
     private static SharedPreferences sharedPreferences;
+    private static ArrayList<Setup> setups;
     private static String app_version; // stored in program
     private static String db_version; // stored in database
 
@@ -67,7 +68,7 @@ public class Settings {
                 if (ignore) {
                     setup.ignore_hostname_mismatch = true;
                 }
-                saveSetup(setup);
+                addSetup(setup);
             }
             // remove old entries
             SharedPreferences.Editor e = sharedPreferences.edit();
@@ -77,6 +78,7 @@ public class Settings {
             e.remove("prefIgnore");
             e.putString("db_version", app_version);
             e.commit();
+            setups = new ArrayList();
             db_version = "1.3.1";
         }
 
@@ -101,12 +103,13 @@ public class Settings {
                         if (ignore) {
                             setup.ignore_hostname_mismatch = true;
                         }
-                        saveSetup(setup);
+                        addSetup(setup);
                     } else {
                         removeSetup_pre_172(id);
                     }
                 }
             }
+            setups = new ArrayList();
             db_version = "1.4.0";
         }
 
@@ -120,6 +123,7 @@ public class Settings {
                     sharedPreferences.edit().putString(prefix + "ignore_cert", ignore_cert.toString()).commit();
                 }
             }
+            setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.6.0").commit();
             db_version = "1.6.0";
         }
@@ -140,6 +144,7 @@ public class Settings {
                 }
             }
 
+            setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.7.0").commit();
             db_version = "1.7.0";
         }
@@ -147,6 +152,7 @@ public class Settings {
         if (db_version.equals("1.7.0")) {
             Log.i("Settings", "Update database format from " + db_version + " to 1.7.1");
             // nothing to change
+            setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.7.1").commit();
             db_version = "1.7.1";
         }
@@ -157,11 +163,20 @@ public class Settings {
             ArrayList<Setup> setups = getAllSetups_pre_172();
             for (Setup setup : setups) {
                 removeSetup_pre_172(setup.getId());
-                saveSetup(setup);
+                addSetup(setup);
             }
 
+            setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.8.0").commit();
             db_version = "1.8.0";
+        }
+
+        if (db_version.equals("1.8.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.9.0");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.9.0").commit();
+            db_version = "1.9.0";
         }
     }
 
@@ -170,9 +185,12 @@ public class Settings {
 
         app_version = getApplicationVersion(context);
         db_version = getDatabaseVersion(context);
+        setups = new ArrayList();
 
         //update database layout if necessary
         upgradeDB();
+
+        loadSetups();
     }
 
     static JSONObject toJsonObject(Setup setup) { 
@@ -275,7 +293,16 @@ public class Settings {
         return setup;
     }
 
-    static Setup loadSetup(int id) {
+    static Setup getSetup(int id) {
+        for (Setup setup : setups) {
+            if (setup.getId() == id) {
+                return setup;
+            }
+        }
+        return null;
+    }
+
+    private static Setup loadSetup(int id) {
         Setup setup = null;
 
         if (id < 0) {
@@ -299,10 +326,13 @@ public class Settings {
         return null;
     }
 
-    static void saveSetup(Setup setup) {
+    // add to list and database
+    static void addSetup(Setup setup) {
         if (setup == null || setup.getId() < 0) {
             return;
         }
+
+        removeSetup(setup.getId());
 
         JSONObject json = toJsonObject(setup);
 
@@ -313,11 +343,24 @@ public class Settings {
         String key = String.format("item_%03d", setup.getId());
 
         sharedPreferences.edit().putString(key, json.toString()).commit();
+
+        setups.add(setup);
     }
 
-   static void removeSetup(int id) {
-        String key = String.format("item_%03d", id);
-        sharedPreferences.edit().remove(key).commit();
+    // remove from list and database
+    static void removeSetup(int id) {
+        Iterator it = setups.iterator();
+        while (it.hasNext()) {
+            Setup setup = (Setup) it.next();
+            if (setup.getId() == id) {
+                it.remove();
+
+                // also remove item from storage
+                String key = String.format("item_%03d", id);
+                sharedPreferences.edit().remove(key).commit();
+                break;
+            }
+        }
     }
 
     private static Setup loadSetup_pre_172(int id) {
@@ -424,8 +467,13 @@ public class Settings {
         e.commit();
     }
 
-    static ArrayList<Setup> getAllSetups() {
-        ArrayList<Setup> setups = new ArrayList();
+    static ArrayList<Setup> getSetups() {
+        return setups;
+    }
+
+    private static void loadSetups() {
+        setups = new ArrayList();
+
         Map<String,?> keys = sharedPreferences.getAll();
         Pattern p = Pattern.compile("^item_(\\d{3})$");
 
@@ -442,12 +490,6 @@ public class Settings {
                 setups.add(setup);
             }
         }
-
-        return setups;
-    }
-
-    static boolean idExists(int id) {
-        return sharedPreferences.contains(String.format("item_%03d", id));
     }
 
     static int getNewID() {
@@ -460,8 +502,16 @@ public class Settings {
         }
     }
 
+    static boolean idExists(int id) {
+        for (Setup setup : setups) {
+            if (setup.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static boolean nameExists(String name) {
-        ArrayList<Setup> setups = getAllSetups();
         for (Setup setup : setups) {
             if (setup.getName().equals(name)) {
                 return true;

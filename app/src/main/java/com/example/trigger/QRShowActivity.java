@@ -24,7 +24,7 @@ public class QRShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qrshow);
 
         int setup_id = getIntent().getIntExtra("setup_id", -1);
-        Setup setup = Settings.loadSetup(setup_id);
+        Setup setup = Settings.getSetup(setup_id);
 
         if (setup != null) {
            setTitle(getTitle() + ": " + setup.getName());

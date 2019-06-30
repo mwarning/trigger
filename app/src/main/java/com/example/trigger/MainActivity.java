@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     Setup getSelectedSetup() {
         SpinnerItem item = (SpinnerItem) spinner.getSelectedItem();
         if (item != null) {
-            return Settings.loadSetup(item.id);
+            return Settings.getSetup(item.id);
         } else {
             return null;
         }
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private void updateSpinner() {
-        ArrayList<Setup> setups = Settings.getAllSetups();
+        ArrayList<Setup> setups = Settings.getSetups();
         ArrayList<SpinnerItem> items = new ArrayList();
 
         for (Setup setup : setups) {
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 obj.put("id", new_id);
                 obj.put("name", new_name);
                 setup = Settings.fromJsonObject(obj);
-                Settings.saveSetup(setup);
+                Settings.addSetup(setup);
                 updateSpinner();
             } catch (Exception e) {
                 e.printStackTrace();
