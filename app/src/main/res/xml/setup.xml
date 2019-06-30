@@ -55,6 +55,30 @@
             android:summary="Called to request the door status."
             android:title="Status URL" />
 
+        <com.example.trigger.ImagePreference
+            android:key="open_image"
+            android:title="Open Door Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="closed_image"
+            android:title="Closed Door Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="disabled_image"
+            android:title="No Connection Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="unknown_image"
+            android:title="Unknown Status Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
         <EditTextPreference
             android:inputType="text"
             android:key="ssids"

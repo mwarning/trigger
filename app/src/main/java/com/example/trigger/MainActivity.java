@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -33,24 +36,36 @@ import com.example.trigger.https.HttpsRequestHandler;
 import com.example.trigger.ssh.SshRequestHandler;
 import com.example.trigger.bluetooth.BluetoothRequestHandler;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean enableRefreshItem = false;
-    private boolean enableMenuItems = false;
-    private ImageView stateIcon;
-    private ImageButton lock;
-    private ImageButton unlock;
+    private boolean hasSetupSelected = false;
+    private ImageView stateImage;
+    private ImageButton lockButton;
+    private ImageButton unlockButton;
     private Spinner spinner;
     private WifiTools wifi;
     private Animation pressed;
+
+    private Bitmap state_open_default_image;
+    private Bitmap state_closed_default_image;
+    private Bitmap state_wifi_default_image;
+    private Bitmap state_unknown_default_image;
 
     public enum Action {
         open_door,
         close_door,
         update_state
+    }
+
+    private void initDefaultImages() {
+        Resources res = getResources();
+        state_open_default_image = BitmapFactory.decodeResource(res, R.drawable.state_open);
+        state_closed_default_image = BitmapFactory.decodeResource(res, R.drawable.state_closed);
+        state_wifi_default_image = BitmapFactory.decodeResource(res, R.drawable.state_wifi);
+        state_unknown_default_image = BitmapFactory.decodeResource(res, R.drawable.state_unknown);
     }
 
     // helper class for spinner
@@ -73,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         ArrayList<String> ret = new ArrayList();
         for (String element : str.split(",")) {
             String e = element.trim();
-            if (e.length() > 0) {
+            if (!e.isEmpty()) {
                 ret.add(e);
             }
         }
@@ -170,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         // something is selected
         if (spinner.getSelectedItemPosition() != INVALID_POSITION) {
-            enableMenuItems = true;
+            hasSetupSelected = true;
         }
     }
 
@@ -189,6 +204,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         this.wifi = new WifiTools(context);
         Settings.init(context);
 
+        initDefaultImages();
+
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -202,9 +219,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         };
 
         spinner = (Spinner) findViewById(R.id.selection_spinner);
-        stateIcon = (ImageView) findViewById(R.id.stateIcon);
-        lock = (ImageButton) findViewById(R.id.Lock);
-        unlock = (ImageButton) findViewById(R.id.Unlock);
+        stateImage = (ImageView) findViewById(R.id.stateImage);
+        lockButton = (ImageButton) findViewById(R.id.Lock);
+        unlockButton = (ImageButton) findViewById(R.id.Unlock);
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
         updateSpinner();
@@ -220,47 +237,59 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     public void onUnlock(View view) {
-        unlock.startAnimation(pressed);
+        unlockButton.startAnimation(pressed);
         callRequestHandler(Action.open_door);
     }
 
     public void onLock(View view) {
-        lock.startAnimation(pressed);
+        lockButton.startAnimation(pressed);
         callRequestHandler(Action.close_door);
     }
 
     private void changeUI(StateCode state) {
+        Bitmap image = null;
 
         switch (state) {
             case OPEN:
-                stateIcon.setImageResource(R.drawable.state_open);
-                lock.setEnabled(true);
-                unlock.setEnabled(true);
+                image = state_open_default_image;
+                lockButton.setEnabled(true);
+                unlockButton.setEnabled(true);
                 enableRefreshItem = true;
                 break;
 
             case CLOSED:
-                stateIcon.setImageResource(R.drawable.state_closed);
-                lock.setEnabled(true);
-                unlock.setEnabled(true);
+                image = state_closed_default_image;
+                lockButton.setEnabled(true);
+                unlockButton.setEnabled(true);
                 enableRefreshItem = true;
                 break;
 
             case DISABLED:
-                stateIcon.setImageResource(R.drawable.state_wifi);
-                lock.setEnabled(false);
-                unlock.setEnabled(false);
+                image = state_wifi_default_image;
+                lockButton.setEnabled(false);
+                unlockButton.setEnabled(false);
                 enableRefreshItem = false;
                 break;
 
             case UNKNOWN:
-                stateIcon.setImageResource(R.drawable.state_unknown);
+                image = state_unknown_default_image;
                 // Enabled, in case the API does not support state queries
-                lock.setEnabled(true);
-                unlock.setEnabled(true);
+                lockButton.setEnabled(true);
+                unlockButton.setEnabled(true);
                 enableRefreshItem = true;
                 break;
         }
+
+        // overwrite with custom image
+        Setup setup = getSelectedSetup();
+        if (setup != null) {
+            Bitmap custom = setup.getStateImage(state);
+            if (custom != null) {
+                image = custom;
+            }
+        }
+
+        stateImage.setImageBitmap(image);
 
         // update action bar menu
         invalidateOptionsMenu();
@@ -313,6 +342,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
+    // Show/Hide menu items
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -323,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         MenuItem showQrMenuItem = menu.findItem(R.id.action_show_qr);
         MenuItem cloneMenuItem = menu.findItem(R.id.action_clone);
 
-        if (enableMenuItems) {
+        if (hasSetupSelected) {
             editMenuItem.setEnabled(true);
             editMenuItem.getIcon().setAlpha(255);
 
@@ -392,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
 
         if (id == R.id.action_about) {
+            changeUI(StateCode.DISABLED);
             Intent i = new Intent(this, AboutActivity.class);
             startActivity(i);
             return true;

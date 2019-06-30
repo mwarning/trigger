@@ -1,6 +1,9 @@
 package com.example.trigger;
 
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
+
 import com.example.trigger.DoorState;
 import com.example.trigger.DoorState.StateCode;
 
@@ -41,6 +44,11 @@ public class BluetoothDoorSetup implements Setup {
     @Override
     public String getSSIDs() {
         return server_address;
+    }
+
+    @Override
+    public Bitmap getStateImage(StateCode _state) {
+        return null;
     }
 
     @Override

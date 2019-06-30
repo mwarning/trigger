@@ -1,5 +1,8 @@
 package com.example.trigger;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
+
 import com.jcraft.jsch.KeyPair;
 
 import com.example.trigger.DoorState.StateCode;
@@ -51,6 +54,11 @@ public class SshDoorSetup implements Setup {
     @Override
     public String getSSIDs() {
         return ssids;
+    }
+
+    @Override
+    public Bitmap getStateImage(StateCode _state) {
+        return null;
     }
 
     @Override

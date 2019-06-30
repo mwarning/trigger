@@ -87,12 +87,24 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         }
     }
 
+    private JSONObject decodeSetup(byte[] data) throws JSONException {
+        String text = "";
+        try {
+            // try to parse as json string
+            text = new String(data, 0, data.length, "UTF-8");
+        } catch (Exception e) {
+            // try to parse as compressed json string
+            text = Utils.deflateDecompressString(data);
+        }
+        return new JSONObject(text);
+    }
+
     @Override
     public void barcodeResult(BarcodeResult result) {
-        String json = result.getText();
-
         try {
-            JSONObject obj = new JSONObject(json);
+            JSONObject obj = decodeSetup(result.getRawBytes());
+
+            // give entry a new id
             obj.put("id", Settings.getNewID());
 
             Setup setup = Settings.fromJsonObject(obj);

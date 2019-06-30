@@ -15,11 +15,12 @@
         android:layout_height="wrap_content" />
 
     <ImageView
-        android:id="@+id/stateIcon"
-        android:layout_width="wrap_content"
+        android:id="@+id/stateImage"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="2"
+        android:layout_margin="70dp"
         android:onClick="onUpdateState"
         android:src="@drawable/state_open" />
 

@@ -9,6 +9,7 @@ Features:
  - auto select profiles by connected device (WiFi/Bluetooth)
  - certificate/key file support
  - import/export via QR Code
+ - custom status images
 
 ![image](screenshot_states.png)
 

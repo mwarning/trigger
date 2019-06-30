@@ -1,5 +1,10 @@
 package com.example.trigger;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
+
+import com.example.trigger.DoorState.StateCode;
+
 
 public interface Setup {
     // internal id
@@ -14,6 +19,9 @@ public interface Setup {
     // Select setup entry from dropdown if it
     // matches any of these SSIDs (comma separated)
     public abstract String getSSIDs();
+
+    // Get image dependent of the door state
+    public abstract Bitmap getStateImage(StateCode state);
 
     // URL to fetch a https certificate from
     // or to send a ssh public key for registration

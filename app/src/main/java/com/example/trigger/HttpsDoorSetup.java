@@ -1,5 +1,9 @@
 package com.example.trigger;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
+import android.util.Log;
+
 import com.example.trigger.DoorState;
 import com.example.trigger.DoorState.StateCode;
 
@@ -13,6 +17,12 @@ public class HttpsDoorSetup implements Setup {
     public String open_query;
     public String close_query;
     public String status_query;
+
+    public Bitmap open_image;
+    public Bitmap closed_image;
+    public Bitmap unknown_image;
+    public Bitmap disabled_image;
+
     public String ssids;
     public Certificate certificate;
     public Boolean ignore_hostname_mismatch;
@@ -23,6 +33,10 @@ public class HttpsDoorSetup implements Setup {
         this.open_query = "";
         this.close_query = "";
         this.status_query = "";
+        this.open_image = null;
+        this.closed_image = null;
+        this.unknown_image = null;
+        this.disabled_image = null;
         this.ssids = "";
         this.certificate = null;
         this.ignore_hostname_mismatch = false;
@@ -46,6 +60,22 @@ public class HttpsDoorSetup implements Setup {
     @Override
     public String getSSIDs() {
         return ssids;
+    }
+
+    @Override
+    public Bitmap getStateImage(StateCode state) {
+        switch (state) {
+            case OPEN:
+                return open_image;
+            case CLOSED:
+                return closed_image;
+            case DISABLED:
+                return disabled_image;
+            case UNKNOWN:
+                return unknown_image;
+            default:
+                return null;
+        }
     }
 
     private static String stripUrls(String... urls) {

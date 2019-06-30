@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -213,6 +214,8 @@ public class Settings {
                     obj.put(name, (Integer) value);
                 } else if (type == int.class) {
                     obj.put(name, (int) value);
+                } else if (type == Bitmap.class) {
+                    obj.put(name, Utils.serializeBitmap((Bitmap) value));
                 } else if (type == KeyPair.class) {
                     obj.put(name, SshTools.serializeKeyPair((KeyPair) value));
                 } else if (type == Certificate.class) {
@@ -251,6 +254,8 @@ public class Settings {
 	                field.set(setup, (Integer) value);
 	            } else if (type == int.class && (value_type == int.class || value_type == Integer.class)) {
 	                field.set(setup, (int) value);
+                } else if (type == Bitmap.class && value_type == String.class) {
+	               field.set(setup, Utils.deserializeBitmap((String) value));
 	            } else if (type == KeyPair.class && value_type == String.class) {
 	                field.set(setup, SshTools.deserializeKeyPair((String) value));
 	            } else if (type == Certificate.class && value_type == String.class) {

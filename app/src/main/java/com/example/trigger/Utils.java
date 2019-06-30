@@ -3,9 +3,16 @@ package com.example.trigger;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
+import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
+import android.util.Log;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +21,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 
 public class Utils {
@@ -94,5 +103,83 @@ public class Utils {
 
       // validation succeeded
       return new InetSocketAddress(host, port);
+    }
+
+
+    public static String serializeBitmap(Bitmap image) {
+        if (image == null) {
+            Log.d("Utils", "serializeBitmap returns empty string");
+            return "";
+        }
+
+        try {
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            boolean success = image.compress(Bitmap.CompressFormat.PNG, 0, byteStream);
+            if (success) {
+                return Base64.encodeToString(byteStream.toByteArray(), 0);
+            } else {
+                throw new Exception("compress failed");
+            }
+        } catch (Exception e) {
+            Log.e("Utils", "serializeBitmap: " + e.toString());
+        }
+
+        return null;
+    }
+
+    public static Bitmap deserializeBitmap(String str) {
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+
+        try {
+            byte[] data = Base64.decode(str, 0);
+            Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
+            if (image == null) {
+                Log.d("Utils", "deserializeBitmap returns null despite string input");
+            }
+            return image;
+        } catch (Exception e) {
+            Log.e("Utils", "deserializeBitmap: " + e.toString());
+        }
+        return null;
+    }
+
+
+    // deflate compression
+    public static byte[] deflateCompressString(String inputString) {
+        try {
+            byte[] input = inputString.getBytes("UTF-8");
+            // Compress the bytes
+            byte[] output = new byte[input.length];
+            Deflater compresser = new Deflater();
+            compresser.setInput(input);
+            compresser.finish();
+            int compressedDataLength = compresser.deflate(output);
+            compresser.end();
+            // create output array of exact size
+            byte[] out = new byte[compressedDataLength];
+            System.arraycopy(output, 0, out, 0, compressedDataLength);
+            return out;
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    // deflate decompress
+    public static String deflateDecompressString(byte[] input) {
+        try {
+            // Decompress the bytes
+            Inflater decompresser = new Inflater();
+            decompresser.setInput(input, 0, input.length);
+            byte[] result = new byte[input.length * 10];
+            int resultLength = decompresser.inflate(result);
+            decompresser.end();
+
+            return new String(result, 0, resultLength, "UTF-8");
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

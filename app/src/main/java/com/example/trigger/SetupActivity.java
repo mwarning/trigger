@@ -1,6 +1,8 @@
 package com.example.trigger;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.content.Context;
 import android.preference.Preference;
@@ -171,6 +173,25 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
+    private Bitmap getBitmap(String key) {
+        ImagePreference kpp = (ImagePreference) findAnyPreference(key, null);
+        if (kpp != null) {
+            return kpp.getImage();
+        } else {
+            Log.e("SetupActivity", "Cannot find key: " + key);
+            return null;
+        }
+    }
+
+    private void setBitmap(String key, Bitmap image) {
+        ImagePreference kpp = (ImagePreference) findAnyPreference(key, null);
+        if (kpp != null) {
+            kpp.setImage(image);
+        } else {
+            Log.e("SetupActivity", "Cannot find key: " + key);
+        }
+    }
+
     private KeyPair getKeyPair(String key) {
         KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
         if (kpp != null) {
@@ -268,9 +289,8 @@ public class SetupActivity extends PreferenceActivity {
 
         int id = getIntent().getIntExtra("setup_id", -1);
 
-        if (Settings.idExists(id)) {
-            setup = Settings.loadSetup(id);
-        } else {
+        setup = Settings.getSetup(id);
+        if (setup == null) {
             // default setup
             setup = new HttpsDoorSetup(Settings.getNewID(), "");
         }
@@ -306,6 +326,8 @@ public class SetupActivity extends PreferenceActivity {
                     setChecked(name, (Boolean) value);
                 } else if (type == boolean.class) {
                     setChecked(name, (boolean) value);
+                } else if (type == Bitmap.class) {
+                    setBitmap(name, (Bitmap) value);
                 } else if (type == KeyPair.class) {
                     setKeyPair(name, (KeyPair) value);
                 } else if (type == Certificate.class) {
@@ -346,6 +368,8 @@ public class SetupActivity extends PreferenceActivity {
                     field.set(setup, new Integer(Integer.parseInt(getText(name))));
                 } else if (type == int.class) {
                    field.set(setup, Integer.parseInt(getText(name)));
+                } else if (type == Bitmap.class) {
+                    field.set(setup, getBitmap(name));
                 } else if (type == KeyPair.class) {
                     field.set(setup, getKeyPair(name));
                 } else if (type == Certificate.class) {
@@ -362,7 +386,7 @@ public class SetupActivity extends PreferenceActivity {
         if (setup.getName() == null || setup.getName().length() == 0) {
             showErrorMessage("Invalid Name", "Name is not set.");
         } else {
-            Settings.saveSetup(this.setup);
+            Settings.addSetup(this.setup);
 
             // report all done
             Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
