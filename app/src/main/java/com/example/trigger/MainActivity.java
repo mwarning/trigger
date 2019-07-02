@@ -444,6 +444,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             return true;
         }
 
+        if (id == R.id.action_backup) {
+            Intent i = new Intent(this, BackupActivity.class);
+            startActivity(i);
+            return true;
+        }
+
         if (id == R.id.action_clone) {
             try {
                 Setup setup = getSelectedSetup();

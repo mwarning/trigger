@@ -7,6 +7,7 @@
     <string name="action_reload">Reload</string>
     <string name="action_scan_qr">QR Scan</string>
     <string name="action_show_qr">QR Show</string>
+    <string name="action_backup">Backup</string>
     <string name="action_clone">Clone</string>
     <string name="action_about">About</string>
 
