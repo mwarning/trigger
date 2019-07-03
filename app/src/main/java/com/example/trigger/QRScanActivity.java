@@ -36,8 +36,8 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         setContentView(R.layout.activity_qrscan);
         barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcodeScannerView);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+        if (Utils.hasCameraPermission(this)) {
+            Utils.requestCameraPermission(this, 1);
         } else {
             startScan();
         }
