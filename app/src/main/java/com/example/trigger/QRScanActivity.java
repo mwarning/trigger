@@ -94,7 +94,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
             text = new String(data, 0, data.length, "UTF-8");
         } catch (Exception e) {
             // try to parse as compressed json string
-            text = Utils.deflateDecompressString(data);
+            //text = Utils.deflateDecompressString(data);
         }
         return new JSONObject(text);
     }

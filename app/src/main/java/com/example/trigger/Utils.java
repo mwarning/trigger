@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
+//import java.util.zip.Deflater;
+//import java.util.zip.Inflater;
 
 
 public class Utils {
@@ -155,7 +155,7 @@ public class Utils {
         return null;
     }
 
-
+/*
     // deflate compression
     public static byte[] deflateCompressString(String inputString) {
         try {
@@ -192,4 +192,5 @@ public class Utils {
             return null;
         }
     }
+*/
 }
