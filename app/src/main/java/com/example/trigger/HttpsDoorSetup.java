@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 import android.util.Log;
 
-import com.example.trigger.DoorState;
 import com.example.trigger.DoorState.StateCode;
 
 import java.security.cert.Certificate;
