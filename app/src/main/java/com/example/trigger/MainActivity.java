@@ -184,7 +184,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         });
 
         // something is selected
-        if (spinner.getSelectedItemPosition() != INVALID_POSITION) {
+        if (spinner.getSelectedItemPosition() == INVALID_POSITION) {
+            hasSetupSelected = false;
+        } else {
             hasSetupSelected = true;
         }
     }
@@ -192,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     @Override
     protected void onResume() {
         updateSpinner();
+        invalidateOptionsMenu();
         super.onResume();
     }
 
