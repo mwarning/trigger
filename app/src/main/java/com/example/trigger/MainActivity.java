@@ -60,14 +60,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         update_state
     }
 
-    private void initDefaultImages() {
-        Resources res = getResources();
-        state_open_default_image = BitmapFactory.decodeResource(res, R.drawable.state_open);
-        state_closed_default_image = BitmapFactory.decodeResource(res, R.drawable.state_closed);
-        state_wifi_default_image = BitmapFactory.decodeResource(res, R.drawable.state_wifi);
-        state_unknown_default_image = BitmapFactory.decodeResource(res, R.drawable.state_unknown);
-    }
-
     // helper class for spinner
     private static class SpinnerItem {
         public final int id;
@@ -207,7 +199,17 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         this.wifi = new WifiTools(context);
         Settings.init(context);
 
-        initDefaultImages();
+        Resources res = getResources();
+        state_open_default_image = BitmapFactory.decodeResource(res, R.drawable.state_open);
+        state_closed_default_image = BitmapFactory.decodeResource(res, R.drawable.state_closed);
+        state_wifi_default_image = BitmapFactory.decodeResource(res, R.drawable.state_wifi);
+        state_unknown_default_image = BitmapFactory.decodeResource(res, R.drawable.state_unknown);
+
+        spinner = (Spinner) findViewById(R.id.selection_spinner);
+        stateImage = (ImageView) findViewById(R.id.stateImage);
+        lockButton = (ImageButton) findViewById(R.id.Lock);
+        unlockButton = (ImageButton) findViewById(R.id.Unlock);
+        pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -220,12 +222,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 }
             }
         };
-
-        spinner = (Spinner) findViewById(R.id.selection_spinner);
-        stateImage = (ImageView) findViewById(R.id.stateImage);
-        lockButton = (ImageButton) findViewById(R.id.Lock);
-        unlockButton = (ImageButton) findViewById(R.id.Unlock);
-        pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
         updateSpinner();
 
