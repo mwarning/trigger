@@ -8,7 +8,8 @@ Features:
  - multiple door profiles
  - auto select profiles by connected device (WiFi/Bluetooth)
  - certificate/key file support
- - import/export via QR Code
+ - QR code import/export
+ - JSON file import/export
  - custom status images
 
 ![image](screenshot_states.png)
