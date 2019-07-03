@@ -68,7 +68,7 @@ public class Utils {
     // write file to external storage
     public static void writeExternalFile(String filepath, byte[] data) throws IOException {
         File file = new File(filepath);
-        if (file.exists()) {
+        if (file.exists() && file.isFile()) {
             if (!file.delete()) {
                 throw new IOException("Failed to delete existing file: " + filepath);
             }
@@ -82,7 +82,7 @@ public class Utils {
     // read file from external storage
     public static byte[] readExternalFile(String filepath) throws IOException {
         File file = new File(filepath);
-        if (!file.exists()) {
+        if (!file.exists() || !file.isFile()) {
             throw new IOException("File does not exist: " + filepath);
         }
         FileInputStream fis = new FileInputStream(file);
