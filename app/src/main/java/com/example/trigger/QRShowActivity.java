@@ -71,13 +71,13 @@ public class QRShowActivity extends AppCompatActivity {
             Object value = obj.opt(key);
             if (value == null) {
                 obj.remove(key);
+            } else if (key.endsWith("_image")) {
+                obj.remove(key);
             } else if (value instanceof String) {
                 String s = (String) value;
                 if (s.length() == 0) {
                     obj.remove(key);
                 }
-            } else if (key.endsWith("_image")) {
-                obj.remove(key);
             }
         }
 
