@@ -52,42 +52,51 @@ public class QRShowActivity extends AppCompatActivity {
         return set;
     }
 
+    ArrayList<String> getJsonKeys(JSONObject obj) {
+        ArrayList<String> keys = new ArrayList<String>();
+        Iterator<String> it = obj.keys();
+        while (it.hasNext()) {
+            keys.add(it.next());
+        }
+        return keys;
+    }
+
     private String encodeSetup(JSONObject obj) {
+        // do not export internal id
+        obj.remove("id");
+
+        // remove empty strings, images and null values
+        ArrayList<String> keys = getJsonKeys(obj);
+        for (String key : keys) {
+            Object value = obj.opt(key);
+            if (value == null) {
+                obj.remove(key);
+            } else if (value instanceof String) {
+                String s = (String) value;
+                if (s.length() == 0) {
+                    obj.remove(key);
+                }
+            } else if (key.endsWith("_image")) {
+                obj.remove(key);
+            }
+        }
+
         return obj.toString();
     }
 
     private void generateQR(Setup setup) throws Exception {
-        /*
-        ArrayList<String> removed = new ArrayList<String>();
-
-        // remove large (string) elements
-        for (String key : collect(obj.keys())) {
-            int len = obj.optString(key).length();
-            if (len > 500) {
-                obj.remove(key);
-                removed.add(key);
-            }
-        }*/
-
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         int data_length = 0;
         try {
             JSONObject obj = Settings.toJsonObject(setup);
-            // do not export internal id
-            obj.remove("id");
             String data = encodeSetup(obj);
-
             data_length = data.length();
+
             // data has to be a string
             BitMatrix bitMatrix = multiFormatWriter.encode(data, BarcodeFormat.QR_CODE, 1080, 1080);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
             ((ImageView) findViewById(R.id.QRView)).setImageBitmap(bitmap);
-/*
-            if (removed.size() > 0) {
-                Toast.makeText(this, "Fields too big for export: " + String.join(", ", removed), Toast.LENGTH_LONG).show();
-            }
-*/
         } catch (WriterException e) {
             Toast.makeText(this, e.getMessage() + " (" + data_length + " Bytes)", Toast.LENGTH_LONG).show();
             finish();
