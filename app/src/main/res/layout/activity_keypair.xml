@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:inputType="textNoSuggestions"
             android:text="Fingerprint"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -32,14 +31,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:inputType="textNoSuggestions"
             android:textAlignment="center"
             android:textIsSelectable="true" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:text="Public Key"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -50,7 +47,6 @@
             style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:textAlignment="center"
             android:layout_marginTop="10dp"
             android:textIsSelectable="true" />
@@ -58,7 +54,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:text="Import/Export Path"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -69,14 +64,12 @@
             style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:layout_marginTop="10dp"
             android:textAlignment="center" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:text="Register Address"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -86,7 +79,6 @@
             android:id="@+id/RegisterAddress"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textNoSuggestions"
             android:layout_marginTop="10dp"
             android:textAlignment="center" />
 
