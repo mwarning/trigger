@@ -1,0 +1,2 @@
+* add camera permission
+* add package metadata

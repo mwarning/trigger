@@ -1,0 +1,4 @@
+* QR-code import/export
+* clone setups
+* fix update from previous versions
+* bluetooth support (untested!)

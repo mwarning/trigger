@@ -1,0 +1,4 @@
+* button press animation
+* fix item selection in drop-down list
+* fetch/import/export https certificate
+* ignore certificate host name mismatch (replaces "ignore errors")

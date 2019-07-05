@@ -1,0 +1,2 @@
+* register ssh public key (send to some address)
+* remove button for ssh key pair / https certificate
