@@ -6,8 +6,8 @@ android {
         applicationId 'com.example.trigger'
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 190
-        versionName "1.9.0"
+        versionCode 191
+        versionName "1.9.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
