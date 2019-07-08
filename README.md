@@ -41,7 +41,7 @@ On Linux based systems:
 ./gradlew assembleRelease
 ```
 
-## Related Projects
+## Similar/Related Projects
 
 * [Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote)
 * [D00r](https://github.com/h42i/d00r-app)
