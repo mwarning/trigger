@@ -29,9 +29,9 @@ Any help, bugfixes, new features, translations are much welcome.
 
 The minimum supported Android version is 5.0.
 
-## Usage
+## Door Status
 
-The status of the door is determined if the https query or ssh command returns the strings `LOCKED` (door closed), `UNLOCKED` (door open) or some other output (unknown door state). The return message is displayed in the App for a short period.
+The door status is determined based on the text returned of the HTTPS query or SSH command. Recognized are the keywords `LOCKED` (door closed) and `UNLOCKED` (door open). If neither keyword is recognized, the door status is set to unknown. The complete return message is displayed in the App for a short time.
 
 ## Build from Sources
 
