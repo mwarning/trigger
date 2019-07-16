@@ -45,6 +45,7 @@ class GenerateIdentityTask extends AsyncTask<Object, Void, String> {
 
             JSch jsch = new JSch();
             keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, bits);
+            keypair.setPublicKeyComment(null);
         } catch (Exception e) {
             return e.getMessage();
         }

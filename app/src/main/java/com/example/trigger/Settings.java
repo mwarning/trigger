@@ -179,6 +179,41 @@ public class Settings {
             sharedPreferences.edit().putString("db_version", "1.9.0").commit();
             db_version = "1.9.0";
         }
+
+        if (db_version.equals("1.9.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.9.1");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.9.0").commit();
+            db_version = "1.9.1";
+        }
+
+        if (db_version.equals("1.9.1")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.9.2");
+            setups = new ArrayList();
+            // convert keypair format
+            SharedPreferences.Editor e = sharedPreferences.edit();
+            for (int id = 0; id < 10; id += 1) {
+                try {
+                    JSONObject obj = loadSetup(id);
+                    if (obj != null && obj.has("keypair")) {
+                        KeyPair keypair = SshTools.deserializeKeyPairOld(
+                            obj.getString("keypair")
+                        );
+                        obj.put("keypair", SshTools.serializeKeyPair(keypair));
+
+                        String key = String.format("item_%03d", id);
+                        e.putString(key, obj.toString());
+                    }
+                } catch (Exception ex) {
+                    Log.e("upgradeDB", ex.toString());
+                }
+            }
+            e.commit();
+
+            sharedPreferences.edit().putString("db_version", "1.9.2").commit();
+            db_version = "1.9.2";
+        }
     }
 
     static void init(Context context) {
@@ -307,7 +342,7 @@ public class Settings {
         return null;
     }
 
-    private static Setup loadSetup(int id) {
+    private static JSONObject loadSetup(int id) throws JSONException {
         Setup setup = null;
 
         if (id < 0) {
@@ -321,14 +356,7 @@ public class Settings {
             return null;
         }
 
-        try {
-            JSONObject obj = new JSONObject(json);
-            return fromJsonObject(obj);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return new JSONObject(json);
     }
 
     // add to list and database
@@ -490,9 +518,16 @@ public class Settings {
             }
 
             int id = Integer.parseInt(m.group(1));
-            Setup setup = loadSetup(id);
-            if (setup != null) {
-                setups.add(setup);
+            try {
+                JSONObject obj = loadSetup(id);
+                if (obj != null) {
+                    Setup setup = fromJsonObject(obj);
+                    if (setup != null) {
+                        setups.add(setup);
+                    }
+                }
+            } catch (Exception e) {
+                // ignore broken setup
             }
         }
     }

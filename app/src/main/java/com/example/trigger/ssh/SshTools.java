@@ -50,17 +50,10 @@ public class SshTools {
         }
 
         try {
-            // KeyPair to KeyPairData
-            KeyPairData obj = keypairToBytes(keypair);
-
-            // serialize KeyPairData to bytes
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(obj);
-            oos.close();
-
-            // bytes to base64 string
-            return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+            keypair.writePrivateKey(baos);
+            baos.close();
+            return new String(baos.toByteArray());
         } catch (Exception e) {
             Log.e("SshTools", "serialize error: " + e.toString());
         }
@@ -68,6 +61,24 @@ public class SshTools {
     }
 
     public static KeyPair deserializeKeyPair(String str) {
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+
+        try {
+            JSch jsch = new JSch();
+            KeyPair keypair = KeyPair.load(jsch, str.getBytes(), null);
+            keypair.setPublicKeyComment(null);
+
+            return keypair;
+        } catch (Exception e) {
+            Log.e("SshTools", "deserialize error: " + e.toString());
+        }
+        return null;
+    }
+
+    // for <= 1.9.1
+    public static KeyPair deserializeKeyPairOld(String str) {
         if (str == null || str.length() == 0) {
             return null;
         }
@@ -83,27 +94,14 @@ public class SshTools {
 
             // KeyParData to KeyPair
             JSch jsch = new JSch();
-            return KeyPair.load(jsch, obj.prvkey, obj.pubkey);
+            KeyPair keypair = KeyPair.load(jsch, obj.prvkey, obj.pubkey);
+            if (keypair != null) {
+                keypair.setPublicKeyComment(null);
+            }
+            return keypair;
         } catch (Exception e) {
             Log.e("SshTools", "deserialize error: " + e.toString());
         }
         return null;
-    }
-
-    public static final void writeKeyFiles(String targetPath, KeyPair keypair) throws Exception {
-        File targetDir = new File(targetPath);
-        File privateKeyFile = new File(targetDir, "id_rsa");
-        File publicKeyFile = new File(targetDir, "id_rsa.pub");
-
-        if (privateKeyFile.exists()) {
-            privateKeyFile.delete();
-        }
-
-        if (publicKeyFile.exists()) {
-            publicKeyFile.delete();
-        }
-
-        keypair.writePrivateKey(new FileOutputStream(privateKeyFile));
-        keypair.writePublicKey(new FileOutputStream(publicKeyFile), "none");
     }
 }
