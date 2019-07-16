@@ -43,9 +43,9 @@ On Linux based systems:
 
 ## Similar/Related Projects
 
-* [Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote)
-* [D00r](https://github.com/h42i/d00r-app)
-* [labadoor](https://github.com/ToLABaki/labadoor)
+* [Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote) / [Sphincter](https://github.com/openlab-aux/sphincter)
+* [D00r-app](https://github.com/h42i/d00r-app) / [D00r-key-server](https://github.com/h42i/d00r-key-server)
+* [labadoor](https://github.com/ToLABaki/labadoor) / [DoorLock](https://wiki.tolabaki.gr/w/DoorLock_v3)
 * [Krautschlüssel](https://gitlab.com/fiveop/krautschluessel)
 * [MetalabDoorWidget](https://github.com/zoff99/MetalabDoorWidget)
 
