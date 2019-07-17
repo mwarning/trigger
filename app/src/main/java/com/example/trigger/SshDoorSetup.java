@@ -86,9 +86,8 @@ public class SshDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        // TODO: This is probably not the expected way to parse the reply.
-        // It probably needs to be made configurable (setting with regex?)
-        String msg = reply.message.trim();
+        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
+
         if (msg.contains("UNLOCKED")) {
             // door unlocked
             return new DoorState(StateCode.OPEN, msg);

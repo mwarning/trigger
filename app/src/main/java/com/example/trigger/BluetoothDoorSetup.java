@@ -74,7 +74,7 @@ public class BluetoothDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        String msg = reply.message.trim();
+        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
 
         switch (reply.code) {
             case LOCAL_ERROR:
