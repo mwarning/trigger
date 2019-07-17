@@ -4,22 +4,25 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="8dp"
+    android:paddingTop="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
+        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_marginTop="1dp"
+        android:layout_weight="6"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:text="Fingerprint"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -30,13 +33,14 @@
             style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_weight="2"
             android:textAlignment="center"
             android:textIsSelectable="true" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Public Key"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -44,113 +48,136 @@
 
         <TextView
             android:id="@+id/PublicKey"
-            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_weight="2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:layout_marginTop="10dp"
             android:textIsSelectable="true" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Import/Export Path"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/PathSelection"
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textAlignment="center" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Register Address"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/RegisterAddress"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textAlignment="center" />
 
     </LinearLayout>
 
     <LinearLayout
-        style="?android:attr/buttonBarStyle"
-        android:layout_gravity="center"
-        android:layout_weight="0"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="?android:attr/listSeparatorTextViewStyle"
         android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/ImportButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+        <Spinner
+            android:id="@+id/keypair_strength_spinner"
+            android:layout_weight="2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Import" />
+            android:layout_gravity="center_vertical" />
 
         <Button
-            android:id="@+id/SelectButton"
+            android:id="@+id/CreateButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Select" />
+            android:layout_weight="0"
+            android:text="Create" />
 
-        <Button
-            android:id="@+id/ExportButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+	</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/RegisterAddress"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Export" />
+            android:layout_marginTop="10dp"
+            android:layout_weight="2"
+            android:textAlignment="center" />
 
         <Button
             android:id="@+id/RegisterButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:text="Register" />
 
     </LinearLayout>
 
     <LinearLayout
-        style="?android:attr/buttonBarStyle"
         android:layout_gravity="center"
-        android:layout_weight="0"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/CreateButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Create" />
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/PathSelection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/ImportButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Import" />
+
+            <Button
+                android:id="@+id/SelectButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Select" />
+
+            <Button
+                android:id="@+id/ExportButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Export" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/DeleteButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
@@ -159,7 +186,7 @@
         <Button
             android:id="@+id/CancelButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
@@ -168,7 +195,7 @@
         <Button
             android:id="@+id/OkButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"

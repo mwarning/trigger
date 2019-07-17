@@ -12,8 +12,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,8 @@ public class KeyPairActivity extends AppCompatActivity implements
     private TextView publicKey;
     private TextView pathSelection;
     private EditText registerAddress;
+    private Spinner keypairStrengthSpinner;
+
     private KeyPair keypair;
     private String selected_path;
     private boolean keyGenInProgress = false;
@@ -74,7 +78,16 @@ public class KeyPairActivity extends AppCompatActivity implements
         publicKey = findViewById(R.id.PublicKey);
         pathSelection = findViewById(R.id.PathSelection);
         registerAddress = findViewById(R.id.RegisterAddress);
+        keypairStrengthSpinner = findViewById(R.id.keypair_strength_spinner);
         final KeyPairActivity self = this;
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,
+                getResources().getStringArray(R.array.KeypairStrengths)
+        );
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        keypairStrengthSpinner.setAdapter(dataAdapter);
+        keypairStrengthSpinner.setSelection(1);
 
         registerAddress.setText(
             getIntent().getStringExtra("register_url")
@@ -101,7 +114,26 @@ public class KeyPairActivity extends AppCompatActivity implements
                     showErrorMessage("In Progress", "Key generation already in progress. Please wait.");
                 } else {
                     keyGenInProgress = true;
-                    new GenerateIdentityTask(self).execute(4096);
+                    int key_strength = 0;
+                    switch (self.keypairStrengthSpinner.getSelectedItemPosition()) {
+                        case 0:
+                            key_strength = 1024;
+                            break;
+                        case 1:
+                            key_strength = 2048;
+                            break;
+                        case 2:
+                            key_strength = 4096;
+                            break;
+                        default:
+                            Log.e("KeyPairActivity", "Invalid selected item position");
+                            key_strength = 0;
+                            break;
+                    }
+
+                    if (key_strength > 0) {
+                        new GenerateIdentityTask(self).execute(key_strength);
+                    }
                 }
             }
         });
