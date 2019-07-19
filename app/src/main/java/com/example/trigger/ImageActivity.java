@@ -149,7 +149,7 @@ public class ImageActivity extends AppCompatActivity implements
                         byte[] data = Utils.readExternalFile(selectedSinglePath);
                         Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
                         // todo: keep aspct ratio
-                        image = Bitmap.createScaledBitmap(image, 500, 500, false);
+                        image = Bitmap.createScaledBitmap(image, 800, 800, false);
                         //scale up for display?
                         /*
 
