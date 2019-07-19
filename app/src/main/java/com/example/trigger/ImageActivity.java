@@ -144,21 +144,25 @@ public class ImageActivity extends AppCompatActivity implements
             case SELECT_FILE_REQUEST:
                 if (extras.containsKey(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)) {
                     String selectedSinglePath = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH);
+                    final int maxSize = 800;
 
                     try {
                         byte[] data = Utils.readExternalFile(selectedSinglePath);
                         Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        // todo: keep aspct ratio
-                        image = Bitmap.createScaledBitmap(image, 800, 800, false);
-                        //scale up for display?
-                        /*
+                        final int inWidth = image.getWidth();
+                        final int inHeight = image.getHeight();
+                        int outWidth = 0;
+                        int outHeight = 0;
 
-                        Bitmap bitmapImage = BitmapFactory.decodeFile("Your path");
-int nh = (int) ( bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()) );
-Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, 512, nh, true);
-your_imageview.setImageBitmap(scaled);
-*/
+                        if (inWidth > inHeight){
+                            outWidth = maxSize;
+                            outHeight = (int) ((inHeight * maxSize) / (float) inWidth);
+                        } else {
+                            outHeight = maxSize;
+                            outWidth = (int) ((inWidth * maxSize) / (float) inHeight);
+                        }
 
+                        image = Bitmap.createScaledBitmap(image, outWidth, outHeight, false);
                         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                         boolean success = image.compress(Bitmap.CompressFormat.PNG, 0, byteStream);
                         if (success) {
