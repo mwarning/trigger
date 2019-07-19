@@ -1,0 +1,4 @@
+* allow different ssh key sizes
+* store ssh keys in a more efficient format
+* always remove html tags from returned text
+* allow imported images to use entire screen width
