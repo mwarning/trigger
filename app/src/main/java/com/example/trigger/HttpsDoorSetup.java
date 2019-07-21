@@ -109,10 +109,10 @@ public class HttpsDoorSetup implements Setup {
             case REMOTE_ERROR:
                 return new DoorState(StateCode.UNKNOWN, msg);
             case SUCCESS:
-                if (msg.contains("UNLOCKED")) {
+                if (reply.message.contains("UNLOCKED")) {
                     // door unlocked
                     return new DoorState(StateCode.OPEN, msg);
-                } else if (msg.contains("LOCKED")) {
+                } else if (reply.message.contains("LOCKED")) {
                     // door locked
                     return new DoorState(StateCode.CLOSED, msg);
                 } else {
