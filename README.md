@@ -48,6 +48,8 @@ On Linux based systems:
 * [labadoor](https://github.com/ToLABaki/labadoor) / [DoorLock](https://wiki.tolabaki.gr/w/DoorLock_v3)
 * [Krautschlüssel](https://gitlab.com/fiveop/krautschluessel)
 * [MetalabDoorWidget](https://github.com/zoff99/MetalabDoorWidget)
+* [HACKS](https://github.com/ktt-ol/hacs)
+* [Stratum0Widget](https://github.com/Valodim/Stratum0Widget)
 
 ## License
 
