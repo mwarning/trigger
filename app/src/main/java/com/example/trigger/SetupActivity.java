@@ -136,20 +136,28 @@ public class SetupActivity extends PreferenceActivity {
     }
 
     private void setText(String key, String text) {
-        EditTextPreference etp = (EditTextPreference) findAnyPreference(key, null);
-        if (etp != null) {
+        Preference p = findAnyPreference(key, null);
+        if (p instanceof EditTextPreference) {
+            EditTextPreference etp = (EditTextPreference) p;
             etp.setText(text);
+        } else if (p instanceof ListPreference) {
+            ListPreference lp = (ListPreference) p;
+            lp.setValue(text);
         } else {
-            Log.e("SetupActivity.setText", "Cannot find key: " + key);
+            Log.e("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
         }
     }
 
     private String getText(String key) {
-        EditTextPreference etp = (EditTextPreference) findAnyPreference(key, null);
-        if (etp != null) {
+        Preference p = findAnyPreference(key, null);
+        if (p instanceof EditTextPreference) {
+            EditTextPreference etp = (EditTextPreference) p;
             return etp.getText();
+        } else if (p instanceof ListPreference) {
+            ListPreference lp = (ListPreference) p;
+            return lp.getValue();
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
             return "";
         }
     }
@@ -159,7 +167,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             cbp.setChecked(checked);
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find CheckBoxPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -168,7 +176,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             return cbp.isChecked();
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find CheckBoxPreference in PreferenceGroup with key: " + key);
             return false;
         }
     }
@@ -178,7 +186,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             return kpp.getImage();
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find ImagePreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
@@ -188,7 +196,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             kpp.setImage(image);
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find ImagePreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -197,7 +205,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             return kpp.getKeyPair();
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
@@ -207,7 +215,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             kpp.setKeyPair(keypair);
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -216,7 +224,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cp != null) {
             return cp.getCertificate();
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find CertificatePreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
@@ -226,7 +234,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cp != null) {
             cp.setCertificate(certificate);
         } else {
-            Log.e("SetupActivity", "Cannot find key: " + key);
+            Log.e("SetupActivity", "Cannot find CertificatePreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -333,10 +341,11 @@ public class SetupActivity extends PreferenceActivity {
                 } else if (type == Certificate.class) {
                     setCertificate(name, (Certificate) value);
                 } else {
-                    Log.e("SetupActivity", "Unhandled type " + type.getSimpleName() + " of field " + name);
+                    throw new Exception("Unhandled type " + type.getSimpleName() + " of field " + name);
                 }
-            } catch (Exception ex) {
-                Log.e("SetupActivity", "loadSetup: " + ex.toString());
+            } catch (Exception e) {
+                Log.e("SetupActivity", "loadSetup: " + e.toString());
+                e.printStackTrace();
             }
         }
 
