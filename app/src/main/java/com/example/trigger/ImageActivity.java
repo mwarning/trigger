@@ -154,7 +154,7 @@ public class ImageActivity extends AppCompatActivity implements
                         int outWidth = 0;
                         int outHeight = 0;
 
-                        if (inWidth > inHeight){
+                        if (inWidth > inHeight) {
                             outWidth = maxSize;
                             outHeight = (int) ((inHeight * maxSize) / (float) inWidth);
                         } else {

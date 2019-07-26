@@ -42,18 +42,18 @@ public class Utils {
     }
 
     public static void requestCameraPermission(Activity activity, int request_code) {
-        ActivityCompat.requestPermissions(activity, new String[] {
-            Manifest.permission.CAMERA }, request_code);
+        ActivityCompat.requestPermissions(activity, new String[]{
+                Manifest.permission.CAMERA}, request_code);
     }
 
     public static void requestReadPermission(Activity activity, int request_code) {
-        ActivityCompat.requestPermissions(activity, new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE }, request_code);
+        ActivityCompat.requestPermissions(activity, new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE}, request_code);
     }
 
     public static void requestWritePermission(Activity activity, int request_code) {
-        ActivityCompat.requestPermissions(activity, new String[] {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE }, request_code);
+        ActivityCompat.requestPermissions(activity, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
     }
 
     public static boolean allGranted(int[] grantResults) {
@@ -115,10 +115,9 @@ public class Utils {
       return new InetSocketAddress(host, port);
     }
 
-
     public static String serializeBitmap(Bitmap image) {
         if (image == null) {
-            Log.d("Utils", "serializeBitmap returns empty string");
+            //Log.d("Utils", "serializeBitmap returns empty string");
             return "";
         }
 

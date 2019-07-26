@@ -77,9 +77,6 @@ public class ImagePreference extends SwitchPreference {
     }
 
     public Bitmap getImage() {
-        if (image == null) {
-            Log.d("ImagePreference", "getImage: image is null");
-        }
         return image;
     }
 

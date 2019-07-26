@@ -15,7 +15,7 @@
             android:title="@string/setup_name" />
 
         <ListPreference
-            android:entries="@array/SetupTypes"
+            android:entries="@array/SetupTypeNames"
             android:entryValues="@array/SetupTypeValues"
             android:key="type"
             android:summary="Type of the door mechanism."
