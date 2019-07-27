@@ -263,4 +263,110 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+            android:title="MQTT Settings"
+            android:key="MqttDoorSetup"
+            android:persistent="false" >
+
+        <EditTextPreference
+            android:title="Hostname"
+            android:key="hostname"
+            android:summary="MQTT Broker Address"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Username"
+            android:key="username"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Password"
+            android:key="password"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Topic"
+            android:key="topic"
+            android:summary="Subscription Topic"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="retained"
+            android:persistent="false"
+            android:summary="Tell broker to store message."
+            android:title="Retained" />
+
+        <ListPreference
+            android:key="qos"
+            android:title="QoS"
+            android:summary="Quality of Service."
+            android:entries="@array/MqttQosNames"
+            android:entryValues="@array/MqttQosValues"/>
+
+        <com.example.trigger.https.CertificatePreference
+            android:key="certificate"
+            android:title="Certificate"
+            android:summary="Use certificate to use for ssl://"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:title="Open Command"
+            android:key="open_query"
+            android:summary="Open Door"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Close Command"
+            android:key="close_query"
+            android:summary="Close door."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="State Command"
+            android:key="status_query"
+            android:summary="Query door status."
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="@string/setup_ssids"
+            android:summary="@string/setup_ssids_description"
+            android:key="ssids"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <com.example.trigger.ImagePreference
+            android:key="open_image"
+            android:title="Open Door Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="closed_image"
+            android:title="Closed Door Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="disabled_image"
+            android:title="No Connection Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="unknown_image"
+            android:title="Unknown Status Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

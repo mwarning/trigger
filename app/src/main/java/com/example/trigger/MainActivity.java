@@ -35,6 +35,7 @@ import com.example.trigger.DoorState.StateCode;
 import com.example.trigger.https.HttpsRequestHandler;
 import com.example.trigger.ssh.SshRequestHandler;
 import com.example.trigger.bluetooth.BluetoothRequestHandler;
+import com.example.trigger.mqtt.MqttRequestHandler;
 
 import org.json.JSONObject;
 
@@ -327,6 +328,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         } else if (setup instanceof BluetoothDoorSetup) {
             BluetoothDoorSetup bluetoothSetup = (BluetoothDoorSetup) setup;
             new BluetoothRequestHandler(this).execute(action, bluetoothSetup);
+        } else if (setup instanceof MqttDoorSetup) {
+            MqttDoorSetup mqttSetup = (MqttDoorSetup) setup;
+            new MqttRequestHandler(this).execute(action, mqttSetup);
         } else {
             changeUI(StateCode.DISABLED);
         }

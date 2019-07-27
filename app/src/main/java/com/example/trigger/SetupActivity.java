@@ -274,6 +274,10 @@ public class SetupActivity extends PreferenceActivity {
                     setup = new BluetoothDoorSetup(setup.getId(), getText("name"));
                     loadSetup();
                     return true;
+                } else if (type.equals(MqttDoorSetup.type)) {
+                    setup = new MqttDoorSetup(setup.getId(), getText("name"));
+                    loadSetup();
+                    return true;
                 } else {
                     Log.e("SetupActivity", "Unhandled type from selection: " + type);
                     return false;

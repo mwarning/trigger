@@ -325,6 +325,8 @@ public class Settings {
             setup = new SshDoorSetup(id, "");
         } else if (type.equals(BluetoothDoorSetup.type)) {
             setup = new BluetoothDoorSetup(id, "");
+        } else if (type.equals(MqttDoorSetup.type)) {
+            setup = new MqttDoorSetup(id, "");
         } else {
             Log.e("Settings.loadSetup", "Found unknown setup type: " + type);
             return null;
@@ -428,6 +430,8 @@ public class Settings {
                 setup = new SshDoorSetup(id, "");
             } else if (type.equals(BluetoothDoorSetup.type)) {
                 setup = new BluetoothDoorSetup(id, "");
+            } else if (type.equals(MqttDoorSetup.type)) {
+                setup = new MqttDoorSetup(id, "");
             } else {
                 Log.e("Settings.loadSetup", "Found unknown setup type: " + type);
                 return null;

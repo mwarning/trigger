@@ -4,15 +4,27 @@
         <item>HTTPS Door</item>
         <item>SSH Door</item>
         <item>Bluetooth Door</item>
+        <item>MQTT Door</item>
     </string-array>
     <string-array translatable="false" name="SetupTypeValues">
         <item>HttpsDoorSetup</item>
         <item>SshDoorSetup</item>
         <item>BluetoothDoorSetup</item>
+        <item>MqttDoorSetup</item>
     </string-array>
     <string-array name="KeypairStrengths">
         <item>Weak (1024 bit)</item>
         <item>Strong (2048 bit)</item>
         <item>Very Strong (4096 bit)</item>
+    </string-array>
+    <string-array name="MqttQosNames">
+        <item>Fire and Forget (0)</item>
+        <item>At least once (1)</item>
+        <item>Exactly once (2)</item>
+    </string-array>
+    <string-array translatable="false" name="MqttQosValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 </resources>

@@ -1,6 +1,7 @@
-Open doors via WiFi using HTTPS/SSH.
+Open doors using HTTPS/SSH/MQTT or Bluetooth.
 
-Send HTTPS requests or execute SSH commands to open doors.
+Open or close doors via several supported queries. Also show if a door is open or closed.
+Send HTTPS queries, execute commands via SSH or publish/subscribe MQTT messages.
 
 Features:
 
@@ -8,7 +9,7 @@ Features:
 * QR-Code support
 * Door setup backup
 * Custom door state pictures
-* Manage TLS certificates and SSH keys
+* Pin TLS certificates and set SSH keys
 * Auto-select door setup by WiFi SSID
 * Display returned text from door
 

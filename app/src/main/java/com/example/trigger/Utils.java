@@ -125,22 +125,60 @@ public class Utils {
         return buffer.toByteArray();
     }
 
-    // parse "1.2.3.4" / "1.2.3.4:80" / "::1" / "[::1]:80"
-    public static InetSocketAddress parseSocketAddress(String addr, int default_port)
+    public static InetSocketAddress createSocketAddress(String addr)
             throws URISyntaxException {
-        URI uri = new URI("my://" + addr);
+        URI uri = new URI(addr);
+        return new InetSocketAddress(uri.getHost(), uri.getPort());
+    }
+
+    /*
+     * parses the following formats:
+     * "1.2.3.4"
+     * "1.2.3.4:80"
+     * "::1"
+     * "[::1]:80"
+     * "example.com"
+     * "example.com:443"
+     *
+     * Schemas like "https://" etc. are preserved.
+     */
+    public static String rebuildAddress(String addr, int default_port)
+            throws URISyntaxException {
+        final boolean has_scheme = addr.contains("://");
+        String scheme_addr;
+
+        // parsing only works with a scheme
+        if (has_scheme) {
+            scheme_addr = addr;
+        } else {
+            scheme_addr = "xyz://" + addr;
+        }
+
+        URI uri = new URI(scheme_addr);
         String host = uri.getHost();
         int port = uri.getPort();
-        if (port == -1) {
+
+        if (port < 0) {
             port = default_port;
         }
 
-        if (host == null || port == -1) {
-            throw new URISyntaxException(uri.toString(), "URI must have host and port parts");
+        if (host == null) {
+            throw new URISyntaxException(uri.toString(), "URI is invalid: " + addr);
         }
 
-      // validation succeeded
-      return new InetSocketAddress(host, port);
+        if (has_scheme) {
+            if (port < 0) {
+                return uri.getScheme() + "://" + host;
+            } else {
+                return uri.getScheme() + "://" + host + ":" + port;
+            }
+        } else {
+            if (port < 0) {
+                return host;
+            } else {
+                return host + ":" + port;
+            }
+        }
     }
 
     public static String serializeBitmap(Bitmap image) {

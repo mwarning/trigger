@@ -28,7 +28,9 @@ class RegisterIdentityTask extends AsyncTask<Object, Void, String> {
         KeyPair keypair = (KeyPair) params[1];
 
         try {
-            InetSocketAddress addr = Utils.parseSocketAddress(address, -1);
+            InetSocketAddress addr = Utils.createSocketAddress(
+                Utils.rebuildAddress(address, -1)
+            );
             Socket client = new Socket(addr.getAddress(), addr.getPort());
 
             OutputStream outToServer = client.getOutputStream();
