@@ -184,7 +184,7 @@ public class Settings {
             Log.i("Settings", "Update database format from " + db_version + " to 1.9.1");
             // nothing to change
             setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "1.9.0").commit();
+            sharedPreferences.edit().putString("db_version", "1.9.1").commit();
             db_version = "1.9.1";
         }
 
@@ -213,6 +213,14 @@ public class Settings {
 
             sharedPreferences.edit().putString("db_version", "1.9.2").commit();
             db_version = "1.9.2";
+        }
+
+		if (db_version.equals("1.9.2")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 2.0.0");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "2.0.0").commit();
+            db_version = "2.0.0";
         }
     }
 
