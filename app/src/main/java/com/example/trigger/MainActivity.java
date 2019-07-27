@@ -324,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         } else if (setup instanceof SshDoorSetup) {
             SshDoorSetup sshSetup = (SshDoorSetup) setup;
             new SshRequestHandler(this).execute(action, sshSetup);
-        } else if (setup instanceof BluetoothRequestHandler) {
+        } else if (setup instanceof BluetoothDoorSetup) {
             BluetoothDoorSetup bluetoothSetup = (BluetoothDoorSetup) setup;
             new BluetoothRequestHandler(this).execute(action, bluetoothSetup);
         } else {
