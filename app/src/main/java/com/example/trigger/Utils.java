@@ -21,6 +21,17 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 //import java.util.zip.Deflater;
 //import java.util.zip.Inflater;
 
@@ -63,6 +74,23 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static SSLSocketFactory getFactoryWithCertificate(Certificate cert)
+            throws CertificateException, KeyStoreException, IOException,
+            NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
+
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", cert);
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+        tmf.init(keyStore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, tmf.getTrustManagers(), null);
+
+        return sslContext.getSocketFactory();
     }
 
     // write file to external storage
