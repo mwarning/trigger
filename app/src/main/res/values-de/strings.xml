@@ -2,7 +2,6 @@
 <resources>
     <string name="action_edit">Verändern</string>
     <string name="action_new">Neu</string>
-    <string name="action_reload">Aktualisieren</string>
     <string name="action_scan_qr">QR Scan</string>
     <string name="action_show_qr">QR Show</string>
     <string name="action_backup">Backup</string>

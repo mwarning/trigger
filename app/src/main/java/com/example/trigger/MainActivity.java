@@ -351,7 +351,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
-        MenuItem refreshMenuItem = menu.findItem(R.id.action_reload);
         MenuItem editMenuItem = menu.findItem(R.id.action_edit);
         MenuItem showQrMenuItem = menu.findItem(R.id.action_show_qr);
         MenuItem cloneMenuItem = menu.findItem(R.id.action_clone);
@@ -374,14 +373,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             cloneMenuItem.setEnabled(false);
             cloneMenuItem.getIcon().setAlpha(130);
-        }
-
-        if (enableRefreshItem) {
-            refreshMenuItem.setEnabled(true);
-            refreshMenuItem.getIcon().setAlpha(255);
-        } else {
-            refreshMenuItem.setEnabled(false);
-            refreshMenuItem.getIcon().setAlpha(130);
         }
 
         return true;
@@ -467,10 +458,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 e.printStackTrace();
             }
             return true;
-        }
-
-        if (id == R.id.action_reload) {
-            callRequestHandler(Action.fetch_state);
         }
 
         return super.onOptionsItemSelected(menu_item);
