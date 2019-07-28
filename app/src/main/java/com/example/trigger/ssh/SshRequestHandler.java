@@ -54,7 +54,7 @@ public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
             case close_door:
                 command = setup.close_command;
                 break;
-            case update_state:
+            case fetch_state:
                 command = setup.state_command;
                 break;
         }

@@ -60,7 +60,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
             case close_door:
                 command = setup.close_query;
                 break;
-            case update_state:
+            case fetch_state:
                 command = setup.status_query;
                 break;
         }

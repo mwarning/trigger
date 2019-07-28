@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     public enum Action {
         open_door,
         close_door,
-        update_state
+        fetch_state
     }
 
     // helper class for spinner
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                callRequestHandler(Action.update_state);
+                callRequestHandler(Action.fetch_state);
             }
 
             @Override
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && wifi.isConnected()) {
                     updateSpinner(); // auto select possible entry
-                    callRequestHandler(Action.update_state);
+                    callRequestHandler(Action.fetch_state);
                 } else {
                     changeUI(StateCode.DISABLED);
                 }
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     public void onUpdateState(View view) {
-        callRequestHandler(Action.update_state);
+        callRequestHandler(Action.fetch_state);
     }
 
     public void onUnlock(View view) {
@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         super.onStart();
 
         if (wifi.isConnected()) {
-            callRequestHandler(Action.update_state);
+            callRequestHandler(Action.fetch_state);
         }
     }
 
@@ -470,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
 
         if (id == R.id.action_reload) {
-            callRequestHandler(Action.update_state);
+            callRequestHandler(Action.fetch_state);
         }
 
         return super.onOptionsItemSelected(menu_item);
