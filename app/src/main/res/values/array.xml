@@ -3,14 +3,14 @@
     <string-array name="SetupTypeNames">
         <item>HTTPS Door</item>
         <item>SSH Door</item>
-        <item>Bluetooth Door</item>
         <item>MQTT Door</item>
+        <item>Bluetooth Door</item>
     </string-array>
     <string-array translatable="false" name="SetupTypeValues">
         <item>HttpsDoorSetup</item>
         <item>SshDoorSetup</item>
-        <item>BluetoothDoorSetup</item>
         <item>MqttDoorSetup</item>
+        <item>BluetoothDoorSetup</item>
     </string-array>
     <string-array name="KeypairStrengths">
         <item>Weak (1024 bit)</item>
