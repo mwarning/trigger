@@ -425,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
 
         if (id == R.id.action_about) {
-            changeUI(StateCode.DISABLED);
             Intent i = new Intent(this, AboutActivity.class);
             startActivity(i);
             return true;
