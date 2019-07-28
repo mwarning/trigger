@@ -55,13 +55,19 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
                 }
                 break;
             case open_door:
-                if (setup.command_topic.isEmpty() || setup.open_command.isEmpty()) {
-                    return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+                if (setup.command_topic.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "No command topic set.");
+                }
+                if (setup.open_command.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "No open command set.");
                 }
                 break;
             case close_door:
-                if (setup.command_topic.isEmpty() || setup.close_command.isEmpty()) {
-                    return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+                if (setup.command_topic.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "No command topic set.");
+                }
+                if (setup.close_command.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "No close command set.");
                 }
                 break;
         }
