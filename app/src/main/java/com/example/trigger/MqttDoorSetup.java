@@ -13,10 +13,10 @@ public class MqttDoorSetup implements Setup {
     String name;
     String username;
     String password;
-    public String hostname;
+    public String server;
     public String topic;
     public Boolean retained;
-    public Integer qos;
+    public int qos;
     public String open_query;
     public String close_query;
     public String status_query;
@@ -34,7 +34,7 @@ public class MqttDoorSetup implements Setup {
         this.name = name;
         this.username = "";
         this.password = "";
-        this.hostname = "";
+        this.server = "";
         this.topic = "";
         this.retained = false;
         this.qos = 0;

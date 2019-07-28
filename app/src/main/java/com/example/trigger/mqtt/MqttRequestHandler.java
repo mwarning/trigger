@@ -2,10 +2,7 @@ package com.example.trigger.mqtt;
 
 import javax.net.ssl.SSLContext;
 
-//import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -13,7 +10,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,13 +21,14 @@ import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
 
+import static com.example.trigger.MainActivity.Action.update_state;
+
+
 public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> implements MqttCallback {
     private OnTaskCompleted listener;
-    //Context ctx;
 
     public MqttRequestHandler(OnTaskCompleted listener) {
         this.listener = listener;
-        //this.ctx = ((AppCompatActivity) this.listener).getApplicationContext();
     }
 
     @Override
@@ -73,34 +70,29 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
         }
 
         if (setup.qos != 0 && setup.qos != 1 && setup.qos != 2) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR,
-                    "Invalid QoS value: " + setup.qos
-            );
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Invalid QoS value: " + setup.qos);
         }
 
         String clientId = MqttClient.generateClientId();
         MqttConnectOptions opts = new MqttConnectOptions();
         MemoryPersistence persistence = new MemoryPersistence();
-        final String hostname = setup.hostname;
-        final String addr;
+        final String address;
 
         try {
-            // publish
-            if (hostname.startsWith("tcp://")) {
-                addr = Utils.rebuildAddress(hostname, 1883);
-            } else if (hostname.startsWith("ssl://")) {
-                addr = Utils.rebuildAddress(hostname, 8883);
+            if (setup.server.startsWith("tcp://")) {
+                address = Utils.rebuildAddress(setup.server, 1883);
+            } else if (setup.server.startsWith("ssl://")) {
+                address = Utils.rebuildAddress(setup.server, 8883);
             } else {
                 throw new Exception(
-                        "Hostname needs to start with 'tcp://' or 'ssl://'."
+                    "Server address needs to start with 'tcp://' or 'ssl://'."
                 );
             }
 
-            //MqttConnectOptions opts = new MqttConnectOptions();
             // false: broker will not keep messages
             opts.setCleanSession(false);
 
-            if (hostname.startsWith("ssl://")) {
+            if (address.startsWith("ssl://")) {
                 if (setup.certificate != null) {
                     // use given certificate only
                     opts.setSocketFactory(
@@ -114,52 +106,59 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
                 }
             }
 
-            MqttClient client = new MqttClient(addr, clientId, persistence);
+            MqttClient client = new MqttClient(address, clientId, persistence);
             client.setTimeToWait(3000); // 3 seconds
-            // connect
-            client.connect(opts);
             client.setCallback(this);
+            client.connect(opts);
 
-            // true for status
-            // false for command
-            MqttMessage message = new MqttMessage(query.getBytes());
-            message.setRetained(setup.retained);
-            message.setQos(setup.qos);
+            if (action == update_state) {
+                // subscribe
+                client.subscribe(setup.topic);
+            } else {
+                //publish
+                MqttMessage message = new MqttMessage(query.getBytes());
+                message.setRetained(setup.retained);
+                message.setQos(setup.qos);
 
-            // publish
-            client.publish(setup.topic, message);
+                client.publish(setup.topic, message);
+            }
 
-            //client.disconnect();
-            // we do not get a message in return ...
-            Log.d("MqttRequestHandler", "end of doInBackground reached");
             return new DoorReply(ReplyCode.SUCCESS, "");
         } catch (MqttException me) {
             return new DoorReply(ReplyCode.REMOTE_ERROR, me.getMessage());
         } catch (Exception e) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
+            return new DoorReply(ReplyCode.LOCAL_ERROR, e.getMessage());
         }
+    }
+
+    private void callOnGuiThread(final ReplyCode code, final String message) {
+        ((AppCompatActivity) this.listener).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listener.onTaskCompleted(
+                   new DoorReply(code, message)
+                );
+            }
+        });
     }
 
     @Override
     public void connectionLost(Throwable cause) {
-        Log.d("MqttRequestHandler", "connectionLost: " + cause.toString());
+        callOnGuiThread(ReplyCode.REMOTE_ERROR, cause.toString());
     }
 
     @Override
-    public void messageArrived(String topic, MqttMessage message)
-            throws Exception {
-        Log.d("MqttRequestHandler", "messageArrived: " + message);
-        //this.listener.onTaskCompleted(
-        // new DoorReply(ReplyCode.SUCCESS, message.toStrng())
-        // );
+    public void messageArrived(String topic, final MqttMessage message) {
+        callOnGuiThread(ReplyCode.SUCCESS, message.toString());
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        Log.d("MqttRequestHandler", "deliveryComplete");
+        // ignore
     }
 
     protected void onPostExecute(DoorReply result) {
+        // already on GUI thread
         listener.onTaskCompleted(result);
     }
 }

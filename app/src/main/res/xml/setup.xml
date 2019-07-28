@@ -269,8 +269,8 @@
             android:persistent="false" >
 
         <EditTextPreference
-            android:title="Hostname"
-            android:key="hostname"
+            android:title="Server"
+            android:key="server"
             android:summary="MQTT Broker Address"
             android:persistent="false"
             android:inputType="text" />
@@ -290,7 +290,7 @@
         <EditTextPreference
             android:title="Topic"
             android:key="topic"
-            android:summary="Subscription Topic"
+            android:summary="MQTT Subscription Topic"
             android:persistent="false"
             android:inputType="text" />
 
@@ -311,7 +311,7 @@
         <com.example.trigger.https.CertificatePreference
             android:key="certificate"
             android:title="Certificate"
-            android:summary="Use certificate to use for ssl://"
+            android:summary="Certificate to use for ssl://"
             android:persistent="false"
             android:defaultValue="false" />
 
