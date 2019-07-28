@@ -21,8 +21,6 @@ import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
 
-import static com.example.trigger.MainActivity.Action.update_state;
-
 
 public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> implements MqttCallback {
     private OnTaskCompleted listener;
@@ -50,23 +48,22 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
             return DoorReply.internal_error();
         }
 
-        String query = "";
-
         switch (action) {
+            case fetch_state:
+                if (setup.status_topic.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+                }
+                break;
             case open_door:
-                query = setup.open_query;
+                if (setup.command_topic.isEmpty() || setup.open_command.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+                }
                 break;
             case close_door:
-                query = setup.close_query;
+                if (setup.command_topic.isEmpty() || setup.close_command.isEmpty()) {
+                    return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+                }
                 break;
-            case update_state:
-                query = setup.status_query;
-                break;
-        }
-
-        if (query.isEmpty()) {
-            // ignore
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
         }
 
         if (setup.qos != 0 && setup.qos != 1 && setup.qos != 2) {
@@ -111,18 +108,29 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
             client.setCallback(this);
             client.connect(opts);
 
-            if (action == update_state) {
-                // subscribe
-                client.subscribe(setup.topic);
-            } else {
-                //publish
-                MqttMessage message = new MqttMessage(query.getBytes());
-                message.setRetained(setup.retained);
-                message.setQos(setup.qos);
+            switch (action) {
+                case fetch_state:
+                    // subscribe
+                    client.subscribe(setup.status_topic);
+                    break;
+                case open_door:
+                    // publish
+                    MqttMessage open = new MqttMessage(setup.open_command.getBytes());
+                    open.setRetained(setup.retained);
+                    open.setQos(setup.qos);
 
-                client.publish(setup.topic, message);
+                    client.publish(setup.command_topic, open);
+                    break;
+                case close_door:
+                    // publish
+                    MqttMessage close = new MqttMessage(setup.close_command.getBytes());
+                    close.setRetained(setup.retained);
+                    close.setQos(setup.qos);
+
+                    client.publish(setup.command_topic, close);
+                    break;
             }
-
+            // this reply will be ignored
             return new DoorReply(ReplyCode.SUCCESS, "");
         } catch (MqttException me) {
             return new DoorReply(ReplyCode.REMOTE_ERROR, me.getMessage());

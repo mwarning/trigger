@@ -14,12 +14,12 @@ public class MqttDoorSetup implements Setup {
     String username;
     String password;
     public String server;
-    public String topic;
+    public String status_topic;
+    public String command_topic;
+    public String open_command;
+    public String close_command;
     public Boolean retained;
     public int qos;
-    public String open_query;
-    public String close_query;
-    public String status_query;
 
     public Bitmap open_image;
     public Bitmap closed_image;
@@ -35,12 +35,12 @@ public class MqttDoorSetup implements Setup {
         this.username = "";
         this.password = "";
         this.server = "";
-        this.topic = "";
+        this.status_topic = "";
+        this.command_topic = "";
+        this.open_command = "";
+        this.close_command = "";
         this.retained = false;
         this.qos = 0;
-        this.open_query = "";
-        this.close_query = "";
-        this.status_query = "";
         this.open_image = null;
         this.closed_image = null;
         this.unknown_image = null;

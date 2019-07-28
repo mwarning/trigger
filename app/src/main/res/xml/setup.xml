@@ -288,9 +288,16 @@
             android:inputType="text" />
 
         <EditTextPreference
-            android:title="Topic"
-            android:key="topic"
-            android:summary="MQTT Subscription Topic"
+            android:title="Command Topic"
+            android:key="command_topic"
+            android:summary="MQTT Topic (publish)"
+            android:persistent="false"
+            android:inputType="text" />
+
+        <EditTextPreference
+            android:title="Status Topic"
+            android:key="status_topic"
+            android:summary="MQTT Topic (subscribe)"
             android:persistent="false"
             android:inputType="text" />
 
@@ -317,22 +324,15 @@
 
         <EditTextPreference
             android:title="Open Command"
-            android:key="open_query"
+            android:key="open_command"
             android:summary="Open Door"
             android:persistent="false"
             android:inputType="text" />
 
         <EditTextPreference
             android:title="Close Command"
-            android:key="close_query"
+            android:key="close_command"
             android:summary="Close door."
-            android:persistent="false"
-            android:inputType="text" />
-
-        <EditTextPreference
-            android:title="State Command"
-            android:key="status_query"
-            android:summary="Query door status."
             android:persistent="false"
             android:inputType="text" />
 
