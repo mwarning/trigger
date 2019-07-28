@@ -1,0 +1,3 @@
+* add MQTT support
+* parse response the same way for every door type
+* remove refresh menu item
