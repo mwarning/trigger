@@ -76,7 +76,7 @@ public class Utils {
         return true;
     }
 
-    public static SSLSocketFactory getFactoryWithCertificate(Certificate cert)
+    public static SSLSocketFactory getSocketFactoryWithCertificate(Certificate cert)
             throws CertificateException, KeyStoreException, IOException,
             NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
 

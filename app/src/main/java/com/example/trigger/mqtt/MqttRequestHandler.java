@@ -96,7 +96,7 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
                 if (setup.certificate != null) {
                     // use given certificate only
                     opts.setSocketFactory(
-                            Utils.getFactoryWithCertificate(setup.certificate)
+                            Utils.getSocketFactoryWithCertificate(setup.certificate)
                     );
                 } else {
                     // use system default certificates

@@ -95,7 +95,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
             if (setup.certificate != null) {
                 // custom certificate
                 HttpsURLConnection.setDefaultSSLSocketFactory(
-                    Utils.getFactoryWithCertificate(setup.certificate)
+                    Utils.getSocketFactoryWithCertificate(setup.certificate)
                 );
             } else {
                 // system certificate
