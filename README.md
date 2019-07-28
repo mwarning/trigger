@@ -6,10 +6,10 @@ Trigger is an Android App to unlock/lock doors and request the status.
 Features:
  - HTTPS, SSH, Bluetooth and MQTT support
  - multiple door profiles
- - auto select profiles by connected device (WiFi/Bluetooth)
+ - auto select profiles by SSID
  - certificate/key file support
  - QR code import/export
- - JSON file import/export (backup)
+ - JSON file import/export
  - custom status images
 
 ![image](screenshot_states.png)
