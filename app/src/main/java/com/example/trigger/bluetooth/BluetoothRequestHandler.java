@@ -72,40 +72,40 @@ public class BluetoothRequestHandler extends AsyncTask<Object, Void, DoorReply> 
 
             if (pairedDevices.isEmpty()) {
                 return new DoorReply(ReplyCode.LOCAL_ERROR, "No paired device found.");
-            } else {
-                for (BluetoothDevice device : pairedDevices) {
-                    String deviceName = device.getName();
-                    String deviceHardwareAddress = device.getAddress();
-                    Log.d("Bluetooth", "name: " + deviceName + ", mac: " + deviceHardwareAddress);
-                    if (device.getAddress().equals(server_address)) {
-                        BluetoothSocket socket = device.createRfcommSocketToServiceRecord(server_port);
-                        socket.connect();
+            }
 
-                        switch (action) {
-                            case open_door:
-                                request = setup.open_query;
-                                break;
-                            case close_door:
-                                request = setup.close_query;
-                                break;
-                            case update_state:
-                                request = setup.status_query;
-                                break;
-                        }
+            for (BluetoothDevice device : pairedDevices) {
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress();
+                Log.d("Bluetooth", "name: " + deviceName + ", mac: " + deviceHardwareAddress);
+                if (device.getAddress().equals(server_address)) {
+                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(server_port);
+                    socket.connect();
 
-                        if (!request.isEmpty()) {
-                            OutputStream out = socket.getOutputStream();
-                            out.write(request.getBytes());
-                        }
+                    switch (action) {
+                        case open_door:
+                            request = setup.open_query;
+                            break;
+                        case close_door:
+                            request = setup.close_query;
+                            break;
+                        case fetch_state:
+                            request = setup.status_query;
+                            break;
+                    }
 
-                        InputStream in = socket.getInputStream();
-                        int byteCount = in.available();
+                    if (!request.isEmpty()) {
+                        OutputStream out = socket.getOutputStream();
+                        out.write(request.getBytes());
+                    }
 
-                        if (byteCount > 0 && byteCount < (10*1024)) {
-                            byte[] bytes = new byte[byteCount];
-                            in.read(bytes);
-                            response = new String(bytes, "UTF-8");
-                        }
+                    InputStream in = socket.getInputStream();
+                    int byteCount = in.available();
+
+                    if (byteCount > 0 && byteCount < (10*1024)) {
+                        byte[] bytes = new byte[byteCount];
+                        in.read(bytes);
+                        response = new String(bytes, "UTF-8");
                     }
                 }
             }
