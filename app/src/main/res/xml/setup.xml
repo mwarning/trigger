@@ -288,39 +288,18 @@
             android:inputType="text" />
 
         <EditTextPreference
-            android:title="Command Topic"
-            android:key="command_topic"
-            android:summary="MQTT Topic (publish)"
-            android:persistent="false"
-            android:inputType="text" />
-
-        <EditTextPreference
             android:title="Status Topic"
             android:key="status_topic"
             android:summary="MQTT Topic (subscribe)"
             android:persistent="false"
             android:inputType="text" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="retained"
+        <EditTextPreference
+            android:title="Command Topic"
+            android:key="command_topic"
+            android:summary="MQTT Topic (publish)"
             android:persistent="false"
-            android:summary="Tell broker to store message."
-            android:title="Retained" />
-
-        <ListPreference
-            android:key="qos"
-            android:title="QoS"
-            android:summary="Quality of Service."
-            android:entries="@array/MqttQosNames"
-            android:entryValues="@array/MqttQosValues"/>
-
-        <com.example.trigger.https.CertificatePreference
-            android:key="certificate"
-            android:title="Certificate"
-            android:summary="Certificate to use for ssl://"
-            android:persistent="false"
-            android:defaultValue="false" />
+            android:inputType="text" />
 
         <EditTextPreference
             android:title="Open Command"
@@ -335,6 +314,27 @@
             android:summary="Close door."
             android:persistent="false"
             android:inputType="text" />
+
+        <ListPreference
+            android:key="qos"
+            android:title="QoS"
+            android:summary="Quality of Service."
+            android:entries="@array/MqttQosNames"
+            android:entryValues="@array/MqttQosValues"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="retained"
+            android:persistent="false"
+            android:summary="Tell broker to store message."
+            android:title="Retained" />
+
+        <com.example.trigger.https.CertificatePreference
+            android:key="certificate"
+            android:title="Certificate"
+            android:summary="Certificate to use for ssl://"
+            android:persistent="false"
+            android:defaultValue="false" />
 
         <EditTextPreference
             android:title="@string/setup_ssids"
