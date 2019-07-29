@@ -65,7 +65,7 @@
         </activity>
         <activity
             android:name=".https.CertificateActivity"
-            android:label="Manage HTTPS Certificate"
+            android:label="Manage TLS Certificate"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name=".https.CertificateActivity" />
