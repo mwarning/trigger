@@ -65,10 +65,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private static class SpinnerItem {
         public final int id;
         public final String name;
+        public final String ssids;
 
-        public SpinnerItem(int id, String name) {
+        public SpinnerItem(int id, String name, String ssids) {
             this.id = id;
             this.name = name;
+            this.ssids = ssids;
         }
 
         @Override
@@ -88,42 +90,38 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         return ret;
     }
 
-    private static int getItemIndex(ArrayList<SpinnerItem> items, int id) {
-        for (int i = 0; i < items.size(); i += 1) {
-            if (items.get(i).id == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private int getPreferredSpinnerIndex(ArrayList<SpinnerItem> items, ArrayList<Setup> setups, Setup current) {
-        String ssid = wifi.getCurrentSSID();
+    private int getPreferredSpinnerIndex(ArrayList<SpinnerItem> items, boolean match_ssid) {
+        int i;
 
         // select by ssid
-        if (ssid.length() > 0) {
-            for (Setup setup : setups) {
-                String ssids = setup.getSSIDs();
-                if (splitCommaSeparated(ssids).contains(ssid)) {
-                    return getItemIndex(items, setup.getId());
+        String ssid = wifi.getCurrentSSID();
+        if (ssid.length() > 0 && match_ssid) {
+            i = 0;
+            for (SpinnerItem item : items) {
+                if (splitCommaSeparated(item.ssids).contains(ssid)) {
+                    return i;
                 }
+                i += 1;
             }
         }
 
         // keep previous selection
+        Setup current = getSelectedSetup();
         if (current != null) {
-            for (Setup setup : setups) {
-                if (current.getId() == setup.getId()) {
-                    return getItemIndex(items, setup.getId());
+            i = 0;
+            for (SpinnerItem item : items) {
+                if (current.getId() == item.id) {
+                    return i;
                 }
+                i += 1;
             }
         }
 
         // select first item
-        if (setups.size() > 0) {
+        if (items.size() > 0) {
             return 0;
         } else {
-            return -1;
+            return INVALID_POSITION;
         }
     }
 
@@ -145,25 +143,26 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
-    private void updateSpinner() {
+    private void updateSpinner(boolean match_ssid) {
         ArrayList<Setup> setups = Settings.getSetups();
         ArrayList<SpinnerItem> items = new ArrayList();
 
         for (Setup setup : setups) {
-            items.add(new SpinnerItem(setup.getId(), setup.getName()));
+            items.add(new SpinnerItem(setup.getId(), setup.getName(), setup.getSSIDs()));
         }
 
-        // sort setups by name
+        // sort items by name
         Collections.sort(items, new Comparator<SpinnerItem>() {
             @Override public int compare(SpinnerItem s1, SpinnerItem s2) {
                 return s1.name.compareTo(s2.name);
             }
         });
 
-        Setup current = getSelectedSetup();
+        int selection = getPreferredSpinnerIndex(items, match_ssid);
+
         ArrayAdapter<SpinnerItem> adapter = new ArrayAdapter<SpinnerItem>(this, R.layout.main_spinner, items);
         spinner.setAdapter(adapter);
-        spinner.setSelection(getPreferredSpinnerIndex(items, setups, current));
+        spinner.setSelection(selection);
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     @Override
     protected void onResume() {
-        updateSpinner();
+        updateSpinner(false);
         invalidateOptionsMenu();
         super.onResume();
     }
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && wifi.isConnected()) {
-                    updateSpinner(); // auto select possible entry
+                    updateSpinner(true); // auto select possible entry
                     callRequestHandler(Action.fetch_state);
                 } else {
                     changeUI(StateCode.DISABLED);
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         };
 
-        updateSpinner();
+        updateSpinner(true);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
@@ -453,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 obj.put("name", new_name);
                 setup = Settings.fromJsonObject(obj);
                 Settings.addSetup(setup);
-                updateSpinner();
+                updateSpinner(false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
