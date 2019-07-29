@@ -1,0 +1,4 @@
+* only auto select by ssid on app start or wifi reconnect
+* more translatable strings
+* prevent image from touching the buttons
+* change some button labels and positions
