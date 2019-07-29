@@ -24,15 +24,6 @@
         android:layout_alignParentBottom="true" >
 
         <Button
-            android:id="@+id/saveButton"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.5"
-            android:onClick="onSaveButtonClicked"
-            android:text="@string/save_button" />
-
-        <Button
             android:id="@+id/deleteButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -40,6 +31,15 @@
             android:layout_weight="0.5"
             android:onClick="onDeleteButtonClicked"
             android:text="@string/remove_button" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.5"
+            android:onClick="onSaveButtonClicked"
+            android:text="@string/save_button" />
 
     </LinearLayout>
 
