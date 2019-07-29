@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Fingerprint"
+            android:text="@string/fingerprint"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Public Key"
+            android:text="@string/public_key"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0"
-            android:text="Create" />
+            android:text="@string/create_button" />
 
 	</LinearLayout>
 
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0"
-            android:text="Register" />
+            android:text="@string/register_button" />
 
     </LinearLayout>
 
@@ -143,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="Import" />
+                android:text="@string/import_button" />
 
             <Button
                 android:id="@+id/SelectButton"
@@ -152,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="Select" />
+                android:text="@string/select_button" />
 
             <Button
                 android:id="@+id/ExportButton"
@@ -161,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="Export" />
+                android:text="@string/export_button" />
         </LinearLayout>
 
     </LinearLayout>
@@ -181,7 +181,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Delete" />
+            android:text="@string/remove_button" />
 
         <Button
             android:id="@+id/CancelButton"
@@ -190,7 +190,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="@string/cancel_button" />
 
         <Button
             android:id="@+id/OkButton"
@@ -199,7 +199,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Ok" />
+            android:text="@string/ok_button" />
 
     </LinearLayout>
 

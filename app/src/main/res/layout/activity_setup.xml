@@ -30,7 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="0.5"
             android:onClick="onSaveButtonClicked"
-            android:text="Save" />
+            android:text="@string/save_button" />
 
         <Button
             android:id="@+id/deleteButton"
@@ -39,7 +39,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="0.5"
             android:onClick="onDeleteButtonClicked"
-            android:text="Delete" />
+            android:text="@string/remove_button" />
 
     </LinearLayout>
 

@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Certificate"
+            android:text="@string/certificate"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -37,7 +37,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Import/Export Path"
+            android:text="@string/import_export_path"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -53,7 +53,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Certificate URL"
+            android:text="@string/certificate_url"
             android:inputType="textNoSuggestions"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Import" />
+            android:text="@string/import_button" />
 
         <Button
             android:id="@+id/SelectPathButton"
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Select" />
+            android:text="@string/select_button" />
 
         <Button
             android:id="@+id/ExportButton"
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Export" />
+            android:text="@string/export_button" />
 
         <Button
             android:id="@+id/FetchButton"
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Fetch" />
+            android:text="@string/fetch_button" />
 
     </LinearLayout>
 
@@ -131,7 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="@string/cancel_button" />
 
         <Button
             android:id="@+id/DeleteButton"
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Delete" />
+            android:text="@string/remove_button" />
 
         <Button
             android:id="@+id/OkButton"
@@ -149,7 +149,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Ok" />
+            android:text="@string/ok_button" />
 
     </LinearLayout>
 

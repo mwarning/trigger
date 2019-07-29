@@ -15,6 +15,24 @@
     <string name="no">Nein</string>
     <string name="really_remove_item">Wirklich löschen?</string>
 
+    <string name="save_button">Speichern</string>
+    <string name="remove_button">Entfernen</string>
+    <string name="select_button">Auswählen</string>
+    <string name="set_button">Setzen</string>
+    <string name="import_button">Importieren</string>
+    <string name="export_button">Exportieren</string>
+    <string name="create_button">Erstellen</string>
+    <string name="register_button">Registrieren</string>
+    <string name="fetch_button">Holen</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="ok_button">Ok</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="public_key">Public Key</string>
+
+    <string name="certificate_url">Zertifikats URL</string>
+    <string name="import_export_path">Import/Export Pfad</string>
+    <string name="certificate">Zertifikat</string>
+
     <string name="new_entry">Neuer Eintrag</string>
     <string name="setup_title">Setup</string>
 
@@ -42,7 +60,4 @@
     <string name="license_title">Lizenz</string>
     <string name="license_name">GPL-2</string>
     <string name="license_url">https://www.gnu.de/documents/gpl-2.0.de.html</string>
-
-    <string name="save_button">Speichern</string>
-    <string name="delete_button">Löschen</string>
 </resources>

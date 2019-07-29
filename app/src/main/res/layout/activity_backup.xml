@@ -42,7 +42,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Import" />
+            android:text="@string/import_button" />
 
         <Button
             android:id="@+id/SelectButton"
@@ -50,7 +50,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Select" />
+            android:text="@string/select_button" />
 
         <Button
             android:id="@+id/ExportButton"
@@ -58,7 +58,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Export" />
+            android:text="@string/export_button" />
 
     </LinearLayout>
 

@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Select" />
+            android:text="@string/select_button" />
 
         <Button
             android:id="@+id/DeleteButton"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Delete" />
+            android:text="@string/remove_button" />
 
         <Button
             android:id="@+id/SetButton"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Set" />
+            android:text="@string/set_button" />
 
     </LinearLayout>
 
