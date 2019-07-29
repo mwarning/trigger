@@ -215,7 +215,7 @@ public class Settings {
             db_version = "1.9.2";
         }
 
-		if (db_version.equals("1.9.2")) {
+        if (db_version.equals("1.9.2")) {
             Log.i("Settings", "Update database format from " + db_version + " to 2.0.0");
             // nothing to change
             setups = new ArrayList();
