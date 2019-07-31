@@ -391,6 +391,17 @@ public class Settings {
             return;
         }
 
+        // make sure a name is set
+        // selecting an empty item from the spinner is hard
+        final String name = json.optString("name");
+        if (name == null || name.length() == 0) {
+            try {
+                json.put("name", "unknown");
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+
         String key = String.format("item_%03d", setup.getId());
 
         sharedPreferences.edit().putString(key, json.toString()).commit();

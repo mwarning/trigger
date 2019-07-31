@@ -88,7 +88,18 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
     }
 
     private JSONObject decodeSetup(String data) throws JSONException {
-        return new JSONObject(data);
+        // A few quick protocol assumptions for raw links etc.
+        if (data.startsWith("https://") || data.startsWith("http://")) {
+            return new JSONObject(
+                "{\"type\": \"HttpsDoorSetup\", \"name\": \"" + Utils.getDomainName(data) + "\", \"open_query\": \"" + data + "\"}"
+            );
+        } else if (data.startsWith("tcp://") || data.startsWith("ssl://")) {
+            return new JSONObject(
+                "{\"type\": \"MqttDoorSetup\", \"name\": \"" + Utils.getDomainName(data) + "\", \"open_command\": \"" + data + "\"}"
+            );
+        } else {
+            return new JSONObject(data);
+        }
     }
 
     @Override
