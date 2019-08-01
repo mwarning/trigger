@@ -125,16 +125,6 @@ public class Utils {
         return buffer.toByteArray();
     }
 
-    public static String getDomainName(String url) {
-        try {
-            URI uri = new URI(url);
-            String domain = uri.getHost();
-            return domain.startsWith("www.") ? domain.substring(4) : domain;
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     public static InetSocketAddress createSocketAddress(String addr)
             throws URISyntaxException {
         URI uri = new URI(addr);

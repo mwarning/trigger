@@ -18,6 +18,7 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -88,18 +89,50 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
     }
 
     private JSONObject decodeSetup(String data) throws JSONException {
-        // A few quick protocol assumptions for raw links etc.
-        if (data.startsWith("https://") || data.startsWith("http://")) {
-            return new JSONObject(
-                "{\"type\": \"HttpsDoorSetup\", \"name\": \"" + Utils.getDomainName(data) + "\", \"open_query\": \"" + data + "\"}"
-            );
-        } else if (data.startsWith("tcp://") || data.startsWith("ssl://")) {
-            return new JSONObject(
-                "{\"type\": \"MqttDoorSetup\", \"name\": \"" + Utils.getDomainName(data) + "\", \"open_command\": \"" + data + "\"}"
-            );
-        } else {
-            return new JSONObject(data);
+        try {
+            // assume raw link
+            URI uri = new URI(data);
+            String scheme = uri.getScheme();
+            String domain = uri.getHost();
+            String path = uri.getPath();
+            String query = uri.getQuery();
+            int port = uri.getPort();
+            switch (scheme) {
+                case "https":
+                case "http":
+                    String http_server = domain + ((port > 0) ? (":" + port) : "");
+                    return new JSONObject(
+                            "{\"type\": \"HttpsDoorSetup\", "
+                            + "\"name\": \""+ http_server + "\", "
+                            + "\"open_query\": \"" + data + "\"}"
+                    );
+                case "ssl":
+                case "tcp:":
+                    String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
+                    return new JSONObject(
+                                "{\"type\": \"MqttDoorSetup\", "
+                                + "\"name\": \"" + domain + "\", "
+                                + "\"server\": \"" + mqtt_server + "\", "
+                                + "\"command_topic\": \"" + path + "\", "
+                                + "\"open_command\": \"" + query + "\"}"
+                    );
+                case "ssh":
+                    return new JSONObject(
+                            "{\"type\": \"SshDoorSetup\", "
+                            + "\"name\": \"" + domain + "\", "
+                            + "\"host\": \"" + domain + "\", "
+                            + "\"port\": \"" + port + "\", "
+                            + "\"open_command\": \"" + query + "\"}"
+                    );
+                default:
+                    // continue
+            }
+        } catch (Exception e) {
+            // continue
         }
+
+        // assume json data
+        return new JSONObject(data);
     }
 
     @Override
