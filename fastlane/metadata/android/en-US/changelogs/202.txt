@@ -1,0 +1,1 @@
+* allow to scan qr code with http/https/tcp/ssl/ssh link. Makes a "guess" about parameters.
