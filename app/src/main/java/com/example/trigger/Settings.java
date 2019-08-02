@@ -590,13 +590,14 @@ public class Settings {
         return false;
     }
 
-    static boolean nameExists(String name) {
+    static int countNames(String name) {
+        int count = 0;
         for (Setup setup : setups) {
             if (setup.getName().equals(name)) {
-                return true;
+                count += 1;
             }
         }
-        return false;
+        return count;
     }
 
     // for debugging

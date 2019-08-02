@@ -360,9 +360,10 @@ public class SetupActivity extends PreferenceActivity {
     // apply preference to setup object
     void storeSetup() {
         // duplicate entry
-        if (!Settings.idExists(setup.getId()) && Settings.nameExists(setup.getName())) {
-           showErrorMessage("Entry Exists", "Name already exists.");
-           return;
+        int count = Settings.countNames(setup.getName());
+        if ((Settings.idExists(setup.getId()) && count > 1) || count > 0) {
+            showErrorMessage("Entry Exists", "Name already exists.");
+            return;
         }
 
         Field[] fields = setup.getClass().getDeclaredFields();
