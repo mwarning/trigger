@@ -5,7 +5,7 @@
     <PreferenceCategory
         android:key="main_category"
         android:persistent="false"
-        android:title="@string/setup_title">
+        android:title="@string/setup_title" >
 
         <EditTextPreference
             android:inputType="text"
@@ -278,12 +278,14 @@
         <EditTextPreference
             android:title="Username"
             android:key="username"
+            android:summary="MQTT username"
             android:persistent="false"
             android:inputType="text" />
 
         <EditTextPreference
             android:title="Password"
             android:key="password"
+            android:summary="MQTT password"
             android:persistent="false"
             android:inputType="text" />
 
@@ -318,7 +320,7 @@
         <ListPreference
             android:key="qos"
             android:title="QoS"
-            android:summary="Quality of Service."
+            android:summary="MQTT Quality Of Service."
             android:entries="@array/MqttQosNames"
             android:entryValues="@array/MqttQosValues"/>
 
@@ -326,13 +328,13 @@
             android:defaultValue="false"
             android:key="retained"
             android:persistent="false"
-            android:summary="Tell broker to store message."
+            android:summary="Tell MQTT broker to store message."
             android:title="Retained" />
 
         <com.example.trigger.https.CertificatePreference
             android:key="certificate"
             android:title="Certificate"
-            android:summary="Certificate to use for ssl://"
+            android:summary="TLS Certificate to use for ssl://"
             android:persistent="false"
             android:defaultValue="false" />
 
