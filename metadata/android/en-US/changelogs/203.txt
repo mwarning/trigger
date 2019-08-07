@@ -1,0 +1,3 @@
+* fix missing german translation
+* fix error when setup name is already taken
+* fix upgrade error (not critical)

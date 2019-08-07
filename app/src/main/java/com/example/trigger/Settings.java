@@ -223,7 +223,7 @@ public class Settings {
             db_version = "2.0.0";
         }
 
-        if (db_version.equals("200")) {
+        if (db_version.equals("2.0.0")) {
             Log.i("Settings", "Update database format from " + db_version + " to 2.0.1");
             // nothing to change
             setups = new ArrayList();
@@ -231,12 +231,20 @@ public class Settings {
             db_version = "2.0.1";
         }
 
-        if (db_version.equals("201")) {
+        if (db_version.equals("2.0.1")) {
             Log.i("Settings", "Update database format from " + db_version + " to 2.0.2");
             // nothing to change
             setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "2.0.2").commit();
             db_version = "2.0.2";
+        }
+
+        if (db_version.equals("2.0.2")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 2.0.3");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "2.0.3").commit();
+            db_version = "2.0.3";
         }
     }
 
