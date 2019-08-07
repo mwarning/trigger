@@ -357,7 +357,7 @@ public class SetupActivity extends PreferenceActivity {
         setMainGroupTitle(setup.getName());
     }
 
-    // apply preference to setup object
+    // apply preference fields to setup object fields
     void storeSetup() {
         Field[] fields = setup.getClass().getDeclaredFields();
         for (Field field : fields) {
