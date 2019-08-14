@@ -12,11 +12,3 @@ Features:
 * Pin TLS certificates and set SSH keys
 * Auto-select door setup by WiFi SSID
 * Display returned text from door
-
-Required Android Permissions:
-
-* READ_EXTERNAL_STORAGE / WRITE_EXTERNAL_STORAGE for Certificate/Key/Backup Import/Export
-* INTERNET / BLUETOOTH to communicate with doors
-* ACCESS_WIFI_STATE / ACCESS_NETWORK_STATE to check if door communication is possible
-* CAMERA to scan QR-Codes
-.
