@@ -246,6 +246,14 @@ public class Settings {
             sharedPreferences.edit().putString("db_version", "2.0.3").commit();
             db_version = "2.0.3";
         }
+
+        if (db_version.equals("2.0.3")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 2.0.4");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "2.0.4").commit();
+            db_version = "2.0.4";
+        }
     }
 
     static void init(Context context) {
