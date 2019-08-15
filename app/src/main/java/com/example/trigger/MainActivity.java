@@ -184,13 +184,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     @Override
-    protected void onResume() {
-        updateSpinner(false);
-        invalidateOptionsMenu();
-        super.onResume();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -211,25 +204,40 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         unlockButton = (ImageButton) findViewById(R.id.Unlock);
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && wifi.isConnected()) {
-                    updateSpinner(true); // auto select possible entry
-                    callRequestHandler(Action.fetch_state);
-                } else {
-                    changeUI(StateCode.DISABLED);
-                }
-            }
-        };
-
         updateSpinner(true);
+    }
+
+    @Override
+    protected void onResume() {
+        updateSpinner(false);
+        invalidateOptionsMenu();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(broadcastReceiver, intentFilter);
+
+        super.onResume();
     }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
+
+    // listen for connectivity change
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && wifi.isConnected()) {
+                updateSpinner(true); // auto select possible entry
+                callRequestHandler(Action.fetch_state);
+            } else {
+                changeUI(StateCode.DISABLED);
+            }
+        }
+    };
 
     public void onUpdateState(View view) {
         callRequestHandler(Action.fetch_state);
