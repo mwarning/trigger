@@ -198,10 +198,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         state_wifi_default_image = BitmapFactory.decodeResource(res, R.drawable.state_wifi);
         state_unknown_default_image = BitmapFactory.decodeResource(res, R.drawable.state_unknown);
 
-        spinner = (Spinner) findViewById(R.id.selection_spinner);
-        stateImage = (ImageView) findViewById(R.id.stateImage);
-        lockButton = (ImageButton) findViewById(R.id.Lock);
-        unlockButton = (ImageButton) findViewById(R.id.Unlock);
+        spinner = findViewById(R.id.selection_spinner);
+        stateImage = findViewById(R.id.stateImage);
+        lockButton = findViewById(R.id.Lock);
+        unlockButton = findViewById(R.id.Unlock);
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
         updateSpinner(true);

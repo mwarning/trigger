@@ -58,7 +58,7 @@ public class ImageActivity extends AppCompatActivity implements
         this.preference = ImagePreference.self; // hack, TODO: pass serialized bitmap in bundle
         this.image = this.preference.getImage();
 
-        imageView = (ImageView) findViewById(R.id.selectedImage);
+        imageView = findViewById(R.id.selectedImage);
 
         builder = new AlertDialog.Builder(this);
         setButton = findViewById(R.id.SetButton);
