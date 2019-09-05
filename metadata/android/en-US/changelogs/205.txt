@@ -1,0 +1,1 @@
+* fix "entry exists" error when saving setting
