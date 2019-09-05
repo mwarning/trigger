@@ -391,7 +391,8 @@ public class SetupActivity extends PreferenceActivity {
         }
 
         int count = Settings.countNames(setup.getName());
-        if ((Settings.idExists(setup.getId()) && count > 1) || count > 0) {
+        boolean exists = Settings.idExists(setup.getId());
+        if ((exists && count > 1) || (!exists && count > 0)) {
             showErrorMessage("Entry Exists", "Name already exists.");
         } else if (setup.getName() == null || setup.getName().length() == 0) {
             showErrorMessage("Invalid Name", "Name is not set.");
