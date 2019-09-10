@@ -14,7 +14,7 @@ Features:
 
 ![image](screenshot_states.png)
 
-(door status open/closed/unknown/disabled)
+(door status open/closed/unknown/no-wifi)
 
 ![image](screenshot_settings.png)
 
@@ -31,7 +31,11 @@ The minimum supported Android version is 5.0.
 
 ## Door Status
 
-The door status is determined based on the text returned of the HTTPS query or SSH command. Recognized are the keywords `LOCKED` (door closed) and `UNLOCKED` (door open). If neither keyword is recognized, the door status is set to unknown. The complete return message is displayed in the App for a short time. HTML elements are stripped from the text.
+The door status is determined based on the text returned of the HTTPS query or SSH command. Recognized are the keywords `LOCKED` (door closed) and `UNLOCKED` (door open) that can occure anywhere in the response, even in tags. If neither keyword is found, the door status is set to unknown. The complete return message is always displayed in the App for a short time (with HTML elements stripped).
+
+## Auto-Select By SSID
+
+The door setup can be selected depending on what WiFi network the device is connected to. This can help to avoid to switch the door setup by hand. Even multiple SSIDs can be set as a comma separated list.
 
 ## Build from Sources
 
