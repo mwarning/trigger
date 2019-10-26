@@ -1,1 +1,2 @@
 * register ssh public key address does not need start with tcp://
+* allow ssh register endpoint to send back a response
