@@ -1,11 +1,16 @@
 package com.example.trigger.ssh;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.trigger.Utils;
 import com.jcraft.jsch.KeyPair;
@@ -26,6 +31,7 @@ class RegisterIdentityTask extends AsyncTask<Object, Void, String> {
     protected String doInBackground(Object... params) {
         String address = (String) params[0];
         KeyPair keypair = (KeyPair) params[1];
+        String reply;
 
         try {
             InetSocketAddress addr = Utils.createSocketAddress(
@@ -33,21 +39,26 @@ class RegisterIdentityTask extends AsyncTask<Object, Void, String> {
             );
             Socket client = new Socket(addr.getAddress(), addr.getPort());
 
-            OutputStream outToServer = client.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToServer);
-            keypair.writePublicKey(out, keypair.getPublicKeyComment());
+            OutputStream os = client.getOutputStream();
+            InputStream is = client.getInputStream();
+            DataOutputStream writer = new DataOutputStream(os);
 
-            out.flush();
-            out.close();
+            // write key in PEM format
+            keypair.writePublicKey(writer, keypair.getPublicKeyComment());
+            os.flush();
+
+            reply = Utils.readStringFromStream(is, 200);
+
+            os.close();
 
             client.close();
         } catch(Exception e) {
             return e.toString();
         }
         
-        return "Done";
+        return (reply != null && reply.length() > 0) ? reply : "Done";
     }
-    
+
     @Override
     protected void onPostExecute(String message) {
         listener.onRegisterIdentityTaskCompleted(message);

@@ -12,12 +12,15 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -74,6 +77,33 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static String readStringFromStream(InputStream in, int maxLength) {
+        BufferedReader reader = null;
+        String result ="";
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+
+            // read at maximum 50KB
+            while (((line = reader.readLine()) != null) && (line.length() < maxLength)) {
+                result += line;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return result;
     }
 
     public static SSLSocketFactory getSocketFactoryWithCertificate(Certificate cert)

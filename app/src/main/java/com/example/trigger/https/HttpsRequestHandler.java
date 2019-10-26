@@ -1,14 +1,9 @@
 package com.example.trigger.https;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.HostnameVerifier;
@@ -108,7 +103,7 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
             con.setConnectTimeout(2000);
             con.setRequestMethod ("GET");
 
-            String result = readStream(con.getInputStream());
+            String result = Utils.readStringFromStream(con.getInputStream(), 50000);
 
             if (con.getResponseCode() == 200) {
                 return new DoorReply(ReplyCode.SUCCESS, result);
@@ -128,33 +123,6 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
         } catch (Exception e) {
             return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
         }
-    }
-
-    private String readStream(InputStream in) throws SSLHandshakeException {
-        BufferedReader reader = null;
-        String result ="";
-
-        try {
-            reader = new BufferedReader(new InputStreamReader(in));
-            String line = "";
-
-            // read at maximum 50KB
-            while (((line = reader.readLine()) != null) && (line.length() < 50000)) {
-                result += line;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return result;
     }
 
     protected void onPostExecute(DoorReply result) {
