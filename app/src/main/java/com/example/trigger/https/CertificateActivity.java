@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -238,6 +239,7 @@ public class CertificateActivity extends AppCompatActivity implements
             if (certificate == null) {
                 deleteButton.setEnabled(false);
                 text = "<no certificate>";
+                certificateInfo.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
             } else {
                 deleteButton.setEnabled(true);
                 if (certificate instanceof X509Certificate) {
@@ -251,9 +253,11 @@ public class CertificateActivity extends AppCompatActivity implements
                     text += "\n";
                 }
                 text += certificate.toString();
+                certificateInfo.setGravity(Gravity.TOP | Gravity.LEFT);
             }
         } catch (Exception e) {
             text = e.getMessage();
+            certificateInfo.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
         }
         certificateInfo.setText(text);
     }

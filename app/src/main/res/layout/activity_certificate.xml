@@ -27,11 +27,11 @@
 
         <TextView
             android:id="@+id/CertificateInfo"
+            android:layout_width="match_parent"
             android:layout_height="300sp"
-            android:scrollHorizontally="true"
-            android:scrollbars="horizontal"
-            android:layout_width="500sp"
             android:layout_marginTop="10dp"
+            android:scrollbars="horizontal"
+            android:scrollHorizontally="true"
             android:textIsSelectable="true" />
 
         <TextView
