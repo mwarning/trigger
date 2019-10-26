@@ -127,7 +127,17 @@ public class Utils {
 
     public static InetSocketAddress createSocketAddress(String addr)
             throws URISyntaxException {
-        URI uri = new URI(addr);
+        final boolean has_scheme = addr.contains("://");
+        String scheme_addr;
+
+        // parsing only works with a scheme
+        if (has_scheme) {
+            scheme_addr = addr;
+        } else {
+            scheme_addr = "xyz://" + addr;
+        }
+
+        URI uri = new URI(scheme_addr);
         return new InetSocketAddress(uri.getHost(), uri.getPort());
     }
 
