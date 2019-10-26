@@ -95,7 +95,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="2"
             android:maxLines="1"
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:textAlignment="center" />
 
         <Button

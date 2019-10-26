@@ -8,7 +8,7 @@
         android:title="@string/setup_title" >
 
         <EditTextPreference
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:key="name"
             android:persistent="false"
             android:summary="@string/setup_name_description"
@@ -35,28 +35,28 @@
             android:defaultValue="false" />
 
         <EditTextPreference
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:key="open_query"
             android:persistent="false"
             android:summary="Called to open the door."
             android:title="Open URL" />
 
         <EditTextPreference
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:key="close_query"
             android:persistent="false"
             android:summary="Called to close the door."
             android:title="Close URL" />
 
         <EditTextPreference
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:key="status_query"
             android:persistent="false"
             android:summary="Called to request the door status."
             android:title="Status URL" />
 
         <EditTextPreference
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:key="ssids"
             android:persistent="false"
             android:summary="@string/setup_ssids_description"
@@ -111,14 +111,14 @@
             android:key="host"
             android:summary="Server address."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Port"
             android:key="port"
             android:summary="SSH port."
             android:persistent="false"
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:digits="0123456789" />
 
         <EditTextPreference
@@ -126,42 +126,42 @@
             android:key="user"
             android:summary="Login name."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Password"
             android:key="password"
             android:summary="Login password."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Open Command"
             android:key="open_command"
             android:summary="Execute after login to open door."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Close Command"
             android:key="close_command"
             android:summary="Execute after login to close door."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="State Command"
             android:key="state_command"
             android:summary="Execute after login to query door status."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="@string/setup_ssids"
             android:summary="@string/setup_ssids_description"
             android:key="ssids"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <com.example.trigger.ImagePreference
             android:key="open_image"
@@ -199,7 +199,7 @@
             android:key="server_address"
             android:summary="Server MAC address"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 <!--
         <EditTextPreference
             android:title="Server Port"
@@ -207,35 +207,35 @@
             android:summary="Server UUID port"
             android:default="00001101-0000-1000-8000-00805F9B34F"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 -->
         <EditTextPreference
             android:title="Open Command"
             android:key="open_query"
             android:summary="Open Door"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Close Command"
             android:key="close_query"
             android:summary="Close door."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="State Command"
             android:key="status_query"
             android:summary="Query door status."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="@string/setup_ssids"
             android:summary="@string/setup_ssids_description"
             android:key="ssids"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <com.example.trigger.ImagePreference
             android:key="open_image"
@@ -273,49 +273,49 @@
             android:key="server"
             android:summary="MQTT Broker Address"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Username"
             android:key="username"
             android:summary="MQTT username"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Password"
             android:key="password"
             android:summary="MQTT password"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Status Topic"
             android:key="status_topic"
             android:summary="MQTT Topic (subscribe)"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Command Topic"
             android:key="command_topic"
             android:summary="MQTT Topic (publish)"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Open Command"
             android:key="open_command"
             android:summary="Open Door"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:title="Close Command"
             android:key="close_command"
             android:summary="Close door."
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <ListPreference
             android:key="qos"
@@ -343,7 +343,7 @@
             android:summary="@string/setup_ssids_description"
             android:key="ssids"
             android:persistent="false"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <com.example.trigger.ImagePreference
             android:key="open_image"

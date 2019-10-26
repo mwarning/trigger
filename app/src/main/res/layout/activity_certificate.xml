@@ -54,7 +54,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/certificate_url"
-            android:inputType="textNoSuggestions"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -64,7 +63,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:singleLine="true"
             android:textAlignment="center" />
 
