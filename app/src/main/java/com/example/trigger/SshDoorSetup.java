@@ -23,6 +23,7 @@ public class SshDoorSetup implements Setup {
     public Bitmap closed_image;
     public Bitmap unknown_image;
     public Bitmap disabled_image;
+    public String register_url;
     public String ssids;
 
     public SshDoorSetup(int id, String name) {
@@ -40,6 +41,7 @@ public class SshDoorSetup implements Setup {
         this.closed_image = null;
         this.unknown_image = null;
         this.disabled_image = null;
+        this.register_url = "";
         this.ssids = "";
     }
 
@@ -81,7 +83,7 @@ public class SshDoorSetup implements Setup {
 
     @Override
     public String getRegisterUrl() {
-        return "";
+        return this.register_url;
     }
 
     @Override
