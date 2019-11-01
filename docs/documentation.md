@@ -10,7 +10,11 @@ The door setup can be selected depending on what WiFi network the device is conn
 
 ## SSH Key Registration
 
-SSH Public Keys can be send to an IP address (like `192.168.1.1:3333`) to be registered. A simple example to collect keys using netcat: `nc -k -l 3333 -c 'cat >> ssh_keys.txt; echo "Your key was received";'`
+SSH Public Keys can be send to an IP address and port (e.g. `192.168.1.1:3333`) to be registered. There is a field and button in the SSH Key Managment for that. A simple example to collect keys using netcat: `nc -k -l 3333 -c 'cat >> ssh_keys.txt; echo "Your key was received!";'`
+
+## Import Link As QR-Code
+
+Instead QR-Code imports from another Trigger app, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `ssl://` or `tcp://` will be used for MQTT and 'ssh://' for SSH based door setups.
 
 ## Build Trigger from Sources
 
