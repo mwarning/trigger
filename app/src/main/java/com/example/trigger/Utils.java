@@ -152,6 +152,7 @@ public class Utils {
             buffer.write(data, 0, nRead);
         }
 
+        fis.close();
         return buffer.toByteArray();
     }
 
