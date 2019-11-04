@@ -14,7 +14,7 @@ SSH Public Keys can be send to an IP address and port (e.g. `192.168.1.1:3333`) 
 
 ## Import Link As QR-Code
 
-Instead QR-Code imports from another Trigger app, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `ssl://` or `tcp://` will be used for MQTT and 'ssh://' for SSH based door setups.
+Instead QR-Code imports from another Trigger app, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `ssl://` or `tcp://` will be used for MQTT and `ssh://` for SSH based door setups.
 
 ## Build Trigger from Sources
 
