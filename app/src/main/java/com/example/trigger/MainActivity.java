@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private boolean hasSetupSelected = false;
     private ImageView stateImage;
     private ImageButton lockButton;
+    private ImageButton ringButton;
     private ImageButton unlockButton;
     private Spinner spinner;
     private WifiTools wifi;
@@ -58,7 +59,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     public enum Action {
         open_door,
         close_door,
-        fetch_state
+        ring_door, // ring the door bell
+        fetch_state // fetch the door state
     }
 
     // helper class for spinner
@@ -181,6 +183,31 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         } else {
             hasSetupSelected = true;
         }
+
+        updateButtons();
+    }
+
+    // hide lock/unlock/ring buttons if there is no action behind them
+    private void updateButtons() {
+        Setup setup = getSelectedSetup();
+
+        if (setup == null || setup.canClose()) {
+            lockButton.setVisibility(View.VISIBLE);
+        } else {
+            lockButton.setVisibility(View.GONE);
+        }
+
+        if (setup == null || setup.canOpen()) {
+            unlockButton.setVisibility(View.VISIBLE);
+        } else {
+            unlockButton.setVisibility(View.GONE);
+        }
+
+        if (setup == null || setup.canRing()) {
+            ringButton.setVisibility(View.VISIBLE);
+        } else {
+            ringButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -201,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         spinner = findViewById(R.id.selection_spinner);
         stateImage = findViewById(R.id.stateImage);
         lockButton = findViewById(R.id.Lock);
+        ringButton = findViewById(R.id.Ring);
         unlockButton = findViewById(R.id.Unlock);
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
@@ -251,6 +279,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     public void onLock(View view) {
         lockButton.startAnimation(pressed);
         callRequestHandler(Action.close_door);
+    }
+
+    public void onRing(View view) {
+        ringButton.startAnimation(pressed);
+        callRequestHandler(Action.ring_door);
     }
 
     private void changeUI(StateCode state) {

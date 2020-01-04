@@ -12,6 +12,7 @@ public class BluetoothDoorSetup implements Setup {
     public String server_address;
     public String open_query;
     public String close_query;
+    public String ring_query;
     public String status_query;
     public Bitmap open_image;
     public Bitmap closed_image;
@@ -24,6 +25,7 @@ public class BluetoothDoorSetup implements Setup {
         this.server_address = "";
         this.open_query = "";
         this.close_query = "";
+        this.ring_query = "";
         this.status_query = "";
         this.open_image = null;
         this.closed_image = null;
@@ -94,5 +96,20 @@ public class BluetoothDoorSetup implements Setup {
                 // should not happen
                 return new DoorState(StateCode.UNKNOWN, msg);
         }
+    }
+
+    @Override
+    public boolean canOpen() {
+        return Utils.isCommand(open_query);
+    }
+
+    @Override
+    public boolean canClose() {
+        return Utils.isCommand(close_query);
+    }
+
+    @Override
+    public boolean canRing() {
+        return Utils.isCommand(ring_query);
     }
 }

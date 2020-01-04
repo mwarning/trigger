@@ -30,4 +30,9 @@ public interface Setup {
     // Parse the text reply from
     // the door and determine state
     public abstract DoorState parseReply(DoorReply reply);
+
+    // To show/hide button
+    public abstract boolean canOpen();
+    public abstract boolean canClose();
+    public abstract boolean canRing();
 }

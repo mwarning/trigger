@@ -299,4 +299,9 @@ public class Utils {
         }
     }
 */
+
+    // non empty string
+    public static boolean isCommand(String str) {
+        return str == null || str.isEmpty();
+    }
 }

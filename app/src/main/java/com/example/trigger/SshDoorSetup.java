@@ -18,6 +18,7 @@ public class SshDoorSetup implements Setup {
     public int port;
     public String open_command;
     public String close_command;
+    public String ring_command;
     public String state_command;
     public Bitmap open_image;
     public Bitmap closed_image;
@@ -36,6 +37,7 @@ public class SshDoorSetup implements Setup {
         this.port = 22;
         this.open_command = "";
         this.close_command = "";
+        this.ring_command = "";
         this.state_command = "";
         this.open_image = null;
         this.closed_image = null;
@@ -99,5 +101,20 @@ public class SshDoorSetup implements Setup {
         } else {
             return new DoorState(StateCode.UNKNOWN, msg);
         }
+    }
+
+    @Override
+    public boolean canOpen() {
+        return Utils.isCommand(open_command);
+    }
+
+    @Override
+    public boolean canClose() {
+        return Utils.isCommand(close_command);
+    }
+
+    @Override
+    public boolean canRing() {
+        return Utils.isCommand(ring_command);
     }
 }

@@ -47,6 +47,19 @@
             android:src="@drawable/ic_lock" />
 
         <ImageButton
+            android:id="@+id/Ring"
+            android:layout_width="50dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundcorners"
+            android:onClick="onRing"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_ring" />
+
+        <ImageButton
             android:id="@+id/Unlock"
             android:layout_width="50dp"
             android:layout_height="100dp"

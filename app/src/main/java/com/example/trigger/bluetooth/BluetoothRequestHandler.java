@@ -86,6 +86,9 @@ public class BluetoothRequestHandler extends AsyncTask<Object, Void, DoorReply> 
                         case open_door:
                             request = setup.open_query;
                             break;
+                        case ring_door:
+                            request = setup.ring_query;
+                            break;
                         case close_door:
                             request = setup.close_query;
                             break;

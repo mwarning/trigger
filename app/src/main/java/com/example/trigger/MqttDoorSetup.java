@@ -18,6 +18,7 @@ public class MqttDoorSetup implements Setup {
     public String command_topic;
     public String open_command;
     public String close_command;
+    public String ring_command;
     public Boolean retained;
     public int qos;
 
@@ -39,6 +40,7 @@ public class MqttDoorSetup implements Setup {
         this.command_topic = "";
         this.open_command = "";
         this.close_command = "";
+        this.ring_command = "";
         this.retained = false;
         this.qos = 0;
         this.open_image = null;
@@ -112,5 +114,20 @@ public class MqttDoorSetup implements Setup {
                 // should not happen
                 return new DoorState(StateCode.UNKNOWN, msg);
         }
+    }
+
+    @Override
+    public boolean canOpen() {
+        return Utils.isCommand(open_command);
+    }
+
+    @Override
+    public boolean canClose() {
+        return Utils.isCommand(close_command);
+    }
+
+    @Override
+    public boolean canRing() {
+        return Utils.isCommand(ring_command);
     }
 }

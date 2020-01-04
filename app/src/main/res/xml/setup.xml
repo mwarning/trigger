@@ -50,6 +50,13 @@
 
         <EditTextPreference
             android:inputType="textNoSuggestions"
+            android:key="ring_query"
+            android:persistent="false"
+            android:summary="Called to ring the door bell."
+            android:title="Ring URL" />
+
+        <EditTextPreference
+            android:inputType="textNoSuggestions"
             android:key="status_query"
             android:persistent="false"
             android:summary="Called to request the door status."
@@ -150,6 +157,13 @@
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
+            android:title="Ring Command"
+            android:key="ring_command"
+            android:summary="Execute after login to ring door bell."
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
             android:title="State Command"
             android:key="state_command"
             android:summary="Execute after login to query door status."
@@ -220,6 +234,13 @@
             android:title="Close Command"
             android:key="close_query"
             android:summary="Close door."
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:title="Ring Command"
+            android:key="ring_query"
+            android:summary="Ring door."
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -314,6 +335,13 @@
             android:title="Close Command"
             android:key="close_command"
             android:summary="Close door."
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:title="Ring Command"
+            android:key="ring_command"
+            android:summary="Ring door bell."
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
