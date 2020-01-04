@@ -1,7 +1,7 @@
 Trigger
 =======
 
-Trigger is an Android App to unlock/lock doors and request the status.
+Trigger is an Android App to unlock/lock doors, show the door status and ring a bell.
 
 Features:
  - HTTPS, SSH, Bluetooth and MQTT support
