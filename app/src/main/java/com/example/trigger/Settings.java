@@ -32,7 +32,7 @@ public class Settings {
 
     private static String getDatabaseVersion(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        // no version set means old 1.2.1
+        // no version set means very old 1.2.1
         return prefs.getString("db_version", "1.2.1");
     }
 

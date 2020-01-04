@@ -41,7 +41,7 @@ import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
-    private boolean enableRefreshItem = false;
+    private boolean enableRefreshItem = false; // not used (yet)
     private boolean hasSetupSelected = false;
     private ImageView stateImage;
     private ImageButton lockButton;
@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 break;
         }
 
-        // overwrite with custom image
+        // use custom image
         Setup setup = getSelectedSetup();
         if (setup != null) {
             Bitmap custom = setup.getStateImage(state);
@@ -329,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             }
         }
 
+        // set background image
         stateImage.setImageBitmap(image);
 
         // update action bar menu
@@ -372,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             MqttDoorSetup mqttSetup = (MqttDoorSetup) setup;
             new MqttRequestHandler(this).execute(action, mqttSetup);
         } else {
+            // hm, invalid setup
             changeUI(StateCode.DISABLED);
         }
     }
