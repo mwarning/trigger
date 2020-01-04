@@ -1,0 +1,2 @@
+* add ring button for door bells
+* hide unused open/close/ring buttons
