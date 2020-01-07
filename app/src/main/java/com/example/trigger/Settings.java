@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ArrayList;
@@ -215,71 +216,8 @@ public class Settings {
             db_version = "1.9.2";
         }
 
-        if (db_version.equals("1.9.2")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.0");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.0").commit();
-            db_version = "2.0.0";
-        }
-
-        if (db_version.equals("2.0.0")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.1");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.1").commit();
-            db_version = "2.0.1";
-        }
-
-        if (db_version.equals("2.0.1")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.2");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.2").commit();
-            db_version = "2.0.2";
-        }
-
-        if (db_version.equals("2.0.2")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.3");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.3").commit();
-            db_version = "2.0.3";
-        }
-
-        if (db_version.equals("2.0.3")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.4");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.4").commit();
-            db_version = "2.0.4";
-        }
-
-        if (db_version.equals("2.0.4")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.5");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.5").commit();
-            db_version = "2.0.5";
-        }
-
-        if (db_version.equals("2.0.5")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.0.6");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.0.6").commit();
-            db_version = "2.0.6";
-        }
-
-        if (db_version.equals("2.0.6")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.1.0");
-            // nothing to change
-            setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.1.0").commit();
-            db_version = "2.1.0";
-        }
-
-        if (db_version.equals("2.1.0")) {
+        // multiple consecutive version with no database change
+        if (Arrays.asList("1.9.2", "2.0.0", "2.0.1", "2.0.2", "2.0.3", "2.0.4", "2.0.5", "2.0.6", "2.1.0").contains(db_version)) {
             Log.i("Settings", "Update database format from " + db_version + " to 2.1.1");
             // nothing to change
             setups = new ArrayList();
