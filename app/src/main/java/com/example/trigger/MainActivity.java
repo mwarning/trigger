@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                updateButtons();
                 callRequestHandler(Action.fetch_state);
             }
 
