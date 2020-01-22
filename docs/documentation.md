@@ -1,8 +1,12 @@
 # Documentation
 
+## Compatible Locks
+
+Trigger makes rather generic requests and needs to be configured depending on the door system. No off the shelf door systems have been tested. So no advice can be given here.
+
 ## Door Status
 
-The door status is determined based on the text returned of the HTTPS query or SSH command. Recognized are the keywords `LOCKED` (door closed) and `UNLOCKED` (door open) that can occure anywhere in the response, even in tags. If neither keyword is found, the door status is set to unknown. The complete return message is always displayed in the App for a short time (with HTML elements stripped).
+The door status is determined based on the text returned of the HTTPS query or SSH command. Recognized are the keywords `LOCKED` (door closed) and `UNLOCKED` (door open) that can occure anywhere in the response, even in HTML tags. If neither keyword is found, the door status is set to unknown. The complete return message is always displayed in the App for a short time (with HTML elements stripped).
 
 ## Auto-Select Door By SSID
 
