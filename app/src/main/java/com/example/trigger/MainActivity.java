@@ -158,7 +158,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         // sort items by name
         Collections.sort(items, new Comparator<SpinnerItem>() {
-            @Override public int compare(SpinnerItem s1, SpinnerItem s2) {
+            @Override
+            public int compare(SpinnerItem s1, SpinnerItem s2) {
                 return s1.name.compareTo(s2.name);
             }
         });
