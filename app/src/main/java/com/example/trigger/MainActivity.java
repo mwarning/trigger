@@ -272,17 +272,17 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         callRequestHandler(Action.fetch_state);
     }
 
-    public void onUnlock(View view) {
+    public void doUnlock(View view) {
         unlockButton.startAnimation(pressed);
         callRequestHandler(Action.open_door);
     }
 
-    public void onLock(View view) {
+    public void doLock(View view) {
         lockButton.startAnimation(pressed);
         callRequestHandler(Action.close_door);
     }
 
-    public void onRing(View view) {
+    public void doRing(View view) {
         ringButton.startAnimation(pressed);
         callRequestHandler(Action.ring_door);
     }

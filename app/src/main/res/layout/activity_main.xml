@@ -41,7 +41,7 @@
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:background="@drawable/roundcorners"
-            android:onClick="onLock"
+            android:onClick="doLock"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_lock" />
@@ -54,7 +54,7 @@
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:background="@drawable/roundcorners"
-            android:onClick="onRing"
+            android:onClick="doRing"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_ring" />
@@ -67,7 +67,7 @@
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:background="@drawable/roundcorners"
-            android:onClick="onUnlock"
+            android:onClick="doUnlock"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_unlock" />
