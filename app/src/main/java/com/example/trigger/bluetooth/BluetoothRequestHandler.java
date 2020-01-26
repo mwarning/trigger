@@ -1,6 +1,5 @@
 package com.example.trigger.bluetooth;
 
-import android.os.AsyncTask;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -18,7 +17,7 @@ import com.example.trigger.OnTaskCompleted;
 import com.example.trigger.Log;
 
 
-public class BluetoothRequestHandler extends AsyncTask<Object, Void, DoorReply> {
+public class BluetoothRequestHandler extends RequestHandler {
     private OnTaskCompleted listener;
 
     public BluetoothRequestHandler(OnTaskCompleted listener) {

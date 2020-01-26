@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Bitmap state_disabled_default_image;
     private Bitmap state_unknown_default_image;
 
+    RequestHandler handler;
+
     public enum Action {
         open_door,
         close_door,
@@ -355,22 +357,36 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private void callRequestHandler(Action action) {
         Setup setup = getSelectedSetup();
+
         if (setup instanceof HttpsDoorSetup) {
-            HttpsDoorSetup httpsSetup = (HttpsDoorSetup) setup;
-            new HttpsRequestHandler(this).execute(action, httpsSetup);
+            handler = new HttpsRequestHandler(this);
+            handler.execute(action, setup);
         } else if (setup instanceof SshDoorSetup) {
-            SshDoorSetup sshSetup = (SshDoorSetup) setup;
-            new SshRequestHandler(this).execute(action, sshSetup);
+            handler = new SshRequestHandler(this);
+            handler.execute(action, setup);
         } else if (setup instanceof BluetoothDoorSetup) {
-            BluetoothDoorSetup bluetoothSetup = (BluetoothDoorSetup) setup;
-            new BluetoothRequestHandler(this).execute(action, bluetoothSetup);
+            handler = new BluetoothRequestHandler(this);
+            handler.execute(action, setup);
         } else if (setup instanceof MqttDoorSetup) {
-            MqttDoorSetup mqttSetup = (MqttDoorSetup) setup;
-            new MqttRequestHandler(this).execute(action, mqttSetup);
+            handler = new MqttRequestHandler(this);
+            handler.execute(action, setup);
         } else {
             // hm, invalid setup
             changeUI(StateCode.DISABLED);
         }
+
+        // make sure the handler exists after two seconds (if supported)
+        new Thread(() -> {
+            RequestHandler h = handler;
+            try {
+                Thread.sleep(2000);
+                if (h != null) {
+                    h.stop();
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override

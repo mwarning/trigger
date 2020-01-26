@@ -10,7 +10,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.trigger.Utils;
@@ -19,10 +18,11 @@ import com.example.trigger.MqttDoorSetup;
 import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
+import com.example.trigger.RequestHandler;
 import com.example.trigger.Log;
 
 
-public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> implements MqttCallback {
+public class MqttRequestHandler extends RequestHandler implements MqttCallback {
     private OnTaskCompleted listener;
 
     public MqttRequestHandler(OnTaskCompleted listener) {

@@ -3,24 +3,24 @@ package com.example.trigger.https;
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
-import android.os.AsyncTask;
-
 import com.example.trigger.MainActivity.Action;
 import com.example.trigger.HttpsDoorSetup;
 import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
+import com.example.trigger.RequestHandler;
 import com.example.trigger.Utils;
 import com.example.trigger.Log;
 
 
-public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
+public class HttpsRequestHandler extends RequestHandler {
     private OnTaskCompleted listener;
 
     public HttpsRequestHandler(OnTaskCompleted listener) {
