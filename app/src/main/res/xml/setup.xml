@@ -36,6 +36,13 @@
 
         <EditTextPreference
             android:inputType="textNoSuggestions"
+            android:key="method"
+            android:persistent="false"
+            android:summary="GET/PUT/POST."
+            android:title="HTTP Method" />
+
+        <EditTextPreference
+            android:inputType="textNoSuggestions"
             android:key="open_query"
             android:persistent="false"
             android:summary="Called to open the door."

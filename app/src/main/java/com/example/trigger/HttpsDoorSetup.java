@@ -12,6 +12,7 @@ public class HttpsDoorSetup implements Setup {
     static final String type = "HttpsDoorSetup";
     int id;
     String name;
+    public String method;
     public String open_query;
     public String close_query;
     public String ring_query;
@@ -29,6 +30,7 @@ public class HttpsDoorSetup implements Setup {
     public HttpsDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
+        this.method = "GET";
         this.open_query = "";
         this.close_query = "";
         this.ring_query = "";
