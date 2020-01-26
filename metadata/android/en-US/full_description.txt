@@ -1,7 +1,5 @@
-Open doors using HTTPS/SSH/MQTT or Bluetooth.
-
 Open or close doors, ring the door bell and show the door state.
-This is done via HTTPS queries, SSH commands or via MQTT messages.
+Supported are HTTPS/SSH/MQTT and Bluetooth.
 
 Features:
 
