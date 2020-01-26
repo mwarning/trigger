@@ -10,7 +10,6 @@ import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

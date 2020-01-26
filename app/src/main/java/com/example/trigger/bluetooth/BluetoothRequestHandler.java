@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.util.Log;
 
 import java.util.Set;
 import java.io.InputStream;
@@ -16,6 +15,7 @@ import com.example.trigger.MainActivity.Action;
 import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
+import com.example.trigger.Log;
 
 
 public class BluetoothRequestHandler extends AsyncTask<Object, Void, DoorReply> {
@@ -28,12 +28,12 @@ public class BluetoothRequestHandler extends AsyncTask<Object, Void, DoorReply> 
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("BluetoothRequestHandler", "Unexpected number of params.");
+            Log.e(this, "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof BluetoothDoorSetup)) {
-            Log.e("BluetoothRequestHandler", "Invalid type of params.");
+            Log.e(this, "Invalid type of params.");
             return DoorReply.internal_error();
         }
 

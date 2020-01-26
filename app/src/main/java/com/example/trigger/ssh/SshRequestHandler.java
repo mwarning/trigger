@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -18,6 +17,7 @@ import com.example.trigger.SshDoorSetup;
 import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
+import com.example.trigger.Log;
 
 
 public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
@@ -30,12 +30,12 @@ public class SshRequestHandler extends AsyncTask<Object, Void, DoorReply> {
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("SshRequestHandler", "Unexpected number of params.");
+            Log.e(this, "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof SshDoorSetup)) {
-            Log.e("SshRequestHandler", "Invalid type of params.");
+            Log.e(this, "Invalid type of params.");
             return DoorReply.internal_error();
         }
 

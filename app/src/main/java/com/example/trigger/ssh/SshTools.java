@@ -1,7 +1,6 @@
 package com.example.trigger.ssh;
 
 import android.util.Base64;
-import android.util.Log;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
@@ -14,8 +13,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import com.example.trigger.Log;
+
 
 public class SshTools {
+    static final String TAG = "SshTools";
+
     // helper class that holds the content of id_rsa/id_rsa.pub file content (PEM format)
     public static class KeyPairData implements Serializable {
         public final byte[] prvkey;
@@ -39,7 +42,7 @@ public class SshTools {
 
             return new KeyPairData(prvstream.toByteArray(), pubstream.toByteArray());
         } catch (Exception e) {
-            Log.e("SshTools.keypairtoBytes", e.toString());
+            Log.e(TAG ,"keypairtoBytes " + e.toString());
         }
         return null;
     }
@@ -55,7 +58,7 @@ public class SshTools {
             baos.close();
             return new String(baos.toByteArray());
         } catch (Exception e) {
-            Log.e("SshTools", "serialize error: " + e.toString());
+            Log.e(TAG, "serialize error: " + e.toString());
         }
         return null;
     }
@@ -72,7 +75,7 @@ public class SshTools {
 
             return keypair;
         } catch (Exception e) {
-            Log.e("SshTools", "deserialize error: " + e.toString());
+            Log.e(TAG, "deserialize error: " + e.toString());
         }
         return null;
     }
@@ -100,7 +103,7 @@ public class SshTools {
             }
             return keypair;
         } catch (Exception e) {
-            Log.e("SshTools", "deserialize error: " + e.toString());
+            Log.e(TAG, "deserialize error: " + e.toString());
         }
         return null;
     }

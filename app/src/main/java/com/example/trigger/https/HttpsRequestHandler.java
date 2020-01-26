@@ -10,7 +10,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.trigger.MainActivity.Action;
 import com.example.trigger.HttpsDoorSetup;
@@ -18,6 +17,7 @@ import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
 import com.example.trigger.Utils;
+import com.example.trigger.Log;
 
 
 public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
@@ -30,12 +30,12 @@ public class HttpsRequestHandler extends AsyncTask<Object, Void, DoorReply> {
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("HttpsRequestHandler", "Unexpected number of params.");
+            Log.e(this, "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof HttpsDoorSetup)) {
-            Log.e("HttpsRequestHandler", "Invalid type of params.");
+            Log.e(this, "Invalid type of params.");
             return DoorReply.internal_error();
         }
 

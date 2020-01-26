@@ -22,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.net.ConnectivityManager;
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 

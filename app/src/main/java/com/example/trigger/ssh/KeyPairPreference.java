@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.example.trigger.SetupActivity;
 import com.jcraft.jsch.KeyPair;

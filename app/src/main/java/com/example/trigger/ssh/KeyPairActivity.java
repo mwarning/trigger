@@ -1,5 +1,6 @@
 package com.example.trigger.ssh;
 
+import com.example.trigger.Log;
 import com.example.trigger.Utils;
 import com.github.isabsent.filepicker.SimpleFilePickerDialog;
 import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
@@ -10,7 +11,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;

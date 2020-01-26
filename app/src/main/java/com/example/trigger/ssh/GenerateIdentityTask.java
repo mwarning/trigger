@@ -14,9 +14,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.example.trigger.Log;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 

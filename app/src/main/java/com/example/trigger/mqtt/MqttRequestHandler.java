@@ -12,7 +12,6 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.example.trigger.Utils;
 import com.example.trigger.MainActivity.Action;
@@ -20,6 +19,7 @@ import com.example.trigger.MqttDoorSetup;
 import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
+import com.example.trigger.Log;
 
 
 public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> implements MqttCallback {
@@ -32,12 +32,12 @@ public class MqttRequestHandler extends AsyncTask<Object, Void, DoorReply> imple
     @Override
     protected DoorReply doInBackground(Object... params) {
         if (params.length != 2) {
-            Log.e("MqttRequestHandler", "Unexpected number of params.");
+            Log.e(this, "Unexpected number of params.");
             return DoorReply.internal_error();
         }
 
         if (!(params[0] instanceof Action && params[1] instanceof MqttDoorSetup)) {
-            Log.e("MqttRequestHandler", "Invalid type of params.");
+            Log.e(this, "Invalid type of params.");
             return DoorReply.internal_error();
         }
 

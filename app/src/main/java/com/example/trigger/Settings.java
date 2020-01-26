@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.example.trigger.https.HttpsTools;
 import com.example.trigger.ssh.SshTools;

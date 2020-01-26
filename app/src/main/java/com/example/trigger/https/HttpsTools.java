@@ -1,7 +1,6 @@
 package com.example.trigger.https;
 
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyManagementException;
@@ -18,6 +17,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import com.example.trigger.Log;
 
 
 public class HttpsTools {

@@ -10,7 +10,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.trigger.Utils;
 import com.jcraft.jsch.KeyPair;

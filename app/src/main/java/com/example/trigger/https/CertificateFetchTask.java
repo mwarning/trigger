@@ -5,7 +5,8 @@ import java.security.cert.Certificate;
 import javax.net.ssl.HttpsURLConnection;
 
 import android.os.AsyncTask;
-import android.util.Log;
+
+import com.example.trigger.Log;
 
 
 public class CertificateFetchTask extends AsyncTask<Object, Void, CertificateFetchTask.Result> {
