@@ -223,6 +223,13 @@
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
+            android:title="Service Identifier"
+            android:key="service_uuid"
+            android:summary="Service UUID (optional)"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
             android:title="Open Command"
             android:key="open_query"
             android:summary="Open Door"

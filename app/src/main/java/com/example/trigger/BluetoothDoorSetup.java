@@ -10,6 +10,7 @@ public class BluetoothDoorSetup implements Setup {
     int id;
     String name;
     public String device_name;
+    public String service_uuid;
     public String open_query;
     public String close_query;
     public String ring_query;
@@ -23,6 +24,7 @@ public class BluetoothDoorSetup implements Setup {
         this.id = id;
         this.name = name;
         this.device_name = "";
+        this.service_uuid = "";
         this.open_query = "";
         this.close_query = "";
         this.ring_query = "";

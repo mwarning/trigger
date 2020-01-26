@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import com.example.trigger.BluetoothDoorSetup;
 import com.example.trigger.BluetoothTools;
@@ -94,7 +95,13 @@ public class BluetoothRequestHandler extends RequestHandler {
 
             BluetoothDevice device = bluetooth.getRemoteDevice(address);
 
-            socket = BluetoothTools.createRfcommSocket(device);
+            if (setup.service_uuid.isEmpty()) {
+                socket = BluetoothTools.createRfcommSocket(device);
+            } else {
+                UUID uuid = UUID.fromString(setup.service_uuid);
+                socket = device.createRfcommSocketToServiceRecord(uuid);
+            }
+
             socket.connect();
 
             // Get the BluetoothSocket input and output streams
