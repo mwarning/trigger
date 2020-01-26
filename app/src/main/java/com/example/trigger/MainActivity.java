@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private Bitmap state_open_default_image;
     private Bitmap state_closed_default_image;
-    private Bitmap state_wifi_default_image;
+    private Bitmap state_disabled_default_image;
     private Bitmap state_unknown_default_image;
 
     public enum Action {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         Resources res = getResources();
         state_open_default_image = BitmapFactory.decodeResource(res, R.drawable.state_open);
         state_closed_default_image = BitmapFactory.decodeResource(res, R.drawable.state_closed);
-        state_wifi_default_image = BitmapFactory.decodeResource(res, R.drawable.state_wifi);
+        state_disabled_default_image = BitmapFactory.decodeResource(res, R.drawable.state_disabled);
         state_unknown_default_image = BitmapFactory.decodeResource(res, R.drawable.state_unknown);
 
         spinner = findViewById(R.id.selection_spinner);
@@ -303,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 break;
 
             case DISABLED:
-                image = state_wifi_default_image;
+                image = state_disabled_default_image;
                 lockButton.setEnabled(false);
                 unlockButton.setEnabled(false);
                 break;
