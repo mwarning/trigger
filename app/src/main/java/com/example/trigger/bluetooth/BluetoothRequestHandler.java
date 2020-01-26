@@ -4,21 +4,24 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
+import java.io.IOException;
 import java.util.Set;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.UUID;
 
 import com.example.trigger.BluetoothDoorSetup;
+import com.example.trigger.BluetoothTools;
 import com.example.trigger.MainActivity.Action;
 import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
+import com.example.trigger.RequestHandler;
 import com.example.trigger.Log;
 
 
 public class BluetoothRequestHandler extends RequestHandler {
     private OnTaskCompleted listener;
+    private BluetoothSocket socket;
 
     public BluetoothRequestHandler(OnTaskCompleted listener) {
         this.listener = listener;
@@ -45,76 +48,86 @@ public class BluetoothRequestHandler extends RequestHandler {
 
         BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
 
+        if (bluetooth == null) {
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Device does not support bluetooth");
+        } else if (!bluetooth.isEnabled()) {
+            // request to enable
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "Bluetooth is disabled.");
+        }
+
+        String request = "";
+        String response = "";
+
+        switch (action) {
+            case open_door:
+                request = setup.open_query;
+                break;
+            case ring_door:
+                request = setup.ring_query;
+                break;
+            case close_door:
+                request = setup.close_query;
+                break;
+            case fetch_state:
+                request = setup.status_query;
+                break;
+        }
+
+        if (request.isEmpty()) {
+            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+        }
+
         try {
-            // serial board port
-            final UUID server_port = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-            final String server_address = setup.server_address.toUpperCase();
-
-            String request = "";
-            String response = "";
-
-            if (bluetooth == null) {
-                return new DoorReply(ReplyCode.LOCAL_ERROR, "Device does not support bluetooth");
-            } else if (!bluetooth.isEnabled()) {
-                // request to enable
-                //Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                //startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                return new DoorReply(ReplyCode.LOCAL_ERROR, "Bluetooth is disabled.");
-            } else {
-                String mydeviceaddress = bluetooth.getAddress();
-                String mydevicename = bluetooth.getName();
-                String state = "" + bluetooth.getState();
-                Log.d("Bluetooth", "myself: " + mydevicename + " : " + mydeviceaddress + " " + state);
-            }
-
             Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
 
-            if (pairedDevices.isEmpty()) {
-                return new DoorReply(ReplyCode.LOCAL_ERROR, "No paired device found.");
-            }
-
+            String address = "";
             for (BluetoothDevice device : pairedDevices) {
-                String deviceName = device.getName();
-                String deviceHardwareAddress = device.getAddress();
-                Log.d("Bluetooth", "name: " + deviceName + ", mac: " + deviceHardwareAddress);
-                if (device.getAddress().equals(server_address)) {
-                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(server_port);
-                    socket.connect();
-
-                    switch (action) {
-                        case open_door:
-                            request = setup.open_query;
-                            break;
-                        case ring_door:
-                            request = setup.ring_query;
-                            break;
-                        case close_door:
-                            request = setup.close_query;
-                            break;
-                        case fetch_state:
-                            request = setup.status_query;
-                            break;
-                    }
-
-                    if (!request.isEmpty()) {
-                        OutputStream out = socket.getOutputStream();
-                        out.write(request.getBytes());
-                    }
-
-                    InputStream in = socket.getInputStream();
-                    int byteCount = in.available();
-
-                    if (byteCount > 0 && byteCount < (10*1024)) {
-                        byte[] bytes = new byte[byteCount];
-                        in.read(bytes);
-                        response = new String(bytes, "UTF-8");
-                    }
+                if ((device.getName() != null && device.getName().equals(setup.device_name))
+					|| device.getAddress().equals(setup.device_name.toUpperCase())) {
+                    address = device.getAddress();
                 }
             }
+
+            if (address.isEmpty()) {
+                return new DoorReply(ReplyCode.LOCAL_ERROR, "Device not paired yet.");
+            }
+
+            BluetoothDevice device = bluetooth.getRemoteDevice(address);
+
+            socket = BluetoothTools.createRfcommSocket(device);
+            socket.connect();
+
+            // Get the BluetoothSocket input and output streams
+            InputStream tmpIn = socket.getInputStream();
+            OutputStream tmpOut = socket.getOutputStream();
+
+            tmpOut.write(request.getBytes());
+            tmpOut.flush();
+
+            try {
+                byte[] buffer = new byte[512];
+                int bytes = tmpIn.read(buffer);
+                response = new String(buffer, 0, bytes);
+            } catch (IOException ioe) {
+                return new DoorReply(ReplyCode.REMOTE_ERROR, "Cannot reach remote device.");
+            }
+
+            socket.close();
 
             return new DoorReply(ReplyCode.SUCCESS, response);
         } catch (Exception e) {
             return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
+        }
+    }
+
+    @Override
+    protected void stop() {
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.trigger;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private ImageButton unlockButton;
     private Spinner spinner;
     private WifiTools wifi;
+    private BluetoothTools bluetooth;
+
     private Animation pressed;
 
     private Bitmap state_open_default_image;
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
         Context context = this.getApplicationContext();
         this.wifi = new WifiTools(context);
+        this.bluetooth = new BluetoothTools(context);
         Settings.init(context);
 
         Resources res = getResources();
@@ -242,8 +246,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         invalidateOptionsMenu();
 
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
         registerReceiver(broadcastReceiver, intentFilter);
 
         super.onResume();
@@ -255,15 +261,37 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         super.onPause();
     }
 
-    // listen for connectivity change
+    // listen for connectivity changes
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE") && wifi.isConnected()) {
-                updateSpinner(true); // auto select possible entry
-                callRequestHandler(Action.fetch_state);
-            } else {
+            String action = intent.getAction();
+            Setup current = getSelectedSetup();
+
+            if (current == null) {
                 changeUI(StateCode.DISABLED);
+            } else if (current instanceof BluetoothDoorSetup) {
+                // assume the current setup uses Bluetooth based!
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+
+                if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED) && state == BluetoothAdapter.STATE_ON) {
+                    Log.d("MainActivity", "bluetooth turned on");
+                    updateSpinner(true); // auto select possible entry
+                    callRequestHandler(Action.fetch_state);
+                } else {
+                    Log.d("MainActivity", "bluetooth state unknown => disabled");
+                    changeUI(StateCode.DISABLED);
+                }
+            } else {
+                // assume the current setup uses WiFi based!
+                Log.d("MainActivity", "wifi turned on");
+                if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) && wifi.isConnected()) {
+                    updateSpinner(true); // auto select possible entry
+                    callRequestHandler(Action.fetch_state);
+                } else {
+                    Log.d("MainActivity", "wifi state unknown => disabled");
+                    changeUI(StateCode.DISABLED);
+                }
             }
         }
     };

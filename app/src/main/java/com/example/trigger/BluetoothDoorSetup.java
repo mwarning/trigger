@@ -9,7 +9,7 @@ public class BluetoothDoorSetup implements Setup {
     static final String type = "BluetoothDoorSetup";
     int id;
     String name;
-    public String server_address;
+    public String device_name;
     public String open_query;
     public String close_query;
     public String ring_query;
@@ -22,7 +22,7 @@ public class BluetoothDoorSetup implements Setup {
     public BluetoothDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
-        this.server_address = "";
+        this.device_name = "";
         this.open_query = "";
         this.close_query = "";
         this.ring_query = "";
@@ -50,7 +50,7 @@ public class BluetoothDoorSetup implements Setup {
 
     @Override
     public String getSSIDs() {
-        return server_address;
+        return device_name;
     }
 
     @Override

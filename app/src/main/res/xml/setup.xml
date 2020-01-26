@@ -216,20 +216,12 @@
             android:persistent="false" >
 
         <EditTextPreference
-            android:title="Server Address"
-            android:key="server_address"
-            android:summary="Server MAC address"
+            android:title="Device Identifier"
+            android:key="device_name"
+            android:summary="Name or MAC Address"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
-<!--
-        <EditTextPreference
-            android:title="Server Port"
-            android:key="server_port"
-            android:summary="Server UUID port"
-            android:default="00001101-0000-1000-8000-00805F9B34F"
-            android:persistent="false"
-            android:inputType="textNoSuggestions" />
--->
+
         <EditTextPreference
             android:title="Open Command"
             android:key="open_query"
