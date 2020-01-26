@@ -41,7 +41,6 @@ import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
-    private boolean enableRefreshItem = false; // not used (yet)
     private boolean hasSetupSelected = false;
     private ImageView stateImage;
     private ImageButton lockButton;
@@ -295,21 +294,18 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 image = state_open_default_image;
                 lockButton.setEnabled(true);
                 unlockButton.setEnabled(true);
-                enableRefreshItem = true;
                 break;
 
             case CLOSED:
                 image = state_closed_default_image;
                 lockButton.setEnabled(true);
                 unlockButton.setEnabled(true);
-                enableRefreshItem = true;
                 break;
 
             case DISABLED:
                 image = state_wifi_default_image;
                 lockButton.setEnabled(false);
                 unlockButton.setEnabled(false);
-                enableRefreshItem = false;
                 break;
 
             case UNKNOWN:
@@ -317,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 // Enabled, in case the API does not support state queries
                 lockButton.setEnabled(true);
                 unlockButton.setEnabled(true);
-                enableRefreshItem = true;
                 break;
         }
 
