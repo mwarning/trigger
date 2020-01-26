@@ -257,13 +257,6 @@
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
-        <EditTextPreference
-            android:title="@string/setup_ssids"
-            android:summary="@string/setup_ssids_description"
-            android:key="ssids"
-            android:persistent="false"
-            android:inputType="textNoSuggestions" />
-
         <com.example.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"
