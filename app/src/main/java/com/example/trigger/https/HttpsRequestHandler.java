@@ -105,10 +105,8 @@ public class HttpsRequestHandler extends RequestHandler {
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setConnectTimeout(2000);
 
-            try {
+            if (!setup.method.isEmpty()) {
                 con.setRequestMethod(setup.method.toUpperCase());
-            } catch (ProtocolException pe) {
-                con.setRequestMethod("GET");
             }
 
             String result = Utils.readStringFromStream(con.getInputStream(), 50000);

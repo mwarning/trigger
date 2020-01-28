@@ -30,7 +30,7 @@ public class HttpsDoorSetup implements Setup {
     public HttpsDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
-        this.method = "GET";
+        this.method = "";
         this.open_query = "";
         this.close_query = "";
         this.ring_query = "";
