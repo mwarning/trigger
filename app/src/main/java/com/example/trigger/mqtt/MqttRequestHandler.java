@@ -86,6 +86,14 @@ public class MqttRequestHandler extends RequestHandler implements MqttCallback {
                 );
             }
 
+            if (!setup.username.isEmpty()) {
+                opts.setUserName(setup.username);
+            }
+
+            if (!setup.password.isEmpty()) {
+                opts.setPassword(setup.password.toCharArray());
+            }
+
             // false: broker will not keep messages
             opts.setCleanSession(false);
 

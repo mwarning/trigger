@@ -11,8 +11,8 @@ public class MqttDoorSetup implements Setup {
     static final String type = "MqttDoorSetup";
     int id;
     String name;
-    String username;
-    String password;
+    public String username;
+    public String password;
     public String server;
     public String status_topic;
     public String command_topic;
