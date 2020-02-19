@@ -1,1 +1,2 @@
 * use username/password for MQTT
+* do not default to GET if http request method is invalid
