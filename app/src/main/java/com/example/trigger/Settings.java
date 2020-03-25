@@ -397,6 +397,7 @@ public class Settings {
 
         String key = String.format("item_%03d", setup.getId());
 
+        // store to persistent memory
         sharedPreferences.edit().putString(key, json.toString()).commit();
 
         setups.add(setup);

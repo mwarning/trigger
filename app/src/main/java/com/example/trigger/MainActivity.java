@@ -32,7 +32,6 @@ import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.example.trigger.DoorState.StateCode;
@@ -152,19 +151,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private void updateSpinner(boolean match_ssid) {
         ArrayList<Setup> setups = Settings.getSetups();
-        ArrayList<SpinnerItem> items = new ArrayList();
+        ArrayList<SpinnerItem> items = new ArrayList<>();
 
         for (Setup setup : setups) {
             items.add(new SpinnerItem(setup.getId(), setup.getName(), setup.getSSIDs()));
         }
 
         // sort items by name
-        Collections.sort(items, new Comparator<SpinnerItem>() {
-            @Override
-            public int compare(SpinnerItem s1, SpinnerItem s2) {
-                return s1.name.compareTo(s2.name);
-            }
-        });
+        Collections.sort(items, (SpinnerItem s1, SpinnerItem s2) -> s1.name.compareTo(s2.name));
 
         int selection = getPreferredSpinnerIndex(items, match_ssid);
 
@@ -364,6 +358,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         invalidateOptionsMenu();
     }
 
+    // can be called multiple times by the same task
     @Override
     public void onTaskResult(int setup_id, DoorReply.ReplyCode code, String message) {
         this.runOnUiThread(() -> {
