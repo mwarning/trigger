@@ -118,16 +118,16 @@ public class MqttDoorSetup implements Setup {
 
     @Override
     public boolean canOpen() {
-        return Utils.isCommand(open_command);
+        return !Utils.isEmpty(open_command);
     }
 
     @Override
     public boolean canClose() {
-        return Utils.isCommand(close_command);
+        return !Utils.isEmpty(close_command);
     }
 
     @Override
     public boolean canRing() {
-        return Utils.isCommand(ring_command);
+        return !Utils.isEmpty(ring_command);
     }
 }

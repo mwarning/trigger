@@ -300,8 +300,8 @@ public class Utils {
 */
 
     // non empty string
-    public static boolean isCommand(String str) {
-        return str != null && !str.isEmpty();
+    public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
     }
 
     public static byte[] hexStringToByteArray(String s) {

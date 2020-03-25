@@ -102,16 +102,16 @@ public class BluetoothDoorSetup implements Setup {
 
     @Override
     public boolean canOpen() {
-        return Utils.isCommand(open_query);
+        return !Utils.isEmpty(open_query);
     }
 
     @Override
     public boolean canClose() {
-        return Utils.isCommand(close_query);
+        return !Utils.isEmpty(close_query);
     }
 
     @Override
     public boolean canRing() {
-        return Utils.isCommand(ring_query);
+        return !Utils.isEmpty(ring_query);
     }
 }
