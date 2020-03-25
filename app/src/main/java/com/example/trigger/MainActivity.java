@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private ImageButton ringButton;
     private ImageButton unlockButton;
     private Spinner spinner;
-    private WifiTools wifi;
-    private BluetoothTools bluetooth;
 
     private Animation pressed;
 
@@ -101,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         int i;
 
         // select by ssid
-        String ssid = wifi.getCurrentSSID();
+        String ssid = WifiTools.getCurrentSSID();
         if (ssid.length() > 0 && match_ssid) {
             i = 0;
             for (SpinnerItem item : items) {
@@ -218,8 +216,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         setContentView(R.layout.activity_main);
 
         Context context = this.getApplicationContext();
-        this.wifi = new WifiTools(context);
-        this.bluetooth = new BluetoothTools(context);
+        WifiTools.init(context);
+        BluetoothTools.init(context);
         Settings.init(context);
 
         Resources res = getResources();
@@ -263,38 +261,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Setup current = getSelectedSetup();
-
-            if (current == null) {
-                changeUI(StateCode.DISABLED);
-            } else if (current instanceof BluetoothDoorSetup || current instanceof NukiDoorSetup) {
-                // assume the current setup uses Bluetooth based!
-                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-
-                if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                    if (state == BluetoothAdapter.STATE_ON) {
-                        Log.d("MainActivity", "bluetooth turned on");
-                        changeUI(StateCode.UNKNOWN);
-                        updateSpinner(true); // auto select possible entry
-                        callRequestHandler(Action.fetch_state);
-                    }
-                    if (state == BluetoothAdapter.STATE_OFF) {
-                        Log.d("MainActivity", "bluetooth state unknown => " + state);
-                        changeUI(StateCode.DISABLED);
-                    }
-                }
-            } else {
-                // assume the current setup uses WiFi based!
-                Log.d("MainActivity", "wifi turned on");
-                if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) && wifi.isConnected()) {
-                    updateSpinner(true); // auto select possible entry
-                    callRequestHandler(Action.fetch_state);
-                } else {
-                    Log.d("MainActivity", "wifi state unknown => disabled");
-                    changeUI(StateCode.DISABLED);
-                }
-            }
+            callRequestHandler(Action.fetch_state);
         }
     };
 
@@ -414,9 +381,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     protected void onStart() {
         super.onStart();
 
-        if (wifi.isConnected()) {
-            callRequestHandler(Action.fetch_state);
-        }
+        callRequestHandler(Action.fetch_state);
     }
 
     // Show/Hide menu items

@@ -8,23 +8,21 @@ import android.content.Context;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.example.trigger.Log;
-
 
 public class BluetoothTools {
     static final String TAG = "BluetoothTools";
-    private BluetoothAdapter bluetoothAdapter;
+    private static BluetoothAdapter adapter;
 
-    BluetoothTools(Context context) {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        
-        if (bluetoothAdapter == null) {
-            // Device doesn't support Bluetooth
-        }
+    static void init(Context context) {
+        adapter = BluetoothAdapter.getDefaultAdapter();
 	}
 
-    public boolean isEnabled() {
-        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
+    public static boolean isEnabled() {
+        return adapter != null && adapter.isEnabled();
+    }
+
+    public static boolean isSupported() {
+        return (adapter != null);
     }
 
     public static BluetoothSocket createRfcommSocket(BluetoothDevice device) {

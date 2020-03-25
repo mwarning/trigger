@@ -11,13 +11,13 @@ import java.util.List;
 
 
 public class WifiTools {
-    private WifiManager wifiManager;
+    private static WifiManager wifiManager;
 
-	WifiTools(Context context) {
-		 this.wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-	}
+    static void init(Context context) {
+        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    }
 
-   	String getCurrentSSID() {
+    public static String getCurrentSSID() {
         // From android 8.0 only available if GPS on?!
         if (wifiManager != null) {
             WifiInfo info = wifiManager.getConnectionInfo();
@@ -34,11 +34,11 @@ public class WifiTools {
         }
     }
 
-    ArrayList<String> getScannedSSIDs() {
+    public static ArrayList<String> getScannedSSIDs() {
         ArrayList<String> ssids;
         List<ScanResult> results;
 
-        ssids = new ArrayList();
+        ssids = new ArrayList<>();
         if (wifiManager != null) {
             results = wifiManager.getScanResults();
             if (results != null) {
@@ -51,11 +51,11 @@ public class WifiTools {
         return ssids;
     }
 
-    ArrayList<String> getConfiguredSSIDs() {
+    public static ArrayList<String> getConfiguredSSIDs() {
         List<WifiConfiguration> configs;
         ArrayList<String> ssids;
 
-        ssids = new ArrayList();
+        ssids = new ArrayList<>();
         if (wifiManager != null) {
             configs = wifiManager.getConfiguredNetworks();
             if (configs != null) {
@@ -68,7 +68,7 @@ public class WifiTools {
         return ssids;
     }
 
-    WifiConfiguration findConfig(List<WifiConfiguration> configs, String ssid) {
+    public static WifiConfiguration findConfig(List<WifiConfiguration> configs, String ssid) {
         for (WifiConfiguration config : configs) {
             if (config.SSID.equals(ssid)) {
                 return config;
@@ -110,7 +110,7 @@ public class WifiTools {
         }
     }
 */
-    boolean isConnected() {
+    public static boolean isConnected() {
         if (wifiManager != null && wifiManager.isWifiEnabled()) {
             // Wi-Fi adapter is ON
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();

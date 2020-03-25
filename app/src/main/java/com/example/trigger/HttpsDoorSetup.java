@@ -121,10 +121,12 @@ public class HttpsDoorSetup implements Setup {
                 } else {
                     return new DoorState(StateCode.UNKNOWN, msg);
                 }
-            default:
-                // should not happen
-                return new DoorState(StateCode.UNKNOWN, msg);
+            case DISABLED:
+                return new DoorState(StateCode.DISABLED, msg);
         }
+
+        // keep compiler quiet :/
+        return null;
     }
 
     @Override

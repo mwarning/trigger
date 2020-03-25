@@ -9,15 +9,12 @@ public class DoorReply {
     public enum ReplyCode {
         LOCAL_ERROR, // could establish a connection for some reason
         REMOTE_ERROR, // the door send some error
-        SUCCESS // the door send some message that has yet to be parsed
+        SUCCESS, // the door send some message that has yet to be parsed
+        DISABLED // Internet, WiFi or Bluetooth disabled or not supported
     }
 
     public DoorReply(ReplyCode code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public static DoorReply internal_error() {
-        return new DoorReply(ReplyCode.LOCAL_ERROR, "Internal Error");
     }
 }

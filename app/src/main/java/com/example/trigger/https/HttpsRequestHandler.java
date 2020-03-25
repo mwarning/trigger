@@ -1,5 +1,7 @@
 package com.example.trigger.https;
 
+import android.content.Context;
+
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -15,6 +17,7 @@ import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
 import com.example.trigger.Utils;
 import com.example.trigger.Log;
+import com.example.trigger.WifiTools;
 
 
 public class HttpsRequestHandler extends Thread {
@@ -31,6 +34,11 @@ public class HttpsRequestHandler extends Thread {
     public void run() {
         if (setup.getId() < 0) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Internal Error");
+            return;
+        }
+
+        if (!WifiTools.isConnected()) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled.");
             return;
         }
 

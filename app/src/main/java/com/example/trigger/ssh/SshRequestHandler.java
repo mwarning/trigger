@@ -3,6 +3,7 @@ package com.example.trigger.ssh;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.example.trigger.WifiTools;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -33,6 +34,12 @@ public class SshRequestHandler extends Thread {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Internal Error");
             return;
         }
+
+        if (!WifiTools.isConnected()) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled.");
+            return;
+        }
+
         String command = "";
 
         switch (action) {

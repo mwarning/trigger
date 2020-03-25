@@ -17,6 +17,7 @@ import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
 import com.example.trigger.Log;
+import com.example.trigger.WifiTools;
 
 
 public class MqttRequestHandler extends Thread implements MqttCallback {
@@ -33,6 +34,11 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
     public void run() {
         if (setup.getId() < 0) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Internal Error");
+            return;
+        }
+
+        if (!WifiTools.isConnected()) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled.");
             return;
         }
 

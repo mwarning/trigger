@@ -36,14 +36,16 @@ public class BluetoothRequestHandler extends Thread {
             return;
         }
 
-        BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (bluetooth == null) {
-            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Device does not support bluetooth");
+        if (adapter == null) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Device does not support Bluetooth");
             return;
-        } else if (!bluetooth.isEnabled()) {
+        }
+
+        if (!adapter.isEnabled()) {
             // request to enable
-            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Bluetooth is disabled.");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Bluetooth is disabled.");
             return;
         }
 
@@ -71,7 +73,7 @@ public class BluetoothRequestHandler extends Thread {
         }
 
         try {
-            Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
+            Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 
             String address = "";
             for (BluetoothDevice device : pairedDevices) {
@@ -86,7 +88,7 @@ public class BluetoothRequestHandler extends Thread {
                 return;
             }
 
-            BluetoothDevice device = bluetooth.getRemoteDevice(address);
+            BluetoothDevice device = adapter.getRemoteDevice(address);
 
             if (setup.service_uuid.isEmpty()) {
                 socket = BluetoothTools.createRfcommSocket(device);

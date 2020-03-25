@@ -92,15 +92,26 @@ public class SshDoorSetup implements Setup {
     public DoorState parseReply(DoorReply reply) {
         String msg = android.text.Html.fromHtml(reply.message).toString().trim();
 
-        if (reply.message.contains("UNLOCKED")) {
-            // door unlocked
-            return new DoorState(StateCode.OPEN, msg);
-        } else if (reply.message.contains("LOCKED")) {
-            // door locked
-            return new DoorState(StateCode.CLOSED, msg);
-        } else {
-            return new DoorState(StateCode.UNKNOWN, msg);
+        switch (reply.code) {
+            case LOCAL_ERROR:
+            case REMOTE_ERROR:
+                return new DoorState(StateCode.UNKNOWN, msg);
+            case SUCCESS:
+                if (reply.message.contains("UNLOCKED")) {
+                    // door unlocked
+                    return new DoorState(StateCode.OPEN, msg);
+                } else if (reply.message.contains("LOCKED")) {
+                    // door locked
+                    return new DoorState(StateCode.CLOSED, msg);
+                } else {
+                    return new DoorState(StateCode.UNKNOWN, msg);
+                }
+            case DISABLED:
+                return new DoorState(StateCode.DISABLED, msg);
         }
+
+        // keep compiler quiet :/
+        return null;
     }
 
     @Override
