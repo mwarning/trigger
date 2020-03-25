@@ -12,37 +12,26 @@ import com.jcraft.jsch.Session;
 
 import com.example.trigger.MainActivity.Action;
 import com.example.trigger.SshDoorSetup;
-import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
-import com.example.trigger.RequestHandler;
 import com.example.trigger.Log;
 
 
-public class SshRequestHandler extends RequestHandler {
-    private OnTaskCompleted listener;
+public class SshRequestHandler extends Thread {
+    private final OnTaskCompleted listener;
+    private final SshDoorSetup setup;
+    private final Action action;
 
-    public SshRequestHandler(OnTaskCompleted listener){
+    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action){
         this.listener = listener;
+        this.setup = setup;
+        this.action = action;
     }
 
-    @Override
-    protected DoorReply doInBackground(Object... params) {
-        if (params.length != 2) {
-            Log.e(this, "Unexpected number of params.");
-            return DoorReply.internal_error();
-        }
-
-        if (!(params[0] instanceof Action && params[1] instanceof SshDoorSetup)) {
-            Log.e(this, "Invalid type of params.");
-            return DoorReply.internal_error();
-        }
-
-        Action action = (Action) params[0];
-        SshDoorSetup setup = (SshDoorSetup) params[1];
-
+    public void run() {
         if (setup.getId() < 0) {
-            return DoorReply.internal_error();
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Internal Error");
+            return;
         }
         String command = "";
 
@@ -61,80 +50,75 @@ public class SshRequestHandler extends RequestHandler {
                 break;
         }
 
-        try {
-            return connectAndExecute(
-                setup.keypair, setup.user, setup.password,
-                setup.host, setup.port, command
-            );
-        } catch (Exception e) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
-        }
-    }
-
-    protected void onPostExecute(DoorReply result) {
-        listener.onTaskCompleted(result);
-    }
-
-    private static final DoorReply connectAndExecute(KeyPair keypair, String user, String password, String host, int port, String command)
-            throws Exception {
-
-        if (command.isEmpty()) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
-        }
-
-        if (host.isEmpty()) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "Host is empty.");
-        }
-
-        // fallback
-        if (user.isEmpty()) {
-            user = "root";
-        }
-
-        JSch jsch = new JSch();
-
-        if (keypair != null) {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
-            byte passphrase[] = new byte[0];
-
-            jsch.addIdentity("authkey", data.prvkey, data.pubkey, passphrase);
-        }
-
-        Session session = jsch.getSession(user, host, port);
-
-        if (password.length() > 0) {
-            session.setPassword(password);
-        }
-
-        session.setConfig("StrictHostKeyChecking", "no");
-
-        StringBuilder outputBuffer = new StringBuilder();
+        String user = setup.user;
+        String password = setup.password;
+        String host = setup.host;
+        KeyPair keypair = setup.keypair;
+        int port = setup.port;
 
         try {
-            session.connect(5000); // 5sec timeout
-
-            Channel channel = session.openChannel("exec");
-
-            ((ChannelExec) channel).setCommand(command);
-            InputStream commandOutput = channel.getInputStream();
-
-            channel.connect();
-
-            int readByte = commandOutput.read();
-
-            while (readByte != 0xffffffff) {
-               outputBuffer.append((char)readByte);
-               readByte = commandOutput.read();
+            if (command.isEmpty()) {
+                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
+                return;
             }
 
-            channel.disconnect();
-            session.disconnect();
-        } catch (IOException ioe) {
-            return new DoorReply(ReplyCode.REMOTE_ERROR, ioe.getMessage());
-        } catch (JSchException jse) {
-            return new DoorReply(ReplyCode.REMOTE_ERROR, jse.getMessage());
-        }
+            if (host.isEmpty()) {
+                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Host is empty.");
+                return;
+            }
 
-        return new DoorReply(ReplyCode.SUCCESS, outputBuffer.toString());
+            // fallback
+            if (setup.user.isEmpty()) {
+                user = "root";
+            }
+
+            JSch jsch = new JSch();
+
+            if (keypair != null) {
+                SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
+                byte passphrase[] = new byte[0];
+
+                jsch.addIdentity("authkey", data.prvkey, data.pubkey, passphrase);
+            }
+
+            Session session = jsch.getSession(user, host, port);
+
+            if (password.length() > 0) {
+                session.setPassword(password);
+            }
+
+            session.setConfig("StrictHostKeyChecking", "no");
+
+            StringBuilder outputBuffer = new StringBuilder();
+
+            try {
+                session.connect(5000); // 5sec timeout
+
+                Channel channel = session.openChannel("exec");
+
+                ((ChannelExec) channel).setCommand(command);
+                InputStream commandOutput = channel.getInputStream();
+
+                channel.connect();
+
+                int readByte = commandOutput.read();
+
+                while (readByte != 0xffffffff) {
+                   outputBuffer.append((char)readByte);
+                   readByte = commandOutput.read();
+                }
+
+                channel.disconnect();
+                session.disconnect();
+            } catch (IOException ioe) {
+                listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, ioe.getMessage());
+            } catch (JSchException jse) {
+                listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, jse.getMessage());
+            }
+
+            listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, outputBuffer.toString());
+        } catch (Exception e) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.toString());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.trigger;
 
 public interface OnTaskCompleted {
-    void onTaskCompleted(DoorReply result);
+    void onTaskResult(int setup_id, DoorReply.ReplyCode code, String message);
 }
+

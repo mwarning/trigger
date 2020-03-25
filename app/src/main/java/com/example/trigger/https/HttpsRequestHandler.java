@@ -3,7 +3,6 @@ package com.example.trigger.https;
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
@@ -12,38 +11,27 @@ import javax.net.ssl.SSLSession;
 
 import com.example.trigger.MainActivity.Action;
 import com.example.trigger.HttpsDoorSetup;
-import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
-import com.example.trigger.RequestHandler;
 import com.example.trigger.Utils;
 import com.example.trigger.Log;
 
 
-public class HttpsRequestHandler extends RequestHandler {
-    private OnTaskCompleted listener;
+public class HttpsRequestHandler extends Thread {
+    private final OnTaskCompleted listener;
+    private final HttpsDoorSetup setup;
+    private final Action action;
 
-    public HttpsRequestHandler(OnTaskCompleted listener) {
+    public HttpsRequestHandler(OnTaskCompleted listener, HttpsDoorSetup setup, Action action) {
         this.listener = listener;
+        this.setup = setup;
+        this.action = action;
     }
 
-    @Override
-    protected DoorReply doInBackground(Object... params) {
-        if (params.length != 2) {
-            Log.e(this, "Unexpected number of params.");
-            return DoorReply.internal_error();
-        }
-
-        if (!(params[0] instanceof Action && params[1] instanceof HttpsDoorSetup)) {
-            Log.e(this, "Invalid type of params.");
-            return DoorReply.internal_error();
-        }
-
-        Action action = (Action) params[0];
-        HttpsDoorSetup setup = (HttpsDoorSetup) params[1];
-
+    public void run() {
         if (setup.getId() < 0) {
-            return DoorReply.internal_error();
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Internal Error");
+            return;
         }
 
         String command = "";
@@ -65,7 +53,8 @@ public class HttpsRequestHandler extends RequestHandler {
 
         if (command.isEmpty()) {
             // ignore
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
+            return;
         }
 
         try {
@@ -112,26 +101,22 @@ public class HttpsRequestHandler extends RequestHandler {
             String result = Utils.readStringFromStream(con.getInputStream(), 50000);
 
             if (con.getResponseCode() == 200) {
-                return new DoorReply(ReplyCode.SUCCESS, result);
+                this.listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, result);
             } else {
-                return new DoorReply(ReplyCode.REMOTE_ERROR, con.getResponseMessage());
+                this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, con.getResponseMessage());
             }
         } catch (MalformedURLException mue) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "Malformed URL.");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Malformed URL.");
         } catch (FileNotFoundException e) {
-            return new DoorReply(ReplyCode.REMOTE_ERROR, "Server responds with an error.");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Server responds with an error.");
         } catch (java.net.SocketTimeoutException ste) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "Server not reachable.");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Server not reachable.");
         } catch (java.net.SocketException se) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "Not connected to network.");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Not connected to network.");
         //} catch (java.security.cert.CertPathValidatorException e) {
         //	return new DoorReply(ReplyCode.LOCAL_ERROR, "Certificate validation failed.");
         } catch (Exception e) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.toString());
         }
-    }
-
-    protected void onPostExecute(DoorReply result) {
-        listener.onTaskCompleted(result);
     }
 }

@@ -1,13 +1,17 @@
 package com.example.trigger;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -56,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Bitmap state_closed_default_image;
     private Bitmap state_disabled_default_image;
     private Bitmap state_unknown_default_image;
-
-    RequestHandler handler;
 
     public enum Action {
         open_door,
@@ -363,59 +365,46 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     @Override
-    public void onTaskCompleted(DoorReply r) {
-        //Log.d("MainActivity.onTaskCompleted", "message: " + r.message);
+    public void onTaskResult(int setup_id, DoorReply.ReplyCode code, String message) {
+        this.runOnUiThread(() -> {
+            Setup setup = getSelectedSetup();
+            if (setup == null || setup.getId() != setup_id) {
+                // probably some late result that does not matter anymore
+                return;
+            }
 
-        Setup setup = getSelectedSetup();
-        if (setup == null) {
-            // should not happen
-            return;
-        }
+            DoorState state = setup.parseReply(new DoorReply(code, message));
 
-        DoorState state = setup.parseReply(r);
+            // change state image
+            changeUI(state.code);
 
-        // change state image
-        changeUI(state.code);
-
-        // display message
-        if (state.message.length() > 0) {
-            Context context = getApplicationContext();
-            Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show();
-        }
+            // display message
+            if (state.message.length() > 0) {
+                Context context = getApplicationContext();
+                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void callRequestHandler(Action action) {
         Setup setup = getSelectedSetup();
 
         if (setup instanceof HttpsDoorSetup) {
-            handler = new HttpsRequestHandler(this);
-            handler.execute(action, setup);
+            HttpsRequestHandler handler = new HttpsRequestHandler(this, (HttpsDoorSetup) setup, action);
+            handler.start();
         } else if (setup instanceof SshDoorSetup) {
-            handler = new SshRequestHandler(this);
-            handler.execute(action, setup);
+            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action);
+            handler.start();
         } else if (setup instanceof BluetoothDoorSetup) {
-            handler = new BluetoothRequestHandler(this);
-            handler.execute(action, setup);
+            BluetoothRequestHandler handler = new BluetoothRequestHandler(this, (BluetoothDoorSetup) setup, action);
+            handler.start();
         } else if (setup instanceof MqttDoorSetup) {
-            handler = new MqttRequestHandler(this);
-            handler.execute(action, setup);
+            MqttRequestHandler handler = new MqttRequestHandler(this, (MqttDoorSetup) setup, action);
+            handler.start();
         } else {
             // hm, invalid setup
             changeUI(StateCode.DISABLED);
         }
-
-        // make sure the handler exists after two seconds (if supported)
-        new Thread(() -> {
-            RequestHandler h = handler;
-            try {
-                Thread.sleep(2000);
-                if (h != null) {
-                    h.stop();
-                }
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-        }).start();
     }
 
     @Override

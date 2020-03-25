@@ -13,47 +13,38 @@ import java.util.UUID;
 import com.example.trigger.BluetoothDoorSetup;
 import com.example.trigger.BluetoothTools;
 import com.example.trigger.MainActivity.Action;
-import com.example.trigger.DoorReply;
 import com.example.trigger.DoorReply.ReplyCode;
 import com.example.trigger.OnTaskCompleted;
-import com.example.trigger.RequestHandler;
 import com.example.trigger.Log;
 
 
-public class BluetoothRequestHandler extends RequestHandler {
-    private OnTaskCompleted listener;
+public class BluetoothRequestHandler extends Thread {
+    private final OnTaskCompleted listener;
+    private final BluetoothDoorSetup setup;
+    private final Action action;
     private BluetoothSocket socket;
 
-    public BluetoothRequestHandler(OnTaskCompleted listener) {
+    public BluetoothRequestHandler(OnTaskCompleted listener, BluetoothDoorSetup setup, Action action) {
         this.listener = listener;
+        this.setup = setup;
+        this.action = action;
     }
 
-    @Override
-    protected DoorReply doInBackground(Object... params) {
-        if (params.length != 2) {
-            Log.e(this, "Unexpected number of params.");
-            return DoorReply.internal_error();
-        }
-
-        if (!(params[0] instanceof Action && params[1] instanceof BluetoothDoorSetup)) {
-            Log.e(this, "Invalid type of params.");
-            return DoorReply.internal_error();
-        }
-
-        Action action = (Action) params[0];
-        BluetoothDoorSetup setup = (BluetoothDoorSetup) params[1];
-
+    public void run() {
         if (setup.getId() < 0) {
-            return DoorReply.internal_error();
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Internal Error");
+            return;
         }
 
         BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetooth == null) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "Device does not support bluetooth");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Device does not support bluetooth");
+            return;
         } else if (!bluetooth.isEnabled()) {
             // request to enable
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "Bluetooth is disabled.");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Bluetooth is disabled.");
+            return;
         }
 
         String request = "";
@@ -75,7 +66,8 @@ public class BluetoothRequestHandler extends RequestHandler {
         }
 
         if (request.isEmpty()) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, "");
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
+            return;
         }
 
         try {
@@ -90,7 +82,8 @@ public class BluetoothRequestHandler extends RequestHandler {
             }
 
             if (address.isEmpty()) {
-                return new DoorReply(ReplyCode.LOCAL_ERROR, "Device not paired yet.");
+                this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Device not paired yet.");
+                return;
             }
 
             BluetoothDevice device = bluetooth.getRemoteDevice(address);
@@ -116,29 +109,15 @@ public class BluetoothRequestHandler extends RequestHandler {
                 int bytes = tmpIn.read(buffer);
                 response = new String(buffer, 0, bytes);
             } catch (IOException ioe) {
-                return new DoorReply(ReplyCode.REMOTE_ERROR, "Cannot reach remote device.");
+                this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Cannot reach remote device.");
+                return;
             }
 
             socket.close();
 
-            return new DoorReply(ReplyCode.SUCCESS, response);
+            this.listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, response);
         } catch (Exception e) {
-            return new DoorReply(ReplyCode.LOCAL_ERROR, e.toString());
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.toString());
         }
-    }
-
-    @Override
-    protected void stop() {
-        try {
-            if (socket != null) {
-                socket.close();
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
-    protected void onPostExecute(DoorReply result) {
-        listener.onTaskCompleted(result);
     }
 }
