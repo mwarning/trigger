@@ -326,6 +326,8 @@ public class Settings {
             setup = new SshDoorSetup(id, "");
         } else if (type.equals(BluetoothDoorSetup.type)) {
             setup = new BluetoothDoorSetup(id, "");
+        } else if (type.equals(NukiDoorSetup.type)) {
+            setup = new NukiDoorSetup(id, "");
         } else if (type.equals(MqttDoorSetup.type)) {
             setup = new MqttDoorSetup(id, "");
         } else {
@@ -371,7 +373,7 @@ public class Settings {
     }
 
     // add to list and database
-    static void addSetup(Setup setup) {
+    public static void addSetup(Setup setup) {
         if (setup == null || setup.getId() < 0) {
             return;
         }
@@ -443,6 +445,8 @@ public class Settings {
                 setup = new SshDoorSetup(id, "");
             } else if (type.equals(BluetoothDoorSetup.type)) {
                 setup = new BluetoothDoorSetup(id, "");
+            } else if (type.equals(NukiDoorSetup.type)) {
+                setup = new NukiDoorSetup(id, "");
             } else if (type.equals(MqttDoorSetup.type)) {
                 setup = new MqttDoorSetup(id, "");
             } else {

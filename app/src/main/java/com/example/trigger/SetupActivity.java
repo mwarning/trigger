@@ -273,6 +273,10 @@ public class SetupActivity extends PreferenceActivity {
                     setup = new BluetoothDoorSetup(setup.getId(), getText("name"));
                     loadSetup();
                     return true;
+                } else if (type.equals(NukiDoorSetup.type)) {
+                    setup = new NukiDoorSetup(setup.getId(), getText("name"));
+                    loadSetup();
+                    return true;
                 } else if (type.equals(MqttDoorSetup.type)) {
                     setup = new MqttDoorSetup(setup.getId(), getText("name"));
                     loadSetup();

@@ -5,6 +5,7 @@
         <item>SSH Tür</item>
         <item>MQTT Tür</item>
         <item>Bluetooth Tür</item>
+        <item>Nuki Tür</item>
     </string-array>
     <string-array name="KeypairStrengths">
         <item>Schwach (1024 bit)</item>

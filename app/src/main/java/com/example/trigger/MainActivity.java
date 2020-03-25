@@ -36,6 +36,7 @@ import java.util.List;
 
 import com.example.trigger.DoorState.StateCode;
 import com.example.trigger.https.HttpsRequestHandler;
+import com.example.trigger.nuki.NukiRequestHandler;
 import com.example.trigger.ssh.SshRequestHandler;
 import com.example.trigger.bluetooth.BluetoothRequestHandler;
 import com.example.trigger.mqtt.MqttRequestHandler;
@@ -267,17 +268,21 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             if (current == null) {
                 changeUI(StateCode.DISABLED);
-            } else if (current instanceof BluetoothDoorSetup) {
+            } else if (current instanceof BluetoothDoorSetup || current instanceof NukiDoorSetup) {
                 // assume the current setup uses Bluetooth based!
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 
-                if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED) && state == BluetoothAdapter.STATE_ON) {
-                    Log.d("MainActivity", "bluetooth turned on");
-                    updateSpinner(true); // auto select possible entry
-                    callRequestHandler(Action.fetch_state);
-                } else {
-                    Log.d("MainActivity", "bluetooth state unknown => disabled");
-                    changeUI(StateCode.DISABLED);
+                if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                    if (state == BluetoothAdapter.STATE_ON) {
+                        Log.d("MainActivity", "bluetooth turned on");
+                        changeUI(StateCode.UNKNOWN);
+                        updateSpinner(true); // auto select possible entry
+                        callRequestHandler(Action.fetch_state);
+                    }
+                    if (state == BluetoothAdapter.STATE_OFF) {
+                        Log.d("MainActivity", "bluetooth state unknown => " + state);
+                        changeUI(StateCode.DISABLED);
+                    }
                 }
             } else {
                 // assume the current setup uses WiFi based!
@@ -393,6 +398,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         } else if (setup instanceof BluetoothDoorSetup) {
             BluetoothRequestHandler handler = new BluetoothRequestHandler(this, (BluetoothDoorSetup) setup, action);
             handler.start();
+        } else if (setup instanceof NukiDoorSetup) {
+            NukiRequestHandler handler = new NukiRequestHandler(this, (NukiDoorSetup) setup, action);
+            handler.start();
         } else if (setup instanceof MqttDoorSetup) {
             MqttRequestHandler handler = new MqttRequestHandler(this, (MqttDoorSetup) setup, action);
             handler.start();
@@ -439,6 +447,11 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             cloneMenuItem.setEnabled(false);
             cloneMenuItem.getIcon().setAlpha(130);
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 123);
         }
 
         return true;

@@ -284,6 +284,51 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+            android:title="Nuki Settings"
+            android:key="NukiDoorSetup"
+            android:persistent="false" >
+
+        <EditTextPreference
+            android:title="Device Identifier"
+            android:key="device_name"
+            android:summary="Name or MAC Address"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:title="User Name"
+            android:key="user_name"
+            android:summary="Name for Nuki log"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <com.example.trigger.ImagePreference
+            android:key="open_image"
+            android:title="Open Door Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="closed_image"
+            android:title="Closed Door Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="disabled_image"
+            android:title="No Connection Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <com.example.trigger.ImagePreference
+            android:key="unknown_image"
+            android:title="Unknown Status Image"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
             android:title="MQTT Settings"
             android:key="MqttDoorSetup"
             android:persistent="false" >

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="SetupTypeNames">
-        <item>HTTPS Door</item>
-        <item>SSH Door</item>
-        <item>MQTT Door</item>
-        <item>Bluetooth Door</item>
+        <item>Generic HTTPS</item>
+        <item>Generic SSH</item>
+        <item>Generic MQTT</item>
+        <item>Generic Bluetooth</item>
+        <item>Nuki SmartLock</item>
     </string-array>
     <string-array translatable="false" name="SetupTypeValues">
         <item>HttpsDoorSetup</item>
         <item>SshDoorSetup</item>
         <item>MqttDoorSetup</item>
         <item>BluetoothDoorSetup</item>
+        <item>NukiDoorSetup</item>
     </string-array>
     <string-array name="KeypairStrengths">
         <item>Weak (1024 bit)</item>
