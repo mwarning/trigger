@@ -1,0 +1,1 @@
+* add support for Nuki SmartLock (pairing, lock, unlock)

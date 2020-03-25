@@ -1,5 +1,5 @@
 Open or close doors, ring the door bell and show the door state.
-Supported are HTTPS/SSH/MQTT and Bluetooth.
+Supported are Generic HTTPS/SSH/MQTT/Bluetooth and the Nuki SmartLock.
 
 Features:
 
