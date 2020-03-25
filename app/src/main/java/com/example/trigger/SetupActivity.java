@@ -143,7 +143,7 @@ public class SetupActivity extends PreferenceActivity {
             ListPreference lp = (ListPreference) p;
             lp.setValue(text);
         } else {
-            Log.e("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
+            Log.w("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -156,7 +156,7 @@ public class SetupActivity extends PreferenceActivity {
             ListPreference lp = (ListPreference) p;
             return lp.getValue();
         } else {
-            Log.e("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
+            Log.w("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
             return "";
         }
     }
@@ -364,14 +364,17 @@ public class SetupActivity extends PreferenceActivity {
             Class<?> type = field.getType();
 
             try {
-                if (name.equals("id") || name.equals("type")) {
+                if (findAnyPreference(name, null) == null) {
+                    // ignore
+                    Log.w("SetupActivity", "ignore setup field: " + name);
+                } else if (name.equals("id") || name.equals("type")) {
                     // ignore - id is not displayed and type is read only field
                 } else if (type == String.class) {
                     field.set(setup, getText(name));
                 } else if (type == Boolean.class) {
                     field.set(setup, getChecked(name));
                 } else if (type == Integer.class) {
-                    field.set(setup, new Integer(Integer.parseInt(getText(name))));
+                    field.set(setup, Integer.parseInt(getText(name)));
                 } else if (type == int.class) {
                    field.set(setup, Integer.parseInt(getText(name)));
                 } else if (type == Bitmap.class) {
