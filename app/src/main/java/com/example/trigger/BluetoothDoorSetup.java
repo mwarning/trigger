@@ -95,11 +95,9 @@ public class BluetoothDoorSetup implements Setup {
                     return new DoorState(StateCode.UNKNOWN, msg);
                 }
             case DISABLED:
+            default:
                 return new DoorState(StateCode.DISABLED, msg);
         }
-
-        // keep compiler quiet :/
-        return null;
     }
 
     @Override
