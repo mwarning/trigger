@@ -2,9 +2,7 @@ package com.example.trigger;
 
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Icon;
 import android.os.Bundle;
-import android.content.Context;
 import android.preference.Preference;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -40,7 +38,7 @@ public class SetupActivity extends PreferenceActivity {
 
     // collect all PreferenceGroups except first
     private ArrayList<PreferenceGroup> collectGroups() {
-        ArrayList<PreferenceGroup> groups = new ArrayList();
+        ArrayList<PreferenceGroup> groups = new ArrayList<>();
         int count = getPreferenceScreen().getPreferenceCount();
         for (int i = count - 1; i > 0; i -= 1) {
             PreferenceGroup p = (PreferenceGroup) getPreferenceScreen().getPreference(i);
@@ -79,19 +77,15 @@ public class SetupActivity extends PreferenceActivity {
         builder.setMessage(R.string.really_remove_item);
         builder.setCancelable(false); // not necessary
 
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Settings.removeSetup(setup.getId());
-                // close this dialog and settings
-                SetupActivity.this.finish();
-            }
+        builder.setPositiveButton(R.string.yes, (DialogInterface dialog, int id) -> {
+            Settings.removeSetup(setup.getId());
+            // close this dialog and settings
+            SetupActivity.this.finish();
         });
 
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // close this dialog
-                dialog.cancel();
-            }
+        builder.setNegativeButton(R.string.no, (DialogInterface dialog, int id) -> {
+            // close this dialog
+            dialog.cancel();
         });
 
         // create dialog box
@@ -243,8 +237,6 @@ public class SetupActivity extends PreferenceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Context context = this.getApplicationContext();
-
         // Set all field to default values - does not work?
         // PreferenceManager.setDefaultValues(context, R.xml.settings, false);
         super.onCreate(savedInstanceState);
@@ -253,50 +245,44 @@ public class SetupActivity extends PreferenceActivity {
 
         // change door type
         ListPreference list_field = (ListPreference) findPreference("type");
-        list_field.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                String type = newValue.toString();
+        list_field.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+            String type = newValue.toString();
 
-                if (type.equals(setup.getType())) {
-                    // no door type change
-                    return true;
-                } else if (type.equals(HttpsDoorSetup.type)) {
-                    setup = new HttpsDoorSetup(setup.getId(), getText("name"));
-                    loadSetup();
-                    return true;
-                } else if (type.equals(SshDoorSetup.type)) {
-                    setup = new SshDoorSetup(setup.getId(), getText("name"));
-                    loadSetup();
-                    return true;
-                } else if (type.equals(BluetoothDoorSetup.type)) {
-                    setup = new BluetoothDoorSetup(setup.getId(), getText("name"));
-                    loadSetup();
-                    return true;
-                } else if (type.equals(NukiDoorSetup.type)) {
-                    setup = new NukiDoorSetup(setup.getId(), getText("name"));
-                    loadSetup();
-                    return true;
-                } else if (type.equals(MqttDoorSetup.type)) {
-                    setup = new MqttDoorSetup(setup.getId(), getText("name"));
-                    loadSetup();
-                    return true;
-                } else {
-                    Log.e("SetupActivity", "Unhandled type from selection: " + type);
-                    return false;
-                }
+            if (type.equals(setup.getType())) {
+                // no door type change
+                return true;
+            } else if (type.equals(HttpsDoorSetup.type)) {
+                setup = new HttpsDoorSetup(setup.getId(), getText("name"));
+                loadSetup();
+                return true;
+            } else if (type.equals(SshDoorSetup.type)) {
+                setup = new SshDoorSetup(setup.getId(), getText("name"));
+                loadSetup();
+                return true;
+            } else if (type.equals(BluetoothDoorSetup.type)) {
+                setup = new BluetoothDoorSetup(setup.getId(), getText("name"));
+                loadSetup();
+                return true;
+            } else if (type.equals(NukiDoorSetup.type)) {
+                setup = new NukiDoorSetup(setup.getId(), getText("name"));
+                loadSetup();
+                return true;
+            } else if (type.equals(MqttDoorSetup.type)) {
+                setup = new MqttDoorSetup(setup.getId(), getText("name"));
+                loadSetup();
+                return true;
+            } else {
+                Log.e("SetupActivity", "Unhandled type from selection: " + type);
+                return false;
             }
         });
 
         // update main category title
         EditTextPreference name_field = (EditTextPreference) findPreference("name");
-        name_field.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String name = newValue.toString();
-                setMainGroupTitle(name);
-                return true;
-            }
+        name_field.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+            final String name = newValue.toString();
+            setMainGroupTitle(name);
+            return true;
         });
 
         builder = new AlertDialog.Builder(this);
@@ -313,10 +299,6 @@ public class SetupActivity extends PreferenceActivity {
         // init type selection
         list_field.setValue(setup.getType());
         loadSetup();
-    }
-
-    PreferenceGroup findPreferenceGroup(String key) {
-        return (PreferenceGroup) getPreferenceScreen().findPreference(key);
     }
 
     void loadSetup() {
