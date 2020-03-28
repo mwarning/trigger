@@ -451,8 +451,8 @@ public class NukiRequestHandler extends Thread {
         }
 
         public void onConnected(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            byte[] message = NukiTools.concat(NukiTools.from16(0x01), NukiTools.from16(0x0C));
-            byte[] request = encrypt_message(this.shared_key, this.auth_id, message, null);
+            NukiCommand.NukiRequest nr = new NukiCommand.NukiRequest(0x0c);
+            byte[] request = encrypt_message(this.shared_key, this.auth_id, nr.generate(), null);
             characteristic.setValue(request);
             boolean ok = gatt.writeCharacteristic(characteristic);
             if (!ok) {
@@ -518,8 +518,8 @@ public class NukiRequestHandler extends Thread {
         }
 
         public void onConnected(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            byte[] msg = NukiTools.concat(NukiTools.from16(0x01), NukiTools.from16(0x04));
-            byte[] request = encrypt_message(this.shared_key, this.auth_id, msg, null);
+            NukiCommand.NukiRequest nr = new NukiCommand.NukiRequest(0x04);
+            byte[] request = encrypt_message(this.shared_key, this.auth_id, nr.generate(), null);
             characteristic.setValue(request);
             boolean ok = gatt.writeCharacteristic(characteristic);
             if (!ok) {
