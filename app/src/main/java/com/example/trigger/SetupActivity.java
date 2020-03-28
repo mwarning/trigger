@@ -75,7 +75,7 @@ public class SetupActivity extends PreferenceActivity {
     }
 
     public void onDeleteButtonClicked(View v) {
-        builder.setTitle("Confirm");
+        builder.setTitle(R.string.confirm);
         builder.setMessage(R.string.really_remove_item);
         builder.setCancelable(false); // not necessary
 

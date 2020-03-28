@@ -30,6 +30,7 @@
     <string name="ok_button">Ok</string>
     <string name="fingerprint">Fingerprint</string>
     <string name="public_key">Public Key</string>
+    <string name="confirm">Confirm</string>
 
     <string name="certificate_url">Certificate URL</string>
     <string name="import_export_path">Import/Export Path</string>
