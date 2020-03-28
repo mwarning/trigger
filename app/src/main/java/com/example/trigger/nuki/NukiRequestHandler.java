@@ -766,11 +766,6 @@ public class NukiRequestHandler extends Thread {
     String getAddress(BluetoothAdapter adapter, String device_name) {
         Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 
-        if (device_name.isEmpty()) {
-            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No device selected. Please set a device name.");
-            return null;
-        }
-
         String address = "";
         for (BluetoothDevice device : pairedDevices) {
             if ((device.getName() != null && device.getName().equals(device_name))
@@ -787,10 +782,6 @@ public class NukiRequestHandler extends Thread {
         return address;
     }
 
-    /*
-     * Only one bluetooth action can be done at the same time.
-     * TODO: extend to other bluetooth using handlers!
-     */
     private static AtomicBoolean bluetooth_in_use = new AtomicBoolean(false);
 
     public void run() {
@@ -811,31 +802,20 @@ public class NukiRequestHandler extends Thread {
             return;
         }
 
-        String address = getAddress(adapter, setup.device_name);
-        if (address == null) {
-            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Device not found.");
+        if (setup.device_name.isEmpty()) {
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No device name set.");
             return;
         }
 
-        BluetoothGattCallback callback;
-        if (setup.shared_key == null || setup.shared_key.length() != 64) {
-            callback = new PairingCallback(setup.getId(), this.listener, setup);
-        } else switch (action) {
-            case open_door:
-                callback = new LockActionCallback(setup.getId(), this.listener, setup, 0x01);
-                break;
-            case ring_door:
-                this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Bell not supported.");
-                return;
-            case close_door:
-                callback = new LockActionCallback(setup.getId(), this.listener, setup, 0x02);
-                break;
-            case fetch_state:
-                callback = new ReadLockStateCallback(setup.getId(), this.listener, setup);
-                break;
-            default:
-                this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Unknown action.");
-                return;
+        if (setup.user_name.isEmpty()) {
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No user name set.");
+            return;
+        }
+
+        String address = getAddress(adapter, setup.device_name);
+        if (address == null) {
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No Device found.");
+            return;
         }
 
         BluetoothDevice device = adapter.getRemoteDevice(address);
@@ -849,10 +829,38 @@ public class NukiRequestHandler extends Thread {
             return;
         }
 
+        BluetoothGattCallback callback;
+        if (action != Action.fetch_state && (setup.shared_key == null || setup.shared_key.length() != 64)) {
+            // initiate pairing
+            callback = new PairingCallback(setup.getId(), this.listener, setup);
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Start Pairing.");
+        } else switch (action) {
+            case open_door:
+                callback = new LockActionCallback(setup.getId(), this.listener, setup, 0x01);
+                break;
+            case ring_door:
+                this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Bell not supported.");
+                return;
+            case close_door:
+                callback = new LockActionCallback(setup.getId(), this.listener, setup, 0x02);
+                break;
+            default:
+            case fetch_state:
+                callback = new ReadLockStateCallback(setup.getId(), this.listener, setup);
+                break;
+        }
+
+        BluetoothGatt gatt;
+
         if (Build.VERSION.SDK_INT >= 23) {
-            device.connectGatt(this.context, false, callback, TRANSPORT_LE);
+            gatt = device.connectGatt(this.context, false, callback, TRANSPORT_LE);
         } else {
-            device.connectGatt(this.context, false, callback);
+            gatt = device.connectGatt(this.context, false, callback);
+        }
+
+        if (gatt == null) {
+            // failed to start connection
+            bluetooth_in_use.set(false);
         }
     }
 }
