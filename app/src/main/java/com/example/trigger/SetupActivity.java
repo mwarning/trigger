@@ -156,13 +156,7 @@ public class SetupActivity extends PreferenceActivity {
         } else if (p instanceof ListPreference) {
             ListPreference lp = (ListPreference) p;
             lp.setValue(value);
-
-            // show value as summary
-            lp.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
-                preference.setSummary(getSummaryValue(key, newValue.toString()));
-                return true;
-            });
-            lp.setSummary(value);
+            // set summary field to "%s" in xml
         } else {
             Log.w("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
         }
@@ -325,15 +319,12 @@ public class SetupActivity extends PreferenceActivity {
 
         // init type selection
         list_field.setValue(setup.getType());
+
         loadSetup();
     }
 
     void loadSetup() {
         showGroup(setup.getType());
-
-        // show human readable door type value in summary
-        ListPreference list_field = (ListPreference) findPreference("type");
-        list_field.setSummary(list_field.getEntry());
 
         Field[] fields = this.setup.getClass().getDeclaredFields();
         for (Field field : fields) {

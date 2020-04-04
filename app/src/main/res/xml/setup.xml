@@ -17,7 +17,7 @@
         <ListPreference
             android:key="type"
             android:title="Door Type"
-            android:summary="@string/none"
+            android:summary="%s"
             android:entries="@array/SetupTypeNames"
             android:entryValues="@array/SetupTypeValues" />
 
@@ -416,7 +416,7 @@
         <ListPreference
             android:key="qos"
             android:title="MQTT Quality Of Service"
-            android:summary="@string/none"
+            android:summary="%s"
             android:entries="@array/MqttQosNames"
             android:entryValues="@array/MqttQosValues"/>
 
