@@ -1,2 +1,4 @@
 * fix hang in SSH key register process
 * SSH key register url defaults to host address
+* show setting values in the settings overview, not only in the edit menu
+* show (read only) nuki settings 
