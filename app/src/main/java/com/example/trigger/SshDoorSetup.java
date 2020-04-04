@@ -85,7 +85,11 @@ public class SshDoorSetup implements Setup {
 
     @Override
     public String getRegisterUrl() {
-        return this.register_url;
+        if (!Utils.isEmpty(register_url)) {
+            return register_url;
+        }
+
+        return host;
     }
 
     @Override
