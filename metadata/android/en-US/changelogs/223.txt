@@ -1,0 +1,2 @@
+* fix hang in SSH key register process
+* SSH key register url defaults to host address
