@@ -102,7 +102,8 @@ public class KeyPairActivity extends AppCompatActivity implements
                 } else if (keypair == null) {
                     showErrorMessage("Key Pair Empty", "No public key available to register.");
                 } else {
-                    new RegisterIdentityTask(self).execute(address, keypair);
+                    RegisterIdentityTask task = new RegisterIdentityTask(self, address, keypair);
+                    task.start();
                 }
             }
         });
@@ -227,7 +228,9 @@ public class KeyPairActivity extends AppCompatActivity implements
 
     @Override
     public void onRegisterIdentityTaskCompleted(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        this.runOnUiThread(() -> {
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void exportKeys() {

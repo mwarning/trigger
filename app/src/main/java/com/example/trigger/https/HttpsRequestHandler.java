@@ -93,7 +93,7 @@ public class HttpsRequestHandler extends Thread {
                 con.setRequestMethod(setup.method.toUpperCase());
             }
 
-            String result = Utils.readStringFromStream(con.getInputStream(), 50000);
+            String result = Utils.readInputStreamWithTimeout(con.getInputStream(), 50000, 2000);
 
             if (con.getResponseCode() == 200) {
                 this.listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, result);

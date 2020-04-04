@@ -78,31 +78,24 @@ public class Utils {
         return true;
     }
 
-    public static String readStringFromStream(InputStream in, int maxLength) {
-        BufferedReader reader = null;
-        String result ="";
-
-        try {
-            reader = new BufferedReader(new InputStreamReader(in));
-            String line = "";
-
-            // read at maximum 50KB
-            while (((line = reader.readLine()) != null) && (line.length() < maxLength)) {
-                result += line;
+    public static String readInputStreamWithTimeout(InputStream is, int maxLength, int timeoutMillis)
+            throws IOException  {
+        byte[] buffer = new byte[maxLength];
+        int bufferOffset = 0;
+        long maxTimeMillis = System.currentTimeMillis() + timeoutMillis;
+        while (System.currentTimeMillis() < maxTimeMillis && bufferOffset < buffer.length) {
+            int readLength = java.lang.Math.min(is.available(), buffer.length - bufferOffset);
+            // can alternatively use bufferedReader, guarded by isReady():
+            int readResult = is.read(buffer, bufferOffset, readLength);
+            if (readResult == -1) {
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            bufferOffset += readResult;
         }
 
-        return result;
+        byte[] ret = new byte[bufferOffset];
+        System.arraycopy(buffer, 0, ret, 0, bufferOffset);
+        return new String(ret);
     }
 
     public static SSLSocketFactory getSocketFactoryWithCertificate(Certificate cert)
