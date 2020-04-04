@@ -1,14 +1,11 @@
 package com.example.trigger.https;
 
-import android.content.Context;
-
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import com.example.trigger.MainActivity.Action;
@@ -70,20 +67,10 @@ public class HttpsRequestHandler extends Thread {
 
             // hostname verification
             if (setup.ignore_hostname_mismatch) {
-                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        // ignore hostname mismatch
-                        return true;
-                    }
-                });
+                // ignore hostname mismatch
+                HttpsURLConnection.setDefaultHostnameVerifier((String hostname, SSLSession session) -> true);
             } else {
-                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        return false;
-                    }
-                });
+                HttpsURLConnection.setDefaultHostnameVerifier((String hostname, SSLSession session) -> false);
             }
 
             // certificate verification

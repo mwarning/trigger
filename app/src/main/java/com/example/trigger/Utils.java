@@ -107,7 +107,7 @@ public class Utils {
 
     public static SSLSocketFactory getSocketFactoryWithCertificate(Certificate cert)
             throws CertificateException, KeyStoreException, IOException,
-            NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
+            NoSuchAlgorithmException, KeyManagementException {
 
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, null);
