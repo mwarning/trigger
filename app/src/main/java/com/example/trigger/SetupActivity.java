@@ -128,14 +128,41 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private void setText(String key, String text) {
+    private String getSummaryValue(String key, String value) {
+        if (value.isEmpty()) {
+            return getResources().getString(R.string.none);
+        }
+
+        if (key.equals("password")) {
+            // only show password as star sequences
+            return new String(new char[value.length()]).replace("\0", "*");
+        } else {
+            return value;
+        }
+    }
+
+    private void setText(String key, String value) {
         Preference p = findAnyPreference(key, null);
         if (p instanceof EditTextPreference) {
             EditTextPreference etp = (EditTextPreference) p;
-            etp.setText(text);
+            etp.setText(value);
+
+            // show value as summary
+            etp.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+                preference.setSummary(getSummaryValue(key, newValue.toString()));
+                return true;
+            });
+            etp.setSummary(getSummaryValue(key, value));
         } else if (p instanceof ListPreference) {
             ListPreference lp = (ListPreference) p;
-            lp.setValue(text);
+            lp.setValue(value);
+
+            // show value as summary
+            lp.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+                preference.setSummary(getSummaryValue(key, newValue.toString()));
+                return true;
+            });
+            lp.setSummary(value);
         } else {
             Log.w("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
         }
@@ -303,6 +330,10 @@ public class SetupActivity extends PreferenceActivity {
 
     void loadSetup() {
         showGroup(setup.getType());
+
+        // show human readable door type value in summary
+        ListPreference list_field = (ListPreference) findPreference("type");
+        list_field.setSummary(list_field.getEntry());
 
         Field[] fields = this.setup.getClass().getDeclaredFields();
         for (Field field : fields) {

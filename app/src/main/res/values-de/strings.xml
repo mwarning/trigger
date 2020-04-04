@@ -13,6 +13,7 @@
 
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+    <string name="none">Leer</string>
     <string name="really_remove_item">Wirklich löschen?</string>
 
     <string name="save_button">Speichern</string>
