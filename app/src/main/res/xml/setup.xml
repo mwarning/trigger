@@ -11,7 +11,6 @@
             android:key="name"
             android:title="@string/setup_name"
             android:inputType="textNoSuggestions"
-            android:summary="@string/none"
             android:persistent="false" />
 
         <ListPreference
@@ -37,42 +36,36 @@
         <EditTextPreference
             android:key="method"
             android:title="HTTP Method"
-            android:summary="GET"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="open_query"
             android:title="Open URL"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="close_query"
             android:title="Close URL"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="ring_query"
             android:title="Ring URL"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="status_query"
             android:title="Status URL"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -123,14 +116,12 @@
         <EditTextPreference
             android:key="host"
             android:title="Server Address"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="port"
             android:title="Server Port"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions"
             android:digits="0123456789" />
@@ -138,49 +129,42 @@
         <EditTextPreference
             android:key="user"
             android:title="Login Name"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="password"
             android:title="Login Password"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="open_command"
             android:title="Open Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="close_command"
             android:title="Close Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="ring_command"
             android:title="Ring Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="state_command"
             android:title="State Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -218,42 +202,36 @@
         <EditTextPreference
             android:key="device_name"
             android:title="Device Name or MAC"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="service_uuid"
             android:title="Service UUID (optional)"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="open_query"
             android:title="Open Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="close_query"
             android:title="Close Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="ring_query"
             android:title="Ring Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="status_query"
             android:title="State Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -291,21 +269,18 @@
         <EditTextPreference
             android:key="device_name"
             android:title="Device Name/MAC"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="user_name"
             android:title="User Name"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="app_id"
             android:title="App Identifier"
-            android:summary="@string/none"
             android:persistent="false"
             android:selectable="false"
             android:inputType="textNoSuggestions" />
@@ -313,7 +288,6 @@
         <EditTextPreference
             android:key="auth_id"
             android:title="Nuki Identifier"
-            android:summary="@string/none"
             android:persistent="false"
             android:selectable="false"
             android:inputType="textNoSuggestions" />
@@ -321,7 +295,6 @@
         <EditTextPreference
             android:key="shared_key"
             android:title="Shared Key"
-            android:summary="@string/none"
             android:persistent="false"
             android:selectable="false"
             android:inputType="textNoSuggestions" />
@@ -360,56 +333,48 @@
         <EditTextPreference
             android:key="server"
             android:title="MQTT Broker Address"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="username"
             android:title="MQTT Username"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="password"
             android:title="MQTT Password"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="status_topic"
             android:title="MQTT Status Topic (subscribe)"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="command_topic"
             android:title="MQTT Command Topic (publish)"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="open_command"
             android:title="Open Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="close_command"
             android:title="Close Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="ring_command"
             android:title="Ring Command"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -423,21 +388,18 @@
         <CheckBoxPreference
             android:key="retained"
             android:title="Retained"
-            android:summary="@string/none"
             android:persistent="false"
             android:defaultValue="false" />
 
         <com.example.trigger.https.CertificatePreference
             android:key="certificate"
             android:title="TLS Certificate"
-            android:summary="@string/none"
             android:persistent="false"
             android:defaultValue="false" />
 
         <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
-            android:summary="@string/none"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
