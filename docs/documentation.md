@@ -2,7 +2,7 @@
 
 ## Compatible Locks
 
-Trigger makes rather generic requests and needs to be configured depending on the door system. No off the shelf door systems have been tested. So no advice can be given here.
+Trigger makes rather generic requests and needs to be configured depending on the door system. No off the shelf door systems have been tested. So no advice can be given here. While the Nuki SmartLock has basic support now, it is rather expensive.
 
 ## Door Status
 
