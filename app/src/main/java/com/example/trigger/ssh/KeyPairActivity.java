@@ -308,7 +308,7 @@ public class KeyPairActivity extends AppCompatActivity implements
 
     private void updatePathInfo() {
         if (selected_path == null) {
-            pathSelection.setText("<none selected>");
+            pathSelection.setText("<no path selected>");
             exportButton.setEnabled(false);
             importButton.setEnabled(false);
         } else {
