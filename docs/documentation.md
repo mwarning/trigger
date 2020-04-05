@@ -14,7 +14,8 @@ The door setup can be selected depending on what WiFi network the device is conn
 
 ## SSH Key Registration
 
-SSH Public Keys can be send to an IP address and port (e.g. `192.168.1.1:3333`) to be registered. There is a field and button in the SSH Key Managment for that. A simple example to collect keys using netcat: `nc -k -l 3333 -c 'cat >> ssh_keys.txt; echo "Your key was received!";'`
+SSH Public Keys can be send to an IP address and port (e.g. `192.168.1.1:3333`) to be registered. There is a field and button in the SSH Key Managment for that. A simple example server to collect keys using netcat: `
+nc -l -k -p 3333 -c 'read key; echo "$key" >> ssh_keys.txt; echo "Your key was received!"'`.
 
 ## Import Link As QR-Code
 
