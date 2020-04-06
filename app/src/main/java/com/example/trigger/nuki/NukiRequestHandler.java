@@ -611,7 +611,7 @@ public class NukiRequestHandler extends Thread {
         long auth_id; // unique identifier of the nuki smartlock or bridge (unsigned int)
         long app_id; // unique identifier of the app (unsigned int)
 
-        final int id_type = 1; // 0 (app), 1 (bridge), 2 (FOB), 3 (Keypad)
+        final int id_type = 0; // 0 (app), 1 (bridge), 2 (FOB), 3 (Keypad)
         final String user_name;
         byte[] uuid;
         byte[] own_nonce = new byte[0];
