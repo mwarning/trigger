@@ -376,11 +376,11 @@ public class SetupActivity extends PreferenceActivity {
             Class<?> type = field.getType();
 
             try {
-                if (findAnyPreference(name, null) == null) {
+                if (name.equals("id") || name.equals("type")) {
+                    // ignore - id is not displayed and type is read only field
+                } else if (findAnyPreference(name, null) == null) {
                     // ignore
                     Log.w("SetupActivity", "ignore setup field: " + name);
-                } else if (name.equals("id") || name.equals("type")) {
-                    // ignore - id is not displayed and type is read only field
                 } else if (type == String.class) {
                     field.set(setup, getText(name));
                 } else if (type == Boolean.class) {
