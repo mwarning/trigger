@@ -339,7 +339,11 @@ public class SetupActivity extends PreferenceActivity {
                     setText(name, (String) value);
                 } else if (type == Integer.class) {
                     setText(name, value.toString());
+                } else if (type == Long.class) {
+                    setText(name, value.toString());
                 } else if (type == int.class) {
+                    setText(name, value.toString());
+                } else if (type == long.class) {
                     setText(name, value.toString());
                 } else if (type == Boolean.class) {
                     setChecked(name, (Boolean) value);
@@ -383,8 +387,12 @@ public class SetupActivity extends PreferenceActivity {
                     field.set(setup, getChecked(name));
                 } else if (type == Integer.class) {
                     field.set(setup, Integer.parseInt(getText(name)));
+                } else if (type == Long.class) {
+                    field.set(setup, Long.parseLong(getText(name)));
                 } else if (type == int.class) {
                    field.set(setup, Integer.parseInt(getText(name)));
+                } else if (type == long.class) {
+                   field.set(setup, Long.parseLong(getText(name)));
                 } else if (type == Bitmap.class) {
                     field.set(setup, getBitmap(name));
                 } else if (type == KeyPair.class) {

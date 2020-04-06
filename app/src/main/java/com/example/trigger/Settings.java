@@ -257,8 +257,12 @@ public class Settings {
                     obj.put(name, (boolean) value);
                 } else if (type == Integer.class) {
                     obj.put(name, (Integer) value);
+                } else if (type == Long.class) {
+                    obj.put(name, (Long) value);
                 } else if (type == int.class) {
                     obj.put(name, (int) value);
+                } else if (type == long.class) {
+                    obj.put(name, (long) value);
                 } else if (type == Bitmap.class) {
                     obj.put(name, Utils.serializeBitmap((Bitmap) value));
                 } else if (type == KeyPair.class) {
@@ -288,29 +292,37 @@ public class Settings {
         Field[] fields = setup.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.getName().equals(name)) {
-	            Class<?> type = field.getType();
-	            if (type == String.class && value_type == String.class) {
-	                field.set(setup, value);
-	            } else if (type == Boolean.class && value_type == Boolean.class) {
-	                field.set(setup, (Boolean) value);
-	            } else if (type == boolean.class && value_type == boolean.class) {
-	                field.set(setup, (boolean) value);
-	            } else if (type == Integer.class && value_type == Integer.class) {
-	                field.set(setup, (Integer) value);
-	            } else if (type == int.class && (value_type == int.class || value_type == Integer.class)) {
-	                field.set(setup, (int) value);
+                Class<?> type = field.getType();
+                if (type == String.class && value_type == String.class) {
+                    field.set(setup, value);
+                } else if (type == Boolean.class && value_type == Boolean.class) {
+                    field.set(setup, (Boolean) value);
+                } else if (type == boolean.class && value_type == boolean.class) {
+                    field.set(setup, (boolean) value);
+                } else if (type == Integer.class && value_type == Integer.class) {
+                    field.set(setup, (Integer) value);
+                } else if (type == Long.class && value_type == Long.class) {
+                    field.set(setup, (Long) value);
+                } else if (type == int.class && value_type == int.class) {
+                    field.set(setup, (int) value);
+                } else if (type == int.class && value_type == Integer.class) {
+                    field.set(setup, (int) value);
+                } else if (type == long.class && value_type == long.class) {
+                    field.set(setup, (long) value);
+                } else if (type == long.class && value_type == Integer.class) {
+                    field.set(setup, (long) (int) value);
                 } else if (type == Bitmap.class && value_type == String.class) {
-	               field.set(setup, Utils.deserializeBitmap((String) value));
-	            } else if (type == KeyPair.class && value_type == String.class) {
-	                field.set(setup, SshTools.deserializeKeyPair((String) value));
-	            } else if (type == Certificate.class && value_type == String.class) {
-	                field.set(setup, HttpsTools.deserializeCertificate((String) value));
-	            } else {
-	                // show warning?
-	                Log.e("Settings", "setField: Unhandled type for " + name + ": " + type.toString());
-	            }
-	            break;
-	        }
+                   field.set(setup, Utils.deserializeBitmap((String) value));
+                } else if (type == KeyPair.class && value_type == String.class) {
+                    field.set(setup, SshTools.deserializeKeyPair((String) value));
+                } else if (type == Certificate.class && value_type == String.class) {
+                    field.set(setup, HttpsTools.deserializeCertificate((String) value));
+                } else {
+                    // show warning?
+                    Log.e("Settings", "setField: Unhandled type for " + name + ": " + type.toString() + ", target type: " + value_type.toString());
+                }
+                break;
+            }
         }
     }
 
@@ -475,8 +487,12 @@ public class Settings {
                     field.set(setup, Boolean.parseBoolean(value));
                 } else if (type == Integer.class) {
                     field.set(setup, new Integer(Integer.parseInt(value)));
+                } else if (type == Long.class) {
+                    field.set(setup, new Long(Long.parseLong(value)));
                 } else if (type == int.class) {
                     field.set(setup, Integer.parseInt(value));
+                } else if (type == long.class) {
+                    field.set(setup, Long.parseLong(value));
                 } else if (type == KeyPair.class) {
                     field.set(setup, SshTools.deserializeKeyPair(value));
                 } else if (type == Certificate.class) {
