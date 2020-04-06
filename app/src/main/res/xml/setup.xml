@@ -201,7 +201,7 @@
 
         <EditTextPreference
             android:key="device_name"
-            android:title="Device Name or MAC"
+            android:title="Lock Name/MAC"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -268,7 +268,7 @@
 
         <EditTextPreference
             android:key="device_name"
-            android:title="Device Name/MAC"
+            android:title="Lock Name/MAC"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -287,7 +287,7 @@
 
         <EditTextPreference
             android:key="auth_id"
-            android:title="Nuki Identifier"
+            android:title="Lock Identifier"
             android:persistent="false"
             android:selectable="false"
             android:inputType="textNoSuggestions" />
