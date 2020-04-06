@@ -386,8 +386,10 @@ public class NukiRequestHandler extends Thread {
                         break;
                 }
             } else {
-                Log.d(TAG, "Connection error: " + getGattStatus(status));
                 closeConnection(gatt);
+                this.listener.onTaskResult(
+                    setup_id, ReplyCode.REMOTE_ERROR, "Connection error: " + getGattStatus(status)
+                );
             }
         }
 
@@ -396,20 +398,29 @@ public class NukiRequestHandler extends Thread {
             if (status == GATT_SUCCESS) {
                 BluetoothGattService service = gatt.getService(this.service_uuid);
                 if (service == null) {
-                    Log.w(TAG, "service not found: " + this.service_uuid);
+                    closeConnection(gatt);
+                    this.listener.onTaskResult(
+                        setup_id, ReplyCode.REMOTE_ERROR, "Service not found: " + this.service_uuid
+                    );
                     return;
                 }
 
                 BluetoothGattCharacteristic characteristic = service.getCharacteristic(this.characteristic_uuid);
                 if (characteristic == null) {
-                    Log.w(TAG, "characteristic not found: " + this.characteristic_uuid);
+                    closeConnection(gatt);
+                    this.listener.onTaskResult(
+                        setup_id, ReplyCode.REMOTE_ERROR, "Characteristic not found: " + this.characteristic_uuid
+                    );
                     return;
                 }
 
                 gatt.setCharacteristicNotification(characteristic, true);
                 BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CCC_DESCRIPTOR_UUID);
                 if (descriptor == null) {
-                    Log.w(TAG, "descriptor not found: " + CCC_DESCRIPTOR_UUID);
+                    closeConnection(gatt);
+                    this.listener.onTaskResult(
+                        setup_id, ReplyCode.REMOTE_ERROR, "Descriptor not found: " + CCC_DESCRIPTOR_UUID
+                    );
                     return;
                 }
                
@@ -421,7 +432,10 @@ public class NukiRequestHandler extends Thread {
                     closeConnection(gatt);
                 }
             } else {
-                Log.e(TAG, "client not found: " + getGattStatus(status));
+                closeConnection(gatt);
+                this.listener.onTaskResult(
+                    setup_id, ReplyCode.LOCAL_ERROR, "Client not found: " + getGattStatus(status)
+                );
             }
         }
 
@@ -431,6 +445,7 @@ public class NukiRequestHandler extends Thread {
             if (status == GATT_SUCCESS) {
                 onConnected(gatt, descriptor.getCharacteristic());
             } else {
+                closeConnection(gatt);
                 Log.e(TAG, "failed to write to client: " + getGattStatus(status));
             }
         }
@@ -486,7 +501,10 @@ public class NukiRequestHandler extends Thread {
                 if (ns.battery_critical == 0x01) {
                     extra = " (Battery Critical!)";
                 }
-                listener.onTaskResult(setup_id, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra);
+
+                listener.onTaskResult(
+                    setup_id, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra
+                );
 
                 // do not wait until the Nuki closes the connection
                 closeConnection(gatt);
@@ -576,6 +594,7 @@ public class NukiRequestHandler extends Thread {
                 closeConnection(gatt);
             } else {
                 Log.e(TAG, "Unhandled command");
+                closeConnection(gatt);
             }
         }
     }
@@ -789,6 +808,9 @@ public class NukiRequestHandler extends Thread {
     public void run() {
         if (bluetooth_in_use.get()) {
             Log.w(TAG, "Bluetooth busy => abort action");
+            if (action != Action.fetch_state) {
+                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Bluetooth device is busy.");
+            }
             return;
         }
 
@@ -826,14 +848,20 @@ public class NukiRequestHandler extends Thread {
             return;
         }
 
+        if (Utils.isEmpty(setup.shared_key) && action == Action.fetch_state) {
+            // ignore query for door state - not paired yet
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
+            return;
+        }
+
         if (!bluetooth_in_use.compareAndSet(false, true)) {
             // setting the variable failed
             return;
         }
 
-        BluetoothGattCallback callback;
-        if (action != Action.fetch_state && (setup.shared_key == null || setup.shared_key.length() != 64)) {
-            // initiate pairing
+        NukiCallback callback;
+        if (Utils.isEmpty(setup.shared_key)) {
+            // initiate paring
             callback = new PairingCallback(setup.getId(), this.listener, setup);
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Start Pairing.");
         } else switch (action) {
