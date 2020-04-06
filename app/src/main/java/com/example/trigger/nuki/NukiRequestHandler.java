@@ -622,6 +622,8 @@ public class NukiRequestHandler extends Thread {
             super(setup_id, listener, PAIRING_SERVICE_UUID, PAIRING_GDIO_XTERISTIC_UUID);
             this.setup = setup;
             this.user_name = setup.user_name;
+            //this.auth_id = setup.auth_id; // we get this from the nuki
+            this.app_id = setup.app_id;
         }
 
         public void onConnected(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
