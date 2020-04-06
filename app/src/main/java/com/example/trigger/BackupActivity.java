@@ -76,27 +76,21 @@ public class BackupActivity extends AppCompatActivity implements
             }
         });
 
-        exportButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.hasReadPermission(BackupActivity.this) && Utils.hasWritePermission(BackupActivity.this)) {
-                    exportSetups();
-                } else {
-                    Utils.requestWritePermission(BackupActivity.this, REQUEST_PERMISSION);
-                    Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
-                }
+        exportButton.setOnClickListener((View v) -> {
+            if (Utils.hasReadPermission(BackupActivity.this) && Utils.hasWritePermission(BackupActivity.this)) {
+                exportSetups();
+            } else {
+                Utils.requestWritePermission(BackupActivity.this, REQUEST_PERMISSION);
+                Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
             }
         });
 
-        selectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.hasReadPermission(BackupActivity.this)) {
-                    final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    showListItemDialog("Select Path", rootPath, FILE_OR_FOLDER_SINGLE_CHOICE, SELECT_PATH_REQUEST);
-                } else {
-                    Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
-                }
+        selectButton.setOnClickListener((View v) -> {
+            if (Utils.hasReadPermission(BackupActivity.this)) {
+                final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                showListItemDialog("Select Path", rootPath, FILE_OR_FOLDER_SINGLE_CHOICE, SELECT_PATH_REQUEST);
+            } else {
+                Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
             }
         });
     }

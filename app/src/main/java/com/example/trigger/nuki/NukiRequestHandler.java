@@ -193,6 +193,7 @@ public class NukiRequestHandler extends Thread {
             case GATT_READ_NOT_PERMITTED: return "GATT_READ_NOT_PERMITTED";
             case 19: return "DISCONNECTED_BY_DEVICE";
             case 133: return "DEVICE_NOT_FOUND";
+            case 8: return "CONNECTION_TIMEOUT";
             default:
                 return Integer.toString(status);
         }
@@ -361,8 +362,8 @@ public class NukiRequestHandler extends Thread {
         }
 
         /*
-         * This is mostly called to end the connection quickly
-         * instead of waiting for the other side to connection
+         * This is mostly called to end the connection quickly instead
+         * of waiting for the other side to close the connection
         */
         protected void closeConnection(BluetoothGatt gatt) {
             gatt.close();
@@ -823,7 +824,6 @@ public class NukiRequestHandler extends Thread {
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null || !adapter.isEnabled()) {
-            // request to enable
             this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Bluetooth is disabled.");
             return;
         }

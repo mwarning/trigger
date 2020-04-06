@@ -509,7 +509,7 @@ public class Settings {
     }
 
     private static ArrayList<Setup> getAllSetups_pre_172() {
-        ArrayList<Setup> setups = new ArrayList();
+        ArrayList<Setup> setups = new ArrayList<>();
         Map<String,?> keys = sharedPreferences.getAll();
         Pattern p = Pattern.compile("^item_(\\d{3})_type$");
 
