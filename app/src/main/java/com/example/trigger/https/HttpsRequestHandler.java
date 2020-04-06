@@ -87,18 +87,22 @@ public class HttpsRequestHandler extends Thread {
             }
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setConnectTimeout(2000);
+            con.setConnectTimeout(2500);
 
             if (!setup.method.isEmpty()) {
                 con.setRequestMethod(setup.method.toUpperCase());
             }
 
-            String result = Utils.readInputStreamWithTimeout(con.getInputStream(), 50000, 2000);
-
             if (con.getResponseCode() == 200) {
+                String result = Utils.readInputStreamWithTimeout(con.getInputStream(), 50000, 2500);
                 this.listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, result);
             } else {
-                this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, con.getResponseMessage());
+                String result = Utils.readInputStreamWithTimeout(con.getErrorStream(), 50000, 2500);
+                if (!Utils.isEmpty(result)) {
+                    this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, result);
+                } else {
+                    this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, con.getResponseMessage());
+                }
             }
         } catch (MalformedURLException mue) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Malformed URL.");
