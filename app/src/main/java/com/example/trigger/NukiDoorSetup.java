@@ -12,8 +12,8 @@ public class NukiDoorSetup implements Setup {
     public String device_name;
     public String user_name;
     public String shared_key;
-    public int auth_id;
-    public int app_id;
+    public long auth_id;
+    public long app_id;
     public Bitmap open_image;
     public Bitmap closed_image;
     public Bitmap unknown_image;
@@ -26,7 +26,7 @@ public class NukiDoorSetup implements Setup {
         this.user_name = "";
         this.shared_key = "";
         this.auth_id = 0;
-        this.app_id = 0;
+        this.app_id = 2342;
         this.open_image = null;
         this.closed_image = null;
         this.unknown_image = null;

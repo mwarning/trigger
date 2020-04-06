@@ -150,7 +150,7 @@ public class NukiRequestHandler extends Thread {
                 }
                 byte[] authenticator = new byte[32];
                 System.arraycopy(data, 2, authenticator, 0, authenticator.length);
-                int auth_id = NukiTools.read32_auth_id(data, 2 + authenticator.length);
+                long auth_id = NukiTools.read32_auth_id(data, 2 + authenticator.length);
                 return new NukiCommand.NukiAuthIdConfirm(authenticator, auth_id);
             }
             case 0x000E: {
@@ -245,7 +245,7 @@ public class NukiRequestHandler extends Thread {
 
         byte[] nonce = new byte[nonce_length];
         System.arraycopy(msg, 0, nonce, 0, nonce.length);
-        int auth_id = NukiTools.read32_auth_id(msg, nonce.length);
+        long auth_id = NukiTools.read32_auth_id(msg, nonce.length);
 
         byte[] encrypted = new byte[length];
         System.arraycopy(msg, nonce_length + 4 + 2, encrypted, 0, encrypted.length);
@@ -283,7 +283,7 @@ public class NukiRequestHandler extends Thread {
     }
 
     // data is expected to be command_id + payload
-    static byte[] encrypt_message(byte[] shared_key, int auth_id, byte[] pdata, byte[] nonce) {
+    static byte[] encrypt_message(byte[] shared_key, long auth_id, byte[] pdata, byte[] nonce) {
         // nonce is provide only for testing purposes!
         if (nonce == null) {
             nonce = new byte[Sodium.crypto_secretbox_noncebytes()];
@@ -440,7 +440,7 @@ public class NukiRequestHandler extends Thread {
 
     static class ReadLockStateCallback extends NukiCallback {
         static final String TAG = "ReadLockStateCallback";
-        int auth_id;
+        long auth_id;
         byte[] shared_key;
         byte[] data;
 
@@ -503,8 +503,8 @@ public class NukiRequestHandler extends Thread {
 
     static class LockActionCallback extends NukiCallback {
         static final String TAG = "LockActionCallback";
-        int auth_id;
-        int app_id;
+        long auth_id;
+        long app_id;
         int lock_action;
         byte[] shared_key;
         byte[] data;
@@ -589,8 +589,8 @@ public class NukiRequestHandler extends Thread {
         byte[] public_key;
         byte[] nuki_public_key;
         byte[] shared_key;
-        int auth_id; // unique identifier of the nuki smartlock or bridge
-        int app_id; // unique identifier of the app
+        long auth_id; // unique identifier of the nuki smartlock or bridge (unsigned int)
+        long app_id; // unique identifier of the app (unsigned int)
 
         final int id_type = 1; // 0 (app), 1 (bridge), 2 (FOB), 3 (Keypad)
         final String user_name;
@@ -687,8 +687,10 @@ public class NukiRequestHandler extends Thread {
                     own_nonce = new byte[32];
                     Sodium.randombytes(own_nonce, own_nonce.length);
 
-                    // TODO: move into NukiAuthData class
-                    this.app_id = (new Random()).nextInt(250);
+                    if (this.app_id == 0) {
+                        // get random unsigned int
+                        this.app_id = (new Random()).nextLong() & 0xffffffffL;
+                    }
                     byte[] valueR = NukiTools.concat(NukiTools.from8(id_type), NukiTools.from32_app_id(app_id), NukiTools.nameToBytes(user_name, 32), own_nonce, nc.nonce);
                     byte[] authenticator = new byte[Sodium.crypto_auth_hmacsha256_bytes()];
                     if (Sodium.crypto_auth_hmacsha256(authenticator, valueR, valueR.length, shared_key) != 0) {

@@ -29,9 +29,9 @@ class NukiCommand {
 
     static class NukiAuthIdConfirm extends NukiCommand {
         byte[] authenticator;
-        int auth_id;
+        long auth_id;
 
-        NukiAuthIdConfirm(byte[] authenticator, int auth_id) {
+        NukiAuthIdConfirm(byte[] authenticator, long auth_id) {
             super(0x001E);
             this.authenticator = authenticator;
             this.auth_id = auth_id;
@@ -45,11 +45,11 @@ class NukiCommand {
     static class NukiAuthData extends NukiCommand {
         byte[] authenticator;
         int id_type; // 0x00: App, 0x01: Bridge, 0x02 Fob, 0x03 Keypad
-        int app_id; // The ID of the Nuki App, Nuki Bridge or Nuki Fob to be authorized. same as auth_id????
+        long app_id; // The ID of the Nuki App, Nuki Bridge or Nuki Fob to be authorized. same as auth_id????
         String name;
         byte[] nonce;
 
-        NukiAuthData(byte[] authenticator, int id_type, int app_id, String name, byte[] nonce) {
+        NukiAuthData(byte[] authenticator, int id_type, long app_id, String name, byte[] nonce) {
             super(0x0006);
             this.authenticator = authenticator;
             this.id_type = id_type;
@@ -109,11 +109,11 @@ class NukiCommand {
 
     static class NukiAuthID extends NukiCommand {
         byte[] authenticator;
-        int auth_id;
+        long auth_id;
         byte[] uuid;
         byte[] nonce;
 
-        NukiAuthID(byte[] authenticator, int auth_id, byte[] uuid, byte[] nonce) {
+        NukiAuthID(byte[] authenticator, long auth_id, byte[] uuid, byte[] nonce) {
             super(0x0007);
             this.authenticator = authenticator;
             this.auth_id = auth_id;
@@ -170,12 +170,12 @@ class NukiCommand {
 
     static class NukiLockAction extends NukiCommand {
         int lock_action;
-        int app_id;
+        long app_id;
         int flags;
         String name_suffix; // optional
         byte[] nonce;
 
-        NukiLockAction(int lock_action, int app_id, int flags, String name_suffix, byte[] nonce) {
+        NukiLockAction(int lock_action, long app_id, int flags, String name_suffix, byte[] nonce) {
             super(0x000D);
             this.lock_action = lock_action;
             this.app_id = app_id;
@@ -188,7 +188,7 @@ class NukiCommand {
             }
         }
 
-        NukiLockAction(int lock_action, int app_id, int flags, byte[] nonce) {
+        NukiLockAction(int lock_action, long app_id, int flags, byte[] nonce) {
             this(lock_action, app_id, flags, null, nonce);
         }
 

@@ -209,13 +209,13 @@ public class NukiTools {
         return v;
     }
 
-    static byte[] from32_auth_id(int value) {
+    static byte[] from32_auth_id(long value) {
         byte[] v = new byte[4];
         write32_auth_id(v, 0, value);
         return v;
     }
 
-    static byte[] from32_app_id(int value) {
+    static byte[] from32_app_id(long value) {
         byte[] v = new byte[4];
         write32_app_id(v, 0, value);
         return v;
@@ -236,28 +236,28 @@ public class NukiTools {
         buffer[offset + 1] = (byte) ((value >> 8) & 0xff);
     }
 
-    static int read32_app_id(byte[] data, int offset) {
+    static long read32_app_id(byte[] data, int offset) {
         return (data[offset + 3] & 0xff)
                 + ((data[offset + 2] & 0xff) << 8)
                 + ((data[offset + 1] & 0xff) << 16)
                 + ((data[offset + 0] & 0xff) << 24);
     }
 
-    static void write32_app_id(byte[] data, int offset, int value) {
+    static void write32_app_id(byte[] data, int offset, long value) {
         data[offset + 0] = (byte) ((value >> 24) & 0xff);
         data[offset + 1] = (byte) ((value >> 16) & 0xff);
         data[offset + 2] = (byte) ((value >> 8) & 0xff);
         data[offset + 3] = (byte) (value & 0xff);
     }
 
-    static int read32_auth_id(byte[] data, int offset) {
+    static long read32_auth_id(byte[] data, int offset) {
         return (data[offset + 0] & 0xff)
                 + ((data[offset + 1] & 0xff) << 8)
                 + ((data[offset + 2] & 0xff) << 16)
                 + ((data[offset + 3] & 0xff) << 24);
     }
 
-    static void write32_auth_id(byte[] data, int offset, int value) {
+    static void write32_auth_id(byte[] data, int offset, long value) {
         data[offset + 3] = (byte) ((value >> 24) & 0xff);
         data[offset + 2] = (byte) ((value >> 16) & 0xff);
         data[offset + 1] = (byte) ((value >> 8) & 0xff);
