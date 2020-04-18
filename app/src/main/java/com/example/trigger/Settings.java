@@ -217,12 +217,12 @@ public class Settings {
 
         // multiple consecutive version with no database change
         if (Arrays.asList("1.9.2", "2.0.0", "2.0.1", "2.0.2", "2.0.3", "2.0.4", "2.0.5",
-                "2.0.6", "2.1.0", "2.1.1", "2.2.0", "2.2.1", "2.2.2").contains(db_version)) {
-            Log.i("Settings", "Update database format from " + db_version + " to 2.2.3");
+                "2.0.6", "2.1.0", "2.1.1", "2.2.0", "2.2.1", "2.2.2", "2.2.3").contains(db_version)) {
+            Log.i("Settings", "Update database format from " + db_version + " to 2.2.4");
             // nothing to change
             setups = new ArrayList();
-            sharedPreferences.edit().putString("db_version", "2.2.3").commit();
-            db_version = "2.2.3";
+            sharedPreferences.edit().putString("db_version", "2.2.4").commit();
+            db_version = "2.2.4";
         }
     }
 
