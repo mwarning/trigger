@@ -187,7 +187,7 @@ public class BackupActivity extends AppCompatActivity implements
                         if (!path.endsWith("/")) {
                             path += "/";
                         }
-                        path += "backup.json";
+                        path += "trigger-backup.json";
                     }
                     pathEditText.setText(path);
                 }
