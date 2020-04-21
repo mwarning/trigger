@@ -108,6 +108,11 @@ public class BackupActivity extends AppCompatActivity implements
             return;
         }
 
+        if ((new File(path)).exists()) {
+            showErrorMessage("File Exists", "Cannot overwrite existing file.");
+            return;
+        }
+
         try {
             JSONObject obj = new JSONObject();
 
