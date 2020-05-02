@@ -37,7 +37,7 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             return;
         }
 
-        if (!WifiTools.isConnected()) {
+        if (setup.require_wifi && !WifiTools.isConnected()) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled.");
             return;
         }

@@ -12,6 +12,7 @@ public class HttpsDoorSetup implements Setup {
     static final String type = "HttpsDoorSetup";
     int id;
     String name;
+    public Boolean require_wifi;
     public String method;
     public String open_query;
     public String close_query;
@@ -30,6 +31,7 @@ public class HttpsDoorSetup implements Setup {
     public HttpsDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
+        this.require_wifi = true;
         this.method = "";
         this.open_query = "";
         this.close_query = "";
