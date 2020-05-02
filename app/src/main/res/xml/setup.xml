@@ -27,6 +27,12 @@
         android:persistent="false"
         android:title="HTTPS Settings">
 
+        <CheckBoxPreference
+            android:key="require_wifi"
+            android:title="Require WiFi"
+            android:defaultValue="true"
+            android:persistent="false" />
+
         <com.example.trigger.https.CertificatePreference
             android:key="certificate"
             android:title="Certificate"
@@ -106,6 +112,12 @@
             android:title="SSH Settings"
             android:key="SshDoorSetup"
             android:persistent="false" >
+
+        <CheckBoxPreference
+            android:key="require_wifi"
+            android:title="Require WiFi"
+            android:defaultValue="true"
+            android:persistent="false" />
 
         <com.example.trigger.ssh.KeyPairPreference
             android:key="keypair"
@@ -329,6 +341,12 @@
             android:key="MqttDoorSetup"
             android:title="MQTT Settings"
             android:persistent="false" >
+
+        <CheckBoxPreference
+            android:key="require_wifi"
+            android:title="Require WiFi"
+            android:defaultValue="true"
+            android:persistent="false" />
 
         <EditTextPreference
             android:key="server"

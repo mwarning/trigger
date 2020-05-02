@@ -11,6 +11,7 @@ public class MqttDoorSetup implements Setup {
     static final String type = "MqttDoorSetup";
     int id;
     String name;
+    public Boolean require_wifi;
     public String username;
     public String password;
     public String server;
@@ -33,6 +34,7 @@ public class MqttDoorSetup implements Setup {
     public MqttDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
+        this.require_wifi = true;
         this.username = "";
         this.password = "";
         this.server = "";
