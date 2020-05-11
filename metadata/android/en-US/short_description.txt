@@ -1,0 +1,1 @@
+Open doors via HTTPS/SSH/Bluetooth/MQTT.
