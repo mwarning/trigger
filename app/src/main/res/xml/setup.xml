@@ -33,7 +33,7 @@
             android:defaultValue="true"
             android:persistent="false" />
 
-        <com.example.trigger.https.CertificatePreference
+        <app.trigger.https.CertificatePreference
             android:key="certificate"
             android:title="Certificate"
             android:persistent="false"
@@ -82,25 +82,25 @@
             android:defaultValue="false"
             android:persistent="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="closed_image"
             android:title="Closed Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="disabled_image"
             android:title="No Connection Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="unknown_image"
             android:title="Unknown Status Image"
             android:persistent="false"
@@ -119,7 +119,7 @@
             android:defaultValue="true"
             android:persistent="false" />
 
-        <com.example.trigger.ssh.KeyPairPreference
+        <app.trigger.ssh.KeyPairPreference
             android:key="keypair"
             android:title="Key Pair"
             android:persistent="false"
@@ -180,25 +180,25 @@
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="closed_image"
             android:title="Closed Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="disabled_image"
             android:title="No Connection Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="unknown_image"
             android:title="Unknown Status Image"
             android:persistent="false"
@@ -247,25 +247,25 @@
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="closed_image"
             android:title="Closed Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="disabled_image"
             android:title="No Connection Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="unknown_image"
             android:title="Unknown Status Image"
             android:persistent="false"
@@ -311,25 +311,25 @@
             android:selectable="false"
             android:inputType="textNoSuggestions" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="closed_image"
             android:title="Closed Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="disabled_image"
             android:title="No Connection Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="unknown_image"
             android:title="Unknown Status Image"
             android:persistent="false"
@@ -409,7 +409,7 @@
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.https.CertificatePreference
+        <app.trigger.https.CertificatePreference
             android:key="certificate"
             android:title="TLS Certificate"
             android:persistent="false"
@@ -421,25 +421,25 @@
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="closed_image"
             android:title="Closed Door Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="disabled_image"
             android:title="No Connection Image"
             android:persistent="false"
             android:defaultValue="false" />
 
-        <com.example.trigger.ImagePreference
+        <app.trigger.ImagePreference
             android:key="unknown_image"
             android:title="Unknown Status Image"
             android:persistent="false"
