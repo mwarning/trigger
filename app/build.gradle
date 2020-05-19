@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId 'app.trigger'
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 225
         versionName "2.2.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
