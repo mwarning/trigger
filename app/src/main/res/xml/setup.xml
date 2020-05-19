@@ -82,6 +82,13 @@
             android:defaultValue="false"
             android:persistent="false" />
 
+        <CheckBoxPreference
+            android:key="ignore_expiration"
+            android:title="Disable Certificate Date Check"
+            android:summary="Warning: This disables security"
+            android:defaultValue="false"
+            android:persistent="false" />
+
         <app.trigger.ImagePreference
             android:key="open_image"
             android:title="Open Door Image"

@@ -27,6 +27,7 @@ public class HttpsDoorSetup implements Setup {
     public String ssids;
     public Certificate certificate;
     public Boolean ignore_hostname_mismatch;
+    public Boolean ignore_expiration;
 
     public HttpsDoorSetup(int id, String name) {
         this.id = id;
@@ -44,6 +45,7 @@ public class HttpsDoorSetup implements Setup {
         this.ssids = "";
         this.certificate = null;
         this.ignore_hostname_mismatch = false;
+        this.ignore_expiration = false;
     }
 
     @Override
