@@ -1,0 +1,2 @@
+* add option to disable https certificate expiration
+* change app id to please the google play app store
