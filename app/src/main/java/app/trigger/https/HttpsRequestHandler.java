@@ -100,7 +100,7 @@ public class HttpsRequestHandler extends Thread {
 
             // certificate verification
             if (setup.certificate != null) {
-                // custom certificate
+                // use custom certificate
                 HttpsURLConnection.setDefaultSSLSocketFactory(
                     Utils.getSocketFactoryWithCertificate(setup.certificate)
                 );
@@ -110,7 +110,7 @@ public class HttpsRequestHandler extends Thread {
                     getSocketFactoryIgnoreCertificateExpiredException()
                 );
             } else {
-                // system certificate
+                // use system certificate
                 HttpsURLConnection.setDefaultSSLSocketFactory(
                     SSLContext.getDefault().getSocketFactory()
                 );
