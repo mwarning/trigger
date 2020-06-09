@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:preference-v7:27.1.1'
-    implementation 'com.jcraft:jsch:0.1.52'
+    implementation 'com.jcraft:jsch:0.1.54'
     implementation 'com.github.isabsent:filepicker:1.1.01'
     implementation 'com.google.zxing:core:3.4.0'
     implementation('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
