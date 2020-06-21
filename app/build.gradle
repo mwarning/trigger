@@ -6,8 +6,8 @@ android {
         applicationId 'app.trigger'
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 301
-        versionName "3.0.1"
+        versionCode 310
+        versionName "3.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resConfigs "en"
     }

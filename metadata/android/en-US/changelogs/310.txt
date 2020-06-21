@@ -1,0 +1,1 @@
+* allow regex to match locked/unlocked message status of https, ssh, mqtt and bluetooth
