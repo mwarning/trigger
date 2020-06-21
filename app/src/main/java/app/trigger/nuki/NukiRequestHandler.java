@@ -414,13 +414,13 @@ public class NukiRequestHandler extends Thread {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Start Pairing.");
         } else switch (action) {
             case open_door:
-                callback = new NukiLockActionCallback(setup.getId(), this.listener, setup, 0x01);
+                callback = new NukiLockActionCallback(setup.getId(), this.listener, setup, 0x01 /*unlock*/);
                 break;
             case ring_door:
                 this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Bell not supported.");
                 return;
             case close_door:
-                callback = new NukiLockActionCallback(setup.getId(), this.listener, setup, 0x02);
+                callback = new NukiLockActionCallback(setup.getId(), this.listener, setup, 0x02 /*lock*/);
                 break;
             default:
             case fetch_state:

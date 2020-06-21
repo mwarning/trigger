@@ -17,6 +17,7 @@ public class SshDoorSetup implements Setup {
     public String password;
     public String host;
     public int port;
+
     public String open_command;
     public String close_command;
     public String ring_command;
@@ -30,6 +31,7 @@ public class SshDoorSetup implements Setup {
     public Bitmap closed_image;
     public Bitmap unknown_image;
     public Bitmap disabled_image;
+
     public String register_url;
     public String ssids;
 

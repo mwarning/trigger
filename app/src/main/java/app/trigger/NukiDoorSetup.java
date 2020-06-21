@@ -14,6 +14,7 @@ public class NukiDoorSetup implements Setup {
     public String shared_key;
     public long auth_id;
     public long app_id;
+
     public Bitmap open_image;
     public Bitmap closed_image;
     public Bitmap unknown_image;

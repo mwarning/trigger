@@ -66,7 +66,7 @@ class NukiLockActionCallback extends NukiCallback {
                 Log.e(TAG, "writeCharacteristic failed for NukiLockAction");
                 closeConnection(gatt);
             }
-        } else if (command instanceof  NukiCommand.NukiStatus) {
+        } else if (command instanceof NukiCommand.NukiStatus) {
             NukiCommand.NukiStatus ns = (NukiCommand.NukiStatus) command;
             if (ns.status == NukiCommand.NukiStatus.STATUS_COMPLETE) {
                 // do not wait until the Nuki closes the connection

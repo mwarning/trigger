@@ -17,13 +17,15 @@ public class MqttDoorSetup implements Setup {
     public String server;
     public String status_topic;
     public String command_topic;
+    public Boolean retained;
+    public int qos;
+
     public String open_command;
     public String close_command;
     public String ring_command;
+
     public String locked_pattern;
     public String unlocked_pattern;
-    public Boolean retained;
-    public int qos;
 
     public Bitmap open_image;
     public Bitmap closed_image;
