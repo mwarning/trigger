@@ -20,6 +20,8 @@ public class MqttDoorSetup implements Setup {
     public String open_command;
     public String close_command;
     public String ring_command;
+    public String locked_pattern;
+    public String unlocked_pattern;
     public Boolean retained;
     public int qos;
 
@@ -43,6 +45,8 @@ public class MqttDoorSetup implements Setup {
         this.open_command = "";
         this.close_command = "";
         this.ring_command = "";
+        this.locked_pattern = "LOCKED";
+        this.unlocked_pattern = "UNLOCKED";
         this.retained = false;
         this.qos = 0;
         this.open_image = null;
@@ -95,27 +99,7 @@ public class MqttDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        // strip HTML from response
-        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
-
-        switch (reply.code) {
-            case LOCAL_ERROR:
-            case REMOTE_ERROR:
-                return new DoorState(StateCode.UNKNOWN, msg);
-            case SUCCESS:
-                if (reply.message.contains("UNLOCKED")) {
-                    // door unlocked
-                    return new DoorState(StateCode.OPEN, msg);
-                } else if (reply.message.contains("LOCKED")) {
-                    // door locked
-                    return new DoorState(StateCode.CLOSED, msg);
-                } else {
-                    return new DoorState(StateCode.UNKNOWN, msg);
-                }
-            case DISABLED:
-            default:
-                return new DoorState(StateCode.DISABLED, msg);
-        }
+        return Utils.genericDoorReturnParser(reply, this.unlocked_pattern, this.locked_pattern);
     }
 
     @Override

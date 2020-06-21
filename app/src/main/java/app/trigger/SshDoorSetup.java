@@ -21,6 +21,11 @@ public class SshDoorSetup implements Setup {
     public String close_command;
     public String ring_command;
     public String state_command;
+
+    // regex to evalute the door return message
+    public String unlocked_pattern;
+    public String locked_pattern;
+
     public Bitmap open_image;
     public Bitmap closed_image;
     public Bitmap unknown_image;
@@ -41,6 +46,8 @@ public class SshDoorSetup implements Setup {
         this.close_command = "";
         this.ring_command = "";
         this.state_command = "";
+        this.locked_pattern = "LOCKED";
+        this.unlocked_pattern = "UNLOCKED";
         this.open_image = null;
         this.closed_image = null;
         this.unknown_image = null;
@@ -96,26 +103,7 @@ public class SshDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
-
-        switch (reply.code) {
-            case LOCAL_ERROR:
-            case REMOTE_ERROR:
-                return new DoorState(StateCode.UNKNOWN, msg);
-            case SUCCESS:
-                if (reply.message.contains("UNLOCKED")) {
-                    // door unlocked
-                    return new DoorState(StateCode.OPEN, msg);
-                } else if (reply.message.contains("LOCKED")) {
-                    // door locked
-                    return new DoorState(StateCode.CLOSED, msg);
-                } else {
-                    return new DoorState(StateCode.UNKNOWN, msg);
-                }
-            case DISABLED:
-            default:
-                return new DoorState(StateCode.DISABLED, msg);
-        }
+        return Utils.genericDoorReturnParser(reply, this.unlocked_pattern, this.locked_pattern);
     }
 
     @Override

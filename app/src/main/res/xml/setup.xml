@@ -70,6 +70,18 @@
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
+            android:key="locked_pattern"
+            android:title="Locked reply pattern"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:key="unlocked_pattern"
+            android:title="UnLocked reply pattern"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
             android:persistent="false"
@@ -181,6 +193,19 @@
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
+
+        <EditTextPreference
+            android:key="locked_pattern"
+            android:title="Locked reply pattern"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:key="unlocked_pattern"
+            android:title="UnLocked reply pattern"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
         <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
@@ -251,6 +276,18 @@
         <EditTextPreference
             android:key="status_query"
             android:title="State Command"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:key="locked_pattern"
+            android:title="Locked reply pattern"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:key="unlocked_pattern"
+            android:title="UnLocked reply pattern"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 

@@ -14,6 +14,8 @@ public class BluetoothDoorSetup implements Setup {
     public String open_query;
     public String close_query;
     public String ring_query;
+    public String locked_pattern;
+    public String unlocked_pattern;
     public String status_query;
     public Bitmap open_image;
     public Bitmap closed_image;
@@ -28,6 +30,8 @@ public class BluetoothDoorSetup implements Setup {
         this.open_query = "";
         this.close_query = "";
         this.ring_query = "";
+        this.locked_pattern = "LOCKED";
+        this.unlocked_pattern = "UNLOCKED";
         this.status_query = "";
         this.open_image = null;
         this.closed_image = null;
@@ -78,26 +82,7 @@ public class BluetoothDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
-
-        switch (reply.code) {
-            case LOCAL_ERROR:
-            case REMOTE_ERROR:
-                return new DoorState(StateCode.UNKNOWN, msg);
-            case SUCCESS:
-                if (reply.message.contains("UNLOCKED")) {
-                    // door unlocked
-                    return new DoorState(StateCode.OPEN, msg);
-                } else if (reply.message.contains("LOCKED")) {
-                    // door locked
-                    return new DoorState(StateCode.CLOSED, msg);
-                } else {
-                    return new DoorState(StateCode.UNKNOWN, msg);
-                }
-            case DISABLED:
-            default:
-                return new DoorState(StateCode.DISABLED, msg);
-        }
+        return Utils.genericDoorReturnParser(reply, this.unlocked_pattern, this.locked_pattern);
     }
 
     @Override

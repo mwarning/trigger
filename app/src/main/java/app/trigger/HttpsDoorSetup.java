@@ -19,6 +19,10 @@ public class HttpsDoorSetup implements Setup {
     public String ring_query;
     public String status_query;
 
+    // regex to evalute the door return message
+    public String unlocked_pattern;
+    public String locked_pattern;
+
     public Bitmap open_image;
     public Bitmap closed_image;
     public Bitmap unknown_image;
@@ -38,6 +42,8 @@ public class HttpsDoorSetup implements Setup {
         this.close_query = "";
         this.ring_query = "";
         this.status_query = "";
+        this.locked_pattern = "LOCKED";
+        this.unlocked_pattern = "UNLOCKED";
         this.open_image = null;
         this.closed_image = null;
         this.unknown_image = null;
@@ -108,27 +114,7 @@ public class HttpsDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        // strip HTML from response
-        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
-
-        switch (reply.code) {
-            case LOCAL_ERROR:
-            case REMOTE_ERROR:
-                return new DoorState(StateCode.UNKNOWN, msg);
-            case SUCCESS:
-                if (reply.message.contains("UNLOCKED")) {
-                    // door unlocked
-                    return new DoorState(StateCode.OPEN, msg);
-                } else if (reply.message.contains("LOCKED")) {
-                    // door locked
-                    return new DoorState(StateCode.CLOSED, msg);
-                } else {
-                    return new DoorState(StateCode.UNKNOWN, msg);
-                }
-            case DISABLED:
-            default:
-                return new DoorState(StateCode.DISABLED, msg);
-        }
+        return Utils.genericDoorReturnParser(reply, this.unlocked_pattern, this.locked_pattern);
     }
 
     @Override

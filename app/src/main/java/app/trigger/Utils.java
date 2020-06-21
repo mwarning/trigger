@@ -30,6 +30,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -329,5 +331,48 @@ public class Utils {
             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    private static boolean match(String message, String pattern) {
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(message);
+        return m.find();
+    }
+
+    // parse return from HTTP/SSH/MQTT doors
+    public static DoorState genericDoorReturnParser(DoorReply reply, String unlocked_pattern, String locked_pattern) {
+        // strip HTML from response
+        String msg = android.text.Html.fromHtml(reply.message).toString().trim();
+
+        if (unlocked_pattern == null) {
+            unlocked_pattern = "";
+        }
+
+        if (locked_pattern == null) {
+            locked_pattern = "";
+        }
+
+        switch (reply.code) {
+            case LOCAL_ERROR:
+            case REMOTE_ERROR:
+                return new DoorState(DoorState.StateCode.UNKNOWN, msg);
+            case SUCCESS:
+                try {
+                    if (match(reply.message, unlocked_pattern)) {
+                        // door unlocked
+                        return new DoorState(DoorState.StateCode.OPEN, msg);
+                    } else if (match(reply.message, locked_pattern)) {
+                        // door locked
+                        return new DoorState(DoorState.StateCode.CLOSED, msg);
+                    } else {
+                        return new DoorState(DoorState.StateCode.UNKNOWN, msg);
+                    }
+                } catch (Exception e) {
+                    return new DoorState(DoorState.StateCode.UNKNOWN, e.toString());
+                }
+            case DISABLED:
+            default:
+                return new DoorState(DoorState.StateCode.DISABLED, msg);
+        }
     }
 }
