@@ -114,7 +114,7 @@ public class HttpsDoorSetup implements Setup {
 
     @Override
     public DoorState parseReply(DoorReply reply) {
-        return Utils.genericDoorReturnParser(reply, this.unlocked_pattern, this.locked_pattern);
+        return Utils.genericDoorReplyParser(reply, this.unlocked_pattern, this.locked_pattern);
     }
 
     @Override

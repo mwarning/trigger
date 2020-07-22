@@ -340,7 +340,7 @@ public class Utils {
     }
 
     // parse return from HTTP/SSH/MQTT doors
-    public static DoorState genericDoorReturnParser(DoorReply reply, String unlocked_pattern, String locked_pattern) {
+    public static DoorState genericDoorReplyParser(DoorReply reply, String unlocked_pattern, String locked_pattern) {
         // strip HTML from response
         String msg = android.text.Html.fromHtml(reply.message).toString().trim();
 
