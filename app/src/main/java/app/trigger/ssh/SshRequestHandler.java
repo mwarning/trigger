@@ -3,6 +3,7 @@ package app.trigger.ssh;
 import java.io.IOException;
 import java.io.InputStream;
 
+import app.trigger.Utils;
 import app.trigger.WifiTools;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -84,6 +85,10 @@ public class SshRequestHandler extends Thread {
             if (keypair != null) {
                 SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
                 byte passphrase[] = new byte[0];
+
+                if (!Utils.isEmpty(setup.passphrase)) {
+                    passphrase = setup.passphrase.getBytes();
+                }
 
                 jsch.addIdentity("authkey", data.prvkey, data.pubkey, passphrase);
             }
