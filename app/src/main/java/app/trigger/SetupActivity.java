@@ -133,7 +133,7 @@ public class SetupActivity extends PreferenceActivity {
             return getResources().getString(R.string.none);
         }
 
-        if (key.equals("password")) {
+        if (key.equals("password") || key.equals("passphrase")) {
             // only show password as star sequences
             return new String(new char[value.length()]).replace("\0", "*");
         } else {
