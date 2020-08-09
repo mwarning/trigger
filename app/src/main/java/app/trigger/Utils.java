@@ -41,6 +41,11 @@ import javax.net.ssl.TrustManagerFactory;
 
 
 public class Utils {
+    public static boolean hasCoarseLocationPermission(Activity activity) {
+        return (ContextCompat.checkSelfPermission(
+                activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+    }
+
     public static boolean hasReadPermission(Activity activity) {
         return (ContextCompat.checkSelfPermission(
                 activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
@@ -54,6 +59,11 @@ public class Utils {
     public static boolean hasCameraPermission(Activity activity) {
         return (ContextCompat.checkSelfPermission(
                 activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
+    }
+
+    public static void requestCoarseLocationPermission(Activity activity, int request_code) {
+        ActivityCompat.requestPermissions(activity, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION}, request_code);
     }
 
     public static void requestCameraPermission(Activity activity, int request_code) {

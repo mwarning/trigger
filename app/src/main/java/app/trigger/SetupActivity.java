@@ -419,6 +419,36 @@ public class SetupActivity extends PreferenceActivity {
 
             // report all done
             Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+
+            // needed for SSID matching
+            if (this.setup.getSSIDs().length() > 0) {
+                checkCoarseLocationPermission();
+            }
+        }
+    }
+
+    private static final int REQUEST_COARSE_LOCATION_PERMISSION = 0x01;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_COARSE_LOCATION_PERMISSION:
+                if (Utils.allGranted(grantResults)) {
+                    // permissions granted
+                    Toast.makeText(getApplicationContext(), "Permissions granted - SSID matching should work now.", Toast.LENGTH_SHORT).show();
+                } else {
+                    showErrorMessage("Permissions Required", "Cannot match WiFi SSIDs.");
+                }
+                break;
+        }
+    }
+
+    // SSID matching needs coarse location permissions
+    private void checkCoarseLocationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 29) {
+            if (!Utils.hasCoarseLocationPermission(this)) {
+                Utils.requestCoarseLocationPermission(this, REQUEST_COARSE_LOCATION_PERMISSION);
+            }
         }
     }
 }

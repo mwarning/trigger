@@ -1,6 +1,8 @@
 package app.trigger;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -12,9 +14,11 @@ import java.util.List;
 
 public class WifiTools {
     private static WifiManager wifiManager;
+    private static ConnectivityManager connectivityManager;
 
     static void init(Context context) {
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     public static boolean matchSSID(String ssids, String ssid) {
@@ -28,7 +32,7 @@ public class WifiTools {
     }
 
     public static String getCurrentSSID() {
-        // From android 8.0 only available if GPS on?!
+        // Note: needs coarse location permission
         if (wifiManager != null) {
             WifiInfo info = wifiManager.getConnectionInfo();
             String ssid = info.getSSID();
@@ -44,6 +48,7 @@ public class WifiTools {
         }
     }
 
+/*
     public static ArrayList<String> getScannedSSIDs() {
         ArrayList<String> ssids;
         List<ScanResult> results;
@@ -60,8 +65,9 @@ public class WifiTools {
 
         return ssids;
     }
-
+*/
     public static ArrayList<String> getConfiguredSSIDs() {
+        // Note: needs coarse location permission
         List<WifiConfiguration> configs;
         ArrayList<String> ssids;
 
@@ -121,6 +127,18 @@ public class WifiTools {
     }
 */
     public static boolean isConnected() {
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        // Note: does not need coarse location permission
+        NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
+        if (ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI) {
+            return true;
+        } else {
+            return false;
+        }
+/*
         if (wifiManager != null && wifiManager.isWifiEnabled()) {
             // Wi-Fi adapter is ON
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -134,5 +152,6 @@ public class WifiTools {
             // Wi-Fi adapter is off
             return false;
         }
+*/
     }
 }
