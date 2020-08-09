@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         int i;
 
         // select by ssid
-        String ssid = WifiTools.getCurrentSSID();
-        if (ssid.length() > 0 && match_ssid) {
+        if (match_ssid && WifiTools.isConnected()) {
+            String ssid = WifiTools.getCurrentSSID();
             i = 0;
             for (SpinnerItem item : items) {
                 if (WifiTools.matchSSID(item.ssids, ssid)) {
