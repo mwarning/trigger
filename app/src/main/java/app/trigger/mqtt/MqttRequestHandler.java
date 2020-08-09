@@ -37,9 +37,16 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             return;
         }
 
-        if (setup.require_wifi && !WifiTools.isConnected()) {
-            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled.");
-            return;
+        if (WifiTools.isConnected()) {
+            if (setup.ssids.length() > 0 && !WifiTools.matchSSID(setup.ssids, WifiTools.getCurrentSSID())) {
+                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "SSID Mismatch");
+                return;
+            }
+        } else {
+            if (setup.require_wifi) {
+                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled");
+                return;
+            }
         }
 
         switch (action) {

@@ -17,6 +17,16 @@ public class WifiTools {
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
+    public static boolean matchSSID(String ssids, String ssid) {
+        for (String element : ssids.split(",")) {
+            String e = element.trim();
+            if (!e.isEmpty() && e.equals(ssid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String getCurrentSSID() {
         // From android 8.0 only available if GPS on?!
         if (wifiManager != null) {

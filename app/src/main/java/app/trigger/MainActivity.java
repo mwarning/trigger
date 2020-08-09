@@ -84,17 +84,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
     }
 
-    private static List<String> splitCommaSeparated(String str) {
-        ArrayList<String> ret = new ArrayList();
-        for (String element : str.split(",")) {
-            String e = element.trim();
-            if (!e.isEmpty()) {
-                ret.add(e);
-            }
-        }
-        return ret;
-    }
-
     private int getPreferredSpinnerIndex(ArrayList<SpinnerItem> items, boolean match_ssid) {
         int i;
 
@@ -103,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         if (ssid.length() > 0 && match_ssid) {
             i = 0;
             for (SpinnerItem item : items) {
-                if (splitCommaSeparated(item.ssids).contains(ssid)) {
+                if (WifiTools.matchSSID(ssid, item.ssids)) {
                     return i;
                 }
                 i += 1;

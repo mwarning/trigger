@@ -36,9 +36,16 @@ public class SshRequestHandler extends Thread {
             return;
         }
 
-        if (setup.require_wifi && !WifiTools.isConnected()) {
-            this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled.");
-            return;
+        if (WifiTools.isConnected()) {
+            if (setup.ssids.length() > 0 && !WifiTools.matchSSID(setup.ssids, WifiTools.getCurrentSSID())) {
+                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "SSID Mismatch");
+                return;
+            }
+        } else {
+            if (setup.require_wifi) {
+                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled");
+                return;
+            }
         }
 
         String command = "";

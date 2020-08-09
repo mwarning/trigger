@@ -1,1 +1,2 @@
-* support ssh passphrase
+* support ssh passphrase (stored!)
+* force SSID setting if used
