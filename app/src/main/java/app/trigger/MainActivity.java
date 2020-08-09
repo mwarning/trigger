@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         if (ssid.length() > 0 && match_ssid) {
             i = 0;
             for (SpinnerItem item : items) {
-                if (WifiTools.matchSSID(ssid, item.ssids)) {
+                if (WifiTools.matchSSID(item.ssids, ssid)) {
                     return i;
                 }
                 i += 1;
