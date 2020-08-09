@@ -8,9 +8,9 @@ Trigger makes rather generic requests and needs to be configured depending on th
 
 The door status is determined based on the text returned of the HTTPS query or SSH command. Recognized are the keywords `LOCKED` (door closed) and `UNLOCKED` (door open) that can occure anywhere in the response, even in HTML tags. If neither keyword is found, the door status is set to unknown. The complete return message is always displayed in the App for a short time (with HTML elements stripped). Since release *3.1.0*, a regular expression can be set.
 
-## Auto-Select Door By SSID
+## Auto-Select/Limit Door By SSID
 
-The door setup can be selected depending on what WiFi network the device is connected to. This can help to avoid to switch the door setup by hand. Even multiple SSIDs can be set as a comma separated list.
+The door setup can be selected depending on what WiFi network the device is connected to. This can help to avoid to switch the door setup by hand. Even multiple SSIDs can be set as a comma separated list. As of release 3.1.1, this disables the setup if the connected WiFi SSID does not match.
 
 ## SSH Key Registration
 
