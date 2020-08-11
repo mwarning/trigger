@@ -16,7 +16,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="none">None</string>
-    <string name="really_remove_item">Really remove item?</string>
+    <string name="really_remove_item">Really remove setup?</string>
 
     <string name="save_button">Save</string>
     <string name="remove_button">Remove</string>
