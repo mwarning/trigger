@@ -327,6 +327,27 @@ public class Utils {
         return data;
     }
 
+    public static int arrayIndexOf(byte[] haystack, byte[] needle) {
+        if (needle.length > haystack.length) {
+            return -1;
+        }
+
+        for (int i = 0; i <= (haystack.length - needle.length); i += 1) {
+            boolean found = true;
+            for (int j = 0; j < needle.length; j += 1) {
+               if (haystack[i+j] != needle[j]) {
+                   found = false;
+                   break;
+               }
+            }
+            if (found) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     public static String byteArrayToHexString(byte[] bytes) {

@@ -261,6 +261,10 @@ public class KeyPairActivity extends AppCompatActivity implements
             byte[] prvkey = Utils.readExternalFile(selected_path + "/id_rsa");
             byte[] pubkey = Utils.readExternalFile(selected_path + "/id_rsa.pub");
 
+            if (Utils.arrayIndexOf(prvkey, "-----BEGIN OPENSSH PRIVATE KEY-----".getBytes()) != -1) {
+                throw new Exception("OpenSSH key format detected - please convert to RSA format.");
+            }
+
             JSch jsch = new JSch();
             KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
 
