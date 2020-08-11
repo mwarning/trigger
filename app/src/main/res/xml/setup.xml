@@ -145,12 +145,6 @@
             android:defaultValue="false" />
 
         <EditTextPreference
-            android:key="passphrase"
-            android:title="Passphrase"
-            android:persistent="false"
-            android:inputType="textNoSuggestions" />
-
-        <EditTextPreference
             android:key="host"
             android:title="Server Address"
             android:persistent="false"

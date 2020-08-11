@@ -16,7 +16,6 @@ public class SshDoorSetup implements Setup {
     public String user;
     public String password;
     public String host;
-    public String passphrase;
     public int port;
 
     public String open_command;
@@ -41,7 +40,6 @@ public class SshDoorSetup implements Setup {
         this.name = name;
         this.require_wifi = true;
         this.keypair = null;
-        this.passphrase = "";
         this.user = "";
         this.password = "";
         this.host = "";
