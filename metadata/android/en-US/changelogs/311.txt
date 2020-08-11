@@ -1,2 +1,3 @@
-* support ssh passphrase (stored!)
-* force SSID setting if used
+* fix some SSH key crashes and import issues
+* force SSID match setting if used
+* fix SSID matching on Android 10
