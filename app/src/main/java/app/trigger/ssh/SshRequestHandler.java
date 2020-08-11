@@ -87,6 +87,11 @@ public class SshRequestHandler extends Thread {
                 user = "root";
             }
 
+            if (keypair == null && password.length() == 0) {
+                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No password or key set.");
+                return;
+            }
+
             JSch jsch = new JSch();
 
             if (keypair != null) {
