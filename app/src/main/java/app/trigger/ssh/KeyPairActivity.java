@@ -241,7 +241,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         } else if (!Utils.hasWritePermission(this)) {
             Utils.requestWritePermission(this, REQUEST_PERMISSION);
         } else try {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(KeyPairActivity.this.keypair);
+            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, "");
 
             Utils.writeExternalFile(selected_path + "/id_rsa.pub", data.pubkey);
             Utils.writeExternalFile(selected_path + "/id_rsa", data.prvkey);
@@ -297,13 +297,16 @@ public class KeyPairActivity extends AppCompatActivity implements
     }
 
     private void updateKeyInfo() {
-        if (keypair == null) {
+        SshTools.KeyPairData data = null;
+        if (keypair != null) {
+            data = SshTools.keypairToBytes(keypair, "");
+        }
+
+        if (keypair == null || data == null || data.prvkey == null || data.pubkey == null) {
             deleteButton.setEnabled(false);
             fingerprint.setText("<no key loaded>");
             publicKey.setText("<no key loaded>");
         } else {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
-
             deleteButton.setEnabled(true);
             fingerprint.setText(keypair.getFingerPrint());
             publicKey.setText(new String(data.pubkey));

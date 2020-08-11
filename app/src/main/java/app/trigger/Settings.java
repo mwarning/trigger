@@ -200,7 +200,7 @@ public class Settings {
                         KeyPair keypair = SshTools.deserializeKeyPairOld(
                             obj.getString("keypair")
                         );
-                        obj.put("keypair", SshTools.serializeKeyPair(keypair));
+                        obj.put("keypair", SshTools.serializeKeyPair(keypair, ""));
 
                         String key = String.format("item_%03d", id);
                         e.putString(key, obj.toString());
@@ -267,7 +267,7 @@ public class Settings {
                 } else if (type == Bitmap.class) {
                     obj.put(name, Utils.serializeBitmap((Bitmap) value));
                 } else if (type == KeyPair.class) {
-                    obj.put(name, SshTools.serializeKeyPair((KeyPair) value));
+                    obj.put(name, SshTools.serializeKeyPair((KeyPair) value, ""));
                 } else if (type == Certificate.class) {
                     obj.put(name, HttpsTools.serializeCertificate((Certificate) value));
                 } else {

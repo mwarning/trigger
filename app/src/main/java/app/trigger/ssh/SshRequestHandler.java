@@ -23,7 +23,7 @@ public class SshRequestHandler extends Thread {
     private final SshDoorSetup setup;
     private final Action action;
 
-    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action){
+    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action) {
         this.listener = listener;
         this.setup = setup;
         this.action = action;
@@ -94,10 +94,8 @@ public class SshRequestHandler extends Thread {
             JSch jsch = new JSch();
 
             if (keypair != null) {
-                SshTools.KeyPairData data = SshTools.keypairToBytes(keypair);
-                byte passphrase[] = new byte[0];
-
-                jsch.addIdentity("authkey", data.prvkey, data.pubkey, passphrase);
+                SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, "");
+                jsch.addIdentity("authkey", data.prvkey, data.pubkey, "".getBytes());
             }
 
             Session session = jsch.getSession(user, host, port);

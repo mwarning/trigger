@@ -27,12 +27,12 @@ public class SshTools {
         }
     };
 
-    public static KeyPairData keypairToBytes(KeyPair keypair) {
+    public static KeyPairData keypairToBytes(KeyPair keypair, String passphrase) {
         try {
             ByteArrayOutputStream prvstream = new ByteArrayOutputStream();
             ByteArrayOutputStream pubstream = new ByteArrayOutputStream();
 
-            keypair.writePrivateKey(prvstream);
+            keypair.writePrivateKey(prvstream, passphrase.getBytes());
             keypair.writePublicKey(pubstream, keypair.getPublicKeyComment());
             prvstream.close();
             pubstream.close();
@@ -44,14 +44,14 @@ public class SshTools {
         return null;
     }
 
-    public static String serializeKeyPair(KeyPair keypair) {
+    public static String serializeKeyPair(KeyPair keypair, String passphrase) {
         if (keypair == null) {
             return "";
         }
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            keypair.writePrivateKey(baos);
+            keypair.writePrivateKey(baos, passphrase.getBytes());
             baos.close();
             return new String(baos.toByteArray());
         } catch (Exception e) {
