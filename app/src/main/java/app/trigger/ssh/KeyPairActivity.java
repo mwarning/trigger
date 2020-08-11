@@ -184,7 +184,7 @@ public class KeyPairActivity extends AppCompatActivity implements
 
                 builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        KeyPairActivity.this.keypair = null;
+                        self.keypair = null;
                         updateKeyInfo();
                         dialog.cancel();
                     }
@@ -266,7 +266,9 @@ public class KeyPairActivity extends AppCompatActivity implements
             }
 
             JSch jsch = new JSch();
-            KeyPairActivity.this.keypair = KeyPair.load(jsch, prvkey, pubkey);
+            keypair = KeyPair.load(jsch, prvkey, pubkey);
+
+            updateKeyInfo();
 
             Toast.makeText(getApplicationContext(), "Done. Read 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
