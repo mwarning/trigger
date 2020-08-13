@@ -94,7 +94,7 @@ public class SshRequestHandler extends Thread {
             JSch jsch = new JSch();
 
             if (keypair != null) {
-                SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, "");
+                SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
                 jsch.addIdentity("authkey", data.prvkey, data.pubkey, "".getBytes());
             }
 

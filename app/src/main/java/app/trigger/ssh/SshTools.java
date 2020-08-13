@@ -32,7 +32,11 @@ public class SshTools {
             ByteArrayOutputStream prvstream = new ByteArrayOutputStream();
             ByteArrayOutputStream pubstream = new ByteArrayOutputStream();
 
-            keypair.writePrivateKey(prvstream, passphrase.getBytes());
+            if (passphrase == null) {
+                keypair.writePrivateKey(prvstream);
+            } else {
+                keypair.writePrivateKey(prvstream, passphrase.getBytes());
+            }
             keypair.writePublicKey(pubstream, keypair.getPublicKeyComment());
             prvstream.close();
             pubstream.close();
@@ -51,7 +55,11 @@ public class SshTools {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            keypair.writePrivateKey(baos, passphrase.getBytes());
+            if (passphrase == null) {
+                keypair.writePrivateKey(baos);
+            } else {
+                keypair.writePrivateKey(baos, passphrase.getBytes());
+            }
             baos.close();
             return new String(baos.toByteArray());
         } catch (Exception e) {

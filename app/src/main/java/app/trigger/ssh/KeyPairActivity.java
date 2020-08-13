@@ -241,7 +241,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         } else if (!Utils.hasWritePermission(this)) {
             Utils.requestWritePermission(this, REQUEST_PERMISSION);
         } else try {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, "");
+            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
 
             Utils.writeExternalFile(selected_path + "/id_rsa.pub", data.pubkey);
             Utils.writeExternalFile(selected_path + "/id_rsa", data.prvkey);
@@ -301,7 +301,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     private void updateKeyInfo() {
         SshTools.KeyPairData data = null;
         if (keypair != null) {
-            data = SshTools.keypairToBytes(keypair, "");
+            data = SshTools.keypairToBytes(keypair, null);
         }
 
         if (keypair == null || data == null || data.prvkey == null || data.pubkey == null) {
