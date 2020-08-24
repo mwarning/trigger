@@ -1,3 +1,4 @@
 * fix some SSH key crashes and import issues
 * force SSID match setting if used
 * fix SSID matching on Android 10
+* use Android target SDK version 29
