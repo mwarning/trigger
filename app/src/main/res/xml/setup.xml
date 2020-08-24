@@ -71,13 +71,13 @@
 
         <EditTextPreference
             android:key="locked_pattern"
-            android:title="Match locked state"
+            android:title="Reply Pattern (locked)"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="unlocked_pattern"
-            android:title="Match unlocked state"
+            android:title="Reply Pattern (unlocked)"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -196,13 +196,13 @@
 
         <EditTextPreference
             android:key="locked_pattern"
-            android:title="Match locked state"
+            android:title="Reply Pattern (locked)"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="unlocked_pattern"
-            android:title="Match unlocked state"
+            android:title="Reply Pattern (unlocked)"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
@@ -281,13 +281,13 @@
 
         <EditTextPreference
             android:key="locked_pattern"
-            android:title="Match locked state"
+            android:title="Reply Pattern (locked)"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
             android:key="unlocked_pattern"
-            android:title="Match unlocked state"
+            android:title="Reply Pattern (unlocked)"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
