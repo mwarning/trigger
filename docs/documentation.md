@@ -8,7 +8,7 @@ Trigger makes rather generic requests and needs to be configured depending on th
 
 Trigger reads the door status from the text returned of the HTTPS query, SSH command or MQTT server. You can set a regular expression for the `Reply Pattern (locked)` and `Reply Pattern (unlocked)` settings. The default values are `LOCKED` and `UNLOCKED`. The complete return message is always displayed in the App for a short time (with possible HTML elements stripped and truncated if needed).
 
-An example of a regular expression pattern is `"state"\s*:\s*"open"`. This would match a part of a typical reponse that is in JSON format.
+An example of a regular expression pattern is `state"\s*:\s*"open`. This would match a part of a typical reponse that is in JSON format.
 
 ## Auto-Select/Limit Door By SSID
 
