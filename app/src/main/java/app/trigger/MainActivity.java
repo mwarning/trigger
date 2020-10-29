@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.view.View;
@@ -337,7 +339,15 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             // display message
             if (state.message.length() > 0) {
                 Context context = getApplicationContext();
-                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show();
+                // show centered text
+                Toast toast = Toast.makeText(context, state.message, Toast.LENGTH_SHORT);
+                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+                if (v != null) {
+                    v.setGravity(Gravity.CENTER);
+                } else {
+                    Log.w(this, "Failed to find android.R.id.message");
+                }
+                toast.show();
             }
         });
     }
