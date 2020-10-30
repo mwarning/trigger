@@ -8,8 +8,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- For WiFi access -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- To read WiFi SSID -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Read WiFi SSID (ACCESS_COARSE_LOCATION was sufficient before Anroid 10) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- For Bluetooth access -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <!-- For Bluetooth Low Energy (BLE) access -->
