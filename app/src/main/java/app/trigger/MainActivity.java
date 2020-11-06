@@ -1,17 +1,13 @@
 package app.trigger;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.animation.Animation;
@@ -34,7 +30,6 @@ import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import app.trigger.DoorState.StateCode;
 import app.trigger.https.HttpsRequestHandler;
