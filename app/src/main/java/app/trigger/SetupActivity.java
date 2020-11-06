@@ -422,17 +422,17 @@ public class SetupActivity extends PreferenceActivity {
 
             // needed for SSID matching
             if (this.setup.getSSIDs().length() > 0) {
-                checkCoarseLocationPermission();
+                checkFineLocationPermission();
             }
         }
     }
 
-    private static final int REQUEST_COARSE_LOCATION_PERMISSION = 0x01;
+    private static final int REQUEST_FINE_LOCATION_PERMISSION = 0x01;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_COARSE_LOCATION_PERMISSION:
+            case REQUEST_FINE_LOCATION_PERMISSION:
                 if (Utils.allGranted(grantResults)) {
                     // permissions granted
                     Toast.makeText(getApplicationContext(), "Permissions granted - SSID matching should work now.", Toast.LENGTH_SHORT).show();
@@ -443,11 +443,11 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    // SSID matching needs coarse location permissions
-    private void checkCoarseLocationPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= 29) {
-            if (!Utils.hasCoarseLocationPermission(this)) {
-                Utils.requestCoarseLocationPermission(this, REQUEST_COARSE_LOCATION_PERMISSION);
+    // SSID matching needs fine location permissions
+    private void checkFineLocationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            if (!Utils.hasFineLocationPermission(this)) {
+                Utils.requestFineLocationPermission(this, REQUEST_FINE_LOCATION_PERMISSION);
             }
         }
     }
