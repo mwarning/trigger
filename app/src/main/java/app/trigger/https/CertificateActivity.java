@@ -2,15 +2,9 @@ package app.trigger.https;
 
 import app.trigger.R;
 import app.trigger.Utils;
-import com.github.isabsent.filepicker.SimpleFilePickerDialog;
-import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -18,13 +12,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.codekidlabs.storagechooser.StorageChooser;
+
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 
 public class CertificateActivity extends AppCompatActivity implements
-        SimpleFilePickerDialog.InteractionListenerString, CertificateFetchTask.OnTaskCompleted {
-    private static final String SELECT_FILE_REQUEST = "SELECT_FILE_REQUEST";
+        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener, CertificateFetchTask.OnTaskCompleted {
     private static final int REQUEST_PERMISSION = 0x01;
     private CertificatePreference preference; // hack
     private AlertDialog.Builder builder;
@@ -92,8 +90,17 @@ public class CertificateActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 if (Utils.hasReadPermission(self)) {
-                    final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    showListItemDialog("Pick Directory", rootPath, FOLDER_ONLY_SINGLE_CHOICE, SELECT_FILE_REQUEST);
+                    StorageChooser chooser = new StorageChooser.Builder()
+                            .withActivity(CertificateActivity.this)
+                            .withFragmentManager(getFragmentManager())
+                            .allowCustomPath(true)
+                            .setType(StorageChooser.DIRECTORY_CHOOSER)
+                            .build();
+                    chooser.show();
+
+                    // get path that the user has chosen
+                    chooser.setOnSelectListener(CertificateActivity.this);
+                    chooser.setOnCancelListener(CertificateActivity.this);
                 } else {
                     Utils.requestReadPermission(self, REQUEST_PERMISSION);
                     Utils.requestWritePermission(self, REQUEST_PERMISSION);
@@ -138,39 +145,29 @@ public class CertificateActivity extends AppCompatActivity implements
             }
         });
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder.setTitle("Confirm");
-                builder.setMessage("Really remove certificate?");
-                builder.setCancelable(false); // not necessary
+        deleteButton.setOnClickListener((View v) -> {
+            builder.setTitle("Confirm");
+            builder.setMessage("Really remove certificate?");
+            builder.setCancelable(false); // not necessary
 
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        CertificateActivity.this.certificate = null;
-                        updateCertificateInfo();
-                        dialog.cancel();
-                    }
-                });
+            builder.setPositiveButton(R.string.yes, (DialogInterface dialog, int id) -> {
+                CertificateActivity.this.certificate = null;
+                updateCertificateInfo();
+                dialog.cancel();
+            });
 
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+            builder.setNegativeButton(R.string.no, (DialogInterface dialog, int id) -> {
+                dialog.cancel();
+            });
 
-                // create dialog box
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
+            // create dialog box
+            AlertDialog alert = builder.create();
+            alert.show();
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // persist your value here
-                CertificateActivity.this.finish();
-            }
+        cancelButton.setOnClickListener((View v) -> {
+            // persist your value here
+            CertificateActivity.this.finish();
         });
 
         updateCertificateInfo();
@@ -211,26 +208,17 @@ public class CertificateActivity extends AppCompatActivity implements
         }
     }
 
-    // path picker
+    // for StorageChooser
     @Override
-    public void showListItemDialog(String title, String folderPath, SimpleFilePickerDialog.CompositeMode mode, String dialogTag){
-        SimpleFilePickerDialog.build(folderPath, mode)
-                .title(title)
-                .show(this, dialogTag);
+    public void onSelect(String path) {
+        this.selected_path = path;
+        updatePathInfo();
     }
 
+    // for StorageChooser
     @Override
-    public boolean onResult(@NonNull String dialogTag, int which, @NonNull Bundle extras) {
-        switch (dialogTag) {
-            case SELECT_FILE_REQUEST:
-                if (extras.containsKey(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)) {
-                    String selectedSinglePath = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH);
-                    this.selected_path = selectedSinglePath;
-                    updatePathInfo();
-                }
-                break;
-        }
-        return false;
+    public void onCancel() {
+        // nothing to do
     }
 
     private void updateCertificateInfo() {

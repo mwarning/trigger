@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -26,6 +25,9 @@ import android.view.MenuItem;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.net.ConnectivityManager;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
 import java.util.ArrayList;

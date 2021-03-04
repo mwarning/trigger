@@ -1,17 +1,13 @@
 package app.trigger;
 
-import com.github.isabsent.filepicker.SimpleFilePickerDialog;
+import com.codekidlabs.storagechooser.StorageChooser;
 
-import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FILE_OR_FOLDER_SINGLE_CHOICE;
+import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +18,7 @@ import java.util.Iterator;
 
 
 public class BackupActivity extends AppCompatActivity implements
-        SimpleFilePickerDialog.InteractionListenerString {
-    private static final String SELECT_PATH_REQUEST = "SELECT_PATH_REQUEST";
+        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener {
     private static final int REQUEST_PERMISSION = 0x01;
     private AlertDialog.Builder builder;
     private Button exportButton;
@@ -49,30 +44,41 @@ public class BackupActivity extends AppCompatActivity implements
         selectButton = findViewById(R.id.SelectButton);
         pathEditText = findViewById(R.id.pathEditText);
 
-        importButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.hasReadPermission(BackupActivity.this)) {
-                    importSetups();
-                } else {
-                    Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
-                }
+        importButton.setOnClickListener((View v) -> {
+            if (!Utils.hasReadPermission(BackupActivity.this)) {
+                Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
+                return;
             }
+            importSetups();
         });
 
         exportButton.setOnClickListener((View v) -> {
-            if (Utils.hasReadPermission(BackupActivity.this) && Utils.hasWritePermission(BackupActivity.this)) {
-                exportSetups();
-            } else {
-                Utils.requestWritePermission(BackupActivity.this, REQUEST_PERMISSION);
+            if (!Utils.hasReadPermission(BackupActivity.this)) {
                 Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
+                return;
             }
+
+            if (!Utils.hasWritePermission(BackupActivity.this)) {
+                Utils.requestWritePermission(BackupActivity.this, REQUEST_PERMISSION);
+                return;
+            }
+
+            exportSetups();
         });
 
         selectButton.setOnClickListener((View v) -> {
             if (Utils.hasReadPermission(BackupActivity.this)) {
-                final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                showListItemDialog("Select Path", rootPath, FILE_OR_FOLDER_SINGLE_CHOICE, SELECT_PATH_REQUEST);
+                StorageChooser chooser = new StorageChooser.Builder()
+                    .withActivity(this)
+                    .withFragmentManager(getFragmentManager())
+                    .allowCustomPath(true)
+                    .setType(StorageChooser.DIRECTORY_CHOOSER)
+                    .build();
+                chooser.show();
+
+                // get path that the user has chosen
+                chooser.setOnSelectListener(this);
+                chooser.setOnCancelListener(this);
             } else {
                 Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
             }
@@ -151,33 +157,23 @@ public class BackupActivity extends AppCompatActivity implements
         }
     }
 
-    // path picker
+    // for StorageChooser
     @Override
-    public void showListItemDialog(String title, String folderPath, SimpleFilePickerDialog.CompositeMode mode, String dialogTag){
-        SimpleFilePickerDialog.build(folderPath, mode)
-                .title(title)
-                .show(this, dialogTag);
+    public void onSelect(String path) {
+        if ((new File(path)).isDirectory()) {
+            // append slash
+            if (!path.endsWith("/")) {
+                path += "/";
+            }
+            path += "trigger-backup.json";
+        }
+        pathEditText.setText(path);
     }
 
+    // for StorageChooser
     @Override
-    public boolean onResult(@NonNull String dialogTag, int which, @NonNull Bundle extras) {
-        switch (dialogTag) {
-            case SELECT_PATH_REQUEST:
-                if (extras.containsKey(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)) {
-                    String path = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH);
-                    //setPath(path);
-                    if ((new File(path)).isDirectory()) {
-                        // append slash
-                        if (!path.endsWith("/")) {
-                            path += "/";
-                        }
-                        path += "trigger-backup.json";
-                    }
-                    pathEditText.setText(path);
-                }
-                break;
-        }
-        return false;
+    public void onCancel() {
+        // nothing to do
     }
 
     @Override

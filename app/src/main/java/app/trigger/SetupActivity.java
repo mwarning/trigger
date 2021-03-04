@@ -10,9 +10,10 @@ import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceGroup;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.lang.reflect.Field;
 import java.security.cert.Certificate;

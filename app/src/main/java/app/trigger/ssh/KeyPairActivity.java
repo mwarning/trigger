@@ -2,15 +2,9 @@ package app.trigger.ssh;
 
 import app.trigger.Log;
 import app.trigger.Utils;
-import com.github.isabsent.filepicker.SimpleFilePickerDialog;
-import static com.github.isabsent.filepicker.SimpleFilePickerDialog.CompositeMode.FOLDER_ONLY_SINGLE_CHOICE;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,16 +13,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import app.trigger.R;
+
+import com.codekidlabs.storagechooser.StorageChooser;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 
 
 public class KeyPairActivity extends AppCompatActivity implements
-        SimpleFilePickerDialog.InteractionListenerString,
+        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener,
         RegisterIdentityTask.OnTaskCompleted,
         GenerateIdentityTask.OnTaskCompleted {
-    private static final String SELECT_PATH_REQUEST = "SELECT_PATH_REQUEST";
     private static final int REQUEST_PERMISSION = 0x01;
     private KeyPairPreference preference; // hack
     private AlertDialog.Builder builder;
@@ -93,62 +91,62 @@ public class KeyPairActivity extends AppCompatActivity implements
             getIntent().getStringExtra("register_url")
         );
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String address = registerAddress.getText().toString();
-                if (address == null || address.length() == 0) {
-                    showErrorMessage("Address Empty", "Address and port needed to send public key to destination.");
-                } else if (keypair == null) {
-                    showErrorMessage("Key Pair Empty", "No public key available to register.");
-                } else {
-                    RegisterIdentityTask task = new RegisterIdentityTask(self, address, keypair);
-                    task.start();
+        registerButton.setOnClickListener((View v) -> {
+            String address = registerAddress.getText().toString();
+            if (address == null || address.length() == 0) {
+                showErrorMessage("Address Empty", "Address and port needed to send public key to destination.");
+            } else if (keypair == null) {
+                showErrorMessage("Key Pair Empty", "No public key available to register.");
+            } else {
+                RegisterIdentityTask task = new RegisterIdentityTask(self, address, keypair);
+                task.start();
+            }
+        });
+
+        createButton.setOnClickListener((View v) -> {
+            if (keyGenInProgress) {
+                showErrorMessage("In Progress", "Key generation already in progress. Please wait.");
+            } else {
+                keyGenInProgress = true;
+                int key_strength = 0;
+                switch (self.keypairStrengthSpinner.getSelectedItemPosition()) {
+                    case 0:
+                        key_strength = 1024;
+                        break;
+                    case 1:
+                        key_strength = 2048;
+                        break;
+                    case 2:
+                        key_strength = 4096;
+                        break;
+                    default:
+                        Log.e("KeyPairActivity", "Invalid selected item position");
+                        key_strength = 0;
+                        break;
+                }
+
+                if (key_strength > 0) {
+                    new GenerateIdentityTask(self).execute(key_strength);
                 }
             }
         });
 
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (keyGenInProgress) {
-                    showErrorMessage("In Progress", "Key generation already in progress. Please wait.");
-                } else {
-                    keyGenInProgress = true;
-                    int key_strength = 0;
-                    switch (self.keypairStrengthSpinner.getSelectedItemPosition()) {
-                        case 0:
-                            key_strength = 1024;
-                            break;
-                        case 1:
-                            key_strength = 2048;
-                            break;
-                        case 2:
-                            key_strength = 4096;
-                            break;
-                        default:
-                            Log.e("KeyPairActivity", "Invalid selected item position");
-                            key_strength = 0;
-                            break;
-                    }
+        selectButton.setOnClickListener((View v) -> {
+            if (Utils.hasReadPermission(self)) {
+                StorageChooser chooser = new StorageChooser.Builder()
+                    .withActivity(KeyPairActivity.this)
+                    .withFragmentManager(getFragmentManager())
+                    .allowCustomPath(true)
+                    .setType(StorageChooser.DIRECTORY_CHOOSER)
+                    .build();
+                chooser.show();
 
-                    if (key_strength > 0) {
-                        new GenerateIdentityTask(self).execute(key_strength);
-                    }
-                }
-            }
-        });
-
-        selectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.hasReadPermission(self)) {
-                    final String rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    showListItemDialog("Pick Directory", rootPath, FOLDER_ONLY_SINGLE_CHOICE, SELECT_PATH_REQUEST);
-                } else {
-                    Utils.requestReadPermission(self, REQUEST_PERMISSION);
-                    Utils.requestWritePermission(self, REQUEST_PERMISSION);
-                }
+                // get path that the user has chosen
+                chooser.setOnSelectListener(KeyPairActivity.this);
+                chooser.setOnCancelListener(KeyPairActivity.this);
+            } else {
+                Utils.requestReadPermission(self, REQUEST_PERMISSION);
+                Utils.requestWritePermission(self, REQUEST_PERMISSION);
             }
         });
 
@@ -159,55 +157,39 @@ public class KeyPairActivity extends AppCompatActivity implements
             }
         });
 
-        importButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                importKeys();
-            }
+        importButton.setOnClickListener((View v) -> {
+            importKeys();
         });
 
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // persist your value here
-                preference.setKeyPair(self.keypair);
-                self.finish();
-            }
+        okButton.setOnClickListener((View v) -> {
+            // persist your value here
+            preference.setKeyPair(self.keypair);
+            self.finish();
         });
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder.setTitle("Confirm");
-                builder.setMessage("Really remove key pair?");
-                builder.setCancelable(false); // not necessary
+        deleteButton.setOnClickListener((View v) -> {
+            builder.setTitle("Confirm");
+            builder.setMessage("Really remove key pair?");
+            builder.setCancelable(false); // not necessary
 
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        self.keypair = null;
-                        updateKeyInfo();
-                        dialog.cancel();
-                    }
-                });
+            builder.setPositiveButton(R.string.yes, (DialogInterface dialog, int id) -> {
+                self.keypair = null;
+                updateKeyInfo();
+                dialog.cancel();
+            });
 
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+            builder.setNegativeButton(R.string.no, (DialogInterface dialog, int id) -> {
+                dialog.cancel();
+            });
 
-                // create dialog box
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
+            // create dialog box
+            AlertDialog alert = builder.create();
+            alert.show();
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // persist your value here
-                self.finish();
-            }
+        cancelButton.setOnClickListener((View v) -> {
+            // persist your value here
+            self.finish();
         });
 
         updateKeyInfo();
@@ -276,26 +258,17 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
     }
 
-    // path picker
+    // for StorageChooser
     @Override
-    public void showListItemDialog(String title, String folderPath, SimpleFilePickerDialog.CompositeMode mode, String dialogTag){
-        SimpleFilePickerDialog.build(folderPath, mode)
-                .title(title)
-                .show(this, dialogTag);
+    public void onSelect(String path) {
+        this.selected_path = path;
+        updatePathInfo();
     }
 
+    // for StorageChooser
     @Override
-    public boolean onResult(@NonNull String dialogTag, int which, @NonNull Bundle extras) {
-        switch (dialogTag) {
-            case SELECT_PATH_REQUEST:
-                if (extras.containsKey(SimpleFilePickerDialog.SELECTED_SINGLE_PATH)) {
-                    String selectedSinglePath = extras.getString(SimpleFilePickerDialog.SELECTED_SINGLE_PATH);
-                    this.selected_path = selectedSinglePath;
-                    updatePathInfo();
-                }
-                break;
-        }
-        return false;
+    public void onCancel() {
+        // nothing to do
     }
 
     private void updateKeyInfo() {

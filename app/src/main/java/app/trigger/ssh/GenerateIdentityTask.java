@@ -1,20 +1,6 @@
 package app.trigger.ssh;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.InetAddress;
-import java.net.Socket;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.NavUtils;
-import android.widget.Toast;
 
 import app.trigger.Log;
 import com.jcraft.jsch.JSch;
