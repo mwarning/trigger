@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ public class BackupActivity extends AppCompatActivity implements
     private AlertDialog.Builder builder;
     private Button exportButton;
     private Button importButton;
-    private Button selectButton;
+    private ImageButton selectButton;
     private TextView pathEditText;
 
     private void showErrorMessage(String title, String message) {
@@ -42,7 +43,7 @@ public class BackupActivity extends AppCompatActivity implements
         importButton = findViewById(R.id.ImportButton);
         exportButton = findViewById(R.id.ExportButton);
         selectButton = findViewById(R.id.SelectButton);
-        pathEditText = findViewById(R.id.pathEditText);
+        pathEditText = findViewById(R.id.PathEditText);
 
         importButton.setOnClickListener((View v) -> {
             if (!Utils.hasReadPermission(BackupActivity.this)) {
