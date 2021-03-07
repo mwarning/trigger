@@ -39,7 +39,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.jcraft:jsch:0.1.54'
-    implementation 'com.github.codekidX:storage-chooser:2.0.4.4'
+    implementation 'com.github.noelchew:storage-chooser:2.0.4.4a'
     implementation 'com.google.zxing:core:3.4.0'
     implementation('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
     implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:2.0.2'
