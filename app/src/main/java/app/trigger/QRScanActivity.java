@@ -88,7 +88,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
     private JSONObject decodeSetup(String data) throws JSONException {
         try {
             // assume raw link
-            URI uri = new URI(data);
+            URI uri = new URI(data.trim());
             String scheme = uri.getScheme();
             String domain = uri.getHost();
             String path = uri.getPath();
