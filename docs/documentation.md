@@ -23,6 +23,23 @@ nc -l -k -p 3333 -c 'read key; echo "$key" >> ssh_keys.txt; echo "Your key was r
 
 Instead QR-Code imports from another Trigger app, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `ssl://` or `tcp://` will be used for MQTT and `ssh://` for SSH based door setups.
 
+## Nuki Smartlock Pairing
+
+Steps to pair Trigger with the Nuki Smartlock:
+
+1. Nuki: Press the door knob button for 3 seconds until the ring lights up (pairing mode).
+2. Phone: Enable Bluetooth.
+3. Phone: Pair phone and Nuki Smartlock.
+4. Phone: Start Trigger, add a new door entry with door type "Nuki SmartLock".
+5. Phone: Enter the name of the paired Nuki Smartlock into the "Lock Name/MAC" field (something like "Nuki_1DAB5E34").
+6. Phone: Enter some user name (not very important) and save the door setup.
+7. Nuki: If the Nuki smartlock is not in pairing mode anymore, just press the the button again.
+8. Phone: Press the open door button in Trigger. This will cause Trigger to register with the Nuki Smartlock.
+
+Now you should be able to send open/close commands.
+
+(tested with Android 10 and Nuki SmartLock 2.0)
+
 ## Build Trigger from Sources
 
 On Linux based systems:
