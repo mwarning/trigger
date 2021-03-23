@@ -386,7 +386,7 @@ public class NukiRequestHandler extends Thread {
 
         String address = getAddress(adapter, setup.device_name);
         if (address == null) {
-            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No Device found.");
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No device found.");
             return;
         }
 
