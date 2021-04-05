@@ -37,7 +37,7 @@ For further feature explanations and How-Tos, see the [Documentation](docs/docum
 
 ## Similar/Related Projects
 
-* [Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote) / [Sphincter](https://github.com/openlab-aux/sphincter)
+* [Sphincter-Remote](https://github.com/openlab-aux/Sphincter-Remote) / [Sphincter](https://github.com/openlab-aux/sphincter) / [Sphincterd](https://github.com/openlab-aux/sphincterd)
 * [D00r-app](https://github.com/h42i/d00r-app) / [D00r-key-server](https://github.com/h42i/d00r-key-server)
 * [labadoor](https://github.com/ToLABaki/labadoor) / [DoorLock](https://wiki.tolabaki.gr/w/DoorLock_v3)
 * [Krautschlüssel](https://gitlab.com/fiveop/krautschluessel)
