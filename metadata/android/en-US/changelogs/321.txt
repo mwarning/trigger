@@ -1,0 +1,2 @@
+* fix crash when selecting a background picture
+* fix crash when using the file selector on Android 11
