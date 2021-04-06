@@ -117,7 +117,7 @@ public class BackupActivity extends AppCompatActivity implements
 
             Utils.writeExternalFile(path, obj.toString().getBytes());
 
-            Toast.makeText(this, "Exported setups: " + count, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Exported " + count + " entries.", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.toString());
         }
