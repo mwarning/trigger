@@ -54,7 +54,8 @@ public class ImageActivity extends AppCompatActivity implements
         selectButton.setOnClickListener((View v) -> {
             if (Utils.hasReadPermission(ImageActivity.this)) {
                 StorageChooser chooser = new StorageChooser.Builder()
-                        .withActivity(ImageActivity.this)
+                        .withActivity(this)
+                        .withFragmentManager(getFragmentManager())
                         .allowCustomPath(true)
                         .setType(StorageChooser.FILE_PICKER)
                         .build();
@@ -120,6 +121,11 @@ public class ImageActivity extends AppCompatActivity implements
         try {
             byte[] data = Utils.readExternalFile(path);
             Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
+            if (image == null) {
+                showErrorMessage("Error", "Not a supported image format: " + path);
+                return;
+            }
+
             final int inWidth = image.getWidth();
             final int inHeight = image.getHeight();
             int outWidth = 0;
