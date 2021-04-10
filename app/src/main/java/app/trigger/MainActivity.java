@@ -338,12 +338,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 Context context = getApplicationContext();
                 // show centered text
                 Toast toast = Toast.makeText(context, state.message, Toast.LENGTH_SHORT);
-                TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-                if (v != null) {
-                    v.setGravity(Gravity.CENTER);
-                } else {
-                    Log.w(this, "Failed to find android.R.id.message");
-                }
+                toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             }
         });
