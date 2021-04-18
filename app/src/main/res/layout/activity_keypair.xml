@@ -64,7 +64,7 @@
         android:orientation="horizontal" >
 
         <Spinner
-            android:id="@+id/keypair_strength_spinner"
+            android:id="@+id/key_type_spinner"
             android:layout_weight="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -118,51 +118,37 @@
         android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_height="40dp"
-            android:layout_width="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/PathSelection"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:textAlignment="center" />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/ImportButton"
+                android:id="@+id/ImportPrivateKeyButton"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="@string/import_button" />
+                android:text="@string/import_private_key_button" />
 
             <Button
-                android:id="@+id/SelectButton"
+                android:id="@+id/ExportPublicKeyButton"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="@string/select_button" />
+                android:text="@string/export_public_key_button" />
 
             <Button
-                android:id="@+id/ExportButton"
+                android:id="@+id/ExportPrivateKeyButton"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="@string/export_button" />
+                android:text="@string/export_private_key_button" />
         </LinearLayout>
 
     </LinearLayout>

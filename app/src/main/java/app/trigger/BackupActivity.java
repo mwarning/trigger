@@ -1,31 +1,27 @@
 package app.trigger;
 
-import com.codekidlabs.storagechooser.StorageChooser;
-
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.Iterator;
 
 
-public class BackupActivity extends AppCompatActivity implements
-        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener {
-    private static final int REQUEST_PERMISSION = 0x01;
+public class BackupActivity extends AppCompatActivity {
+    private static final int READ_REQUEST_CODE = 0x01;
+    private static final int WRITE_REQUEST_CODE = 0x02;
     private AlertDialog.Builder builder;
     private Button exportButton;
     private Button importButton;
-    private ImageButton selectButton;
-    private TextView pathEditText;
 
     private void showErrorMessage(String title, String message) {
         builder.setTitle(title);
@@ -42,68 +38,46 @@ public class BackupActivity extends AppCompatActivity implements
         builder = new AlertDialog.Builder(this);
         importButton = findViewById(R.id.ImportButton);
         exportButton = findViewById(R.id.ExportButton);
-        selectButton = findViewById(R.id.SelectButton);
-        pathEditText = findViewById(R.id.PathEditText);
 
         importButton.setOnClickListener((View v) -> {
-            if (!Utils.hasReadPermission(BackupActivity.this)) {
-                Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
-                return;
-            }
-            importSetups();
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/json");
+            startActivityForResult(intent, READ_REQUEST_CODE);
         });
 
         exportButton.setOnClickListener((View v) -> {
-            if (!Utils.hasReadPermission(BackupActivity.this)) {
-                Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
-                return;
-            }
-
-            if (!Utils.hasWritePermission(BackupActivity.this)) {
-                Utils.requestWritePermission(BackupActivity.this, REQUEST_PERMISSION);
-                return;
-            }
-
-            exportSetups();
-        });
-
-        selectButton.setOnClickListener((View v) -> {
-            if (Utils.hasReadPermission(BackupActivity.this)) {
-                StorageChooser chooser = new StorageChooser.Builder()
-                    .withActivity(this)
-                    .withFragmentManager(getFragmentManager())
-                    .allowCustomPath(true)
-                    .setType(StorageChooser.DIRECTORY_CHOOSER)
-                    .build();
-                chooser.show();
-
-                // get path that the user has chosen
-                chooser.setOnSelectListener(this);
-                chooser.setOnCancelListener(this);
-            } else {
-                Utils.requestReadPermission(BackupActivity.this, REQUEST_PERMISSION);
-            }
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.putExtra(Intent.EXTRA_TITLE, "trigger-backup.json");
+            intent.setType("application/json");
+            startActivityForResult(intent, WRITE_REQUEST_CODE);
         });
     }
 
-    private void exportSetups() {
-        String path = pathEditText.getText().toString();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if (path.isEmpty()) {
-            showErrorMessage("Empty Path", "No path selected.");
+        if (resultCode != RESULT_OK) {
             return;
         }
 
-        if ((new File(path)).isDirectory() || path.endsWith("/")) {
-            showErrorMessage("Invalid Path", "Not a file name.");
+        if (data == null || data.getData() == null) {
             return;
         }
 
-        if ((new File(path)).exists()) {
-            showErrorMessage("File Exists", "Cannot overwrite existing file.");
-            return;
+        switch (requestCode) {
+        case READ_REQUEST_CODE:
+            importSetups(data.getData());
+            break;
+        case WRITE_REQUEST_CODE:
+            exportSetups(data.getData());
+            break;
         }
+    }
 
+    private void exportSetups(Uri uri) {
         try {
             JSONObject obj = new JSONObject();
 
@@ -115,29 +89,17 @@ public class BackupActivity extends AppCompatActivity implements
                 count += 1;
             }
 
-            Utils.writeExternalFile(path, obj.toString().getBytes());
-
+            Utils.writeFile(this, uri, obj.toString().getBytes());
             Toast.makeText(this, "Exported " + count + " entries.", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.toString());
         }
     }
 
-    private void importSetups() {
-        String path = pathEditText.getText().toString();
-
-        if (path.isEmpty()) {
-            showErrorMessage("Empty Path", "No path selected.");
-            return;
-        }
-
-        if ((new File(path)).isDirectory() || path.endsWith("/")) {
-            showErrorMessage("Invalid Path", "Not a file name.");
-            return;
-        }
-
+    private void importSetups(Uri uri) {
         try {
-            byte[] data = Utils.readExternalFile(path);
+            byte[] data = Utils.readFile(this, uri);
+
             JSONObject json_data = new JSONObject(
                 new String(data, 0, data.length, "UTF-8")
             );
@@ -155,39 +117,6 @@ public class BackupActivity extends AppCompatActivity implements
             Toast.makeText(this, "Imported setups: " + count, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.toString());
-        }
-    }
-
-    // for StorageChooser
-    @Override
-    public void onSelect(String path) {
-        if ((new File(path)).isDirectory()) {
-            // append slash
-            if (!path.endsWith("/")) {
-                path += "/";
-            }
-            path += "trigger-backup.json";
-        }
-        pathEditText.setText(path);
-    }
-
-    // for StorageChooser
-    @Override
-    public void onCancel() {
-        // nothing to do
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION:
-                if (Utils.allGranted(grantResults)) {
-                    // permissions granted
-                    Toast.makeText(getApplicationContext(), "Permissions granted - please try again.", Toast.LENGTH_SHORT).show();
-                } else {
-                    showErrorMessage("Permissions Required", "Action cannot be performed.");
-                }
-                break;
         }
     }
 }

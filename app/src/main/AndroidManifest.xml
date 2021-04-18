@@ -3,12 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="app.trigger">
 
-    <!-- Certificate/Key/Backup Import/Export -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- For WiFi access -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Read WiFi SSID (ACCESS_COARSE_LOCATION was sufficient before Anroid 10) -->
+    <!-- Read WiFi SSID (ACCESS_COARSE_LOCATION was sufficient before Android 10) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- For Bluetooth access -->
     <uses-permission android:name="android.permission.BLUETOOTH" />

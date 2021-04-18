@@ -27,10 +27,11 @@ class GenerateIdentityTask extends AsyncTask<Object, Void, String> {
         }
 
         try {
+            Integer type = (Integer) params[1];
             Integer bits = (Integer) params[0];
 
             JSch jsch = new JSch();
-            keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA, bits);
+            keypair = KeyPair.genKeyPair(jsch, type, bits);
             keypair.setPublicKeyComment(null);
         } catch (Exception e) {
             return e.getMessage();

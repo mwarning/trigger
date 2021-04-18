@@ -4,6 +4,8 @@ import app.trigger.Log;
 import app.trigger.Utils;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,39 +15,38 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import app.trigger.R;
 
-import com.codekidlabs.storagechooser.StorageChooser;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 
 
 public class KeyPairActivity extends AppCompatActivity implements
-        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener,
         RegisterIdentityTask.OnTaskCompleted,
         GenerateIdentityTask.OnTaskCompleted {
-    private static final int REQUEST_PERMISSION = 0x01;
+    private static final int IMPORT_PRIVATE_KEY_CODE = 0x01;
+    private static final int EXPORT_PUBLIC_KEY_CODE = 0x02;
+    private static final int EXPORT_PRIVATE_KEY_CODE = 0x03;
     private KeyPairPreference preference; // hack
     private AlertDialog.Builder builder;
     private Button createButton;
-    private Button importButton;
-    private Button exportButton;
+    private Button importPrivateKeyButton;
+    private Button exportPublicKeyButton;
+    private Button exportPrivateKeyButton;
     private Button cancelButton;
-    private Button selectButton;
     private Button registerButton;
     private Button okButton;
     private Button deleteButton;
     private TextView fingerprint;
     private TextView publicKey;
-    private TextView pathSelection;
     private EditText registerAddress;
-    private Spinner keypairStrengthSpinner;
+    private Spinner keyTypeSpinner;
 
     private KeyPair keypair;
-    private String selected_path;
     private boolean keyGenInProgress = false;
 
     private void showErrorMessage(String title, String message) {
@@ -65,27 +66,26 @@ public class KeyPairActivity extends AppCompatActivity implements
 
         builder = new AlertDialog.Builder(this);
         createButton = findViewById(R.id.CreateButton);
-        importButton = findViewById(R.id.ImportButton);
-        exportButton = findViewById(R.id.ExportButton);
+        importPrivateKeyButton = findViewById(R.id.ImportPrivateKeyButton);
+        exportPublicKeyButton = findViewById(R.id.ExportPublicKeyButton);
+        exportPrivateKeyButton = findViewById(R.id.ExportPrivateKeyButton);
         cancelButton = findViewById(R.id.CancelButton);
-        selectButton = findViewById(R.id.SelectButton);
         registerButton = findViewById(R.id.RegisterButton);
         okButton = findViewById(R.id.OkButton);
         deleteButton = findViewById(R.id.DeleteButton);
         fingerprint = findViewById(R.id.Fingerprint);
         publicKey = findViewById(R.id.PublicKey);
-        pathSelection = findViewById(R.id.PathSelection);
         registerAddress = findViewById(R.id.RegisterAddress);
-        keypairStrengthSpinner = findViewById(R.id.keypair_strength_spinner);
+        keyTypeSpinner = findViewById(R.id.key_type_spinner);
         final KeyPairActivity self = this;
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.KeypairStrengths)
+            android.R.layout.simple_spinner_item,
+            getResources().getStringArray(R.array.SshKeyTypes)
         );
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        keypairStrengthSpinner.setAdapter(dataAdapter);
-        keypairStrengthSpinner.setSelection(1);
+        keyTypeSpinner.setAdapter(dataAdapter);
+        keyTypeSpinner.setSelection(1);
 
         registerAddress.setText(
             getIntent().getStringExtra("register_url")
@@ -108,57 +108,64 @@ public class KeyPairActivity extends AppCompatActivity implements
                 showErrorMessage("In Progress", "Key generation already in progress. Please wait.");
             } else {
                 keyGenInProgress = true;
-                int key_strength = 0;
-                switch (self.keypairStrengthSpinner.getSelectedItemPosition()) {
+                int key_length = 0;
+                int key_type = 0;
+                switch (self.keyTypeSpinner.getSelectedItemPosition()) {
                     case 0:
-                        key_strength = 1024;
+                        key_length = 1024;
+                        key_type = KeyPair.RSA;
                         break;
                     case 1:
-                        key_strength = 2048;
+                        key_length = 2048;
+                        key_type = KeyPair.RSA;
                         break;
                     case 2:
-                        key_strength = 4096;
+                        key_length = 4096;
+                        key_type = KeyPair.RSA;
                         break;
                     default:
                         Log.e("KeyPairActivity", "Invalid selected item position");
-                        key_strength = 0;
+                        key_length = 0;
+                        key_type = 0;
                         break;
                 }
 
-                if (key_strength > 0) {
-                    new GenerateIdentityTask(self).execute(key_strength);
+                if (key_length > 0) {
+                    new GenerateIdentityTask(self).execute(key_type, key_length);
                 }
             }
         });
 
-        selectButton.setOnClickListener((View v) -> {
-            if (Utils.hasReadPermission(self)) {
-                StorageChooser chooser = new StorageChooser.Builder()
-                    .withActivity(KeyPairActivity.this)
-                    .withFragmentManager(getFragmentManager())
-                    .allowCustomPath(true)
-                    .setType(StorageChooser.DIRECTORY_CHOOSER)
-                    .build();
-                chooser.show();
-
-                // get path that the user has chosen
-                chooser.setOnSelectListener(KeyPairActivity.this);
-                chooser.setOnCancelListener(KeyPairActivity.this);
+        exportPublicKeyButton.setOnClickListener((View v) -> {
+            if (keypair == null) {
+                showErrorMessage("No Key", "No key loaded to export.");
             } else {
-                Utils.requestReadPermission(self, REQUEST_PERMISSION);
-                Utils.requestWritePermission(self, REQUEST_PERMISSION);
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa.pub");
+                intent.setType("*/*");
+                startActivityForResult(intent, EXPORT_PUBLIC_KEY_CODE);
             }
         });
 
-        exportButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportKeys();
+        exportPrivateKeyButton.setOnClickListener((View v) -> {
+            if (keypair == null) {
+                showErrorMessage("No Key", "No key loaded to export.");
+            } else {
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
+                intent.setType("*/*");
+                startActivityForResult(intent, EXPORT_PRIVATE_KEY_CODE);
             }
         });
 
-        importButton.setOnClickListener((View v) -> {
-            importKeys();
+        importPrivateKeyButton.setOnClickListener((View v) -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
+            intent.setType("*/*");
+            startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE);
         });
 
         okButton.setOnClickListener((View v) -> {
@@ -193,7 +200,6 @@ public class KeyPairActivity extends AppCompatActivity implements
         });
 
         updateKeyInfo();
-        updatePathInfo();
     }
 
     @Override
@@ -215,60 +221,84 @@ public class KeyPairActivity extends AppCompatActivity implements
         });
     }
 
-    private void exportKeys() {
-        if (selected_path == null) {
-            showErrorMessage("No Directory Selected", "No directory for export selected.");
-        } else if (keypair == null) {
-            showErrorMessage("No Key Pair", "No keys loaded to export.");
-        } else if (!Utils.hasWritePermission(this)) {
-            Utils.requestWritePermission(this, REQUEST_PERMISSION);
-        } else try {
+    private void exportPublicKey(Uri uri) {
+        if (keypair == null) {
+            showErrorMessage("No Key Pair", "No key loaded to export.");
+            return;
+        }
+
+        try {
             SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
+            Utils.writeFile(this, uri, data.pubkey);
 
-            Utils.writeExternalFile(selected_path + "/id_rsa.pub", data.pubkey);
-            Utils.writeExternalFile(selected_path + "/id_rsa", data.prvkey);
-
-            Toast.makeText(getApplicationContext(), "Done. Wrote files 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Done. Wrote public key: " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
     }
 
-    private void importKeys() {
-        if (selected_path == null) {
-            showErrorMessage("No Directory Selected", "No directory for import selected.");
-        } else if (!Utils.hasReadPermission(this)) {
-            Utils.requestReadPermission(this, REQUEST_PERMISSION);
-        } else try {
-            byte[] prvkey = Utils.readExternalFile(selected_path + "/id_rsa");
-            byte[] pubkey = Utils.readExternalFile(selected_path + "/id_rsa.pub");
+    private void exportPrivateKey(Uri uri) {
+        if (keypair == null) {
+            showErrorMessage("No Key", "No key loaded to export.");
+            return;
+        }
+
+        try {
+            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
+            Utils.writeFile(this, uri, data.prvkey);
+
+            Toast.makeText(getApplicationContext(), "Done. Wrote private key: " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            showErrorMessage("Error", e.getMessage());
+        }
+    }
+
+    private void importPrivateKey(Uri uri) {
+        try {
+            byte[] prvkey = Utils.readFile(this, uri);
+
+            if (Utils.arrayIndexOf(prvkey, "PUBLIC KEY".getBytes()) != -1) {
+                throw new Exception("Cannot import public key - Use private key!");
+            }
 
             if (Utils.arrayIndexOf(prvkey, "-----BEGIN OPENSSH PRIVATE KEY-----".getBytes()) != -1) {
                 throw new Exception("OpenSSH key format detected - please convert to RSA format.");
             }
 
             JSch jsch = new JSch();
-            keypair = KeyPair.load(jsch, prvkey, pubkey);
+            keypair = KeyPair.load(jsch, prvkey, null);
 
             updateKeyInfo();
 
-            Toast.makeText(getApplicationContext(), "Done. Read 'id_rsa.pub' and 'id_rsa'.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Done. Read " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
     }
 
-    // for StorageChooser
     @Override
-    public void onSelect(String path) {
-        this.selected_path = path;
-        updatePathInfo();
-    }
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    // for StorageChooser
-    @Override
-    public void onCancel() {
-        // nothing to do
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (data == null || data.getData() == null) {
+            return;
+        }
+
+        switch (requestCode) {
+        case EXPORT_PUBLIC_KEY_CODE:
+            exportPublicKey(data.getData());
+            break;
+        case EXPORT_PRIVATE_KEY_CODE:
+            exportPrivateKey(data.getData());
+            break;
+        case IMPORT_PRIVATE_KEY_CODE:
+            importPrivateKey(data.getData());
+            break;
+        }
     }
 
     private void updateKeyInfo() {
@@ -279,38 +309,16 @@ public class KeyPairActivity extends AppCompatActivity implements
 
         if (keypair == null || data == null || data.prvkey == null || data.pubkey == null) {
             deleteButton.setEnabled(false);
+            exportPublicKeyButton.setEnabled(false);
+            exportPrivateKeyButton.setEnabled(false);
             fingerprint.setText("<no key loaded>");
             publicKey.setText("<no key loaded>");
         } else {
             deleteButton.setEnabled(true);
+            exportPublicKeyButton.setEnabled(true);
+            exportPrivateKeyButton.setEnabled(true);
             fingerprint.setText(keypair.getFingerPrint());
             publicKey.setText(new String(data.pubkey));
-        }
-    }
-
-    private void updatePathInfo() {
-        if (selected_path == null) {
-            pathSelection.setText("<no path selected>");
-            exportButton.setEnabled(false);
-            importButton.setEnabled(false);
-        } else {
-            pathSelection.setText(this.selected_path);
-            exportButton.setEnabled(true);
-            importButton.setEnabled(true);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION:
-                if (Utils.allGranted(grantResults)) {
-                    // permissions granted
-                    Toast.makeText(getApplicationContext(), "Permissions granted - please try again.", Toast.LENGTH_SHORT).show();
-                } else {
-                    showErrorMessage("Permissions Required", "Action cannot be performed.");
-                }
-                break;
         }
     }
 }

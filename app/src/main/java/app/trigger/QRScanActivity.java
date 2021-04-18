@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ResultPoint;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.KeyPair;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
@@ -22,6 +24,8 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import app.trigger.ssh.SshTools;
 
 
 public class QRScanActivity extends AppCompatActivity implements BarcodeCallback {
@@ -87,42 +91,54 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
 
     private JSONObject decodeSetup(String data) throws JSONException {
         try {
-            // assume raw link
-            URI uri = new URI(data.trim());
-            String scheme = uri.getScheme();
-            String domain = uri.getHost();
-            String path = uri.getPath();
-            String query = uri.getQuery();
-            int port = uri.getPort();
-            switch (scheme) {
-                case "https":
-                case "http":
-                    String http_server = domain + ((port > 0) ? (":" + port) : "");
-                    return new JSONObject(
-                            "{\"type\": \"HttpsDoorSetup\", "
-                            + "\"name\": \""+ http_server + "\", "
-                            + "\"open_query\": \"" + data + "\"}"
-                    );
-                case "ssl":
-                case "tcp:":
-                    String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
-                    return new JSONObject(
-                                "{\"type\": \"MqttDoorSetup\", "
+            if (data.contains(" PRIVATE KEY-----") && data.length() > 256) {
+                // assume ssh private key
+                JSch jsch = new JSch();
+                KeyPair keypair_obj = KeyPair.load(jsch, data, null);
+                String keypair_str = SshTools.serializeKeyPair(keypair_obj, null);
+                return new JSONObject(
+                        "{\"type\": \"SshDoorSetup\", "
+                        + "\"name\": \"SSH Door\", "
+                        + "\"keypair\": \"" + keypair_str + "\"}"
+                );
+            } else {
+                // assume raw link
+                URI uri = new URI(data.trim());
+                String scheme = uri.getScheme();
+                String domain = uri.getHost();
+                String path = uri.getPath();
+                String query = uri.getQuery();
+                int port = uri.getPort();
+                switch (scheme) {
+                    case "https":
+                    case "http":
+                        String http_server = domain + ((port > 0) ? (":" + port) : "");
+                        return new JSONObject(
+                                "{\"type\": \"HttpsDoorSetup\", "
+                                + "\"name\": \""+ http_server + "\", "
+                                + "\"open_query\": \"" + data + "\"}"
+                        );
+                    case "ssl":
+                    case "tcp:":
+                        String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
+                        return new JSONObject(
+                                    "{\"type\": \"MqttDoorSetup\", "
+                                    + "\"name\": \"" + domain + "\", "
+                                    + "\"server\": \"" + mqtt_server + "\", "
+                                    + "\"command_topic\": \"" + path + "\", "
+                                    + "\"open_command\": \"" + query + "\"}"
+                        );
+                    case "ssh":
+                        return new JSONObject(
+                                "{\"type\": \"SshDoorSetup\", "
                                 + "\"name\": \"" + domain + "\", "
-                                + "\"server\": \"" + mqtt_server + "\", "
-                                + "\"command_topic\": \"" + path + "\", "
+                                + "\"host\": \"" + domain + "\", "
+                                + "\"port\": \"" + port + "\", "
                                 + "\"open_command\": \"" + query + "\"}"
-                    );
-                case "ssh":
-                    return new JSONObject(
-                            "{\"type\": \"SshDoorSetup\", "
-                            + "\"name\": \"" + domain + "\", "
-                            + "\"host\": \"" + domain + "\", "
-                            + "\"port\": \"" + port + "\", "
-                            + "\"open_command\": \"" + query + "\"}"
-                    );
-                default:
-                    // continue
+                        );
+                    default:
+                        // continue
+                }
             }
         } catch (Exception e) {
             // continue

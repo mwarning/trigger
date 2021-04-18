@@ -1,26 +1,24 @@
 package app.trigger;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.codekidlabs.storagechooser.StorageChooser;
-
 import java.io.ByteArrayOutputStream;
 
 
-public class ImageActivity extends AppCompatActivity implements
-        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener {
-    private static final int REQUEST_PERMISSION = 0x01;
+public class ImageActivity extends AppCompatActivity {
+    private static final int READ_IMAGE_REQUEST = 0x01;
     private ImagePreference preference; // hack
     private AlertDialog.Builder builder;
     private Button setButton;
@@ -52,26 +50,13 @@ public class ImageActivity extends AppCompatActivity implements
         deleteButton = findViewById(R.id.DeleteButton);
 
         selectButton.setOnClickListener((View v) -> {
-            if (Utils.hasReadPermission(ImageActivity.this)) {
-                StorageChooser chooser = new StorageChooser.Builder()
-                        .withActivity(this)
-                        .withFragmentManager(getFragmentManager())
-                        .allowCustomPath(true)
-                        .setType(StorageChooser.FILE_PICKER)
-                        .build();
-                chooser.show();
-
-                // get path that the user has chosen
-                chooser.setOnSelectListener(ImageActivity.this);
-                chooser.setOnCancelListener(ImageActivity.this);
-            } else {
-                Utils.requestReadPermission(ImageActivity.this, REQUEST_PERMISSION);
-                Utils.requestWritePermission(ImageActivity.this, REQUEST_PERMISSION);
-            }
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            startActivityForResult(intent, READ_IMAGE_REQUEST);
         });
 
         setButton.setOnClickListener((View v) -> {
-            Log.d("ImageActivity", "ok pressed, is image null? " + (ImageActivity.this.image == null));
             // persist your value here
             ImageActivity.this.preference.setImage(ImageActivity.this.image);
             ImageActivity.this.finish();
@@ -82,12 +67,10 @@ public class ImageActivity extends AppCompatActivity implements
             builder.setMessage("Really remove image?");
             builder.setCancelable(false); // not necessary
 
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    ImageActivity.this.image = null;
-                    ImageActivity.this.updateImageView();
-                    dialog.cancel();
-                }
+            builder.setPositiveButton(R.string.yes, (DialogInterface dialog, int id) -> {
+                ImageActivity.this.image = null;
+                ImageActivity.this.updateImageView();
+                dialog.cancel();
             });
 
             builder.setNegativeButton(R.string.no, (DialogInterface dialog, int id) -> {
@@ -113,21 +96,31 @@ public class ImageActivity extends AppCompatActivity implements
         }
     }
 
-    // for StorageChooser
     @Override
-    public void onSelect(String path) {
-        final int maxSize = 800;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == READ_IMAGE_REQUEST && resultCode == RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                updateImage(data.getData());
+            }
+        }
+    }
+
+    void updateImage(Uri uri) {
+        final int maxSize = 800;
         try {
-            byte[] data = Utils.readExternalFile(path);
+            byte[] data = Utils.readFile(this, uri);
             Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
+
             if (image == null) {
-                showErrorMessage("Error", "Not a supported image format: " + path);
+                showErrorMessage("Error", "Not a supported image format: " + uri.getLastPathSegment());
                 return;
             }
 
             final int inWidth = image.getWidth();
             final int inHeight = image.getHeight();
+
             int outWidth = 0;
             int outHeight = 0;
 
@@ -143,35 +136,14 @@ public class ImageActivity extends AppCompatActivity implements
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             boolean success = image.compress(Bitmap.CompressFormat.PNG, 0, byteStream);
             if (success) {
-                Log.d("ImageActivity", "data.length: " + data.length + " + compress.length: " + byteStream.toByteArray().length + ", base64: "
-                 + Base64.encodeToString(byteStream.toByteArray(), 0).length());
+                //Log.d("ImageActivity", "image: " + inWidth + "/" + inHeight + ", compress.length: " + byteStream.toByteArray().length + ", base64: " + Base64.encodeToString(byteStream.toByteArray(), 0).length());
                 this.image = image;
             } else {
                 throw new Exception("Cannot compress image");
             }
             updateImageView();
-        } catch( Exception e) {
+        } catch (Exception e) {
             showErrorMessage("Error", e.toString());
-        }
-    }
-
-    // for StorageChooser
-    @Override
-    public void onCancel() {
-        // nothing to do
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION:
-                if (Utils.allGranted(grantResults)) {
-                    // permissions granted
-                    Toast.makeText(getApplicationContext(), "Permissions granted - please try again.", Toast.LENGTH_SHORT).show();
-                } else {
-                    showErrorMessage("Permissions Required", "Action cannot be performed.");
-                }
-                break;
         }
     }
 }

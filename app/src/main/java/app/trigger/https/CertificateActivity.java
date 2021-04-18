@@ -4,6 +4,8 @@ import app.trigger.R;
 import app.trigger.Utils;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -12,30 +14,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.codekidlabs.storagechooser.StorageChooser;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 
-public class CertificateActivity extends AppCompatActivity implements
-        StorageChooser.OnSelectListener, StorageChooser.OnCancelListener, CertificateFetchTask.OnTaskCompleted {
-    private static final int REQUEST_PERMISSION = 0x01;
+public class CertificateActivity extends AppCompatActivity implements CertificateFetchTask.OnTaskCompleted {
+    private static final int READ_REQUEST_CODE = 0x01;
+    private static final int WRITE_REQUEST_CODE = 0x02;
     private CertificatePreference preference; // hack
     private AlertDialog.Builder builder;
     private Button importButton;
     private Button exportButton;
     private Button cancelButton;
-    private Button selectButton;
     private Button okButton;
     private Button deleteButton;
     private Button fetchButton;
     private TextView certificateInfo;
     private EditText certificateUrl;
-    private TextView pathSelection;
     private Certificate certificate;
     private String selected_path;
 
@@ -71,78 +70,53 @@ public class CertificateActivity extends AppCompatActivity implements
         builder = new AlertDialog.Builder(this);
         importButton = findViewById(R.id.ImportButton);
         exportButton = findViewById(R.id.ExportButton);
-        selectButton = findViewById(R.id.SelectPathButton);
         cancelButton = findViewById(R.id.CancelButton);
         okButton = findViewById(R.id.OkButton);
         deleteButton = findViewById(R.id.DeleteButton);
         certificateInfo = findViewById(R.id.CertificateInfo);
         certificateUrl = findViewById(R.id.CertificateUrl);
-        pathSelection = findViewById(R.id.PathSelection);
         fetchButton = findViewById(R.id.FetchButton);
         final CertificateActivity self = this;
 
         // initialize with url for registering
         certificateUrl.setText(
-                getIntent().getStringExtra("register_url")
+            getIntent().getStringExtra("register_url")
         );
 
-        selectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.hasReadPermission(self)) {
-                    StorageChooser chooser = new StorageChooser.Builder()
-                            .withActivity(CertificateActivity.this)
-                            .withFragmentManager(getFragmentManager())
-                            .allowCustomPath(true)
-                            .setType(StorageChooser.DIRECTORY_CHOOSER)
-                            .build();
-                    chooser.show();
+        importButton.setOnClickListener((View v) -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            startActivityForResult(intent, READ_REQUEST_CODE);
+        });
 
-                    // get path that the user has chosen
-                    chooser.setOnSelectListener(CertificateActivity.this);
-                    chooser.setOnCancelListener(CertificateActivity.this);
-                } else {
-                    Utils.requestReadPermission(self, REQUEST_PERMISSION);
-                    Utils.requestWritePermission(self, REQUEST_PERMISSION);
-                }
+        exportButton.setOnClickListener((View v) -> {
+            if (certificate == null) {
+                showErrorMessage("No Certificate", "No Certificate loaded to export.");
+            } else {
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.putExtra(Intent.EXTRA_TITLE, "cert.pem");
+                intent.setType("*/*");
+                startActivityForResult(intent, WRITE_REQUEST_CODE);
             }
         });
 
-        exportButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportCertificateFile();
+        fetchButton.setOnClickListener((View v) -> {
+            String url = certificateUrl.getText().toString();
+            if (url == null || url.isEmpty()) {
+                showErrorMessage("Empty URL", "No URL set to fetch a certificate from.");
+            } else {
+                new CertificateFetchTask(CertificateActivity.this).execute(url);
             }
         });
 
-        importButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                importCertificateFile();
+        okButton.setOnClickListener((View v) -> {
+            // persist your value here
+            if (CertificateActivity.this.certificate != null) {
+                preference.setCertificate(CertificateActivity.this.certificate);
             }
-        });
-
-        fetchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = certificateUrl.getText().toString();
-                if (url == null || url.isEmpty()) {
-                    showErrorMessage("Empty URL", "No URL set to fetch a certificate from.");
-                } else {
-                    new CertificateFetchTask(CertificateActivity.this).execute(url);
-                }
-            }
-        });
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // persist your value here
-                if (CertificateActivity.this.certificate != null) {
-                    preference.setCertificate(CertificateActivity.this.certificate);
-                }
-                CertificateActivity.this.finish();
-            }
+            CertificateActivity.this.finish();
         });
 
         deleteButton.setOnClickListener((View v) -> {
@@ -171,54 +145,52 @@ public class CertificateActivity extends AppCompatActivity implements
         });
 
         updateCertificateInfo();
-        updatePathInfo();
     }
 
-    private void exportCertificateFile() {
-        String path = this.selected_path;
-        if (path == null || path.isEmpty()) {
-            showErrorMessage("No Directory Selected", "No directory for export selected.");
-        } else if (certificate == null) {
+    private void exportCertificateFile(Uri uri) {
+        if (certificate == null) {
             showErrorMessage("No Certificate", "No Certificate loaded to export.");
-        } else if (!Utils.hasWritePermission(this)) {
-            Utils.requestWritePermission(this, REQUEST_PERMISSION);
         } else try {
-            Utils.writeExternalFile(path + "/cert.pem", HttpsTools.serializeCertificate(certificate).getBytes());
-
-            Toast.makeText(getApplicationContext(), "Done. Wrote file 'cert.pem'.", Toast.LENGTH_SHORT).show();
+            String pem = HttpsTools.serializeCertificate(certificate);
+            Utils.writeFile(this, uri, pem.getBytes());
+            Toast.makeText(getApplicationContext(), "Done. Wrote " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
+            updateCertificateInfo();
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
     }
 
-    private void importCertificateFile() {
-        String path = this.selected_path;
-        if (path == null || path.isEmpty()) {
-            showErrorMessage("No Directory Selected", "No directory for import selected.");
-        } else if (!Utils.hasReadPermission(this)) {
-            Utils.requestReadPermission(this, REQUEST_PERMISSION);
-        } else try {
-            byte[] cert = Utils.readExternalFile(selected_path + "/cert.pem");
-
-            certificate = HttpsTools.deserializeCertificate(new String(cert));
-
-            Toast.makeText(getApplicationContext(), "Done. Read 'cert.pem'.", Toast.LENGTH_SHORT).show();
+    private void importCertificateFile(Uri uri) {
+        try {
+            byte[] cert = Utils.readFile(this, uri);
+            certificate = HttpsTools.deserializeCertificate(new String(cert, "UTF-8"));
+            Toast.makeText(getApplicationContext(), "Done. Read " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
+            updateCertificateInfo();
         } catch (Exception e) {
             showErrorMessage("Error", e.getMessage());
         }
     }
 
-    // for StorageChooser
     @Override
-    public void onSelect(String path) {
-        this.selected_path = path;
-        updatePathInfo();
-    }
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    // for StorageChooser
-    @Override
-    public void onCancel() {
-        // nothing to do
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (data == null || data.getData() == null) {
+            return;
+        }
+
+        switch (requestCode) {
+        case WRITE_REQUEST_CODE:
+            exportCertificateFile(data.getData());
+            break;
+        case READ_REQUEST_CODE:
+            importCertificateFile(data.getData());
+            break;
+        }
     }
 
     private void updateCertificateInfo() {
@@ -226,10 +198,12 @@ public class CertificateActivity extends AppCompatActivity implements
         try {
             if (certificate == null) {
                 deleteButton.setEnabled(false);
+                exportButton.setEnabled(false);
                 text = "<no certificate>";
                 certificateInfo.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
             } else {
                 deleteButton.setEnabled(true);
+                exportButton.setEnabled(true);
                 if (certificate instanceof X509Certificate) {
                     X509Certificate c = (X509Certificate) certificate;
                     if (!HttpsTools.isValid(c)) {
@@ -248,31 +222,5 @@ public class CertificateActivity extends AppCompatActivity implements
             certificateInfo.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
         }
         certificateInfo.setText(text);
-    }
-
-    private void updatePathInfo() {
-        if (selected_path == null || selected_path.isEmpty()) {
-            pathSelection.setText("<none selected>");
-            exportButton.setEnabled(false);
-            importButton.setEnabled(false);
-        } else {
-            pathSelection.setText(selected_path);
-            exportButton.setEnabled(true);
-            importButton.setEnabled(true);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION:
-                if (Utils.allGranted(grantResults)) {
-                    // permissions granted
-                    Toast.makeText(getApplicationContext(), "Permissions granted - please try again.", Toast.LENGTH_SHORT).show();
-                } else {
-                    showErrorMessage("Permissions Required", "Action cannot be performed.");
-                }
-                break;
-        }
     }
 }

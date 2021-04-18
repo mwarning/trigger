@@ -2,9 +2,13 @@ package app.trigger;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.util.Base64;
 
 import androidx.core.app.ActivityCompat;
@@ -13,9 +17,11 @@ import androidx.core.content.ContextCompat;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -122,37 +128,35 @@ public class Utils {
         return sslContext.getSocketFactory();
     }
 
-    // write file to external storage
-    public static void writeExternalFile(String filepath, byte[] data) throws IOException {
-        File file = new File(filepath);
-        if (file.exists() && file.isFile()) {
-            if (!file.delete()) {
-                throw new IOException("Failed to delete existing file: " + filepath);
-            }
-        }
-        file.createNewFile();
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(data);
-        fos.close();
+    public static long getFileSize(Context ctx, Uri uri) {
+        Cursor cursor = ctx.getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        long size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE));
+        cursor.close();
+        return size;
     }
 
-    // read file from external storage
-    public static byte[] readExternalFile(String filepath) throws IOException {
-        File file = new File(filepath);
-        if (!file.exists() || !file.isFile()) {
-            throw new IOException("File does not exist: " + filepath);
-        }
-        FileInputStream fis = new FileInputStream(file);
+    public static byte[] readFile(Context ctx, Uri uri) throws IOException {
+        int size = (int) getFileSize(ctx, uri);
+        InputStream is = ctx.getContentResolver().openInputStream(uri);
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         int nRead;
-        byte[] data = new byte[16384];
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        while ((nRead = fis.read(data, 0, data.length)) != -1) {
+        byte[] data = new byte[size];
+
+        while ((nRead = is.read(data, 0, data.length)) != -1) {
             buffer.write(data, 0, nRead);
         }
 
-        fis.close();
-        return buffer.toByteArray();
+        is.close();
+        return data;
+    }
+
+    public static void writeFile(Context ctx, Uri uri, byte[] data) throws IOException {
+        OutputStream fos = ctx.getContentResolver().openOutputStream(uri);
+        fos.write(data);
+        fos.close();
     }
 
     public static InetSocketAddress createSocketAddress(String addr)
