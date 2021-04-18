@@ -1,0 +1,4 @@
+* use Android storage framework
+* use ssh library fork
+  * www.jcraft.com/jsch/ => github.com/mwiede/jsch
+  * chance to support ssh-ed25519 in the future
