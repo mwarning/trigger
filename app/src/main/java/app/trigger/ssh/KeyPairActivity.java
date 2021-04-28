@@ -85,7 +85,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         );
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         keyTypeSpinner.setAdapter(dataAdapter);
-        keyTypeSpinner.setSelection(1);
+        keyTypeSpinner.setSelection(0);
 
         registerAddress.setText(
             getIntent().getStringExtra("register_url")
