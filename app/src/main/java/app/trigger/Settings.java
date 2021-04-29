@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 
 public class Settings {
+    private static final String TAG = "Settings";
     private static SharedPreferences sharedPreferences;
     private static ArrayList<Setup> setups;
     private static String app_version; // stored in program
@@ -54,7 +55,7 @@ public class Settings {
     private static void upgradeDB() {
         // update from 1.2.1 to 1.3.0
         if (db_version.equals("1.2.1")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.3.1");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.3.1");
 
             // Recover setup from 1.2.0
             String name = sharedPreferences.getString("prefName", "");
@@ -85,7 +86,7 @@ public class Settings {
 
         // update from 1.3.0/1.3.1 to 1.4.0
         if (db_version.equals("1.3.0") || db_version.equals("1.3.1")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.4.0");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.4.0");
 
             for (int id = 0; id < 10; id += 1) {
                 String prefix = String.format("item_%03d_", id);
@@ -115,7 +116,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.4.0")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.6.0");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.6.0");
             for (int id = 0; id < 10; id += 1) {
                 String prefix = String.format("item_%03d_", id);
                 // change type of entry
@@ -130,7 +131,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.6.0")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.7.0");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.7.0");
             for (int id = 0; id < 10; id += 1) {
                 String prefix = String.format("item_%03d_", id);
                 // change type of entry
@@ -151,7 +152,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.7.0")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.7.1");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.7.1");
             // nothing to change
             setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.7.1").commit();
@@ -159,7 +160,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.7.1")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.8.0");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.8.0");
             // convert settings from key based scheme to json
             ArrayList<Setup> setups = getAllSetups_pre_172();
             for (Setup setup : setups) {
@@ -173,7 +174,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.8.0")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.9.0");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.9.0");
             // nothing to change
             setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.9.0").commit();
@@ -181,7 +182,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.9.0")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.9.1");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.9.1");
             // nothing to change
             setups = new ArrayList();
             sharedPreferences.edit().putString("db_version", "1.9.1").commit();
@@ -189,7 +190,7 @@ public class Settings {
         }
 
         if (db_version.equals("1.9.1")) {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.9.2");
+            Log.i(TAG, "Update database format from " + db_version + " to 1.9.2");
             setups = new ArrayList();
             // convert keypair format
             SharedPreferences.Editor e = sharedPreferences.edit();
@@ -273,10 +274,10 @@ public class Settings {
                 } else if (type == Certificate.class) {
                     obj.put(name, HttpsTools.serializeCertificate((Certificate) value));
                 } else {
-                    Log.e("Settings", "toJsonObject: Unhandled type for " + name + ": " + type.toString());
+                    Log.e(TAG, "toJsonObject: Unhandled type for " + name + ": " + type.toString());
                 }
             } catch (Exception e) {
-                Log.e("Settings", "toJsonObject: " + e.toString());
+                Log.e(TAG, "toJsonObject: " + e.toString());
                 return null;
             }
         }
@@ -322,7 +323,7 @@ public class Settings {
                     field.set(setup, HttpsTools.deserializeCertificate((String) value));
                 } else {
                     // show warning?
-                    Log.e("Settings", "setField: Unhandled type for " + name + ": " + type.toString() + ", target type: " + value_type.toString());
+                    Log.e(TAG, "setField: Unhandled type for " + name + ": " + type.toString() + ", target type: " + value_type.toString());
                 }
                 break;
             }
@@ -347,7 +348,7 @@ public class Settings {
         } else if (type.equals(MqttDoorSetup.type)) {
             setup = new MqttDoorSetup(id, "");
         } else {
-            Log.e("Settings.loadSetup", "Found unknown setup type: " + type);
+            Log.e(TAG, "Found unknown setup type: " + type);
             return null;
         }
 
@@ -466,7 +467,7 @@ public class Settings {
             } else if (type.equals(MqttDoorSetup.type)) {
                 setup = new MqttDoorSetup(id, "");
             } else {
-                Log.e("Settings.loadSetup", "Found unknown setup type: " + type);
+                Log.e(TAG, "Found unknown setup type: " + type);
                 return null;
             }
         }
@@ -501,10 +502,10 @@ public class Settings {
                 } else if (type == Certificate.class) {
                     field.set(setup, HttpsTools.deserializeCertificate(value));
                 } else {
-                    Log.e("Settings", "loadSetup: Unhandled type for " + name + ": " + type.toString());
+                    Log.e(TAG, "loadSetup(): Unhandled type for " + name + ": " + type.toString());
                 }
             } catch (Exception ex) {
-                Log.e("Settings", "loadSetup: " + ex.toString());
+                Log.e(TAG, "loadSetup(): " + ex.toString());
             }
         }
 
@@ -614,7 +615,7 @@ public class Settings {
     static void printAll(SharedPreferences pref) {
         Map<String,?> keys = pref.getAll();
         for (Map.Entry<String,?> entry : keys.entrySet()){
-            Log.d("Settings.printAll", entry.getKey() + ": " +  entry.getValue().toString());
+            Log.d(TAG, "printAll(): ", entry.getKey() + ": " +  entry.getValue().toString());
         }
     }
 }

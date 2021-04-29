@@ -26,6 +26,7 @@ import app.trigger.ssh.KeyPairPreference;
 
 
 public class SetupActivity extends PreferenceActivity {
+    private static final String TAG = "SetupActivity";
     private ArrayList<PreferenceGroup> setupGroups;
     private AlertDialog.Builder builder;
     private Setup setup;
@@ -66,7 +67,7 @@ public class SetupActivity extends PreferenceActivity {
             }
         }
 
-        Log.e("SetupActivity", "PreferenceGroup not found: " + key);
+        Log.e(TAG, "showGroup(): PreferenceGroup not found: " + key);
     }
 
     public void onSaveButtonClicked(View v) {
@@ -125,7 +126,7 @@ public class SetupActivity extends PreferenceActivity {
                 pc.setTitle(R.string.new_entry);
             }
         } else {
-            Log.e("SetupActivity.setTitle", "Cannot find main_category");
+            Log.e(TAG, "setMainGroupTitle(): Cannot find main_category");
         }
     }
 
@@ -159,7 +160,7 @@ public class SetupActivity extends PreferenceActivity {
             lp.setValue(value);
             // set summary field to "%s" in xml
         } else {
-            Log.w("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
+            Log.w(TAG, "setText(): Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -172,7 +173,7 @@ public class SetupActivity extends PreferenceActivity {
             ListPreference lp = (ListPreference) p;
             return lp.getValue();
         } else {
-            Log.w("SetupActivity.setText", "Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
+            Log.w(TAG, "getText(): Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
             return "";
         }
     }
@@ -182,7 +183,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             cbp.setChecked(checked);
         } else {
-            Log.e("SetupActivity", "Cannot find CheckBoxPreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "setChecked(): Cannot find CheckBoxPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -191,7 +192,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cbp != null) {
             return cbp.isChecked();
         } else {
-            Log.e("SetupActivity", "Cannot find CheckBoxPreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "getChecked(): Cannot find CheckBoxPreference in PreferenceGroup with key: " + key);
             return false;
         }
     }
@@ -201,7 +202,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             return kpp.getImage();
         } else {
-            Log.e("SetupActivity", "Cannot find ImagePreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "getBitmap(): Cannot find ImagePreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
@@ -211,7 +212,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             kpp.setImage(image);
         } else {
-            Log.e("SetupActivity", "Cannot find ImagePreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "setBitmap(): Cannot find ImagePreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -220,7 +221,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             return kpp.getKeyPair();
         } else {
-            Log.e("SetupActivity", "Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "getKeyPair(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
@@ -230,7 +231,7 @@ public class SetupActivity extends PreferenceActivity {
         if (kpp != null) {
             kpp.setKeyPair(keypair);
         } else {
-            Log.e("SetupActivity", "Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "setKeyPair(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -239,7 +240,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cp != null) {
             return cp.getCertificate();
         } else {
-            Log.e("SetupActivity", "Cannot find CertificatePreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "getCertificate(): Cannot find CertificatePreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
@@ -249,7 +250,7 @@ public class SetupActivity extends PreferenceActivity {
         if (cp != null) {
             cp.setCertificate(certificate);
         } else {
-            Log.e("SetupActivity", "Cannot find CertificatePreference in PreferenceGroup with key: " + key);
+            Log.e(TAG, "setCertificate(): Cannot find CertificatePreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -294,7 +295,7 @@ public class SetupActivity extends PreferenceActivity {
                 loadSetup();
                 return true;
             } else {
-                Log.e("SetupActivity", "Unhandled type from selection: " + type);
+                Log.e(TAG, "Unhandled type from selection: " + type);
                 return false;
             }
         });
@@ -360,7 +361,7 @@ public class SetupActivity extends PreferenceActivity {
                     throw new Exception("Unhandled type " + type.getSimpleName() + " of field " + name);
                 }
             } catch (Exception e) {
-                Log.e("SetupActivity", "loadSetup: " + e.toString());
+                Log.e(TAG, "loadSetup: " + e.toString());
                 e.printStackTrace();
             }
         }
@@ -381,7 +382,7 @@ public class SetupActivity extends PreferenceActivity {
                     // ignore - id is not displayed and type is read only field
                 } else if (findAnyPreference(name, null) == null) {
                     // ignore
-                    Log.w("SetupActivity", "ignore setup field: " + name);
+                    Log.w(TAG, "storeSetup(): Ignore setup field: " + name);
                 } else if (type == String.class) {
                     field.set(setup, getText(name));
                 } else if (type == Boolean.class) {
@@ -401,7 +402,7 @@ public class SetupActivity extends PreferenceActivity {
                 } else if (type == Certificate.class) {
                     field.set(setup, getCertificate(name));
                 } else {
-                    Log.e("SetupActivity", "storeSetup: Unhandled type for " + name + ": " + type.toString());
+                    Log.e(TAG, "storeSetup: Unhandled type for " + name + ": " + type.toString());
                 }
             } catch (Exception ex) {
                 showErrorMessage("Error", "Input for '" + name + "' caused an error: " + ex.toString());
