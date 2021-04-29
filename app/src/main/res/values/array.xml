@@ -15,9 +15,11 @@
         <item>NukiDoorSetup</item>
     </string-array>
     <string-array name="SshKeyTypes">
-        <item>Weak (1024 bit)</item>
-        <item>Strong (2048 bit)</item>
-        <item>Very Strong (4096 bit)</item>
+        <item>ED25519</item>
+        <item>ECDSA (nistp384)</item>
+        <item>ECDSA (nistp521)</item>
+        <item>RSA (2048)</item>
+        <item>RSA (4096)</item>
     </string-array>
     <string-array name="MqttQosNames">
         <item>Fire and Forget (0)</item>

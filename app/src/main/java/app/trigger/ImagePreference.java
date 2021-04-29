@@ -2,13 +2,11 @@ package app.trigger;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 
 import app.trigger.SetupActivity;
-import com.jcraft.jsch.KeyPair;
 
 import android.graphics.Bitmap;
 

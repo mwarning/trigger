@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -40,6 +41,7 @@ import app.trigger.ssh.SshRequestHandler;
 import app.trigger.bluetooth.BluetoothRequestHandler;
 import app.trigger.mqtt.MqttRequestHandler;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.JSONObject;
 
 
@@ -63,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         close_door,
         ring_door, // ring the door bell
         fetch_state // fetch the door state
+    }
+
+    // BouncyCastle is a crypto library for SSHJ
+    static {
+        Security.removeProvider("BC");//first remove default os provider
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);//add new provider
     }
 
     // helper class for spinner

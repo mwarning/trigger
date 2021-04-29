@@ -2,9 +2,8 @@ package app.trigger;
 
 import android.graphics.Bitmap;
 
-import com.jcraft.jsch.KeyPair;
-
 import app.trigger.DoorState.StateCode;
+import app.trigger.ssh.KeyPairTrigger;
 
 
 public class SshDoorSetup implements Setup {
@@ -12,7 +11,7 @@ public class SshDoorSetup implements Setup {
     int id;
     String name;
     public Boolean require_wifi;
-    public KeyPair keypair;
+    public KeyPairTrigger keypair;
     public String user;
     public String password;
     public String host;

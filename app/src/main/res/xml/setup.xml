@@ -193,7 +193,6 @@
             android:persistent="false"
             android:inputType="textNoSuggestions" />
 
-
         <EditTextPreference
             android:key="locked_pattern"
             android:title="Reply Pattern (locked)"

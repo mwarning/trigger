@@ -7,19 +7,18 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import app.trigger.Utils;
-import com.jcraft.jsch.KeyPair;
 
 
 class RegisterIdentityTask extends Thread {
     private OnTaskCompleted listener;
     private String address;
-    private KeyPair keypair;
+    private KeyPairTrigger keypair;
 
     public interface OnTaskCompleted {
         void onRegisterIdentityTaskCompleted(String message);
     }
 
-    public RegisterIdentityTask(OnTaskCompleted listener, String address, KeyPair keypair) {
+    public RegisterIdentityTask(OnTaskCompleted listener, String address, KeyPairTrigger keypair) {
         this.listener = listener;
         this.address = address;
         this.keypair = keypair;
@@ -32,7 +31,7 @@ class RegisterIdentityTask extends Thread {
             );
 
             if (addr.getPort() == 0) {
-                listener.onRegisterIdentityTaskCompleted("Missing port, use <ip-address>:<port>");
+                listener.onRegisterIdentityTaskCompleted("Missing port, use <address>:<port>");
                 return;
             }
 
@@ -42,11 +41,11 @@ class RegisterIdentityTask extends Thread {
             InputStream is = client.getInputStream();
             DataOutputStream writer = new DataOutputStream(os);
 
-            // write key in PEM format
-            keypair.writePublicKey(writer, keypair.getPublicKeyComment());
+            // send public key in PEM format
+            os.write(keypair.getPublicKeyPEM().getBytes());
             os.flush();
 
-            String reply = Utils.readInputStreamWithTimeout(is, 1024, 500);
+            String reply = Utils.readInputStreamWithTimeout(is, 1024, 1000);
             client.close();
 
             if (reply.length() > 0) {
@@ -54,7 +53,7 @@ class RegisterIdentityTask extends Thread {
             } else {
                 listener.onRegisterIdentityTaskCompleted("Done");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             listener.onRegisterIdentityTaskCompleted(e.toString());
         }
     }

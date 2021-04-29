@@ -7,14 +7,13 @@ import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 
 import app.trigger.SetupActivity;
-import com.jcraft.jsch.KeyPair;
 
 /*
 * Stores a string in preference. Indicated the presence of data with a switch.
 * On click, the file chooser opens.
 */
 public class KeyPairPreference extends SwitchPreference {
-    private KeyPair keypair;
+    private KeyPairTrigger keypair;
     private Context context;
     static KeyPairPreference self;
 
@@ -62,7 +61,7 @@ public class KeyPairPreference extends SwitchPreference {
         });
     }
 
-    public void setKeyPair(KeyPair keypair) {
+    public void setKeyPair(KeyPairTrigger keypair) {
         this.keypair = keypair;
 
         if (this.keypair == null) {
@@ -72,7 +71,7 @@ public class KeyPairPreference extends SwitchPreference {
         }
     }
 
-    public KeyPair getKeyPair() {
+    public KeyPairTrigger getKeyPair() {
         return keypair;
     }
 

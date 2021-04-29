@@ -1,15 +1,15 @@
 package app.trigger.ssh;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import app.trigger.WifiTools;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.KeyPair;
-import com.jcraft.jsch.Session;
+
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.common.IOUtils;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 import app.trigger.MainActivity.Action;
 import app.trigger.SshDoorSetup;
@@ -69,8 +69,9 @@ public class SshRequestHandler extends Thread {
         String user = setup.user;
         String password = setup.password;
         String host = setup.host;
-        KeyPair keypair = setup.keypair;
+        KeyPairTrigger keypair = setup.keypair;
         int port = setup.port;
+        Session session = null;
 
         try {
             if (command.isEmpty()) {
@@ -93,49 +94,38 @@ public class SshRequestHandler extends Thread {
                 return;
             }
 
-            JSch jsch = new JSch();
-
-            if (keypair != null) {
-                SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
-                jsch.addIdentity("authkey", data.prvkey, data.pubkey, "".getBytes());
-            }
-
-            Session session = jsch.getSession(user, host, port);
-
-            if (password.length() > 0) {
-                session.setPassword(password);
-            }
-
-            session.setConfig("StrictHostKeyChecking", "no");
-
-            StringBuilder outputBuffer = new StringBuilder();
+            final SSHClient ssh = new SSHClient();
 
             try {
-                session.connect(5000); // 5sec timeout
+                ssh.addHostKeyVerifier(new PromiscuousVerifier());
+                ssh.connect(host, port);
+                if (keypair != null) {
+                    KeyProvider kp = ssh.loadKeys(keypair.getPrivateKeyPEM(), null, null);
+                    ssh.authPublickey(user, kp);
+                } else {
+                    ssh.authPublickey(user, password);
+                }
+                session = ssh.startSession();
+                Session.Command cmd = session.exec(command);
+                cmd.join(5, TimeUnit.SECONDS);
 
-                Channel channel = session.openChannel("exec");
-
-                ((ChannelExec) channel).setCommand(command);
-                InputStream commandOutput = channel.getInputStream();
-
-                channel.connect();
-
-                int readByte = commandOutput.read();
-
-                while (readByte != 0xffffffff) {
-                   outputBuffer.append((char)readByte);
-                   readByte = commandOutput.read();
+                String output = IOUtils.readFully(cmd.getInputStream()).toString();
+                if (cmd.getExitStatus() == 0) {
+                    listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, output);
+                } else {
+                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, output);
+                }
+            } finally {
+                try {
+                    if (session != null) {
+                        session.close();
+                    }
+                } catch (IOException e) {
+                    // Do Nothing
                 }
 
-                channel.disconnect();
-                session.disconnect();
-            } catch (IOException ioe) {
-                listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, ioe.getMessage());
-            } catch (JSchException jse) {
-                listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, jse.getMessage());
+                ssh.disconnect();
             }
-
-            listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, outputBuffer.toString());
         } catch (Exception e) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.toString());
         }

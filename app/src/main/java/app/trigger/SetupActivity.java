@@ -19,10 +19,9 @@ import java.lang.reflect.Field;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 
-import com.jcraft.jsch.KeyPair;
-
 import app.trigger.https.CertificatePreference;
 import app.trigger.ssh.KeyPairPreference;
+import app.trigger.ssh.KeyPairTrigger;
 
 
 public class SetupActivity extends PreferenceActivity {
@@ -216,7 +215,7 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private KeyPair getKeyPair(String key) {
+    private KeyPairTrigger getKeyPair(String key) {
         KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
         if (kpp != null) {
             return kpp.getKeyPair();
@@ -226,7 +225,7 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private void setKeyPair(String key, KeyPair keypair) {
+    private void setKeyPair(String key, KeyPairTrigger keypair) {
         KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
         if (kpp != null) {
             kpp.setKeyPair(keypair);
@@ -353,8 +352,8 @@ public class SetupActivity extends PreferenceActivity {
                     setChecked(name, (boolean) value);
                 } else if (type == Bitmap.class) {
                     setBitmap(name, (Bitmap) value);
-                } else if (type == KeyPair.class) {
-                    setKeyPair(name, (KeyPair) value);
+                } else if (type == KeyPairTrigger.class) {
+                    setKeyPair(name, (KeyPairTrigger) value);
                 } else if (type == Certificate.class) {
                     setCertificate(name, (Certificate) value);
                 } else {
@@ -397,7 +396,7 @@ public class SetupActivity extends PreferenceActivity {
                    field.set(setup, Long.parseLong(getText(name)));
                 } else if (type == Bitmap.class) {
                     field.set(setup, getBitmap(name));
-                } else if (type == KeyPair.class) {
+                } else if (type == KeyPairTrigger.class) {
                     field.set(setup, getKeyPair(name));
                 } else if (type == Certificate.class) {
                     field.set(setup, getCertificate(name));

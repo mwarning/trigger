@@ -23,6 +23,10 @@ nc -l -k -p 3333 -c 'read key; echo "$key" >> ssh_keys.txt; echo "Your key was r
 
 Instead QR-Code imports from another Trigger app, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `ssl://` or `tcp://` will be used for MQTT and `ssh://` for SSH based door setups.
 
+## Import SSH Key As QR-Code
+
+Use e.g. `qrencode -t ansiutf8 < .ssh/id_ed25519` to show an SSH private key as QR-Code. Scan with trigger and add the server address, user, command etc..
+
 ## Nuki Smartlock Pairing
 
 Steps to pair Trigger with the Nuki Smartlock:

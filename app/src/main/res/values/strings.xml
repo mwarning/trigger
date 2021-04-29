@@ -25,8 +25,8 @@
     <string name="import_button">Import</string>
     <string name="export_button">Export</string>
     <string name="import_private_key_button">Import Private Key</string>
-    <string name="export_public_key_button">Export Private Key</string>
-    <string name="export_private_key_button">Export Public Key</string>
+    <string name="export_public_key_button">Export Public Key</string>
+    <string name="export_private_key_button">Export Private Key</string>
     <string name="create_button">Create</string>
     <string name="register_button">Register</string>
     <string name="fetch_button">Fetch</string>

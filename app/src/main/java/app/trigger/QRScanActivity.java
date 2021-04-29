@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ResultPoint;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.KeyPair;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
@@ -91,16 +89,13 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
 
     private JSONObject decodeSetup(String data) throws JSONException {
         try {
-            if (data.contains(" PRIVATE KEY-----") && data.length() > 256) {
-                // assume ssh private key
-                JSch jsch = new JSch();
-                KeyPair keypair_obj = KeyPair.load(jsch, data, null);
-                String keypair_str = SshTools.serializeKeyPair(keypair_obj, null);
-                return new JSONObject(
-                        "{\"type\": \"SshDoorSetup\", "
-                        + "\"name\": \"SSH Door\", "
-                        + "\"keypair\": \"" + keypair_str + "\"}"
-                );
+            if (SshTools.isPrivateKey(data)) {
+                // assume SSH private key
+                JSONObject obj = new JSONObject();
+                obj.put("type", "SshDoorSetup");
+                obj.put("name", "SSH Door");
+                obj.put("keypair", data);
+                return obj;
             } else {
                 // assume raw link
                 URI uri = new URI(data.trim());
@@ -111,31 +106,34 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                 int port = uri.getPort();
                 switch (scheme) {
                     case "https":
-                    case "http":
+                    case "http": {
                         String http_server = domain + ((port > 0) ? (":" + port) : "");
-                        return new JSONObject(
-                                "{\"type\": \"HttpsDoorSetup\", "
-                                + "\"name\": \""+ http_server + "\", "
-                                + "\"open_query\": \"" + data + "\"}"
-                        );
+                        JSONObject obj = new JSONObject();
+                        obj.put("type", "HttpsDoorSetup");
+                        obj.put("name", "http_server");
+                        obj.put("open_query", data);
+                        return obj;
+                    }
                     case "ssl":
-                    case "tcp:":
+                    case "tcp:": {
                         String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
-                        return new JSONObject(
-                                    "{\"type\": \"MqttDoorSetup\", "
-                                    + "\"name\": \"" + domain + "\", "
-                                    + "\"server\": \"" + mqtt_server + "\", "
-                                    + "\"command_topic\": \"" + path + "\", "
-                                    + "\"open_command\": \"" + query + "\"}"
-                        );
-                    case "ssh":
-                        return new JSONObject(
-                                "{\"type\": \"SshDoorSetup\", "
-                                + "\"name\": \"" + domain + "\", "
-                                + "\"host\": \"" + domain + "\", "
-                                + "\"port\": \"" + port + "\", "
-                                + "\"open_command\": \"" + query + "\"}"
-                        );
+                        JSONObject obj = new JSONObject();
+                        obj.put("type", "MqttDoorSetup");
+                        obj.put("name", domain);
+                        obj.put("server", mqtt_server);
+                        obj.put("command_topic", path);
+                        obj.put("open_command", query);
+                        return obj;
+                    }
+                    case "ssh": {
+                        JSONObject obj = new JSONObject();
+                        obj.put("type", "SshDoorSetup");
+                        obj.put("name", domain);
+                        obj.put("host", domain);
+                        obj.put("port", port);
+                        obj.put("open_command", query);
+                        return obj;
+                    }
                     default:
                         // continue
                 }
@@ -144,7 +142,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
             // continue
         }
 
-        // assume json data
+        // assume json data, throws exception otherwise
         return new JSONObject(data);
     }
 

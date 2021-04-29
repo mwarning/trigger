@@ -1,14 +1,21 @@
 package app.trigger.ssh;
 
-import android.util.Base64;
+import net.schmizz.sshj.Config;
+import net.schmizz.sshj.DefaultConfig;
+import net.schmizz.sshj.common.Factory;
+import net.schmizz.sshj.userauth.keyprovider.FileKeyProvider;
+import net.schmizz.sshj.userauth.keyprovider.KeyFormat;
+import net.schmizz.sshj.userauth.keyprovider.KeyProviderUtil;
+import net.schmizz.sshj.userauth.password.PasswordFinder;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.KeyPair;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.util.OpenSSHPrivateKeyUtil;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemWriter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
+import java.io.StringWriter;
+import java.security.PrivateKey;
 
 import app.trigger.Log;
 
@@ -16,100 +23,66 @@ import app.trigger.Log;
 public class SshTools {
     static final String TAG = "SshTools";
 
-    // helper class that holds the content of id_rsa/id_rsa.pub file content (PEM format)
-    public static class KeyPairData implements Serializable {
-        public final byte[] prvkey;
-        public final byte[] pubkey;
-
-        KeyPairData(byte[] prvkey, byte[] pubkey) {
-            this.prvkey = prvkey;
-            this.pubkey = pubkey;
-        }
-    };
-
-    public static KeyPairData keypairToBytes(KeyPair keypair, String passphrase) {
-        try {
-            ByteArrayOutputStream prvstream = new ByteArrayOutputStream();
-            ByteArrayOutputStream pubstream = new ByteArrayOutputStream();
-
-            if (passphrase == null) {
-                keypair.writePrivateKey(prvstream);
-            } else {
-                keypair.writePrivateKey(prvstream, passphrase.getBytes());
-            }
-            keypair.writePublicKey(pubstream, keypair.getPublicKeyComment());
-            prvstream.close();
-            pubstream.close();
-
-            return new KeyPairData(prvstream.toByteArray(), pubstream.toByteArray());
-        } catch (Exception e) {
-            Log.e(TAG ,"keypairtoBytes " + e.toString());
-        }
-        return null;
-    }
-
-    public static String serializeKeyPair(KeyPair keypair, String passphrase) {
+    public static String serializeKeyPair(KeyPairTrigger keypair, String passphrase) {
         if (keypair == null) {
             return "";
+        } else {
+            return keypair.getData();
         }
+    }
 
+    public static KeyPairTrigger deserializeKeyPair(String str) {
+        if (str == null || str.length() == 0) {
+            return null;
+        }
+        return new KeyPairTrigger(str);
+    }
+
+    public static String privateKeyToPEM(PrivateKey pk) {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            if (passphrase == null) {
-                keypair.writePrivateKey(baos);
-            } else {
-                keypair.writePrivateKey(baos, passphrase.getBytes());
-            }
-            baos.close();
-            return new String(baos.toByteArray());
+            AsymmetricKeyParameter akp = PrivateKeyFactory.createKey(pk.getEncoded());
+            byte[] content = OpenSSHPrivateKeyUtil.encodePrivateKey(akp);
+            PemObject o = new PemObject("OPENSSH PRIVATE KEY", content);
+            StringWriter sw = new StringWriter();
+            PemWriter w = new PemWriter(sw);
+            w.writeObject(o);
+            w.close();
+            return sw.toString();
         } catch (Exception e) {
-            Log.e(TAG, "serialize error: " + e.toString());
+            Log.e(TAG, "privateKeyToPEM(): " + e);
         }
         return null;
     }
 
-    public static KeyPair deserializeKeyPair(String str) {
-        if (str == null || str.length() == 0) {
-            return null;
+    public static boolean isPrivateKey(String privateKey) {
+        if (privateKey == null || privateKey.length() == 0) {
+            return false;
         }
 
         try {
-            JSch jsch = new JSch();
-            KeyPair keypair = KeyPair.load(jsch, str.getBytes(), null);
-            keypair.setPublicKeyComment(null);
-
-            return keypair;
+            final Config config = new DefaultConfig();
+            final String publicKey = null;
+            final PasswordFinder passwordFinder = null;
+            final KeyFormat format = KeyProviderUtil.detectKeyFileFormat(privateKey, publicKey != null);
+            final FileKeyProvider fkp = Factory.Named.Util.create(config/*trans.getConfig()*/.getFileKeyProviderFactories(), format.toString());
+            if (fkp == null) {
+                Log.e(TAG, "No provider available for " + format + " key file");
+                return false;
+            }
+            fkp.init(privateKey, publicKey, passwordFinder);
+            return (fkp.getPublic() != null && fkp.getPrivate() != null);
         } catch (Exception e) {
-            Log.e(TAG, "deserialize error: " + e.toString());
+            Log.e(TAG, e.toString());
+            return false;
         }
-        return null;
     }
 
-    // for <= 1.9.1
-    public static KeyPair deserializeKeyPairOld(String str) {
-        if (str == null || str.length() == 0) {
+    // for <= 2.2.0
+    public static KeyPairTrigger deserializeKeyPair220(String str) {
+        if (isPrivateKey(str)) {
+            return new KeyPairTrigger(str);
+        } else {
             return null;
         }
-
-        try {
-            // base64 string to bytes
-            byte[] bytes = Base64.decode(str, Base64.DEFAULT);
-
-            // bytes to KeyPairData
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            ObjectInputStream ios = new ObjectInputStream(bais);
-            KeyPairData obj = (KeyPairData) ios.readObject();
-
-            // KeyParData to KeyPair
-            JSch jsch = new JSch();
-            KeyPair keypair = KeyPair.load(jsch, obj.prvkey, obj.pubkey);
-            if (keypair != null) {
-                keypair.setPublicKeyComment(null);
-            }
-            return keypair;
-        } catch (Exception e) {
-            Log.e(TAG, "deserialize error: " + e.toString());
-        }
-        return null;
     }
 }

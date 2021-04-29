@@ -21,13 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import app.trigger.R;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.KeyPair;
-
-
 public class KeyPairActivity extends AppCompatActivity implements
         RegisterIdentityTask.OnTaskCompleted,
         GenerateIdentityTask.OnTaskCompleted {
+    private static final String TAG = "KeyPairActivity";
     private static final int IMPORT_PRIVATE_KEY_CODE = 0x01;
     private static final int EXPORT_PUBLIC_KEY_CODE = 0x02;
     private static final int EXPORT_PRIVATE_KEY_CODE = 0x03;
@@ -46,7 +43,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     private EditText registerAddress;
     private Spinner keyTypeSpinner;
 
-    private KeyPair keypair;
+    private KeyPairTrigger keypair;
     private boolean keyGenInProgress = false;
 
     private void showErrorMessage(String title, String message) {
@@ -105,33 +102,34 @@ public class KeyPairActivity extends AppCompatActivity implements
 
         createButton.setOnClickListener((View v) -> {
             if (keyGenInProgress) {
-                showErrorMessage("In Progress", "Key generation already in progress. Please wait.");
+                showErrorMessage("Busy", "Key generation already in progress. Please wait.");
             } else {
                 keyGenInProgress = true;
-                int key_length = 0;
-                int key_type = 0;
+                String type = "";
                 switch (self.keyTypeSpinner.getSelectedItemPosition()) {
                     case 0:
-                        key_length = 1024;
-                        key_type = KeyPair.RSA;
+                        type = "ED25519";
                         break;
                     case 1:
-                        key_length = 2048;
-                        key_type = KeyPair.RSA;
+                        type = "ECDSA-384";
                         break;
                     case 2:
-                        key_length = 4096;
-                        key_type = KeyPair.RSA;
+                        type = "ECDSA-521";
+                        break;
+                    case 3:
+                        type = "RSA-2048";
+                        break;
+                    case 4:
+                        type = "RSA-4096";
                         break;
                     default:
-                        Log.e("KeyPairActivity", "Invalid selected item position");
-                        key_length = 0;
-                        key_type = 0;
+                        Log.e(TAG, "Invalid selected item position");
+                        type = "";
                         break;
                 }
 
-                if (key_length > 0) {
-                    new GenerateIdentityTask(self).execute(key_type, key_length);
+                if (!type.isEmpty()) {
+                    new GenerateIdentityTask(self).execute(type);
                 }
             }
         });
@@ -203,7 +201,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGenerateIdentityTaskCompleted(String message, KeyPair keypair) {
+    public void onGenerateIdentityTaskCompleted(String message, KeyPairTrigger keypair) {
         if (keypair != null) {
             // only set if successful
             this.keypair = keypair;
@@ -228,8 +226,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
 
         try {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
-            Utils.writeFile(this, uri, data.pubkey);
+            Utils.writeFile(this, uri, keypair.getData().getBytes());
 
             Toast.makeText(getApplicationContext(), "Done. Wrote public key: " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -244,8 +241,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
 
         try {
-            SshTools.KeyPairData data = SshTools.keypairToBytes(keypair, null);
-            Utils.writeFile(this, uri, data.prvkey);
+            Utils.writeFile(this, uri, keypair.getData().getBytes());
 
             Toast.makeText(getApplicationContext(), "Done. Wrote private key: " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -255,18 +251,13 @@ public class KeyPairActivity extends AppCompatActivity implements
 
     private void importPrivateKey(Uri uri) {
         try {
-            byte[] prvkey = Utils.readFile(this, uri);
+            String privateKeyPEM = new String(Utils.readFile(this, uri));
 
-            if (Utils.arrayIndexOf(prvkey, "PUBLIC KEY".getBytes()) != -1) {
-                throw new Exception("Cannot import public key - Use private key!");
+            if (!SshTools.isPrivateKey(privateKeyPEM)) {
+                throw new Exception("Not a valid key!");
             }
 
-            if (Utils.arrayIndexOf(prvkey, "-----BEGIN OPENSSH PRIVATE KEY-----".getBytes()) != -1) {
-                throw new Exception("OpenSSH key format detected - please convert to RSA format.");
-            }
-
-            JSch jsch = new JSch();
-            keypair = KeyPair.load(jsch, prvkey, null);
+            keypair = new KeyPairTrigger(privateKeyPEM);
 
             updateKeyInfo();
 
@@ -302,12 +293,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     }
 
     private void updateKeyInfo() {
-        SshTools.KeyPairData data = null;
-        if (keypair != null) {
-            data = SshTools.keypairToBytes(keypair, null);
-        }
-
-        if (keypair == null || data == null || data.prvkey == null || data.pubkey == null) {
+        if (keypair == null) {
             deleteButton.setEnabled(false);
             exportPublicKeyButton.setEnabled(false);
             exportPrivateKeyButton.setEnabled(false);
@@ -318,7 +304,7 @@ public class KeyPairActivity extends AppCompatActivity implements
             exportPublicKeyButton.setEnabled(true);
             exportPrivateKeyButton.setEnabled(true);
             fingerprint.setText(keypair.getFingerPrint());
-            publicKey.setText(new String(data.pubkey));
+            publicKey.setText(keypair.getPublicKeyPEM());
         }
     }
 }
