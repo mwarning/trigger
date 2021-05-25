@@ -30,8 +30,7 @@
     <string name="fetch_button">Holen</string>
     <string name="cancel_button">Abbrechen</string>
     <string name="ok_button">Ok</string>
-    <string name="fingerprint">Fingerprint</string>
-    <string name="public_key">Public Key</string>
+    <string name="public_key">Public Key: %s</string>
     <string name="confirm">Bestätigen</string>
 
     <string name="certificate_url">Zertifikats URL</string>

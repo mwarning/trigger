@@ -1,6 +1,6 @@
 * use Android storage framework
-* switch from JSCH to SSHJ and BouncyCastle
-  * add support for ed25519
+* switch to SSH code from ConnectBot
+  * adds support for ed25519
 * allow ssh key import via QR-code
 * drop update support for pre 1.9.2 releases
   * otherwise we would need to keep JSCH as dependency

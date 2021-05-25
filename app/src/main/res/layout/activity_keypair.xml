@@ -21,26 +21,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="@string/fingerprint"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/Fingerprint"
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAlignment="center"
-            android:textIsSelectable="true" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/PublicKeyTextView"
             android:text="@string/public_key"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -48,7 +30,7 @@
 
         <TextView
             android:id="@+id/PublicKey"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -64,7 +46,7 @@
         android:orientation="horizontal" >
 
         <Spinner
-            android:id="@+id/key_type_spinner"
+            android:id="@+id/KeyTypeSpinner"
             android:layout_weight="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,6 +131,21 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:text="@string/export_private_key_button" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <CheckBox android:id="@+id/UseClipboardCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="From/to Clipboard" />
+
         </LinearLayout>
 
     </LinearLayout>

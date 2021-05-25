@@ -1,15 +1,11 @@
 package app.trigger.ssh;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.spec.InvalidKeySpecException;
+import app.trigger.Utils;
 import app.trigger.WifiTools;
-
-import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.IOUtils;
-import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
-import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
 import app.trigger.MainActivity.Action;
 import app.trigger.SshDoorSetup;
@@ -17,11 +13,31 @@ import app.trigger.DoorReply.ReplyCode;
 import app.trigger.OnTaskCompleted;
 import app.trigger.Log;
 
+import com.trilead.ssh2.crypto.keys.Ed25519Provider;
+import com.trilead.ssh2.ChannelCondition;
+import com.trilead.ssh2.Connection;
+import com.trilead.ssh2.ConnectionInfo;
+import com.trilead.ssh2.ConnectionMonitor;
+import com.trilead.ssh2.Session;
+import com.trilead.ssh2.crypto.PEMDecoder;
 
-public class SshRequestHandler extends Thread {
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+
+public class SshRequestHandler extends Thread implements ConnectionMonitor {
+    private static String TAG = "SshRequestHandler";
     private final OnTaskCompleted listener;
     private final SshDoorSetup setup;
     private final Action action;
+
+    static {
+        Log.d(TAG, "Ed25519Provider.insertIfNeeded2");
+        // Since this class deals with Ed25519 keys, we need to make sure this is available.
+        Ed25519Provider.insertIfNeeded();
+    }
 
     public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action) {
         this.listener = listener;
@@ -39,7 +55,7 @@ public class SshRequestHandler extends Thread {
             String current_ssid = WifiTools.getCurrentSSID();
             if (setup.ssids.length() > 0 && !WifiTools.matchSSID(setup.ssids, current_ssid)) {
                 this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED,
-                    "SSID mismatch<br/>(connected to '" + current_ssid + "')");
+                        "SSID mismatch<br/>(connected to '" + current_ssid + "')");
                 return;
             }
         } else {
@@ -66,68 +82,170 @@ public class SshRequestHandler extends Thread {
                 break;
         }
 
-        String user = setup.user;
-        String password = setup.password;
-        String host = setup.host;
-        KeyPairTrigger keypair = setup.keypair;
-        int port = setup.port;
+        final String username = setup.user.isEmpty() ? "root" : setup.user;
+        final String password = setup.password;
+        final String hostname = setup.host;
+        final KeyPairBean keypair = setup.keypair;
+        final int port = setup.port;
+
+        if (command.isEmpty()) {
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
+            return;
+        }
+
+        if (hostname.isEmpty()) {
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Server address is empty.");
+            return;
+        }
+
+        Connection connection = null;
         Session session = null;
 
         try {
-            if (command.isEmpty()) {
-                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
-                return;
-            }
+            connection = new Connection(hostname, port);
+            connection.addConnectionMonitor(this);
+            ConnectionInfo connectionInfo = connection.connect();
 
-            if (host.isEmpty()) {
-                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Host is empty.");
-                return;
-            }
-
-            // fallback
-            if (setup.user.isEmpty()) {
-                user = "root";
-            }
-
-            if (keypair == null && password.length() == 0) {
-                listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No password or key set.");
-                return;
-            }
-
-            final SSHClient ssh = new SSHClient();
-
-            try {
-                ssh.addHostKeyVerifier(new PromiscuousVerifier());
-                ssh.connect(host, port);
-                if (keypair != null) {
-                    KeyProvider kp = ssh.loadKeys(keypair.getPrivateKeyPEM(), null, null);
-                    ssh.authPublickey(user, kp);
+            // try without authentication
+            if (Utils.isEmpty(password) && keypair == null) {
+                if (password.isEmpty() && connection.authenticateWithNone(username)) {
+                    // login successfull
                 } else {
-                    ssh.authPublickey(user, password);
+                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Login without credentials failed.");
+                    return;
                 }
-                session = ssh.startSession();
-                Session.Command cmd = session.exec(command);
-                cmd.join(5, TimeUnit.SECONDS);
+            }
 
-                String output = IOUtils.readFully(cmd.getInputStream()).toString();
-                if (cmd.getExitStatus() == 0) {
-                    listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, output);
-                } else {
-                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, output);
-                }
-            } finally {
-                try {
-                    if (session != null) {
-                        session.close();
+            // authentication by password
+            if (!Utils.isEmpty(password) && keypair == null) {
+                if (connection.isAuthMethodAvailable(username, "password")) {
+                    if (!connection.authenticateWithPassword(username, password)) {
+                        listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Password was not accepted.");
+                        return;
                     }
-                } catch (IOException e) {
-                    // Do Nothing
                 }
+            }
 
-                ssh.disconnect();
+            // authentication by key pair
+            if (Utils.isEmpty(password) && keypair != null) {
+                if (!tryPublicKey(connection, username, keypair)) {
+                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair was not accepted.");
+                    return;
+                }
+            }
+
+            if (!connection.isAuthenticationComplete()) {
+                listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Authentication failed.");
+                return;
+            }
+
+            session = connection.openSession();
+            session.startShell();
+
+            byte[] buffer = new byte[1000];
+            int bytesread;
+
+            bytesread = read(session, buffer, 0, buffer.length);
+            write(session, command + "\n");
+            bytesread = read(session, buffer, 0, buffer.length);
+
+            String output = new String(buffer, 0, bytesread);
+            // not all implementation seem to provide an exit code
+            Integer ret = session.getExitStatus();
+            if (ret == null || ret == 0) {
+                listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, output);
+            } else {
+                listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, output);
             }
         } catch (Exception e) {
-            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.toString());
+            listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.getMessage());
+
+            Log.e(TAG, "Problem in SSH connection thread during authentication: " + e);
+
+        } finally {
+            if (session != null) {
+                session.close();
+                session = null;
+            }
+
+            if (connection != null) {
+                connection.close();
+                connection = null;
+            }
+        }
+    }
+
+    private static final int conditions = ChannelCondition.STDOUT_DATA
+        | ChannelCondition.STDERR_DATA
+        | ChannelCondition.CLOSED
+        | ChannelCondition.EOF;
+
+    private static boolean tryPublicKey(Connection connection, String username, KeyPairBean kp) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyPair pair = null;
+        String password = "";
+
+        if (KeyPairBean.KEY_TYPE_IMPORTED.equals(kp.type)) {
+            // load specific key using pem format
+            pair = PEMDecoder.decode(new String(kp.privateKey, "UTF-8").toCharArray(), password);
+        } else {
+            // load using internal generated format
+            PrivateKey privKey;
+            try {
+                privKey = PubkeyUtils.decodePrivate(kp.privateKey,
+                        kp.type, password);
+            } catch (Exception e) {
+                Log.e(TAG, "Bad password for key. Authentication failed: " + e);
+                return false;
+            }
+
+            PublicKey pubKey = PubkeyUtils.decodePublic(kp.publicKey, kp.type);
+
+            // convert key to trilead format
+            pair = new KeyPair(pubKey, privKey);
+        }
+
+        return connection.authenticateWithPublicKey(username, pair);
+    }
+
+    @Override
+    public void connectionLost(Throwable reason) {
+        Log.d(TAG, "connectionLost");
+    }
+
+    private static int read(Session session, byte[] buffer, int start, int len) throws IOException {
+        int bytesRead = 0;
+
+        if (session == null)
+            return 0;
+
+        InputStream stdout = session.getStdout();
+        InputStream stderr = session.getStderr();
+
+        int newConditions = session.waitForCondition(conditions, 500 /*0*/);
+
+        if ((newConditions & ChannelCondition.STDOUT_DATA) != 0) {
+            bytesRead = stdout.read(buffer, start, len);
+        }
+
+        if ((newConditions & ChannelCondition.STDERR_DATA) != 0) {
+            byte[] discard = new byte[256];
+            while (stderr.available() > 0) {
+                stderr.read(discard);
+                //Log.e(TAG, "stderr: " + (new String(discard)));
+            }
+        }
+
+        if ((newConditions & ChannelCondition.EOF) != 0) {
+            throw new IOException("Remote end closed connection");
+        }
+
+        return bytesRead;
+    }
+
+    private static void write(Session session, String command) throws IOException {
+        OutputStream stdin = session.getStdin();
+        if (stdin != null) {
+            stdin.write(command.getBytes());
         }
     }
 }

@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.view.View;
@@ -41,7 +40,7 @@ import app.trigger.ssh.SshRequestHandler;
 import app.trigger.bluetooth.BluetoothRequestHandler;
 import app.trigger.mqtt.MqttRequestHandler;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.conscrypt.OpenSSLProvider;
 import org.json.JSONObject;
 
 
@@ -65,12 +64,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         close_door,
         ring_door, // ring the door bell
         fetch_state // fetch the door state
-    }
-
-    // BouncyCastle is a crypto library for SSHJ
-    static {
-        Security.removeProvider("BC");//first remove default os provider
-        Security.insertProviderAt(new BouncyCastleProvider(), 1);//add new provider
     }
 
     // helper class for spinner
@@ -230,6 +223,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed);
 
         updateSpinner(true);
+
+        Log.d("MainActivity", "Security.insertProviderAt(new OpenSSLProvider()");
+        Security.insertProviderAt(new OpenSSLProvider(), 1);
     }
 
     @Override
@@ -346,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 Context context = getApplicationContext();
                 // show centered text
                 Toast toast = Toast.makeText(context, state.message, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
+                //toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             }
         });

@@ -3,13 +3,17 @@ package app.trigger.ssh;
 import app.trigger.Log;
 import app.trigger.Utils;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,20 +34,21 @@ public class KeyPairActivity extends AppCompatActivity implements
     private static final int EXPORT_PRIVATE_KEY_CODE = 0x03;
     private KeyPairPreference preference; // hack
     private AlertDialog.Builder builder;
+    private ClipboardManager clipboard;
     private Button createButton;
     private Button importPrivateKeyButton;
     private Button exportPublicKeyButton;
     private Button exportPrivateKeyButton;
+    private CheckBox useClipboardCheckBox;
     private Button cancelButton;
     private Button registerButton;
     private Button okButton;
     private Button deleteButton;
-    private TextView fingerprint;
     private TextView publicKey;
     private EditText registerAddress;
     private Spinner keyTypeSpinner;
 
-    private KeyPairTrigger keypair;
+    private KeyPairBean keypair;
     private boolean keyGenInProgress = false;
 
     private void showErrorMessage(String title, String message) {
@@ -59,21 +64,22 @@ public class KeyPairActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_keypair);
 
         this.preference = KeyPairPreference.self; // hack, TODO: pass serialized key in bundle
-        this.keypair = this.preference.getKeyPair();
+
+        clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
         builder = new AlertDialog.Builder(this);
         createButton = findViewById(R.id.CreateButton);
         importPrivateKeyButton = findViewById(R.id.ImportPrivateKeyButton);
         exportPublicKeyButton = findViewById(R.id.ExportPublicKeyButton);
         exportPrivateKeyButton = findViewById(R.id.ExportPrivateKeyButton);
+        useClipboardCheckBox = findViewById(R.id.UseClipboardCheckBox);
         cancelButton = findViewById(R.id.CancelButton);
         registerButton = findViewById(R.id.RegisterButton);
         okButton = findViewById(R.id.OkButton);
         deleteButton = findViewById(R.id.DeleteButton);
-        fingerprint = findViewById(R.id.Fingerprint);
         publicKey = findViewById(R.id.PublicKey);
         registerAddress = findViewById(R.id.RegisterAddress);
-        keyTypeSpinner = findViewById(R.id.key_type_spinner);
+        keyTypeSpinner = findViewById(R.id.KeyTypeSpinner);
         final KeyPairActivity self = this;
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
@@ -137,6 +143,11 @@ public class KeyPairActivity extends AppCompatActivity implements
         exportPublicKeyButton.setOnClickListener((View v) -> {
             if (keypair == null) {
                 showErrorMessage("No Key", "No key loaded to export.");
+            } else if (useClipboardCheckBox.isChecked()) {
+                String publicKey = keypair.getOpenSSHPublicKey();
+                ClipData clip = ClipData.newPlainText(keypair.getDescription(), publicKey);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getApplicationContext(), "Done.", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -149,6 +160,11 @@ public class KeyPairActivity extends AppCompatActivity implements
         exportPrivateKeyButton.setOnClickListener((View v) -> {
             if (keypair == null) {
                 showErrorMessage("No Key", "No key loaded to export.");
+            } else if (useClipboardCheckBox.isChecked()) {
+                String privateKey = keypair.getOpenSSHPrivateKey();
+                ClipData clip = ClipData.newPlainText(keypair.getDescription(), privateKey);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getApplicationContext(), "Done.", Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -159,11 +175,26 @@ public class KeyPairActivity extends AppCompatActivity implements
         });
 
         importPrivateKeyButton.setOnClickListener((View v) -> {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
-            intent.setType("*/*");
-            startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE);
+            if (useClipboardCheckBox.isChecked()) {
+                if (clipboard.hasPrimaryClip()) {
+                    String privateKey = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
+                    KeyPairBean kp = SshTools.parsePrivateKeyPEM(privateKey);
+                    if (kp != null) {
+                        Toast.makeText(getApplicationContext(), "Done.", Toast.LENGTH_SHORT).show();
+                        updateKeyInfo(kp);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Import Failed.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Clipboard is empty.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
+                intent.setType("*/*");
+                startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE);
+            }
         });
 
         okButton.setOnClickListener((View v) -> {
@@ -178,8 +209,7 @@ public class KeyPairActivity extends AppCompatActivity implements
             builder.setCancelable(false); // not necessary
 
             builder.setPositiveButton(R.string.yes, (DialogInterface dialog, int id) -> {
-                self.keypair = null;
-                updateKeyInfo();
+                updateKeyInfo(null);
                 dialog.cancel();
             });
 
@@ -197,19 +227,18 @@ public class KeyPairActivity extends AppCompatActivity implements
             self.finish();
         });
 
-        updateKeyInfo();
+        updateKeyInfo(this.preference.getKeyPair());
     }
 
     @Override
-    public void onGenerateIdentityTaskCompleted(String message, KeyPairTrigger keypair) {
-        if (keypair != null) {
-            // only set if successful
-            this.keypair = keypair;
-        }
-
+    public void onGenerateIdentityTaskCompleted(String message, KeyPairBean keypair) {
         this.keyGenInProgress = false;
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-        updateKeyInfo();
+
+        // only set if successful
+        if (keypair != null) {
+            updateKeyInfo(keypair);
+        }
     }
 
     @Override
@@ -226,7 +255,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
 
         try {
-            Utils.writeFile(this, uri, keypair.getData().getBytes());
+            Utils.writeFile(this, uri, keypair.getOpenSSHPublicKey().getBytes());
 
             Toast.makeText(getApplicationContext(), "Done. Wrote public key: " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -241,7 +270,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
 
         try {
-            Utils.writeFile(this, uri, keypair.getData().getBytes());
+            Utils.writeFile(this, uri, keypair.getOpenSSHPrivateKey().getBytes());
 
             Toast.makeText(getApplicationContext(), "Done. Wrote private key: " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -253,13 +282,12 @@ public class KeyPairActivity extends AppCompatActivity implements
         try {
             String privateKeyPEM = new String(Utils.readFile(this, uri));
 
-            if (!SshTools.isPrivateKey(privateKeyPEM)) {
+            KeyPairBean kp = SshTools.parsePrivateKeyPEM(privateKeyPEM);
+            if (kp == null) {
                 throw new Exception("Not a valid key!");
             }
 
-            keypair = new KeyPairTrigger(privateKeyPEM);
-
-            updateKeyInfo();
+            updateKeyInfo(kp);
 
             Toast.makeText(getApplicationContext(), "Done. Read " + uri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
@@ -292,19 +320,25 @@ public class KeyPairActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateKeyInfo() {
+    private void updateKeyInfo(KeyPairBean kp) {
+        keypair = kp;
+
+        Resources res = getResources();
+        TextView tv = findViewById(R.id.PublicKeyTextView);
+
         if (keypair == null) {
             deleteButton.setEnabled(false);
             exportPublicKeyButton.setEnabled(false);
             exportPrivateKeyButton.setEnabled(false);
-            fingerprint.setText("<no key loaded>");
             publicKey.setText("<no key loaded>");
+            tv.setText(res.getString(R.string.public_key, ""));
         } else {
             deleteButton.setEnabled(true);
             exportPublicKeyButton.setEnabled(true);
             exportPrivateKeyButton.setEnabled(true);
-            fingerprint.setText(keypair.getFingerPrint());
-            publicKey.setText(keypair.getPublicKeyPEM());
+            publicKey.setText(keypair.getOpenSSHPublicKey());
+            tv.setText(keypair.getDescription());
+            tv.setText(res.getString(R.string.public_key, keypair.getDescription()));
         }
     }
 }

@@ -13,7 +13,7 @@ import app.trigger.SetupActivity;
 * On click, the file chooser opens.
 */
 public class KeyPairPreference extends SwitchPreference {
-    private KeyPairTrigger keypair;
+    private KeyPairBean keypair;
     private Context context;
     static KeyPairPreference self;
 
@@ -61,7 +61,7 @@ public class KeyPairPreference extends SwitchPreference {
         });
     }
 
-    public void setKeyPair(KeyPairTrigger keypair) {
+    public void setKeyPair(KeyPairBean keypair) {
         this.keypair = keypair;
 
         if (this.keypair == null) {
@@ -71,7 +71,7 @@ public class KeyPairPreference extends SwitchPreference {
         }
     }
 
-    public KeyPairTrigger getKeyPair() {
+    public KeyPairBean getKeyPair() {
         return keypair;
     }
 

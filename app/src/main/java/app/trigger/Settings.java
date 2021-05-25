@@ -8,13 +8,14 @@ import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 
 import app.trigger.https.HttpsTools;
-import app.trigger.ssh.KeyPairTrigger;
+import app.trigger.ssh.KeyPairBean;
 import app.trigger.ssh.SshTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -53,6 +54,169 @@ public class Settings {
 
     // update database format
     private static void upgradeDB() {
+// update from 1.2.1 to 1.3.0
+        if (db_version.equals("1.2.1")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.3.1");
+
+            // Recover setup from 1.2.0
+            String name = sharedPreferences.getString("prefName", "");
+            String url = sharedPreferences.getString("prefUrl", "");
+            String token = sharedPreferences.getString("prefToken", "");
+            Boolean ignore = sharedPreferences.getBoolean("prefIgnore", false);
+            if (name.length() > 0) {
+                HttpsDoorSetup setup = new HttpsDoorSetup(0, name);
+                setup.open_query = url + "?action=open&token=" + token;
+                setup.close_query = url + "?action=close&token=" + token;
+                setup.status_query = url + "?action=status&token=" + token;
+                if (ignore) {
+                    setup.ignore_hostname_mismatch = true;
+                }
+                addSetup(setup);
+            }
+            // remove old entries
+            SharedPreferences.Editor e = sharedPreferences.edit();
+            e.remove("prefName");
+            e.remove("prefUrl");
+            e.remove("prefToken");
+            e.remove("prefIgnore");
+            e.putString("db_version", app_version);
+            e.commit();
+            setups = new ArrayList();
+            db_version = "1.3.1";
+        }
+
+        // update from 1.3.0/1.3.1 to 1.4.0
+        if (db_version.equals("1.3.0") || db_version.equals("1.3.1")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.4.0");
+
+            for (int id = 0; id < 10; id += 1) {
+                String prefix = String.format("item_%03d_", id);
+                if (sharedPreferences.contains(prefix + "type")) {
+                    String name = sharedPreferences.getString(prefix + "name", "");
+                    String url = sharedPreferences.getString(prefix + "url", "");
+                    String token = sharedPreferences.getString(prefix + "token", "");
+                    String ssids = sharedPreferences.getString(prefix + "ssids", "");
+                    Boolean ignore = sharedPreferences.getBoolean(prefix + "ignore", false);
+                    if (name.length() > 0) {
+                        HttpsDoorSetup setup = new HttpsDoorSetup(id, name);
+                        setup.open_query = url + "?action=open&token=" + token;
+                        setup.close_query = url + "?action=close&token=" + token;
+                        setup.status_query = url + "?action=status&token=" + token;
+                        setup.ssids = ssids;
+                        if (ignore) {
+                            setup.ignore_hostname_mismatch = true;
+                        }
+                        addSetup(setup);
+                    } else {
+                        removeSetup_pre_172(id);
+                    }
+                }
+            }
+            setups = new ArrayList();
+            db_version = "1.4.0";
+        }
+
+        if (db_version.equals("1.4.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.6.0");
+            for (int id = 0; id < 10; id += 1) {
+                String prefix = String.format("item_%03d_", id);
+                // change type of entry
+                if (sharedPreferences.contains(prefix + "ignore_cert")) {
+                    Boolean ignore_cert = sharedPreferences.getBoolean(prefix + "ignore_cert", false);
+                    sharedPreferences.edit().putString(prefix + "ignore_cert", ignore_cert.toString()).commit();
+                }
+            }
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.6.0").commit();
+            db_version = "1.6.0";
+        }
+
+        if (db_version.equals("1.6.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.7.0");
+            for (int id = 0; id < 10; id += 1) {
+                String prefix = String.format("item_%03d_", id);
+                // change type of entry
+                if (sharedPreferences.contains(prefix + "ignore_cert")) {
+                    String ignore_cert = sharedPreferences.getString(prefix + "ignore_cert", (new Boolean(false)).toString());
+                    if (new Boolean(ignore_cert)) {
+                        SharedPreferences.Editor e = sharedPreferences.edit();
+                        e.putString(prefix + "ignore_hostname_mismatch", (new Boolean(true).toString()));
+                        e.remove(prefix + "ignore_cert");
+                        e.commit();
+                    }
+                }
+            }
+
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.7.0").commit();
+            db_version = "1.7.0";
+        }
+
+        if (db_version.equals("1.7.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.7.1");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.7.1").commit();
+            db_version = "1.7.1";
+        }
+
+        if (db_version.equals("1.7.1")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.8.0");
+            // convert settings from key based scheme to json
+            ArrayList<Setup> setups = getAllSetups_pre_172();
+            for (Setup setup : setups) {
+                removeSetup_pre_172(setup.getId());
+                addSetup(setup);
+            }
+
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.8.0").commit();
+            db_version = "1.8.0";
+        }
+
+        if (db_version.equals("1.8.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.9.0");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.9.0").commit();
+            db_version = "1.9.0";
+        }
+
+        if (db_version.equals("1.9.0")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.9.1");
+            // nothing to change
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", "1.9.1").commit();
+            db_version = "1.9.1";
+        }
+
+        if (db_version.equals("1.9.1")) {
+            Log.i("Settings", "Update database format from " + db_version + " to 1.9.2");
+            setups = new ArrayList();
+            // convert keypair format
+            SharedPreferences.Editor e = sharedPreferences.edit();
+            for (int id = 0; id < 10; id += 1) {
+                try {
+                    JSONObject obj = loadSetup(id);
+                    if (obj != null && obj.has("keypair")) {
+                        KeyPairBean keypair = SshTools.deserializeKeyPair_1_9_1(
+                            obj.getString("keypair")
+                        );
+                        obj.put("keypair", SshTools.serializeKeyPair(keypair));
+
+                        String key = String.format("item_%03d", id);
+                        e.putString(key, obj.toString());
+                    }
+                } catch (Exception ex) {
+                    Log.e("upgradeDB", ex.toString());
+                }
+            }
+            e.commit();
+
+            sharedPreferences.edit().putString("db_version", "1.9.2").commit();
+            db_version = "1.9.2";
+        }
+
         // multiple consecutive versions with no database change
         if (Arrays.asList("1.9.2", "2.0.0", "2.0.1", "2.0.2", "2.0.3", "2.0.4", "2.0.5",
                 "2.0.6", "2.1.0", "2.1.1", "2.2.0", "2.2.1", "2.2.2", "2.2.3", "2.2.4",
@@ -69,9 +233,26 @@ public class Settings {
         if (Arrays.asList("3.2.2").contains(db_version)) {
             String new_version = "3.3.0";
             Log.i(TAG, "Update database format from " + db_version + " to " + new_version);
-            // TODO: update SSH keys
-            //deserializeKeyPair220()
             setups = new ArrayList();
+            // convert keypair format
+            SharedPreferences.Editor e = sharedPreferences.edit();
+            for (int id = 0; id < 10; id += 1) {
+                try {
+                    JSONObject obj = loadSetup(id);
+                    if (obj != null && obj.has("keypair")) {
+                        KeyPairBean keypair = SshTools.deserializeKeyPair_3_2_3(
+                            obj.getString("keypair")
+                        );
+                        obj.put("keypair", SshTools.serializeKeyPair(keypair));
+                        String key = String.format("item_%03d", id);
+                        e.putString(key, obj.toString());
+                    }
+                } catch (Exception ex) {
+                    Log.e("upgradeDB", ex.toString());
+                }
+            }
+            e.commit();
+
             sharedPreferences.edit().putString("db_version", new_version).commit();
             db_version = new_version;
         }
@@ -116,8 +297,8 @@ public class Settings {
                     obj.put(name, (long) value);
                 } else if (type == Bitmap.class) {
                     obj.put(name, Utils.serializeBitmap((Bitmap) value));
-                } else if (type == KeyPairTrigger.class) {
-                    obj.put(name, SshTools.serializeKeyPair((KeyPairTrigger) value, null));
+                } else if (type == KeyPairBean.class) {
+                    obj.put(name, SshTools.serializeKeyPair((KeyPairBean) value));
                 } else if (type == Certificate.class) {
                     obj.put(name, HttpsTools.serializeCertificate((Certificate) value));
                 } else {
@@ -164,7 +345,7 @@ public class Settings {
                     field.set(setup, (long) (int) value);
                 } else if (type == Bitmap.class && value_type == String.class) {
                    field.set(setup, Utils.deserializeBitmap((String) value));
-                } else if (type == KeyPairTrigger.class && value_type == String.class) {
+                } else if (type == KeyPairBean.class && value_type == String.class) {
                     field.set(setup, SshTools.deserializeKeyPair((String) value));
                 } else if (type == Certificate.class && value_type == String.class) {
                     field.set(setup, HttpsTools.deserializeCertificate((String) value));
@@ -344,7 +525,7 @@ public class Settings {
                     field.set(setup, Integer.parseInt(value));
                 } else if (type == long.class) {
                     field.set(setup, Long.parseLong(value));
-                } else if (type == KeyPairTrigger.class) {
+                } else if (type == KeyPairBean.class) {
                     field.set(setup, SshTools.deserializeKeyPair(value));
                 } else if (type == Certificate.class) {
                     field.set(setup, HttpsTools.deserializeCertificate(value));

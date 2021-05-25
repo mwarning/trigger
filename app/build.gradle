@@ -33,10 +33,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    // https://www.hivemq.com/blog/mqtt-client-library-enyclopedia-paho-android-service/
-    implementation 'org.slf4j:slf4j-simple:1.6.2'
-    implementation 'com.hierynomus:sshj:0.31.0'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.68'
+    implementation 'org.conscrypt:conscrypt-android:2.5.2'
+    implementation 'org.connectbot:sshlib:2.2.19'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.1'
     implementation "androidx.core:core-ktx:1.3.2"
     implementation 'androidx.appcompat:appcompat:1.2.0'

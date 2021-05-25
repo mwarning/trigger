@@ -25,8 +25,11 @@ import org.json.JSONObject;
 
 import app.trigger.ssh.SshTools;
 
+import app.trigger.ssh.KeyPairBean;
+
 
 public class QRScanActivity extends AppCompatActivity implements BarcodeCallback {
+    private static final String TAG = "QRScanActivity";
     private DecoratedBarcodeView barcodeView;
 
     @Override
@@ -89,12 +92,16 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
 
     private JSONObject decodeSetup(String data) throws JSONException {
         try {
-            if (SshTools.isPrivateKey(data)) {
-                // assume SSH private key
+            KeyPairBean kp = SshTools.parsePrivateKeyPEM(data);
+            if (kp != null) {
+                if (kp.encrypted) {
+                    throw new Exception("Encrypted keys are not supported.");
+                }
+                Log.d(TAG, "type: " + kp.type + ", pk len: " + kp.publicKey.length + ", sk.len: " + kp.privateKey.length);
                 JSONObject obj = new JSONObject();
                 obj.put("type", "SshDoorSetup");
                 obj.put("name", "SSH Door");
-                obj.put("keypair", data);
+                obj.put("keypair", SshTools.serializeKeyPair(kp));
                 return obj;
             } else {
                 // assume raw link
@@ -150,7 +157,6 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
     public void barcodeResult(BarcodeResult result) {
         try {
             JSONObject obj = decodeSetup(result.getText());
-
             // give entry a new id
             obj.put("id", Settings.getNewID());
 
@@ -158,13 +164,12 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
             Settings.addSetup(setup);
             Toast.makeText(this, "Added " + setup.getName(), Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
-            e.printStackTrace();
             Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_LONG).show();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
             Toast.makeText(this, "Incompatible QR Code", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
         finish();
     }
 

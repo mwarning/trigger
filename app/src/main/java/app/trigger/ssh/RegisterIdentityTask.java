@@ -12,13 +12,13 @@ import app.trigger.Utils;
 class RegisterIdentityTask extends Thread {
     private OnTaskCompleted listener;
     private String address;
-    private KeyPairTrigger keypair;
+    private KeyPairBean keypair;
 
     public interface OnTaskCompleted {
         void onRegisterIdentityTaskCompleted(String message);
     }
 
-    public RegisterIdentityTask(OnTaskCompleted listener, String address, KeyPairTrigger keypair) {
+    public RegisterIdentityTask(OnTaskCompleted listener, String address, KeyPairBean keypair) {
         this.listener = listener;
         this.address = address;
         this.keypair = keypair;
@@ -42,7 +42,7 @@ class RegisterIdentityTask extends Thread {
             DataOutputStream writer = new DataOutputStream(os);
 
             // send public key in PEM format
-            os.write(keypair.getPublicKeyPEM().getBytes());
+            os.write(keypair.getOpenSSHPublicKey().getBytes());
             os.flush();
 
             String reply = Utils.readInputStreamWithTimeout(is, 1024, 1000);

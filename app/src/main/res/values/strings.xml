@@ -32,8 +32,7 @@
     <string name="fetch_button">Fetch</string>
     <string name="cancel_button">Cancel</string>
     <string name="ok_button">Ok</string>
-    <string name="fingerprint">Fingerprint</string>
-    <string name="public_key">Public Key</string>
+    <string name="public_key">Public Key: %s</string>
     <string name="confirm">Confirm</string>
 
     <string name="certificate_url">Certificate URL</string>
