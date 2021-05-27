@@ -88,6 +88,13 @@
             android:inputType="textNoSuggestions" />
 
         <CheckBoxPreference
+            android:key="ignore_certificate"
+            android:title="Ignore Certificate Validity"
+            android:summary="Warning: This disables security"
+            android:defaultValue="false"
+            android:persistent="false" />
+
+        <CheckBoxPreference
             android:key="ignore_hostname_mismatch"
             android:title="Disable Certificate Hostname Check"
             android:summary="Warning: This disables security"

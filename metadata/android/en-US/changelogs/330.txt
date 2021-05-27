@@ -4,3 +4,4 @@
 * allow ssh key import via QR-code
 * drop update support for pre 1.9.2 releases
   * otherwise we would need to keep JSCH as dependency
+* add option to ignore certifacte validity

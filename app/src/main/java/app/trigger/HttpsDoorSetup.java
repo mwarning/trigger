@@ -30,6 +30,7 @@ public class HttpsDoorSetup implements Setup {
 
     public String ssids;
     public Certificate certificate;
+    public Boolean ignore_certificate;
     public Boolean ignore_hostname_mismatch;
     public Boolean ignore_expiration;
 
@@ -50,6 +51,7 @@ public class HttpsDoorSetup implements Setup {
         this.disabled_image = null;
         this.ssids = "";
         this.certificate = null;
+        this.ignore_certificate = false;
         this.ignore_hostname_mismatch = false;
         this.ignore_expiration = false;
     }

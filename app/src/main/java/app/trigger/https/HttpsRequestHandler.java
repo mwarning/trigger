@@ -8,7 +8,11 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -27,6 +31,7 @@ import app.trigger.WifiTools;
 
 
 public class HttpsRequestHandler extends Thread {
+    private static String TAG = "HttpsRequestHandler";
     private final OnTaskCompleted listener;
     private final HttpsDoorSetup setup;
     private final Action action;
@@ -107,8 +112,18 @@ public class HttpsRequestHandler extends Thread {
                 HttpsURLConnection.setDefaultHostnameVerifier((String hostname, SSLSession session) -> false);
             }
 
-            // certificate verification
-            if (setup.certificate != null) {
+            if (setup.ignore_certificate) {
+                // disable entire certificate validity
+                SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, new X509TrustManager[]{new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                    public void checkServerTrusted(X509Certificate[] chain,
+                                    String authType) throws CertificateException {}
+                    public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                    }}}, new SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+            } else if (setup.certificate != null) {
                 // use custom certificate
                 HttpsURLConnection.setDefaultSSLSocketFactory(
                     Utils.getSocketFactoryWithCertificate(setup.certificate)
@@ -152,7 +167,7 @@ public class HttpsRequestHandler extends Thread {
         } catch (java.net.SocketException se) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Not connected to network.");
         //} catch (java.security.cert.CertPathValidatorException e) {
-        //	return new DoorReply(ReplyCode.LOCAL_ERROR, "Certificate validation failed.");
+        //    return new DoorReply(ReplyCode.LOCAL_ERROR, "Certificate validation failed.");
         } catch (Exception e) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.toString());
         }
