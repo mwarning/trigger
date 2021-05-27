@@ -40,6 +40,7 @@ public class KeyPairActivity extends AppCompatActivity implements
     private Button exportPublicKeyButton;
     private Button exportPrivateKeyButton;
     private CheckBox useClipboardCheckBox;
+    private CheckBox useFilesystemCheckBox;
     private Button cancelButton;
     private Button registerButton;
     private Button okButton;
@@ -73,6 +74,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         exportPublicKeyButton = findViewById(R.id.ExportPublicKeyButton);
         exportPrivateKeyButton = findViewById(R.id.ExportPrivateKeyButton);
         useClipboardCheckBox = findViewById(R.id.UseClipboardCheckBox);
+        useFilesystemCheckBox = findViewById(R.id.UseFilesystemCheckBox);
         cancelButton = findViewById(R.id.CancelButton);
         registerButton = findViewById(R.id.RegisterButton);
         okButton = findViewById(R.id.OkButton);
@@ -93,6 +95,16 @@ public class KeyPairActivity extends AppCompatActivity implements
         registerAddress.setText(
             getIntent().getStringExtra("register_url")
         );
+
+        // toogle between both checkboxes
+        useClipboardCheckBox.setOnClickListener((View v) -> {
+            useFilesystemCheckBox.setChecked(!useClipboardCheckBox.isChecked());
+        });
+
+        // toogle between both checkboxes
+        useFilesystemCheckBox.setOnClickListener((View v) -> {
+            useClipboardCheckBox.setChecked(!useFilesystemCheckBox.isChecked());
+        });
 
         registerButton.setOnClickListener((View v) -> {
             String address = registerAddress.getText().toString();

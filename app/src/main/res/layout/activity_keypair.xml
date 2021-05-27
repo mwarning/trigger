@@ -140,11 +140,20 @@
             android:layout_weight="1"
             android:orientation="horizontal" >
 
-            <CheckBox android:id="@+id/UseClipboardCheckBox"
+            <CheckBox
+                android:id="@+id/UseClipboardCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="From/to Clipboard" />
+                android:checked="true"
+                android:text="Use Clipboard" />
+
+            <CheckBox android:id="@+id/UseFilesystemCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="Use Filesystem" />
 
         </LinearLayout>
 
