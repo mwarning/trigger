@@ -1,7 +1,6 @@
 * use Android storage framework
 * switch to SSH code from ConnectBot
-  * adds support for ed25519
-* allow ssh key import via QR-code
-* drop update support for pre 1.9.2 releases
-  * otherwise we would need to keep JSCH as dependency
-* add option to ignore certifacte validity
+  * adds support for ED25519 an others
+* allow SSH key import via QR-code
+* add option to ignore HTTPS certificte validity
+* allow export/import SSH keys via clipboard
