@@ -107,9 +107,9 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             ConnectionInfo connectionInfo = connection.connect();
 
             // try without authentication
-            if (Utils.isEmpty(password) && keypair == null) {
+            if (Utils.isEmpty(password) && keypair == null && !connection.isAuthenticationComplete()) {
                 if (password.isEmpty() && connection.authenticateWithNone(username)) {
-                    // login successfull
+                    // login successful
                 } else {
                     listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Login without credentials failed.");
                     return;
@@ -117,7 +117,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             }
 
             // authentication by password
-            if (!Utils.isEmpty(password) && keypair == null) {
+            if (!Utils.isEmpty(password) && !connection.isAuthenticationComplete()) {
                 if (connection.isAuthMethodAvailable(username, "password")) {
                     if (!connection.authenticateWithPassword(username, password)) {
                         listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Password was not accepted.");
@@ -127,7 +127,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             }
 
             // authentication by key pair
-            if (Utils.isEmpty(password) && keypair != null) {
+            if (keypair != null && !connection.isAuthenticationComplete()) {
                 if (!tryPublicKey(connection, username, keypair)) {
                     listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair was not accepted.");
                     return;
