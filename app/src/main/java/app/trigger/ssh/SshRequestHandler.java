@@ -140,17 +140,16 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             }
 
             session = connection.openSession();
-            session.startShell();
-
             byte[] buffer = new byte[1000];
-            int bytesread;
 
-            bytesread = read(session, buffer, 0, buffer.length);
-            write(session, command + "\n");
-            bytesread = read(session, buffer, 0, buffer.length);
+            // clear any welcome message
+            read(session, buffer, 0, buffer.length);
 
-            String output = new String(buffer, 0, bytesread);
-            // not all implementation seem to provide an exit code
+            session.execCommand(command);
+
+            int bytes_read = read(session, buffer, 0, buffer.length);
+            String output = new String(buffer, 0, bytes_read);
+
             Integer ret = session.getExitStatus();
             if (ret == null || ret == 0) {
                 listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, output);
