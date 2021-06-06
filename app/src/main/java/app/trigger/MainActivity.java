@@ -45,6 +45,7 @@ import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
+    private static final String TAG = "MainActivity";
     private boolean hasSetupSelected = false;
     private ImageView stateImage;
     private ImageButton lockButton;
@@ -154,10 +155,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         spinner.setAdapter(adapter);
         spinner.setSelection(selection);
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            int check = 0; // prevent triggering on creation
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                updateButtons();
-                callRequestHandler(Action.fetch_state);
+                if (check++ > 0) {
+                    updateButtons();
+                    callRequestHandler(Action.fetch_state);
+                }
             }
 
             @Override
@@ -251,9 +256,19 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     // listen for connectivity changes
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        long lastTrigger = System.currentTimeMillis();
+
         @Override
         public void onReceive(Context context, Intent intent) {
-            callRequestHandler(Action.fetch_state);
+            if (isInitialStickyBroadcast()) {
+                return;
+            }
+
+            long now =  System.currentTimeMillis();
+            if ((lastTrigger + 1000L) < now) {
+                lastTrigger = now;
+                callRequestHandler(Action.fetch_state);
+            }
         }
     };
 
