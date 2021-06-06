@@ -142,11 +142,12 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             session = connection.openSession();
             byte[] buffer = new byte[1000];
 
-            // clear any welcome message
-            read(session, buffer, 0, buffer.length);
+            // clear any welcome message (stdout/stderr)
+            //read(session, buffer, 0, buffer.length);
 
             session.execCommand(command);
 
+            // read stdout (drop stderr)
             int bytes_read = read(session, buffer, 0, buffer.length);
             String output = new String(buffer, 0, bytes_read);
 
