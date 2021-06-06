@@ -1,0 +1,1 @@
+* fix SSH_ORIGINAL_COMMAND for command in .ssh/authorized_keys
