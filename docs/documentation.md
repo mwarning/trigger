@@ -27,6 +27,15 @@ Instead QR-Code imports from another Trigger app, you can import simple links li
 
 Use e.g. `qrencode -t ansiutf8 < .ssh/id_ed25519` to show an SSH private key as QR-Code. Scan with trigger and add the server address, user, command etc..
 
+## Limit SSH Access To the Server
+
+To limit a user to call only one command via SSH, put this line in the `~/.ssh/authorized_keys` on the SSH server:
+
+```
+no-port-forwarding,no-x11-forwarding,no-agent-forwarding,command="/home/pi/bin/controldoor.sh" ssh-[keyver] [pubkeydata] [comment]
+```
+(replace command and other variables as you need)
+
 ## Nuki Smartlock Pairing
 
 Steps to pair Trigger with the Nuki Smartlock:
