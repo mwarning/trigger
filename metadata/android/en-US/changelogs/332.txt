@@ -1,0 +1,1 @@
+* add status patterns for MQTT
