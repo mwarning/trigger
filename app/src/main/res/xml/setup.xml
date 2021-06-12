@@ -466,6 +466,18 @@
             android:defaultValue="false" />
 
         <EditTextPreference
+            android:key="locked_pattern"
+            android:title="Reply Pattern (locked)"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
+            android:key="unlocked_pattern"
+            android:title="Reply Pattern (unlocked)"
+            android:persistent="false"
+            android:inputType="textNoSuggestions" />
+
+        <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
             android:persistent="false"
