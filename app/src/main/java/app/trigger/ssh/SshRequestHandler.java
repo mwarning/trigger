@@ -165,12 +165,10 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         } finally {
             if (session != null) {
                 session.close();
-                session = null;
             }
 
             if (connection != null) {
                 connection.close();
-                connection = null;
             }
         }
     }
@@ -221,7 +219,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         InputStream stdout = session.getStdout();
         InputStream stderr = session.getStderr();
 
-        int newConditions = session.waitForCondition(conditions, 500 /*0*/);
+        int newConditions = session.waitForCondition(conditions, 500);
 
         if ((newConditions & ChannelCondition.STDOUT_DATA) != 0) {
             bytesRead = stdout.read(buffer, start, len);
