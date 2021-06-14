@@ -256,19 +256,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     // listen for connectivity changes
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        long lastTrigger = System.currentTimeMillis();
-
         @Override
         public void onReceive(Context context, Intent intent) {
             if (isInitialStickyBroadcast()) {
+                // do nothing if the receiver was just initialized
                 return;
             }
 
-            long now =  System.currentTimeMillis();
-            if ((lastTrigger + 1000L) < now) {
-                lastTrigger = now;
-                callRequestHandler(Action.fetch_state);
-            }
+            callRequestHandler(Action.fetch_state);
         }
     };
 
