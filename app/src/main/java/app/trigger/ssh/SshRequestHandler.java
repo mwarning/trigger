@@ -106,13 +106,14 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             connection.addConnectionMonitor(this);
             ConnectionInfo connectionInfo = connection.connect();
 
-            // try without authentication
-            if (Utils.isEmpty(password) && keypair == null && !connection.isAuthenticationComplete()) {
-                if (password.isEmpty() && connection.authenticateWithNone(username)) {
-                    // login successful
-                } else {
-                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Login without credentials failed.");
-                    return;
+            // authentication by key pair
+            if (keypair != null && !connection.isAuthenticationComplete()) {
+                if (!tryPublicKey(connection, username, keypair)) {
+                    if (Utils.isEmpty(password)) {
+                        listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair was not accepted.");
+                    } else {
+                        // continue with _additional_ password authentication
+                    }
                 }
             }
 
@@ -126,10 +127,12 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
                 }
             }
 
-            // authentication by key pair
-            if (keypair != null && !connection.isAuthenticationComplete()) {
-                if (!tryPublicKey(connection, username, keypair)) {
-                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair was not accepted.");
+            // try without authentication
+            if (Utils.isEmpty(password) && !connection.isAuthenticationComplete()) {
+                if (connection.authenticateWithNone(username)) {
+                    // login successful
+                } else {
+                    listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Login without credentials failed.");
                     return;
                 }
             }
