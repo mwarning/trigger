@@ -3,7 +3,6 @@ package app.trigger;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -13,6 +12,7 @@ import java.util.List;
 
 
 public class WifiTools {
+    private static final String TAG = "WifiTools";
     private static WifiManager wifiManager;
     private static ConnectivityManager connectivityManager;
 
@@ -65,7 +65,7 @@ public class WifiTools {
 
         return ssids;
     }
-*/
+
     public static ArrayList<String> getConfiguredSSIDs() {
         // Note: needs coarse location permission
         List<WifiConfiguration> configs;
@@ -92,7 +92,7 @@ public class WifiTools {
         }
         return null;
     }
-/*
+
     // connect to the best wifi that is configured by this app and system
     void connectBestOf(ArrayList<String> ssids) {
         String current_ssid = this.getCurrentSSID();
@@ -131,27 +131,7 @@ public class WifiTools {
             return false;
         }
 
-        // Note: does not need coarse location permission
-        NetworkInfo ni = connectivityManager.getActiveNetworkInfo();
-        if (ni != null && ni.getType() == ConnectivityManager.TYPE_WIFI) {
-            return true;
-        } else {
-            return false;
-        }
-/*
-        if (wifiManager != null && wifiManager.isWifiEnabled()) {
-            // Wi-Fi adapter is ON
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            if (wifiInfo.getNetworkId() == -1) {
-                // not connected to an access point
-                return false;
-            }
-            // connected to an access point
-            return true;
-        } else {
-            // Wi-Fi adapter is off
-            return false;
-        }
-*/
+        NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return mWifi.isConnected();
     }
 }
