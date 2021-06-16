@@ -104,7 +104,11 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         try {
             connection = new Connection(hostname, port);
             connection.addConnectionMonitor(this);
-            ConnectionInfo connectionInfo = connection.connect();
+            ConnectionInfo connectionInfo = connection.connect(
+                null, // host key verifier
+                2000, // connect timeout
+                3000 // key exchange timeout
+            );
 
             // authentication by key pair
             if (keypair != null && !connection.isAuthenticationComplete()) {
