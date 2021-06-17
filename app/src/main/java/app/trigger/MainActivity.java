@@ -8,6 +8,10 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,14 +25,13 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.net.ConnectivityManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
+import java.net.NetworkInterface;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -241,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         registerReceiver(broadcastReceiver, intentFilter);
 
@@ -263,7 +265,26 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 return;
             }
 
-            callRequestHandler(Action.fetch_state);
+            String action = intent.getAction();
+
+            if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+                NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                NetworkInfo.DetailedState state = networkInfo.getDetailedState();
+                if (state == NetworkInfo.DetailedState.CONNECTED || state == NetworkInfo.DetailedState.DISCONNECTED) {
+                    // WifiTools.isConnected() will take a while until it returns true
+                    final Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(() -> {
+                            callRequestHandler(Action.fetch_state);
+                    }, 1000);
+                }
+            }
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1);
+                if (state == BluetoothAdapter.STATE_ON || state == BluetoothAdapter.STATE_OFF) {
+                    callRequestHandler(Action.fetch_state);
+                }
+            }
         }
     };
 
