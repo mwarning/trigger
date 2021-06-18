@@ -155,7 +155,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             session.execCommand(command);
 
             // read stdout (drop stderr)
-            int bytes_read = read(session, buffer, 0, buffer.length);
+            int bytes_read = read(session, buffer, 0, buffer.length, setup.timeout);
             String output = new String(buffer, 0, bytes_read);
 
             Integer ret = session.getExitStatus();
@@ -217,7 +217,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         Log.d(TAG, "connectionLost");
     }
 
-    private static int read(Session session, byte[] buffer, int start, int len) throws IOException {
+    private static int read(Session session, byte[] buffer, int start, int len, int timeout_ms) throws IOException {
         int bytesRead = 0;
 
         if (session == null)
@@ -226,7 +226,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         InputStream stdout = session.getStdout();
         InputStream stderr = session.getStderr();
 
-        int newConditions = session.waitForCondition(conditions, 5000);
+        int newConditions = session.waitForCondition(conditions, timeout_ms);
 
         if ((newConditions & ChannelCondition.STDOUT_DATA) != 0) {
             bytesRead = stdout.read(buffer, start, len);

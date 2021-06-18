@@ -34,6 +34,8 @@ public class SshDoorSetup implements Setup {
     public String register_url;
     public String ssids;
 
+    public int timeout; // milliseconds
+
     public SshDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
@@ -55,6 +57,7 @@ public class SshDoorSetup implements Setup {
         this.disabled_image = null;
         this.register_url = "";
         this.ssids = "";
+        this.timeout = 5000;
     }
 
     @Override

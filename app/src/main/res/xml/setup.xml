@@ -213,6 +213,13 @@
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
+            android:key="timeout"
+            android:title="Command Timeout (ms)"
+            android:persistent="false"
+            android:inputType="textNoSuggestions"
+            android:digits="0123456789" />
+
+        <EditTextPreference
             android:key="ssids"
             android:title="@string/setup_ssids"
             android:persistent="false"
