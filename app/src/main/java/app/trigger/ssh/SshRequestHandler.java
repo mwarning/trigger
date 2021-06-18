@@ -226,7 +226,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         InputStream stdout = session.getStdout();
         InputStream stderr = session.getStderr();
 
-        int newConditions = session.waitForCondition(conditions, 500);
+        int newConditions = session.waitForCondition(conditions, 5000);
 
         if ((newConditions & ChannelCondition.STDOUT_DATA) != 0) {
             bytesRead = stdout.read(buffer, start, len);
