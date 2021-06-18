@@ -1,3 +1,5 @@
 * add status patterns for MQTT
 * allow key and password authentication for SSH
-* fix status call problems introduced by previous fix 
+* call status call only once on connection change
+* make SSH execution timeout configurable
+  * defaults to 5 seconds
