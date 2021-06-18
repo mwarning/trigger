@@ -269,6 +269,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
                 NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if (networkInfo == null) {
+                    return;
+                }
                 NetworkInfo.DetailedState state = networkInfo.getDetailedState();
                 if (state == NetworkInfo.DetailedState.CONNECTED || state == NetworkInfo.DetailedState.DISCONNECTED) {
                     // WifiTools.isConnected() will take a while until it returns true
