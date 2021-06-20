@@ -8,7 +8,7 @@ Trigger makes rather generic requests and needs to be configured depending on th
 
 Trigger reads the door status from the text returned of the HTTPS query, SSH command or MQTT server. You can set a regular expression for the `Reply Pattern (locked)` and `Reply Pattern (unlocked)` settings. The default values are `LOCKED` and `UNLOCKED`. The complete return message is always displayed in the App for a short time (with possible HTML elements stripped and truncated if needed).
 
-An example of a regular expression pattern is `state"\s*:\s*"open`. This would match a part of a typical reponse that is in JSON format.
+An example of a regular expression pattern is `"state"\s*:\s*"open"`. This would match a part of a typical JSON response.
 
 ## Auto-Select/Limit Door By SSID
 
@@ -27,14 +27,15 @@ Instead QR-Code imports from another Trigger app, you can import simple links li
 
 Use e.g. `qrencode -t ansiutf8 < .ssh/id_ed25519` to show an SSH private key as QR-Code. Scan with trigger and add the server address, user, command etc..
 
-## Limit SSH Access To the Server
+## Limit SSH Access To The Server
 
-To limit a user to call only one command via SSH, put this line in the `~/.ssh/authorized_keys` on the SSH server:
+To limit a user to call only one command via SSH, put a line into `~/.ssh/authorized_keys` on the SSH server. E.g.:
 
 ```
 no-port-forwarding,no-x11-forwarding,no-agent-forwarding,command="/home/pi/bin/controldoor.sh" ssh-[keyver] [pubkeydata] [comment]
 ```
-(replace command and other variables as you need)
+
+The command send by Trigger is available as environment variable called `SSH_ORIGINAL_COMMAND` in the command script.
 
 ## Nuki Smartlock Pairing
 
@@ -46,7 +47,7 @@ Steps to pair Trigger with the Nuki Smartlock:
 4. Phone: Start Trigger, add a new door entry with door type "Nuki SmartLock".
 5. Phone: Enter the name of the paired Nuki Smartlock into the "Lock Name/MAC" field (something like "Nuki_1DAB5E34").
 6. Phone: Enter some user name (not very important) and save the door setup.
-7. Nuki: If the Nuki smartlock is not in pairing mode anymore, just press the the button again.
+7. Nuki: If the Nuki smartlock is not in pairing mode anymore, just press the button again.
 8. Phone: Press the open door button in Trigger. This will cause Trigger to register with the Nuki Smartlock.
 
 Now you should be able to send open/close commands.
