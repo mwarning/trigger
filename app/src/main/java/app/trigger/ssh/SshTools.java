@@ -69,10 +69,6 @@ public class SshTools {
         }
 
         try {
-            //JSch jsch = new JSch();
-            //KeyPair keypair = KeyPair.load(jsch, str.getBytes(), null);
-            //keypair.setPublicKeyComment(null);
-            //return keypair;
             return parsePrivateKeyPEM(str);
         } catch (Exception e) {
             Log.e(TAG, "deserialize error: " + e.toString());
@@ -96,11 +92,6 @@ public class SshTools {
             KeyPairData obj = (KeyPairData) ios.readObject();
 
             return parsePrivateKeyPEM(new String(obj.prvkey));
-
-            // KeyParData to KeyPair
-            //JSch jsch = new JSch();
-            //KeyPair keypair = KeyPair.load(jsch, obj.prvkey, obj.pubkey);
-            //return keypair;
         } catch (Exception e) {
             Log.e(TAG, "deserialize error: " + e.toString());
         }
