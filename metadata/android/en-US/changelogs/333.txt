@@ -1,0 +1,1 @@
+* support old style SSH keypair value
