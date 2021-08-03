@@ -57,8 +57,10 @@ public class SshTools {
             return kp;
         } catch (JSONException e) {
             Log.e(TAG, "deserializeKeyPair: " + e);
+
+            // fallback for old
+            return deserializeKeyPair_3_2_3(str);
         }
-        return null;
     }
 
     public static KeyPairBean deserializeKeyPair_3_2_3(String str) {
