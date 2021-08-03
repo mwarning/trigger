@@ -54,7 +54,7 @@ public class Settings {
 
     // update database format
     private static void upgradeDB() {
-// update from 1.2.1 to 1.3.0
+        // update from 1.2.1 to 1.3.0
         if (db_version.equals("1.2.1")) {
             Log.i("Settings", "Update database format from " + db_version + " to 1.3.1");
 
