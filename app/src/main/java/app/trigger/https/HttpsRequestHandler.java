@@ -12,7 +12,6 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -103,44 +102,46 @@ public class HttpsRequestHandler extends Thread {
 
         try {
             URL url = new URL(command);
-
-            // hostname verification
-            if (setup.ignore_hostname_mismatch) {
-                // ignore hostname mismatch
-                HttpsURLConnection.setDefaultHostnameVerifier((String hostname, SSLSession session) -> true);
-            } else {
-                HttpsURLConnection.setDefaultHostnameVerifier((String hostname, SSLSession session) -> false);
-            }
-
-            if (setup.ignore_certificate) {
-                // disable entire certificate validity
-                SSLContext context = SSLContext.getInstance("TLS");
-                context.init(null, new X509TrustManager[]{new X509TrustManager() {
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-                    public void checkServerTrusted(X509Certificate[] chain,
-                                    String authType) throws CertificateException {}
-                    public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[0];
-                    }}}, new SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
-            } else if (setup.certificate != null) {
-                // use custom certificate
-                HttpsURLConnection.setDefaultSSLSocketFactory(
-                    Utils.getSocketFactoryWithCertificate(setup.certificate)
-                );
-            } else if (setup.ignore_expiration) {
-                // ignore notBefore/notAfter
-                HttpsURLConnection.setDefaultSSLSocketFactory(
-                    getSocketFactoryIgnoreCertificateExpiredException()
-                );
-            } else {
-                // use system certificate
-                HttpsURLConnection.setDefaultSSLSocketFactory(
-                    SSLContext.getDefault().getSocketFactory()
-                );
-            }
-
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            if (con instanceof HttpsURLConnection) {
+                HttpsURLConnection https = (HttpsURLConnection) con;
+
+                // hostname verification
+                if (setup.ignore_hostname_mismatch) {
+                    // ignore hostname mismatch
+                    https.setHostnameVerifier((String hostname, SSLSession session) -> true);
+                }
+
+                if (setup.ignore_certificate) {
+                    // disable entire certificate validity
+                    SSLContext context = SSLContext.getInstance("TLS");
+                    context.init(null, new X509TrustManager[]{new X509TrustManager() {
+                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                        public void checkServerTrusted(X509Certificate[] chain,
+                                        String authType) throws CertificateException {}
+                        public X509Certificate[] getAcceptedIssuers() {
+                                return new X509Certificate[0];
+                        }}}, new SecureRandom());
+                    https.setSSLSocketFactory(context.getSocketFactory());
+                } else if (setup.certificate != null) {
+                    // use custom certificate
+                    https.setSSLSocketFactory(
+                        Utils.getSocketFactoryWithCertificate(setup.certificate)
+                    );
+                } else if (setup.ignore_expiration) {
+                    // ignore notBefore/notAfter
+                    https.setSSLSocketFactory(
+                        getSocketFactoryIgnoreCertificateExpiredException()
+                    );
+                } else {
+                    // use system certificate
+                    https.setSSLSocketFactory(
+                        SSLContext.getDefault().getSocketFactory()
+                    );
+                }
+            }
+
             con.setConnectTimeout(2500);
 
             if (!setup.method.isEmpty()) {
