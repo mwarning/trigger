@@ -1,0 +1,2 @@
+* fix some HTTPS hostname verification issues
+* make HTTP method explicit
