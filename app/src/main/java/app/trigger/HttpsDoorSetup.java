@@ -38,7 +38,7 @@ public class HttpsDoorSetup implements Setup {
         this.id = id;
         this.name = name;
         this.require_wifi = true;
-        this.method = "";
+        this.method = "GET";
         this.open_query = "";
         this.close_query = "";
         this.ring_query = "";
