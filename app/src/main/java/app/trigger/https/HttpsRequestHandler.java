@@ -20,6 +20,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import android.util.Base64;
+
 import app.trigger.MainActivity.Action;
 import app.trigger.HttpsDoorSetup;
 import app.trigger.DoorReply.ReplyCode;
@@ -103,6 +105,11 @@ public class HttpsRequestHandler extends Thread {
         try {
             URL url = new URL(command);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            if (url.getUserInfo() != null) {
+                String basicAuth = "Basic " + Base64.encodeToString(url.getUserInfo().getBytes(), Base64.DEFAULT);
+                con.setRequestProperty("Authorization", basicAuth);
+            }
 
             if (con instanceof HttpsURLConnection) {
                 HttpsURLConnection https = (HttpsURLConnection) con;
