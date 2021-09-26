@@ -1,0 +1,3 @@
+* add support for HTTP Basic Authentication
+  * e.g. https://user:password@example.com/open_door
+ 
