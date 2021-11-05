@@ -107,7 +107,7 @@ public class HttpsRequestHandler extends Thread {
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
             if (url.getUserInfo() != null) {
-                String basicAuth = "Basic " + Base64.encodeToString(url.getUserInfo().getBytes(), Base64.DEFAULT);
+                String basicAuth = "Basic " + Base64.encodeToString(url.getUserInfo().getBytes(), Base64.NO_WRAP);
                 con.setRequestProperty("Authorization", basicAuth);
             }
 
