@@ -1,0 +1,1 @@
+* fix HTTP Basic Authentication
