@@ -467,8 +467,20 @@
             android:defaultValue="false" />
 
         <app.trigger.https.CertificatePreference
-            android:key="certificate"
-            android:title="TLS Certificate"
+            android:key="server_certificate"
+            android:title="Server Certificate"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <app.trigger.https.CertificatePreference
+            android:key="client_certificate"
+            android:title="Client Certificate"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <app.trigger.ssh.KeyPairPreference
+            android:key="client_key"
+            android:title="Client Private Key"
             android:persistent="false"
             android:defaultValue="false" />
 

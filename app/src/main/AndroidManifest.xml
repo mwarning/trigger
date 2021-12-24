@@ -64,7 +64,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ssh.KeyPairActivity"
-            android:label="Manage SSH Key Pair"
+            android:label="@string/manage_ssh_key_pair"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name=".ssh.KeyPairActivity" />
@@ -73,7 +73,7 @@
         </activity>
         <activity
             android:name=".https.CertificateActivity"
-            android:label="Manage TLS Certificate"
+            android:label="@string/manage_tls_certificate"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name=".https.CertificateActivity" />

@@ -16,6 +16,9 @@
     <string name="none">Leer</string>
     <string name="really_remove_item">Wirklich löschen?</string>
 
+    <string name="manage_ssh_key_pair">SSH Schlüsselpaar Verwalten</string>
+    <string name="manage_tls_certificate">TLS Zertifikat Verwalten</string>
+
     <string name="save_button">Speichern</string>
     <string name="remove_button">Entfernen</string>
     <string name="select_button">Auswählen</string>
@@ -35,7 +38,7 @@
 
     <string name="certificate_url">Zertifikats URL</string>
     <string name="import_export_path">Import/Export Pfad</string>
-    <string name="certificate">Zertifikat</string>
+    <string name="server_certificate">Server Zertifikat</string>
 
     <string name="new_entry">Neuer Eintrag</string>
     <string name="setup_title">Setup</string>

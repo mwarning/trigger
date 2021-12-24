@@ -33,15 +33,15 @@ public class KeyPairBean implements Serializable {
     public boolean encrypted = false;
     public String nickname = "";
 
-    String getType() {
+    public String getType() {
         return type;
     }
 
-    byte[] getPublicKey() {
+    public byte[] getPublicKey() {
         return publicKey;
     }
 
-    byte[] getPrivateKey() {
+    public byte[] getPrivateKey() {
         return privateKey;
     }
 

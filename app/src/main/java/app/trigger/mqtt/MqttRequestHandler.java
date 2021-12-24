@@ -10,6 +10,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 import app.trigger.Utils;
 import app.trigger.MainActivity.Action;
 import app.trigger.MqttDoorSetup;
@@ -18,6 +21,7 @@ import app.trigger.DoorReply.ReplyCode;
 import app.trigger.OnTaskCompleted;
 import app.trigger.Log;
 import app.trigger.WifiTools;
+import app.trigger.ssh.PubkeyUtils;
 
 
 public class MqttRequestHandler extends Thread implements MqttCallback {
@@ -105,15 +109,25 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             opts.setCleanSession(false);
 
             if (address.startsWith("ssl://")) {
-                if (setup.certificate != null) {
+                if (setup.server_certificate != null) {
                     // use given certificate only
-                    opts.setSocketFactory(
-                            Utils.getSocketFactoryWithCertificate(setup.certificate)
-                    );
+                    if (setup.client_certificate != null && setup.client_key != null) {
+                        PrivateKey client_private_key = PubkeyUtils.decodePrivate(
+                            setup.client_key.getPrivateKey(), setup.client_key.getType()
+                        );
+                        opts.setSocketFactory(
+                            Utils.getSocketFactoryWithCertificateAndClientKey(
+                                setup.server_certificate, setup.client_certificate, client_private_key)
+                        );
+                    } else {
+                        opts.setSocketFactory(
+                            Utils.getSocketFactoryWithCertificate(setup.server_certificate)
+                        );
+                    }
                 } else {
                     // use system default certificates
                     opts.setSocketFactory(
-                            SSLContext.getDefault().getSocketFactory()
+                        SSLContext.getDefault().getSocketFactory()
                     );
                 }
             }

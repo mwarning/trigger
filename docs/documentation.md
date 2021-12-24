@@ -39,6 +39,14 @@ no-port-forwarding,no-x11-forwarding,no-agent-forwarding,command="/home/pi/bin/c
 
 The command send by Trigger is available as environment variable called `SSH_ORIGINAL_COMMAND` in the command script.
 
+## MQTT Server Setup
+
+Use these two sites as a HowTo:
+
+* [Run Local MQTT Broker on OpenWrt](https://www.onetransistor.eu/2019/05/run-local-mqtt-broker-on-openwrt-router.html)
+* [Mosquitto on OpenWrt Router](https://www.onetransistor.eu/2019/05/mosquitto-mqtt-on-openwrt-router.html)
+* [Mosquitto with TLS Certificate](https://www.onetransistor.eu/2019/05/mosquitto-mqtt-tls-certificate.html)
+
 ## Nuki Smartlock Pairing
 
 Steps to pair Trigger with the Nuki Smartlock:

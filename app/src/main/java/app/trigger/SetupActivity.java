@@ -20,6 +20,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 
 import app.trigger.https.CertificatePreference;
+import app.trigger.mqtt.FilePreference;
 import app.trigger.ssh.KeyPairPreference;
 import app.trigger.ssh.KeyPairBean;
 
@@ -234,6 +235,25 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
+    private byte[] getFileContent(String key) {
+        FilePreference kpp = (FilePreference) findAnyPreference(key, null);
+        if (kpp != null) {
+            return kpp.getFileContent();
+        } else {
+            Log.e(TAG, "getFileContent(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
+            return null;
+        }
+    }
+
+    private void setFileContent(String key, byte[] content) {
+        FilePreference kpp = (FilePreference) findAnyPreference(key, null);
+        if (kpp != null) {
+            kpp.setFileContent(content);
+        } else {
+            Log.e(TAG, "setFileContent(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
+        }
+    }
+
     private Certificate getCertificate(String key) {
         CertificatePreference cp = (CertificatePreference) findAnyPreference(key, null);
         if (cp != null) {
@@ -356,6 +376,8 @@ public class SetupActivity extends PreferenceActivity {
                     setKeyPair(name, (KeyPairBean) value);
                 } else if (type == Certificate.class) {
                     setCertificate(name, (Certificate) value);
+                } else if (type == FileContent.class) {
+                    setFileContent(name, (FileContent) value);
                 } else {
                     throw new Exception("Unhandled type " + type.getSimpleName() + " of field " + name);
                 }
@@ -400,6 +422,8 @@ public class SetupActivity extends PreferenceActivity {
                     field.set(setup, getKeyPair(name));
                 } else if (type == Certificate.class) {
                     field.set(setup, getCertificate(name));
+                } else if (type == FileContent.class) {
+                    field.set(setup, getFileContent(name));
                 } else {
                     Log.e(TAG, "storeSetup: Unhandled type for " + name + ": " + type.toString());
                 }
