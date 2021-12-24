@@ -25,14 +25,18 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.KeyManagerFactory;
 //import java.util.zip.Deflater;
 //import java.util.zip.Inflater;
 
@@ -100,6 +104,35 @@ public class Utils {
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, tmf.getTrustManagers(), null);
+
+        return sslContext.getSocketFactory();
+    }
+
+    public static SSLSocketFactory getSocketFactoryWithCertificateAndClientKey(Certificate cert, Certificate clientCertificate, PrivateKey privateKey)
+            throws CertificateException, KeyStoreException, IOException,
+            NoSuchAlgorithmException, KeyManagementException {
+
+        String TEMPORARY_KEY_PASSWORD = UUID.randomUUID().toString().replace("-","");
+
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", cert);
+        keyStore.setCertificateEntry("client-cert", clientCertificate);
+        keyStore.setKeyEntry("client-key", privateKey, TEMPORARY_KEY_PASSWORD.toCharArray(), new Certificate[]{clientCertificate});
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(
+                KeyManagerFactory.getDefaultAlgorithm());
+        try {
+            kmf.init(keyStore, TEMPORARY_KEY_PASSWORD.toCharArray());
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+        tmf.init(keyStore);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         return sslContext.getSocketFactory();
     }

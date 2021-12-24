@@ -41,7 +41,7 @@ public class KeyPairBean implements Serializable {
         return publicKey;
     }
 
-    byte[] getPrivateKey() {
+    public byte[] getPrivateKey() {
         return privateKey;
     }
 

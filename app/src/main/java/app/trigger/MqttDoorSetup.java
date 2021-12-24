@@ -3,8 +3,10 @@ package app.trigger;
 import android.graphics.Bitmap;
 
 import app.trigger.DoorState.StateCode;
+import app.trigger.ssh.KeyPairBean;
 
 import java.security.cert.Certificate;
+import java.security.PrivateKey;
 
 
 public class MqttDoorSetup implements Setup {
@@ -34,6 +36,8 @@ public class MqttDoorSetup implements Setup {
 
     public String ssids;
     public Certificate certificate;
+    public Certificate client_certificate;
+    public KeyPairBean client_key;
 
     public MqttDoorSetup(int id, String name) {
         this.id = id;
