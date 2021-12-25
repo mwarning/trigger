@@ -33,7 +33,7 @@ public class KeyPairBean implements Serializable {
     public boolean encrypted = false;
     public String nickname = "";
 
-    String getType() {
+    public String getType() {
         return type;
     }
 

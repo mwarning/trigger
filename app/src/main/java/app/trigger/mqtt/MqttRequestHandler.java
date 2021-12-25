@@ -112,7 +112,7 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
                 if (setup.certificate != null) {
                     // use given certificate only
                     if(setup.client_certificate != null && setup.client_key != null) {
-                        PrivateKey client_private_key = PubkeyUtils.decodePrivate(setup.client_key.getPrivateKey(),"RSA");
+                        PrivateKey client_private_key = PubkeyUtils.decodePrivate(setup.client_key.getPrivateKey(),setup.client_key.getType());
                         opts.setSocketFactory(
                                 Utils.getSocketFactoryWithCertificateAndClientKey(setup.certificate,setup.client_certificate,client_private_key)
                         );
