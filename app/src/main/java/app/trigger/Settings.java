@@ -265,6 +265,14 @@ public class Settings {
             sharedPreferences.edit().putString("db_version", new_version).commit();
             db_version = new_version;
         }
+
+        if (Arrays.asList("3.3.6").contains(db_version)) {
+            String new_version = "3.4.0";
+            Log.i(TAG, "Update database format from " + db_version + " to " + new_version);
+            setups = new ArrayList();
+            sharedPreferences.edit().putString("db_version", new_version).commit();
+            db_version = new_version;
+        }
     }
 
     static void init(Context context) {
