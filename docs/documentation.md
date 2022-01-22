@@ -54,11 +54,11 @@ Steps to pair Trigger with the Nuki Smartlock:
 1. Nuki: Press the door knob button for 3 seconds until the ring lights up (pairing mode).
 2. Phone: Enable Bluetooth.
 3. Phone: Pair phone and Nuki Smartlock.
-4. Phone: Start Trigger, add a new door entry with door type "Nuki SmartLock".
-5. Phone: Enter the name of the paired Nuki Smartlock into the "Lock Name/MAC" field (something like "Nuki_1DAB5E34").
-6. Phone: Enter some user name (not very important) and save the door setup.
+4. Trigger: Start App and add a new door entry with door type "Nuki SmartLock".
+5. Trigger: Enter the name of the paired Nuki Smartlock into the "Lock Name/MAC" field (something like "Nuki_1DAB5E34").
+6. Trigger: Enter some user name (not very important) and save the door setup.
 7. Nuki: If the Nuki smartlock is not in pairing mode anymore, just press the button again.
-8. Phone: Press the open door button in Trigger. This will cause Trigger to register with the Nuki Smartlock.
+8. Trigger: Press the open door button in Trigger. This will cause Trigger to register with the Nuki Smartlock.
 
 Now you should be able to send open/close commands.
 
