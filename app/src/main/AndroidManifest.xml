@@ -63,7 +63,7 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ssh.KeyPairActivity"
+            android:name=".ssh.SshKeyPairActivity"
             android:label="@string/manage_ssh_key_pair"
             android:screenOrientation="portrait" >
             <intent-filter>

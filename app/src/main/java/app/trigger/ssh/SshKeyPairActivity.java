@@ -25,14 +25,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import app.trigger.R;
 
-public class KeyPairActivity extends AppCompatActivity implements
+public class SshKeyPairActivity extends AppCompatActivity implements
         RegisterIdentityTask.OnTaskCompleted,
         GenerateIdentityTask.OnTaskCompleted {
     private static final String TAG = "KeyPairActivity";
     private static final int IMPORT_PRIVATE_KEY_CODE = 0x01;
     private static final int EXPORT_PUBLIC_KEY_CODE = 0x02;
     private static final int EXPORT_PRIVATE_KEY_CODE = 0x03;
-    private KeyPairPreference preference; // hack
+    private SshKeyPairPreference preference; // hack
     private AlertDialog.Builder builder;
     private ClipboardManager clipboard;
     private Button createButton;
@@ -64,7 +64,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keypair);
 
-        this.preference = KeyPairPreference.self; // hack, TODO: pass serialized key in bundle
+        this.preference = SshKeyPairPreference.self; // hack, TODO: pass serialized key in bundle
 
         clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
@@ -82,7 +82,7 @@ public class KeyPairActivity extends AppCompatActivity implements
         publicKey = findViewById(R.id.PublicKey);
         registerAddress = findViewById(R.id.RegisterAddress);
         keyTypeSpinner = findViewById(R.id.KeyTypeSpinner);
-        final KeyPairActivity self = this;
+        final SshKeyPairActivity self = this;
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
             android.R.layout.simple_spinner_item,

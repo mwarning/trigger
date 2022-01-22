@@ -9,18 +9,18 @@ import android.util.AttributeSet;
 import app.trigger.SetupActivity;
 
 /*
-* Stores a string in preference. Indicated the presence of data with a switch.
-* On click, the file chooser opens.
-*/
-public class KeyPairPreference extends SwitchPreference {
+ * Preference to indicate the presence of data with a switch.
+ * On click, the SshKeyPairActivity opens.
+ */
+public class SshKeyPairPreference extends SwitchPreference {
     private KeyPairBean keypair;
     private Context context;
-    static KeyPairPreference self;
+    static SshKeyPairPreference self;
 
-    public KeyPairPreference(Context context, AttributeSet attrs) {
+    public SshKeyPairPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        final KeyPairPreference self = this;
+        final SshKeyPairPreference self = this;
 
         // tell the superclass that we handle the value on out own!
         setPersistent(false);
@@ -50,9 +50,9 @@ public class KeyPairPreference extends SwitchPreference {
                 String register_url = ((SetupActivity) self.context).getRegisterUrl();
 
                 // store in public static member - hack!
-                KeyPairPreference.self = KeyPairPreference.this;
+                SshKeyPairPreference.self = SshKeyPairPreference.this;
 
-                Intent intent = new Intent(self.context, KeyPairActivity.class);
+                Intent intent = new Intent(self.context, SshKeyPairActivity.class);
                 intent.putExtra("register_url", register_url);
                 self.context.startActivity(intent);
 

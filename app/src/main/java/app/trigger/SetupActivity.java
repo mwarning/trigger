@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import app.trigger.https.CertificatePreference;
 import app.trigger.mqtt.MqttClientKeyPairPreference;
-import app.trigger.ssh.KeyPairPreference;
+import app.trigger.ssh.SshKeyPairPreference;
 import app.trigger.ssh.KeyPairBean;
 
 
@@ -218,8 +218,8 @@ public class SetupActivity extends PreferenceActivity {
 
     private KeyPairBean getKeyPairBean(String key) {
         Preference preference = findAnyPreference(key, null);
-        if (preference instanceof KeyPairPreference) {
-            return ((KeyPairPreference)  preference).getKeyPair();
+        if (preference instanceof SshKeyPairPreference) {
+            return ((SshKeyPairPreference)  preference).getKeyPair();
         } else if (preference instanceof MqttClientKeyPairPreference) {
             return ((MqttClientKeyPairPreference)  preference).getKeyPair();
         } else {
@@ -230,8 +230,8 @@ public class SetupActivity extends PreferenceActivity {
 
     private void setKeyPairBean(String key, KeyPairBean keypair) {
         Preference preference = findAnyPreference(key, null);
-        if (preference instanceof KeyPairPreference) {
-            ((KeyPairPreference)  preference).setKeyPair(keypair);
+        if (preference instanceof SshKeyPairPreference) {
+            ((SshKeyPairPreference)  preference).setKeyPair(keypair);
         } else if (preference instanceof MqttClientKeyPairPreference) {
             ((MqttClientKeyPairPreference)  preference).setKeyPair(keypair);
         } else {

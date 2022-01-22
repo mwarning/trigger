@@ -145,7 +145,7 @@
             android:defaultValue="true"
             android:persistent="false" />
 
-        <app.trigger.ssh.KeyPairPreference
+        <app.trigger.ssh.SshKeyPairPreference
             android:key="keypair"
             android:title="Key Pair"
             android:persistent="false"
