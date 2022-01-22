@@ -22,6 +22,7 @@ import app.trigger.Log;
 
 
 public class HttpsTools {
+    private static final String TAG = "HttpsTools";
 
     public static boolean isValid(X509Certificate cert) {
         try {
@@ -48,7 +49,7 @@ public class HttpsTools {
                 + Base64.encodeToString(cert.getEncoded(), Base64.DEFAULT)
                 + "\n-----END CERTIFICATE-----\n";
         } catch (Exception e) {
-            Log.e("HttpsTools", e.toString());
+            Log.e(TAG, e.toString());
         }
 
         return "";
