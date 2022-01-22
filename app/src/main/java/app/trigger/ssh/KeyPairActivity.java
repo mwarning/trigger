@@ -96,12 +96,12 @@ public class KeyPairActivity extends AppCompatActivity implements
             getIntent().getStringExtra("register_url")
         );
 
-        // toogle between both checkboxes
+        // toggle between both checkboxes
         useClipboardCheckBox.setOnClickListener((View v) -> {
             useFilesystemCheckBox.setChecked(!useClipboardCheckBox.isChecked());
         });
 
-        // toogle between both checkboxes
+        // toggle between both checkboxes
         useFilesystemCheckBox.setOnClickListener((View v) -> {
             useClipboardCheckBox.setChecked(!useFilesystemCheckBox.isChecked());
         });
