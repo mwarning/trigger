@@ -11,7 +11,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.security.PrivateKey;
-import java.security.PublicKey;
 
 import app.trigger.Utils;
 import app.trigger.MainActivity.Action;
@@ -55,25 +54,20 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             }
         }
 
-        switch (action) {
-            case fetch_state:
-                if (setup.status_topic.isEmpty()) {
-                    this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
-                    return;
-                }
-                break;
-            case open_door:
-            case ring_door:
-            case close_door:
-                if (setup.command_topic.isEmpty()) {
-                    this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No command topic set.");
-                    return;
-                }
-                if (setup.close_command.isEmpty()) {
-                    this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No close command set.");
-                    return;
-                }
-                break;
+        if (action == Action.fetch_state && setup.status_topic.isEmpty()) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
+            return;
+        }
+
+        if ((action == Action.open_door || action == Action.ring_door || action == Action.close_door)
+                && setup.command_topic.isEmpty()) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No command topic set.");
+            return;
+        }
+
+        if (action == Action.close_door && setup.close_command.isEmpty()) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "No close command set.");
+            return;
         }
 
         if (setup.qos != 0 && setup.qos != 1 && setup.qos != 2) {
@@ -111,18 +105,20 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             if (address.startsWith("ssl://")) {
                 if (setup.server_certificate != null) {
                     // use given certificate only
-                    if (setup.client_certificate != null && setup.client_key != null) {
+                    if (setup.client_keypair != null && setup.client_certificate != null) {
                         PrivateKey client_private_key = PubkeyUtils.decodePrivate(
-                            setup.client_key.getPrivateKey(), setup.client_key.getType()
+                            setup.client_keypair.getPrivateKey(), setup.client_keypair.getType()
                         );
                         opts.setSocketFactory(
                             Utils.getSocketFactoryWithCertificateAndClientKey(
                                 setup.server_certificate, setup.client_certificate, client_private_key)
                         );
-                    } else {
+                    } else if (setup.client_keypair == null && setup.client_certificate == null) {
                         opts.setSocketFactory(
                             Utils.getSocketFactoryWithCertificate(setup.server_certificate)
                         );
+                    } else {
+                        throw new Exception("Cannot use either client keypair and client certificate. Set both or none.");
                     }
                 } else {
                     // use system default certificates

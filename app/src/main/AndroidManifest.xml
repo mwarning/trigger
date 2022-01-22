@@ -72,6 +72,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".mqtt.MqttClientKeyPairActivity"
+            android:label="Manage Client Private Key"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name=".mqtt.MqttPrivateClientKeyActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".https.CertificateActivity"
             android:label="@string/manage_tls_certificate"
             android:screenOrientation="portrait" >

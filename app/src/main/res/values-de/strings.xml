@@ -34,6 +34,7 @@
     <string name="cancel_button">Abbrechen</string>
     <string name="ok_button">Ok</string>
     <string name="public_key">Public Key: %s</string>
+    <string name="private_key">Private Key: %s</string>
     <string name="confirm">Bestätigen</string>
 
     <string name="certificate_url">Zertifikats URL</string>

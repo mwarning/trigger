@@ -20,7 +20,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 
 import app.trigger.https.CertificatePreference;
-import app.trigger.mqtt.FilePreference;
+import app.trigger.mqtt.MqttClientKeyPairPreference;
 import app.trigger.ssh.KeyPairPreference;
 import app.trigger.ssh.KeyPairBean;
 
@@ -216,41 +216,26 @@ public class SetupActivity extends PreferenceActivity {
         }
     }
 
-    private KeyPairBean getKeyPair(String key) {
-        KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
-        if (kpp != null) {
-            return kpp.getKeyPair();
+    private KeyPairBean getKeyPairBean(String key) {
+        Preference preference = findAnyPreference(key, null);
+        if (preference instanceof KeyPairPreference) {
+            return ((KeyPairPreference)  preference).getKeyPair();
+        } else if (preference instanceof MqttClientKeyPairPreference) {
+            return ((MqttClientKeyPairPreference)  preference).getKeyPair();
         } else {
             Log.e(TAG, "getKeyPair(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
             return null;
         }
     }
 
-    private void setKeyPair(String key, KeyPairBean keypair) {
-        KeyPairPreference kpp = (KeyPairPreference) findAnyPreference(key, null);
-        if (kpp != null) {
-            kpp.setKeyPair(keypair);
+    private void setKeyPairBean(String key, KeyPairBean keypair) {
+        Preference preference = findAnyPreference(key, null);
+        if (preference instanceof KeyPairPreference) {
+            ((KeyPairPreference)  preference).setKeyPair(keypair);
+        } else if (preference instanceof MqttClientKeyPairPreference) {
+            ((MqttClientKeyPairPreference)  preference).setKeyPair(keypair);
         } else {
             Log.e(TAG, "setKeyPair(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
-        }
-    }
-
-    private byte[] getFileContent(String key) {
-        FilePreference kpp = (FilePreference) findAnyPreference(key, null);
-        if (kpp != null) {
-            return kpp.getFileContent();
-        } else {
-            Log.e(TAG, "getFileContent(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
-            return null;
-        }
-    }
-
-    private void setFileContent(String key, byte[] content) {
-        FilePreference kpp = (FilePreference) findAnyPreference(key, null);
-        if (kpp != null) {
-            kpp.setFileContent(content);
-        } else {
-            Log.e(TAG, "setFileContent(): Cannot find KeyPairPreference in PreferenceGroup with key: " + key);
         }
     }
 
@@ -373,11 +358,9 @@ public class SetupActivity extends PreferenceActivity {
                 } else if (type == Bitmap.class) {
                     setBitmap(name, (Bitmap) value);
                 } else if (type == KeyPairBean.class) {
-                    setKeyPair(name, (KeyPairBean) value);
+                    setKeyPairBean(name, (KeyPairBean) value);
                 } else if (type == Certificate.class) {
                     setCertificate(name, (Certificate) value);
-                } else if (type == FileContent.class) {
-                    setFileContent(name, (FileContent) value);
                 } else {
                     throw new Exception("Unhandled type " + type.getSimpleName() + " of field " + name);
                 }
@@ -419,11 +402,9 @@ public class SetupActivity extends PreferenceActivity {
                 } else if (type == Bitmap.class) {
                     field.set(setup, getBitmap(name));
                 } else if (type == KeyPairBean.class) {
-                    field.set(setup, getKeyPair(name));
+                    field.set(setup, getKeyPairBean(name));
                 } else if (type == Certificate.class) {
                     field.set(setup, getCertificate(name));
-                } else if (type == FileContent.class) {
-                    field.set(setup, getFileContent(name));
                 } else {
                     Log.e(TAG, "storeSetup: Unhandled type for " + name + ": " + type.toString());
                 }

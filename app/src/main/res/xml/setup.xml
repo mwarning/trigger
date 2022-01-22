@@ -478,8 +478,8 @@
             android:persistent="false"
             android:defaultValue="false" />
 
-        <app.trigger.ssh.KeyPairPreference
-            android:key="client_key"
+        <app.trigger.mqtt.MqttClientKeyPairPreference
+            android:key="client_keypair"
             android:title="Client Private Key"
             android:persistent="false"
             android:defaultValue="false" />
