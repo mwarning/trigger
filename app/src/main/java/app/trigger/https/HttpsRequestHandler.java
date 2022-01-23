@@ -4,10 +4,6 @@ import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -15,9 +11,6 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import android.util.Base64;
@@ -41,22 +34,6 @@ public class HttpsRequestHandler extends Thread {
         this.listener = listener;
         this.setup = setup;
         this.action = action;
-    }
-
-    private static SSLSocketFactory getSocketFactoryIgnoreCertificateExpiredException()
-            throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        TrustManagerFactory factory;
-        factory = TrustManagerFactory.getInstance("X509");
-        factory.init((KeyStore) null);
-        TrustManager[] trustManagers = factory.getTrustManagers();
-        for (int i = 0; i < trustManagers.length; i++) {
-            if (trustManagers[i] instanceof X509TrustManager) {
-                trustManagers[i] = new IgnoreExpirationTrustManager((X509TrustManager) trustManagers[i]);
-            }
-        }
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagers, null);
-        return sslContext.getSocketFactory();
     }
 
     public void run() {
@@ -139,7 +116,7 @@ public class HttpsRequestHandler extends Thread {
                 } else if (setup.ignore_expiration) {
                     // ignore notBefore/notAfter
                     https.setSSLSocketFactory(
-                        getSocketFactoryIgnoreCertificateExpiredException()
+                        HttpsTools.getSocketFactoryIgnoreCertificateExpiredException()
                     );
                 } else {
                     // use system certificate

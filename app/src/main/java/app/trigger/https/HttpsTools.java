@@ -4,6 +4,8 @@ import android.util.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
@@ -15,7 +17,9 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import app.trigger.Log;
@@ -105,5 +109,21 @@ public class HttpsTools {
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, trustManagers, new SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+    }
+
+    public static SSLSocketFactory getSocketFactoryIgnoreCertificateExpiredException()
+            throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        TrustManagerFactory factory;
+        factory = TrustManagerFactory.getInstance("X509");
+        factory.init((KeyStore) null);
+        TrustManager[] trustManagers = factory.getTrustManagers();
+        for (int i = 0; i < trustManagers.length; i++) {
+            if (trustManagers[i] instanceof X509TrustManager) {
+                trustManagers[i] = new IgnoreExpirationTrustManager((X509TrustManager) trustManagers[i]);
+            }
+        }
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, null);
+        return sslContext.getSocketFactory();
     }
 }
