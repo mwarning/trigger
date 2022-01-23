@@ -103,6 +103,8 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             opts.setCleanSession(false);
 
             if (address.startsWith("ssl://")) {
+                opts.setHttpsHostnameVerificationEnabled(!setup.ignore_hostname_mismatch);
+
                 if (setup.server_certificate != null) {
                     // use given certificate only
                     if (setup.client_keypair != null && setup.client_certificate != null) {

@@ -484,6 +484,13 @@
             android:persistent="false"
             android:defaultValue="false" />
 
+        <CheckBoxPreference
+            android:key="ignore_hostname_mismatch"
+            android:title="Disable Certificate Hostname Check"
+            android:summary="Warning: This disables security"
+            android:defaultValue="false"
+            android:persistent="false" />
+
         <EditTextPreference
             android:key="locked_pattern"
             android:title="Reply Pattern (locked)"
