@@ -120,13 +120,17 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
                             Utils.getSocketFactoryWithCertificate(setup.server_certificate)
                         );
                     } else {
-                        throw new Exception("Cannot use either client keypair and client certificate. Set both or none.");
+                        throw new Exception("Both client keypair and client certificate needed.");
                     }
                 } else {
-                    // use system default certificates
-                    opts.setSocketFactory(
-                        SSLContext.getDefault().getSocketFactory()
-                    );
+                    if (setup.client_keypair != null || setup.client_certificate != null) {
+                        throw new Exception("Client key and client certificate needed.");
+                    } else {
+                        // use system default certificates
+                        opts.setSocketFactory(
+                            SSLContext.getDefault().getSocketFactory()
+                        );
+                    }
                 }
             }
 
