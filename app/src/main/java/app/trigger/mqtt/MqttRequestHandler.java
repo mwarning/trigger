@@ -172,7 +172,7 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             // this reply will be ignored
             this.listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, "");
         } catch (MqttException me) {
-            this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, me.getMessage());
+            this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, me.toString());
         } catch (Exception e) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.getMessage());
         }
