@@ -2,13 +2,10 @@ package app.trigger;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class WifiTools {
@@ -126,7 +123,20 @@ public class WifiTools {
         }
     }
 */
+
     public static boolean isConnected() {
+        Network[] networks = connectivityManager.getAllNetworks();
+        for (Network network : networks){
+           NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network);
+
+           if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+               return true;
+           }
+        }
+        return false;
+    }
+
+    public static boolean isConnectedWithInternet() {
         if (connectivityManager == null) {
             return false;
         }
