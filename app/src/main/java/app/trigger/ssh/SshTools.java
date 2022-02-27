@@ -21,7 +21,7 @@ import app.trigger.Utils;
 
 
 public class SshTools {
-    static final String TAG = "SshTools";
+    private static final String TAG = "SshTools";
 
     public static String serializeKeyPair(KeyPairBean keypair) {
         if (keypair == null) {

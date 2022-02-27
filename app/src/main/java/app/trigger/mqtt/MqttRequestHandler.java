@@ -24,6 +24,7 @@ import app.trigger.ssh.PubkeyUtils;
 
 
 public class MqttRequestHandler extends Thread implements MqttCallback {
+    private static final String TAG = "MqttRequestHandler";
     private final OnTaskCompleted listener;
     private final MqttDoorSetup setup;
     private final Action action;

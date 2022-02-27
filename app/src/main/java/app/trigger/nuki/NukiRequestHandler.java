@@ -35,7 +35,7 @@ import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
 
 
 public class NukiRequestHandler extends Thread {
-    static final String TAG = "NukiRequestHandler";
+    private static final String TAG = "NukiRequestHandler";
     private final OnTaskCompleted listener;
     private final NukiDoorSetup setup;
     private final Action action;

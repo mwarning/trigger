@@ -11,7 +11,7 @@ import app.trigger.Utils;
 
 
 class NukiReadLockStateCallback extends NukiCallback {
-    static final String TAG = "ReadLockStateCallback";
+    private static final String TAG = "ReadLockStateCallback";
     long auth_id;
     byte[] shared_key;
     byte[] data;

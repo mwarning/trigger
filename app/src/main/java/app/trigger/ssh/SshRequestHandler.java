@@ -28,7 +28,7 @@ import java.security.PublicKey;
 
 
 public class SshRequestHandler extends Thread implements ConnectionMonitor {
-    private static String TAG = "SshRequestHandler";
+    private static final String TAG = "SshRequestHandler";
     private final OnTaskCompleted listener;
     private final SshDoorSetup setup;
     private final Action action;

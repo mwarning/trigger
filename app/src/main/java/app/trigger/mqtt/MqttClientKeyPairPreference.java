@@ -14,6 +14,7 @@ import app.trigger.ssh.KeyPairBean;
 * On click, the MqttClientKeypairActivity opens.
 */
 public class MqttClientKeyPairPreference extends SwitchPreference {
+    private static final String TAG = "MqttClientKeyPairPreference";
     private KeyPairBean clientKey;
     private Context context;
     static MqttClientKeyPairPreference self;

@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 
 
 public class BluetoothTools {
-    static final String TAG = "BluetoothTools";
+    private static final String TAG = "BluetoothTools";
     private static BluetoothAdapter adapter;
 
     static void init(Context context) {

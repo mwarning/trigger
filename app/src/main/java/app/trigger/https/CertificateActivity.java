@@ -23,6 +23,7 @@ import java.security.cert.X509Certificate;
 
 
 public class CertificateActivity extends AppCompatActivity implements CertificateFetchTask.OnTaskCompleted {
+    private static final String TAG = "CertificateActivity";
     private static final int READ_REQUEST_CODE = 0x01;
     private static final int WRITE_REQUEST_CODE = 0x02;
     private CertificatePreference preference; // hack

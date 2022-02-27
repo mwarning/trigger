@@ -16,7 +16,7 @@ import app.trigger.Utils;
 import java.util.Random;
 
 class NukiPairingCallback extends NukiCallback {
-    static final String TAG = "PairingCallback";
+    private static final String TAG = "PairingCallback";
     NukiDoorSetup setup;
     byte[] data;
 

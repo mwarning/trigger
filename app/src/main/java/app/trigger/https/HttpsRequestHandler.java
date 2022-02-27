@@ -25,7 +25,7 @@ import app.trigger.WifiTools;
 
 
 public class HttpsRequestHandler extends Thread {
-    private static String TAG = "HttpsRequestHandler";
+    private static final String TAG = "HttpsRequestHandler";
     private final OnTaskCompleted listener;
     private final HttpsDoorSetup setup;
     private final Action action;

@@ -11,7 +11,7 @@ import app.trigger.Log;
 
 
 class NukiLockActionCallback extends NukiCallback {
-    static final String TAG = "LockActionCallback";
+    private static final String TAG = "LockActionCallback";
     long auth_id;
     long app_id;
     int lock_action;
