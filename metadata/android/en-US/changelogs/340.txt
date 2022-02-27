@@ -1,1 +1,3 @@
-* add TLS support for MQTT
+* add MQTT support for TLS client/server certificates
+* "Wifi needed" now ignores Internet availability
+* fix deletion of key and certificates
