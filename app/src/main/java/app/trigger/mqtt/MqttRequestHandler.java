@@ -55,6 +55,11 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             }
         }
 
+        if (Utils.isEmpty(setup.server)) {
+            this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "MQTT broker address not set.");
+            return;
+        }
+
         if (action == Action.fetch_state && setup.status_topic.isEmpty()) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "");
             return;
