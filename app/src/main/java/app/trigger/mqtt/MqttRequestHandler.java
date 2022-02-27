@@ -126,7 +126,7 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
                             Utils.getSocketFactoryWithCertificate(setup.server_certificate)
                         );
                     } else {
-                        throw new Exception("Both client keypair and client certificate needed.");
+                        throw new Exception("Both client key and client certificate needed.");
                     }
                 } else {
                     if (setup.client_keypair != null || setup.client_certificate != null) {
@@ -175,9 +175,9 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
                     client.publish(setup.command_topic, close);
                     break;
             }
-            // this reply will be ignored
             this.listener.onTaskResult(setup.getId(), ReplyCode.SUCCESS, "");
         } catch (MqttException me) {
+            //me.getMessage() returns "MqttException" only
             this.listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, me.toString());
         } catch (Exception e) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, e.getMessage());
