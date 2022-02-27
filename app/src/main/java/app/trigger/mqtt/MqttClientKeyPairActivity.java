@@ -116,10 +116,8 @@ public class MqttClientKeyPairActivity extends AppCompatActivity {
         });
 
         okButton.setOnClickListener((View v) -> {
-            // persist your value here
-            if (MqttClientKeyPairActivity.this.keypair != null) {
-                preference.setKeyPair(MqttClientKeyPairActivity.this.keypair);
-            }
+            // update the SwitchPreference
+            preference.setKeyPair(MqttClientKeyPairActivity.this.keypair);
             MqttClientKeyPairActivity.this.finish();
         });
 
