@@ -112,10 +112,8 @@ public class CertificateActivity extends AppCompatActivity implements Certificat
         });
 
         okButton.setOnClickListener((View v) -> {
-            // persist your value here
-            if (CertificateActivity.this.certificate != null) {
-                preference.setCertificate(CertificateActivity.this.certificate);
-            }
+            // update the SwitchPreference switch
+            preference.setCertificate(CertificateActivity.this.certificate);
             CertificateActivity.this.finish();
         });
 
