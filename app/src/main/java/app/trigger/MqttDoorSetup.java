@@ -37,7 +37,9 @@ public class MqttDoorSetup implements Setup {
     public Certificate client_certificate;
     public KeyPairBean client_keypair;
 
+    public Boolean ignore_certificate;
     public Boolean ignore_hostname_mismatch;
+    public Boolean ignore_expiration;
 
     public MqttDoorSetup(int id, String name) {
         this.id = id;
@@ -60,7 +62,9 @@ public class MqttDoorSetup implements Setup {
         this.unknown_image = null;
         this.disabled_image = null;
         this.ssids = "";
+        this.ignore_certificate = false;
         this.ignore_hostname_mismatch = false;
+        this.ignore_expiration = false;
     }
 
     @Override

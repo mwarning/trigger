@@ -1,6 +1,8 @@
 package app.trigger.mqtt;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
+import javax.security.cert.CertificateException;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -11,6 +13,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 
 import app.trigger.Utils;
 import app.trigger.MainActivity.Action;
@@ -20,6 +24,7 @@ import app.trigger.DoorReply.ReplyCode;
 import app.trigger.OnTaskCompleted;
 import app.trigger.Log;
 import app.trigger.WifiTools;
+import app.trigger.https.HttpsTools;
 import app.trigger.ssh.PubkeyUtils;
 
 
@@ -122,9 +127,31 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
                                 setup.server_certificate, setup.client_certificate, client_private_key)
                         );
                     } else if (setup.client_keypair == null && setup.client_certificate == null) {
-                        opts.setSocketFactory(
-                            Utils.getSocketFactoryWithCertificate(setup.server_certificate)
-                        );
+                        if (setup.ignore_certificate) {
+                            // disable entire certificate validity
+                            SSLContext context = SSLContext.getInstance("TLS");
+                            context.init(null, new X509TrustManager[]{new X509TrustManager() {
+                                @Override
+                                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+
+                                @Override
+                                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+
+                                @Override
+                                public X509Certificate[] getAcceptedIssuers() {
+                                    return new X509Certificate[0];
+                                }}}, new SecureRandom());
+                            opts.setSocketFactory(context.getSocketFactory());
+                        } else if (setup.ignore_expiration) {
+                            // ignore notBefore/notAfter
+                            opts.setSocketFactory(
+                                    HttpsTools.getSocketFactoryIgnoreCertificateExpiredException()
+                            );
+                        } else {
+                            opts.setSocketFactory(
+                                Utils.getSocketFactoryWithCertificate(setup.server_certificate)
+                            );
+                        }
                     } else {
                         throw new Exception("Both client key and client certificate needed.");
                     }
