@@ -29,8 +29,6 @@ public class HttpsDoorSetup implements Setup {
     public Bitmap unknown_image;
     public Bitmap disabled_image;
 
-    public Certificate certificate;
-
     public String ssids;
     public Certificate server_certificate;
     public Certificate client_certificate;
@@ -56,7 +54,6 @@ public class HttpsDoorSetup implements Setup {
         this.unknown_image = null;
         this.disabled_image = null;
         this.ssids = "";
-        this.certificate = null;
         this.ignore_certificate = false;
         this.ignore_hostname_mismatch = false;
         this.ignore_expiration = false;
