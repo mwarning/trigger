@@ -289,6 +289,30 @@ public class Settings {
             sharedPreferences.edit().putString("db_version", new_version).commit();
             db_version = new_version;
         }
+
+        if (Arrays.asList("3.4.0").contains(db_version)) {
+            String new_version = "3.4.1";
+            Log.i(TAG, "Update database format from " + db_version + " to " + new_version);
+            setups = new ArrayList();
+            // convert HTTPS certificate field name to server_certificate
+            for (int id = 0; id < 10; id += 1) {
+                String prefix = String.format("item_%03d_", id);
+                if (sharedPreferences.getString(prefix + "type", "") == "HttpsDoorSetup"
+                        && sharedPreferences.contains(prefix + "certificate")) {
+                    Certificate cert = HttpsTools.deserializeCertificate(
+                        sharedPreferences.getString(prefix + "certificate", null)
+                    );
+                    if (cert != null) {
+                        SharedPreferences.Editor e = sharedPreferences.edit();
+                        e.putString(prefix + "server_certificate", HttpsTools.serializeCertificate(cert));
+                        e.remove(prefix + "certificate");
+                        e.commit();
+                    }
+                }
+            }
+            sharedPreferences.edit().putString("db_version", new_version).commit();
+            db_version = new_version;
+        }
     }
 
     static void init(Context context) {
