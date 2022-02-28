@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -22,6 +23,7 @@ import app.trigger.OnTaskCompleted;
 import app.trigger.Utils;
 import app.trigger.Log;
 import app.trigger.WifiTools;
+import app.trigger.ssh.PubkeyUtils;
 
 
 public class HttpsRequestHandler extends Thread {
@@ -97,31 +99,45 @@ public class HttpsRequestHandler extends Thread {
                     https.setHostnameVerifier((String hostname, SSLSession session) -> true);
                 }
 
-                if (setup.ignore_certificate) {
-                    // disable entire certificate validity
-                    SSLContext context = SSLContext.getInstance("TLS");
-                    context.init(null, new X509TrustManager[]{new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+                if (setup.server_certificate != null) {
+                    // use given certificate only
+                    if (setup.client_keypair != null && setup.client_certificate != null) {
+                        PrivateKey client_private_key = PubkeyUtils.decodePrivate(
+                            setup.client_keypair.getPrivateKey(), setup.client_keypair.getType()
+                        );
+                        https.setSSLSocketFactory(
+                            Utils.getSocketFactoryWithCertificateAndClientKey(
+                                setup.server_certificate, setup.client_certificate, client_private_key)
+                        );
+                    } else if (setup.client_keypair == null && setup.client_certificate == null) {
+                        if (setup.ignore_certificate) {
+                            // disable entire certificate validity
+                            SSLContext context = SSLContext.getInstance("TLS");
+                            context.init(null, new X509TrustManager[]{new X509TrustManager() {
+                                @Override
+                                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
 
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+                                @Override
+                                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
 
-                        @Override
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[0];
-                        }}}, new SecureRandom());
-                    https.setSSLSocketFactory(context.getSocketFactory());
-                } else if (setup.certificate != null) {
-                    // use custom certificate
-                    https.setSSLSocketFactory(
-                        Utils.getSocketFactoryWithCertificate(setup.certificate)
-                    );
-                } else if (setup.ignore_expiration) {
-                    // ignore notBefore/notAfter
-                    https.setSSLSocketFactory(
-                        HttpsTools.getSocketFactoryIgnoreCertificateExpiredException()
-                    );
+                                @Override
+                                public X509Certificate[] getAcceptedIssuers() {
+                                    return new X509Certificate[0];
+                                }}}, new SecureRandom());
+                            https.setSSLSocketFactory(context.getSocketFactory());
+                        } else if (setup.ignore_expiration) {
+                            // ignore notBefore/notAfter
+                            https.setSSLSocketFactory(
+                                HttpsTools.getSocketFactoryIgnoreCertificateExpiredException()
+                            );
+                        } else {
+                            https.setSSLSocketFactory(
+                                Utils.getSocketFactoryWithCertificate(setup.server_certificate)
+                            );
+                        }
+                    } else {
+                        throw new Exception("Both client key and client certificate needed.");
+                    }
                 } else {
                     // use system certificate
                     https.setSSLSocketFactory(

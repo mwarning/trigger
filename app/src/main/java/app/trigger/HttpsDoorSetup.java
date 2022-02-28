@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 
 import app.trigger.DoorState.StateCode;
+import app.trigger.ssh.KeyPairBean;
 
 import java.security.cert.Certificate;
 
@@ -28,8 +29,13 @@ public class HttpsDoorSetup implements Setup {
     public Bitmap unknown_image;
     public Bitmap disabled_image;
 
-    public String ssids;
     public Certificate certificate;
+
+    public String ssids;
+    public Certificate server_certificate;
+    public Certificate client_certificate;
+    public KeyPairBean client_keypair;
+
     public Boolean ignore_certificate;
     public Boolean ignore_hostname_mismatch;
     public Boolean ignore_expiration;

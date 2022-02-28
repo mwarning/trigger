@@ -33,12 +33,6 @@
             android:defaultValue="true"
             android:persistent="false" />
 
-        <app.trigger.https.CertificatePreference
-            android:key="certificate"
-            android:title="Certificate"
-            android:persistent="false"
-            android:defaultValue="false" />
-
         <EditTextPreference
             android:key="method"
             android:title="HTTP Method"
@@ -86,6 +80,24 @@
             android:title="@string/setup_ssids"
             android:persistent="false"
             android:inputType="textNoSuggestions" />
+
+        <app.trigger.https.CertificatePreference
+            android:key="server_certificate"
+            android:title="Server Certificate"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <app.trigger.https.CertificatePreference
+            android:key="client_certificate"
+            android:title="Client Certificate"
+            android:persistent="false"
+            android:defaultValue="false" />
+
+        <app.trigger.mqtt.MqttClientKeyPairPreference
+            android:key="client_keypair"
+            android:title="Client Private Key"
+            android:persistent="false"
+            android:defaultValue="false" />
 
         <CheckBoxPreference
             android:key="ignore_certificate"
