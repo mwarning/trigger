@@ -101,11 +101,15 @@ public class HttpsRequestHandler extends Thread {
                     // disable entire certificate validity
                     SSLContext context = SSLContext.getInstance("TLS");
                     context.init(null, new X509TrustManager[]{new X509TrustManager() {
-                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-                        public void checkServerTrusted(X509Certificate[] chain,
-                                        String authType) throws CertificateException {}
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {}
+
+                        @Override
                         public X509Certificate[] getAcceptedIssuers() {
-                                return new X509Certificate[0];
+                            return new X509Certificate[0];
                         }}}, new SecureRandom());
                     https.setSSLSocketFactory(context.getSocketFactory());
                 } else if (setup.certificate != null) {
