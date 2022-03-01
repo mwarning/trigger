@@ -121,8 +121,10 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                         obj.put("open_query", data);
                         return obj;
                     }
-                    case "ssl":
-                    case "tcp:": {
+                    case "ssl": // deprecated
+                    case "tcp:": // deprecated
+                    case "mqtt":
+                    case "mqtts":
                         String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
                         JSONObject obj = new JSONObject();
                         obj.put("type", "MqttDoorSetup");

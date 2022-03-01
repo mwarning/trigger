@@ -89,16 +89,22 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
         String clientId = MqttClient.generateClientId();
         MqttConnectOptions opts = new MqttConnectOptions();
         MemoryPersistence persistence = new MemoryPersistence();
-        final String address;
+        final String address = setup.server;
 
         try {
-            if (setup.server.startsWith("tcp://")) {
-                address = Utils.rebuildAddress(setup.server, 1883);
+            if (address.startsWith("mqtt://")) {
+                address = address.replaceFirst("mqtt://", "tcp://");
+                address = Utils.rebuildAddress(address, 1883);
+            } else if (address.startsWith("mqtts://")) {
+                address = address.replaceFirst("mqtts://", "ssl://");
+                address = Utils.rebuildAddress(address, 8883);
+            } else if (setup.server.startsWith("tcp://")) {
+                address = Utils.rebuildAddress(address, 1883);
             } else if (setup.server.startsWith("ssl://")) {
-                address = Utils.rebuildAddress(setup.server, 8883);
+                address = Utils.rebuildAddress(address, 8883);
             } else {
                 throw new Exception(
-                    "Server address needs to start with 'tcp://' or 'ssl://'."
+                    "Server address needs to start with 'mqtt://' or 'mqtts://'."
                 );
             }
 
