@@ -34,33 +34,27 @@ public class CertificatePreference extends SwitchPreference {
             setChecked(true);
         }
 
-        this.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (self.certificate == null) {
-                    self.setChecked(false);
-                } else {
-                    self.setChecked(true);
-                }
-                
-                return false;
+        this.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (self.certificate == null) {
+                self.setChecked(false);
+            } else {
+                self.setChecked(true);
             }
+
+            return false;
         });
 
-        this.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                String register_url = ((SetupActivity) self.context).getRegisterUrl();
+        this.setOnPreferenceClickListener((Preference preference) -> {
+            String register_url = ((SetupActivity) self.context).getRegisterUrl();
 
-                // store in public static member - hack!
-                CertificatePreference.self = self;
+            // store in public static member - hack!
+            CertificatePreference.self = self;
 
-                Intent intent = new Intent(self.context, CertificateActivity.class);
-                intent.putExtra("register_url", register_url);
+            Intent intent = new Intent(self.context, CertificateActivity.class);
+            intent.putExtra("register_url", register_url);
 
-                self.context.startActivity(intent);
-                return false;
-            }
+            self.context.startActivity(intent);
+            return false;
         });
     }
 
