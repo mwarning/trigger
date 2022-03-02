@@ -64,9 +64,11 @@ public class CertificateActivity extends AppCompatActivity implements Certificat
 
         this.preference = CertificatePreference.self; // hack, TODO: pass serialized key in bundle
         this.certificate = this.preference.getCertificate();
-        //this.certificate = HttpsTools.deserializeCertififcate(
-        //    getIntent().getStringExtra("certificate")
-        //);
+
+        TextView title = findViewById(R.id.CertificateTitle);
+        title.setText(
+            getIntent().getStringExtra("certificate_preference_title")
+        );
 
         builder = new AlertDialog.Builder(this);
         importButton = findViewById(R.id.ImportButton);

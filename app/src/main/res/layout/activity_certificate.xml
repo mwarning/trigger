@@ -16,11 +16,12 @@
         android:layout_weight="2"
         android:orientation="vertical">
 
+        <!-- placeholder for title text - will be set dynamically -->
         <TextView
+            android:id="@+id/CertificateTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/server_certificate"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold" />

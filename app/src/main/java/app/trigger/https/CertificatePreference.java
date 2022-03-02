@@ -52,6 +52,7 @@ public class CertificatePreference extends SwitchPreference {
 
             Intent intent = new Intent(self.context, CertificateActivity.class);
             intent.putExtra("register_url", register_url);
+            intent.putExtra("certificate_preference_title", self.getTitle().toString());
 
             self.context.startActivity(intent);
             return false;
