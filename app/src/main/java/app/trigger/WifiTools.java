@@ -19,7 +19,7 @@ public class WifiTools {
     }
 
     public static boolean matchSSID(String ssids, String ssid) {
-        if (ssids == null || ssids.length == 0) {
+        if (ssids == null || ssids.length() == 0) {
             return false;
         }
         for (String element : ssids.split(",")) {

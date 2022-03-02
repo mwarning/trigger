@@ -89,7 +89,7 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
         String clientId = MqttClient.generateClientId();
         MqttConnectOptions opts = new MqttConnectOptions();
         MemoryPersistence persistence = new MemoryPersistence();
-        final String address = setup.server;
+        String address = setup.server;
 
         try {
             if (address.startsWith("mqtt://")) {
