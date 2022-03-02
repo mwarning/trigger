@@ -109,6 +109,8 @@ public class CertificateActivity extends AppCompatActivity implements Certificat
             String url = certificateUrl.getText().toString();
             if (url == null || url.isEmpty()) {
                 showErrorMessage("Empty URL", "No URL set to fetch a certificate from.");
+            } else if (!url.startsWith("https://")) {
+                showErrorMessage("Invalid URL", "URL need to start with 'https://'");
             } else {
                 new CertificateFetchTask(CertificateActivity.this).execute(url);
             }
