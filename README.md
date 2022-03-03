@@ -7,11 +7,12 @@ Features:
  - Generic HTTPS, SSH, Bluetooth and MQTT support
  - support for Nuki SmartLock
  - multiple door profiles
- - auto select profiles by SSID
- - certificate/key file support
- - QR code import/export
- - JSON file import/export
+ - auto select profiles by connected WiFi
+ - HTTPS server/client certificate support
+ - SSH key generation support (ED25519, RSA,...)
  - custom status images
+ - QR code support
+ - backup support
 
 ![image](docs/screenshot_states.png)
 
