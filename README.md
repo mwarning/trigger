@@ -18,10 +18,6 @@ Features:
 
 (door status open/closed/unknown/no-wifi and also some different buttons)
 
-![image](docs/screenshot_settings.png)
-
-(ssh setup and key pair management, https setup and certificate management)
-
 Any help, bugfixes, new features, translations are much welcome.
 
 ## Download
