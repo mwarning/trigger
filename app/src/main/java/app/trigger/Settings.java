@@ -272,18 +272,17 @@ public class Settings {
             setups = new ArrayList();
             // convert MQTT certificate field name to server_certificate
             for (int id = 0; id < 10; id += 1) {
-                String prefix = String.format("item_%03d_", id);
-                if (sharedPreferences.getString(prefix + "type", "") == "MqttDoorSetup"
-                        && sharedPreferences.contains(prefix + "certificate")) {
-                    Certificate cert = HttpsTools.deserializeCertificate(
-                        sharedPreferences.getString(prefix + "certificate", null)
-                    );
-                    if (cert != null) {
-                        SharedPreferences.Editor e = sharedPreferences.edit();
-                        e.putString(prefix + "server_certificate", HttpsTools.serializeCertificate(cert));
-                        e.remove(prefix + "certificate");
-                        e.commit();
+                try {
+                    JSONObject obj = loadSetup(id);
+                    if (obj != null && obj.has("type") && obj.get("type").equals("MQTTDoorSetup")) {
+                        if (obj.has("certificate")) {
+                            obj.put("server_certificate", obj.get("certificate"));
+                            obj.remove("certificate");
+                            storeSetup(id, obj);
+                        }
                     }
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to rename MQTT certificate field: " + e);
                 }
             }
             sharedPreferences.edit().putString("db_version", new_version).commit();
@@ -296,18 +295,17 @@ public class Settings {
             setups = new ArrayList();
             // convert HTTPS certificate field name to server_certificate
             for (int id = 0; id < 10; id += 1) {
-                String prefix = String.format("item_%03d_", id);
-                if (sharedPreferences.getString(prefix + "type", "") == "HttpsDoorSetup"
-                        && sharedPreferences.contains(prefix + "certificate")) {
-                    Certificate cert = HttpsTools.deserializeCertificate(
-                        sharedPreferences.getString(prefix + "certificate", null)
-                    );
-                    if (cert != null) {
-                        SharedPreferences.Editor e = sharedPreferences.edit();
-                        e.putString(prefix + "server_certificate", HttpsTools.serializeCertificate(cert));
-                        e.remove(prefix + "certificate");
-                        e.commit();
+                try {
+                    JSONObject obj = loadSetup(id);
+                    if (obj != null && obj.has("type") && obj.get("type").equals("HttpsDoorSetup")) {
+                        if (obj.has("certificate")) {
+                            obj.put("server_certificate", obj.get("certificate"));
+                            obj.remove("certificate");
+                            storeSetup(id, obj);
+                        }
                     }
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to rename HTTPS certificate field: " + e);
                 }
             }
             sharedPreferences.edit().putString("db_version", new_version).commit();
@@ -455,6 +453,11 @@ public class Settings {
             }
         }
         return null;
+    }
+
+    private static void storeSetup(int id, JSONObject json) {
+        String key = String.format("item_%03d", id);
+        sharedPreferences.edit().putString(key, json.toString()).commit();
     }
 
     private static JSONObject loadSetup(int id) throws JSONException {
