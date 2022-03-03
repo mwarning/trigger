@@ -1,1 +1,3 @@
-* https with server certificate and client certificate + key
+* HTTPS with server certificate and client certificate + key
+* fix TLS certificate activity titles (client vs. server certificate)
+* MQTT now uses mqtt:// and mqtts:// as link schemes
