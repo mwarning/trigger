@@ -48,7 +48,7 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
 
         if (WifiTools.isConnected()) {
             String current_ssid = WifiTools.getCurrentSSID();
-            if (!WifiTools.matchSSID(setup.ssids, current_ssid)) {
+            if (setup.ssids.length() > 0 && !WifiTools.matchSSID(setup.ssids, current_ssid)) {
                 this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED,
                     "SSID mismatch<br/>(connected to '" + current_ssid + "')");
                 return;
