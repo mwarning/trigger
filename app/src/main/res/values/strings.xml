@@ -56,7 +56,7 @@
     <string name="setup_token">Token</string>
     <string name="setup_token_description">Your personal access token</string>
 
-    <string name="setup_ssids">SSIDs</string>
+    <string name="setup_ssids">WiFi SSIDs</string>
     <string name="setup_ssids_description">Auto-Select when connected to a specific network</string>
 
     <string name="setup_ignore">Ignore Errors</string>
