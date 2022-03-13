@@ -312,8 +312,8 @@ public class Settings {
             db_version = new_version;
         }
 
-        if (Arrays.asList("3.4.1").contains(db_version)) {
-            String new_version = "3.4.2";
+        if (Arrays.asList("3.4.1", "3.4.2").contains(db_version)) {
+            String new_version = "3.4.3";
             Log.i(TAG, "Update database format from " + db_version + " to " + new_version);
             // nothing to change
             setups = new ArrayList();
