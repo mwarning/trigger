@@ -44,7 +44,7 @@ public class MqttDoorSetup implements Setup {
     public MqttDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
-        this.require_wifi = true;
+        this.require_wifi = false;
         this.username = "";
         this.password = "";
         this.server = "";

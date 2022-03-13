@@ -39,7 +39,7 @@ public class SshDoorSetup implements Setup {
     public SshDoorSetup(int id, String name) {
         this.id = id;
         this.name = name;
-        this.require_wifi = true;
+        this.require_wifi = false;
         this.keypair = null;
         this.user = "";
         this.password = "";
