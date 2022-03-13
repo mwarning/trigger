@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Bitmap state_disabled_default_image;
     private Bitmap state_unknown_default_image;
 
+    private int ignore_wifi_check_for_setup_id = -1;
+
     public enum Action {
         open_door,
         close_door,
@@ -389,10 +391,31 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private boolean checkConnectedWifi(Setup setup, Action action) {
+        if (setup.getId() == ignore_wifi_check_for_setup_id) {
+            return true;
+        } else {
+            ignore_wifi_check_for_setup_id = -1;
+        }
+
         boolean wifi_connected = WifiTools.isConnected();
 
         if (!wifi_connected && setup.getWiFiRequired()) {
-            showMessage("Wifi Disabled");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("WiFi Disabled");
+            builder.setMessage("WiFi disabled - ignore?");
+
+            builder.setPositiveButton("Yes", (DialogInterface dialog, int id) -> {
+                ignore_wifi_check_for_setup_id = setup.getId();
+                // trigger aggain
+                callRequestHandler(action);
+                dialog.cancel();
+            });
+
+            builder.setNegativeButton("No", (DialogInterface dialog, int id) -> {
+                dialog.cancel();
+            });
+
+            builder.show();
             return false;
         }
 
@@ -401,7 +424,22 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             String current_ssid = WifiTools.getCurrentSSID();
 
             if (ssids.length() > 0 && !WifiTools.matchSSID(ssids, current_ssid)) {
-                showMessage("SSID mismatch<br/>(connected to '" + current_ssid + "')");
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Wrong WiFi");
+                builder.setMessage("Connected to wrong network ('" + current_ssid + "') - ignore?");
+
+                builder.setPositiveButton("Yes", (DialogInterface dialog, int id) -> {
+                    ignore_wifi_check_for_setup_id = setup.getId();
+                    // trigger aggain
+                    callRequestHandler(action);
+                    dialog.cancel();
+                });
+
+                builder.setNegativeButton("No", (DialogInterface dialog, int id) -> {
+                    dialog.cancel();
+                });
+
+                builder.show();
                 return false;
             }
         }
