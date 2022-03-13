@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Bitmap state_unknown_default_image;
 
     private int ignore_wifi_check_for_setup_id = -1;
-    private String ssh_keypair_password = "";
+    private String ssh_passphrase = "";
 
     public enum Action {
         open_door,
@@ -455,19 +455,19 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
     private boolean checkSshPassword(Setup setup, Action action) {
         if (setup instanceof SshDoorSetup && ((SshDoorSetup) setup).keypair.encrypted) {
-            if (ssh_keypair_password.length() > 0) {
+            if (ssh_passphrase.length() > 0) {
                 return true;
             }
 
             Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.dialog_ssh_password);
+            dialog.setContentView(R.layout.dialog_ssh_passphrase);
 
             EditText passwordEditText = dialog.findViewById(R.id.PasswordEditText);
             Button exitButton = dialog.findViewById(R.id.ExitButton);
             Button okButton = dialog.findViewById(R.id.OkButton);
 
             okButton.setOnClickListener((View v) -> {
-                ssh_keypair_password = passwordEditText.getText().toString();
+                ssh_passphrase = passwordEditText.getText().toString();
                 callRequestHandler(action);
                 dialog.cancel();
             });
@@ -479,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             dialog.show();
             return false;
         } else {
-            ssh_keypair_password = "";
+            ssh_passphrase = "";
         }
 
         return true;
@@ -500,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             HttpsRequestHandler handler = new HttpsRequestHandler(this, (HttpsDoorSetup) setup, action);
             handler.start();
         } else if (setup instanceof SshDoorSetup) {
-            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action, this.ssh_keypair_password);
+            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action, this.ssh_passphrase);
             handler.start();
         } else if (setup instanceof BluetoothDoorSetup) {
             BluetoothRequestHandler handler = new BluetoothRequestHandler(this, (BluetoothDoorSetup) setup, action);
