@@ -20,6 +20,9 @@ public interface Setup {
     // matches any of these SSIDs (comma separated)
     public abstract String getSSIDs();
 
+    // only applies for HTTPS, SSH and MQTT so far
+    public abstract boolean getWiFiRequired();
+
     // Get image dependent of the door state
     public abstract Bitmap getStateImage(StateCode state);
 

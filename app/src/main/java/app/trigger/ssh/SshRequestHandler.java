@@ -51,20 +51,6 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
             return;
         }
 
-        if (WifiTools.isConnected()) {
-            String current_ssid = WifiTools.getCurrentSSID();
-            if (setup.ssids.length() > 0 && !WifiTools.matchSSID(setup.ssids, current_ssid)) {
-                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED,
-                        "SSID mismatch<br/>(connected to '" + current_ssid + "')");
-                return;
-            }
-        } else {
-            if (setup.require_wifi) {
-                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled");
-                return;
-            }
-        }
-
         String command = "";
 
         switch (action) {

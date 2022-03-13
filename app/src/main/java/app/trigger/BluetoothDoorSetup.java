@@ -60,6 +60,11 @@ public class BluetoothDoorSetup implements Setup {
     }
 
     @Override
+    public boolean getWiFiRequired() {
+        return false;
+    }
+
+    @Override
     public Bitmap getStateImage(StateCode state) {
         switch (state) {
             case OPEN:

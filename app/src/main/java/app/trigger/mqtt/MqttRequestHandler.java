@@ -46,20 +46,6 @@ public class MqttRequestHandler extends Thread implements MqttCallback {
             return;
         }
 
-        if (WifiTools.isConnected()) {
-            String current_ssid = WifiTools.getCurrentSSID();
-            if (setup.ssids.length() > 0 && !WifiTools.matchSSID(setup.ssids, current_ssid)) {
-                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED,
-                    "SSID mismatch<br/>(connected to '" + current_ssid + "')");
-                return;
-            }
-        } else {
-            if (setup.require_wifi) {
-                this.listener.onTaskResult(setup.getId(), ReplyCode.DISABLED, "Wifi Disabled");
-                return;
-            }
-        }
-
         if (Utils.isEmpty(setup.server)) {
             this.listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "MQTT broker address not set.");
             return;

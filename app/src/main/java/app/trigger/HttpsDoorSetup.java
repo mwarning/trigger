@@ -80,6 +80,11 @@ public class HttpsDoorSetup implements Setup {
     }
 
     @Override
+    public boolean getWiFiRequired() {
+        return require_wifi;
+    }
+
+    @Override
     public Bitmap getStateImage(StateCode state) {
         switch (state) {
             case OPEN:

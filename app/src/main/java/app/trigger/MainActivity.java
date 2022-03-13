@@ -3,6 +3,7 @@ package app.trigger;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
@@ -382,8 +384,41 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         });
     }
 
+    private boolean checkConnectedWifi(Setup setup, Action action) {
+        boolean wifi_connected = WifiTools.isConnected();
+
+        if (!wifi_connected && setup.getWiFiRequired()) {
+            Context context = getApplicationContext();
+            // show centered text
+            Toast toast = Toast.makeText(context, "Wifi Disabled", Toast.LENGTH_SHORT);
+            //toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return false;
+        }
+
+        if (wifi_connected) {
+            String ssids = setup.getSSIDs();
+            String current_ssid = WifiTools.getCurrentSSID();
+
+            if (ssids.length() > 0 && !WifiTools.matchSSID(ssids, current_ssid)) {
+                Context context = getApplicationContext();
+                // show centered text
+                Toast toast = Toast.makeText(context, "SSID mismatch<br/>(connected to '" + current_ssid + "')", Toast.LENGTH_SHORT);
+                //toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void callRequestHandler(Action action) {
         Setup setup = getSelectedSetup();
+
+        if (!checkConnectedWifi(setup, action)) {
+            return;
+        }
 
         if (setup instanceof HttpsDoorSetup) {
             HttpsRequestHandler handler = new HttpsRequestHandler(this, (HttpsDoorSetup) setup, action);
