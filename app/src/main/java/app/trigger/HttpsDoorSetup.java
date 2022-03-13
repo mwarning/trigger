@@ -75,7 +75,7 @@ public class HttpsDoorSetup implements Setup {
     }
 
     @Override
-    public String getSSIDs() {
+    public String getWiFiSSIDs() {
         return ssids;
     }
 

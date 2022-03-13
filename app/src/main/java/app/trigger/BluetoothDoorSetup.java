@@ -55,7 +55,7 @@ public class BluetoothDoorSetup implements Setup {
     }
 
     @Override
-    public String getSSIDs() {
+    public String getWiFiSSIDs() {
         return device_name;
     }
 

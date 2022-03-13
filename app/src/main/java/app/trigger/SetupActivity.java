@@ -427,7 +427,7 @@ public class SetupActivity extends PreferenceActivity {
             Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
 
             // needed for SSID matching
-            if (this.setup.getSSIDs().length() > 0) {
+            if (this.setup.getWiFiSSIDs().length() > 0) {
                 checkFineLocationPermission();
             }
         }

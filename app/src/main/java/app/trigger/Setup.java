@@ -18,7 +18,7 @@ public interface Setup {
 
     // Select setup entry from dropdown if it
     // matches any of these SSIDs (comma separated)
-    public abstract String getSSIDs();
+    public abstract String getWiFiSSIDs();
 
     // only applies for HTTPS, SSH and MQTT so far
     public abstract boolean getWiFiRequired();

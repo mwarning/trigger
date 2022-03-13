@@ -50,7 +50,7 @@ public class NukiDoorSetup implements Setup {
     }
 
     @Override
-    public String getSSIDs() {
+    public String getWiFiSSIDs() {
         return device_name;
     }
 

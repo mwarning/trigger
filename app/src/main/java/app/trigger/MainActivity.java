@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         ArrayList<SpinnerItem> items = new ArrayList<>();
 
         for (Setup setup : setups) {
-            items.add(new SpinnerItem(setup.getId(), setup.getName(), setup.getSSIDs()));
+            items.add(new SpinnerItem(setup.getId(), setup.getName(), setup.getWiFiSSIDs()));
         }
 
         // sort items by name
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         }
 
         if (wifi_connected) {
-            String ssids = setup.getSSIDs();
+            String ssids = setup.getWiFiSSIDs();
             String current_ssid = WifiTools.getCurrentSSID();
 
             if (ssids.length() > 0 && !WifiTools.matchSSID(ssids, current_ssid)) {
@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         ArrayList<String> ssids = new ArrayList();
 
         for (Setup setup : setups) {
-            ssids.addAll(splitCommaSeparated(setup.getSSIDs()));
+            ssids.addAll(splitCommaSeparated(setup.getWiFiSSIDs()));
         }
 
         wifi.connectBestOf(ssids);
