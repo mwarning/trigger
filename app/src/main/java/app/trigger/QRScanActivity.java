@@ -94,10 +94,6 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         try {
             KeyPairBean kp = SshTools.parsePrivateKeyPEM(data);
             if (kp != null) {
-                if (kp.encrypted) {
-                    throw new Exception("Encrypted keys are not supported.");
-                }
-                Log.d(TAG, "type: " + kp.type + ", pk len: " + kp.publicKey.length + ", sk.len: " + kp.privateKey.length);
                 JSONObject obj = new JSONObject();
                 obj.put("type", "SshDoorSetup");
                 obj.put("name", "SSH Door");

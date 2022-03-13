@@ -1,5 +1,6 @@
 package app.trigger;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +19,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.ImageView;
@@ -41,6 +44,8 @@ import java.util.Collections;
 import app.trigger.DoorState.StateCode;
 import app.trigger.https.HttpsRequestHandler;
 import app.trigger.nuki.NukiRequestHandler;
+import app.trigger.ssh.KeyPairBean;
+import app.trigger.ssh.PubkeyUtils;
 import app.trigger.ssh.SshRequestHandler;
 import app.trigger.bluetooth.BluetoothRequestHandler;
 import app.trigger.mqtt.MqttRequestHandler;
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Bitmap state_unknown_default_image;
 
     private int ignore_wifi_check_for_setup_id = -1;
+    private String ssh_keypair_password = "";
 
     public enum Action {
         open_door,
@@ -447,6 +453,38 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         return true;
     }
 
+    private boolean checkSshPassword(Setup setup, Action action) {
+        if (setup instanceof SshDoorSetup && ((SshDoorSetup) setup).keypair.encrypted) {
+            if (ssh_keypair_password.length() > 0) {
+                return true;
+            }
+
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.dialog_ssh_password);
+
+            EditText passwordEditText = dialog.findViewById(R.id.PasswordEditText);
+            Button exitButton = dialog.findViewById(R.id.ExitButton);
+            Button okButton = dialog.findViewById(R.id.OkButton);
+
+            okButton.setOnClickListener((View v) -> {
+                ssh_keypair_password = passwordEditText.getText().toString();
+                callRequestHandler(action);
+                dialog.cancel();
+            });
+
+            exitButton.setOnClickListener((View v) -> {
+                dialog.cancel();
+            });
+
+            dialog.show();
+            return false;
+        } else {
+            ssh_keypair_password = "";
+        }
+
+        return true;
+    }
+
     private void callRequestHandler(Action action) {
         Setup setup = getSelectedSetup();
 
@@ -454,11 +492,15 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             return;
         }
 
+        if (!checkSshPassword(setup, action)) {
+            return;
+        }
+
         if (setup instanceof HttpsDoorSetup) {
             HttpsRequestHandler handler = new HttpsRequestHandler(this, (HttpsDoorSetup) setup, action);
             handler.start();
         } else if (setup instanceof SshDoorSetup) {
-            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action);
+            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action, this.ssh_keypair_password);
             handler.start();
         } else if (setup instanceof BluetoothDoorSetup) {
             BluetoothRequestHandler handler = new BluetoothRequestHandler(this, (BluetoothDoorSetup) setup, action);

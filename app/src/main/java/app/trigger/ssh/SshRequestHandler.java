@@ -32,6 +32,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
     private final OnTaskCompleted listener;
     private final SshDoorSetup setup;
     private final Action action;
+    private final String keypair_password;
 
     static {
         Log.d(TAG, "Ed25519Provider.insertIfNeeded2");
@@ -39,10 +40,11 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         Ed25519Provider.insertIfNeeded();
     }
 
-    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action) {
+    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action, String keypair_password) {
         this.listener = listener;
         this.setup = setup;
         this.action = action;
+        this.keypair_password = keypair_password;
     }
 
     public void run() {
@@ -98,9 +100,9 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
 
             // authentication by key pair
             if (keypair != null && !connection.isAuthenticationComplete()) {
-                if (!tryPublicKey(connection, username, keypair)) {
-                    if (Utils.isEmpty(password)) {
-                        listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair was not accepted.");
+                if (!tryPublicKey(connection, username, keypair, this.keypair_password)) {
+                    if (Utils.isEmpty(this.keypair_password)) {
+                        listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair password was not accepted.");
                     } else {
                         // continue with _additional_ password authentication
                     }
@@ -171,19 +173,17 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         | ChannelCondition.CLOSED
         | ChannelCondition.EOF;
 
-    private static boolean tryPublicKey(Connection connection, String username, KeyPairBean kp) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private static boolean tryPublicKey(Connection connection, String username, KeyPairBean kp, String keypair_password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         KeyPair pair = null;
-        String password = "";
 
         if (KeyPairBean.KEY_TYPE_IMPORTED.equals(kp.type)) {
             // load specific key using pem format
-            pair = PEMDecoder.decode(new String(kp.privateKey, "UTF-8").toCharArray(), password);
+            pair = PEMDecoder.decode(new String(kp.privateKey, "UTF-8").toCharArray(), keypair_password);
         } else {
             // load using internal generated format
             PrivateKey privKey;
             try {
-                privKey = PubkeyUtils.decodePrivate(kp.privateKey,
-                        kp.type, password);
+                privKey = PubkeyUtils.decodePrivate(kp.privateKey, kp.type, keypair_password);
             } catch (Exception e) {
                 Log.e(TAG, "Bad password for key. Authentication failed: " + e);
                 return false;

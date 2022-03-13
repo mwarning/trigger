@@ -1,1 +1,2 @@
 * show dialog to temporarly disable wifi checks
+* add support for password protected SSH keys
