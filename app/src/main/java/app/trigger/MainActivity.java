@@ -454,8 +454,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private boolean checkSshPassword(Setup setup, Action action) {
-        if (setup instanceof SshDoorSetup && ((SshDoorSetup) setup).keypair.encrypted) {
-            if (ssh_passphrase.length() > 0) {
+        if (setup instanceof SshDoorSetup) {
+            SshDoorSetup s = (SshDoorSetup) setup;
+            if (s.keypair == null || !s.keypair.encrypted || ssh_passphrase.length() != 0) {
                 return true;
             }
 
