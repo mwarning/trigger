@@ -258,6 +258,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         super.onPause();
     }
 
+    private void showMessage(String message) {
+        Context context = getApplicationContext();
+        // show centered text
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+        //toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
     // listen for connectivity changes
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -375,11 +383,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             // display message
             if (state.message.length() > 0) {
-                Context context = getApplicationContext();
-                // show centered text
-                Toast toast = Toast.makeText(context, state.message, Toast.LENGTH_SHORT);
-                //toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+                showMessage(state.message);
             }
         });
     }
@@ -388,11 +392,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         boolean wifi_connected = WifiTools.isConnected();
 
         if (!wifi_connected && setup.getWiFiRequired()) {
-            Context context = getApplicationContext();
-            // show centered text
-            Toast toast = Toast.makeText(context, "Wifi Disabled", Toast.LENGTH_SHORT);
-            //toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            showMessage("Wifi Disabled");
             return false;
         }
 
@@ -401,11 +401,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             String current_ssid = WifiTools.getCurrentSSID();
 
             if (ssids.length() > 0 && !WifiTools.matchSSID(ssids, current_ssid)) {
-                Context context = getApplicationContext();
-                // show centered text
-                Toast toast = Toast.makeText(context, "SSID mismatch<br/>(connected to '" + current_ssid + "')", Toast.LENGTH_SHORT);
-                //toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+                showMessage("SSID mismatch<br/>(connected to '" + current_ssid + "')");
                 return false;
             }
         }
