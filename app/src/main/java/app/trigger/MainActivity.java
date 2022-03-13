@@ -391,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     }
 
     private boolean checkConnectedWifi(Setup setup, Action action) {
-        if (setup.getId() == ignore_wifi_check_for_setup_id) {
+        if (setup == null || setup.getId() == ignore_wifi_check_for_setup_id) {
             return true;
         } else {
             ignore_wifi_check_for_setup_id = -1;
