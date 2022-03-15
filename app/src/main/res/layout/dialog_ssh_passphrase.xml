@@ -17,7 +17,7 @@
         android:text="SSH keypair requires passphrase:" />
 
     <EditText
-        android:id="@+id/PasswordEditText"
+        android:id="@+id/PassphraseEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword" />
@@ -28,12 +28,12 @@
         android:orientation="horizontal">
 
          <Button
-            android:id="@+id/ExitButton"
+            android:id="@+id/AbortButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
              android:layout_marginEnd="3dp"
-            android:text="Exit" />
+            android:text="Abort" />
 
         <Button
             android:id="@+id/OkButton"

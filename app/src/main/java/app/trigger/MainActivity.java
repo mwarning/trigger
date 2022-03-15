@@ -463,17 +463,17 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_ssh_passphrase);
 
-            EditText passwordEditText = dialog.findViewById(R.id.PasswordEditText);
-            Button exitButton = dialog.findViewById(R.id.ExitButton);
+            EditText passphraseEditText = dialog.findViewById(R.id.PassphraseEditText);
+            Button abortButton = dialog.findViewById(R.id.AbortButton);
             Button okButton = dialog.findViewById(R.id.OkButton);
 
             okButton.setOnClickListener((View v) -> {
-                ssh_passphrase = passwordEditText.getText().toString();
+                ssh_passphrase = passphraseEditText.getText().toString();
                 callRequestHandler(action);
                 dialog.cancel();
             });
 
-            exitButton.setOnClickListener((View v) -> {
+            abortButton.setOnClickListener((View v) -> {
                 dialog.cancel();
             });
 
