@@ -4,6 +4,8 @@ import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -40,10 +42,14 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         setContentView(R.layout.activity_qrscan);
         barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcodeScannerView);
 
-        if (Utils.hasCameraPermission(this)) {
-            startScan();
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (Utils.hasCameraPermission(this)) {
+                startScan();
+            } else {
+                Utils.requestCameraPermission(this, CAMERA_REQUEST_CODE);
+            }
         } else {
-            Utils.requestCameraPermission(this, CAMERA_REQUEST_CODE);
+            startScan();
         }
     }
 
