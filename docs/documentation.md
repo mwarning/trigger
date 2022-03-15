@@ -21,7 +21,7 @@ nc -l -k -p 3333 -c 'read key; echo "$key" >> ssh_keys.txt; echo "Your key was r
 
 ## Import Link As QR-Code
 
-Instead of QR-Codes imported from other Trigger Apps, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `mqtts://` and `mqtts://` will be used for MQTT and `ssh://` for SSH based door setups.
+Instead of QR-Codes imported from other Trigger Apps, you can import simple links like `https://example.com/open?pass=secret` as QR-Code to create a simple HTTPS based door setup. Links starting with `mqtt://` and `mqtts://` will be used for MQTT and `ssh://` for SSH based door setups.
 
 HTTP(s) links may also contain a username and password to be used for basic access authentication, e.g.: `https://user:password@example.com/open_door`.
 
