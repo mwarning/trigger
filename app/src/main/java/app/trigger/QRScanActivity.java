@@ -30,6 +30,7 @@ import app.trigger.ssh.KeyPairBean;
 
 public class QRScanActivity extends AppCompatActivity implements BarcodeCallback {
     private static final String TAG = "QRScanActivity";
+    private static final int CAMERA_REQUEST_CODE = 0x01;
     private DecoratedBarcodeView barcodeView;
 
     @Override
@@ -42,7 +43,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         if (Utils.hasCameraPermission(this)) {
             startScan();
         } else {
-            Utils.requestCameraPermission(this, 1);
+            Utils.requestCameraPermission(this, CAMERA_REQUEST_CODE);
         }
     }
 
@@ -82,11 +83,13 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            startScan();
-        } else {
-            Toast.makeText(this, "Camera permissions required for QR code scan.", Toast.LENGTH_LONG).show();
-            finish();
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                startScan();
+            } else {
+                Toast.makeText(this, "Camera permissions required for QR code scan.", Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
     }
 
