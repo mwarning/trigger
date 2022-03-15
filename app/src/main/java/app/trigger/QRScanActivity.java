@@ -117,8 +117,8 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                 String query = uri.getQuery();
                 int port = uri.getPort();
                 switch (scheme) {
-                    case "https":
-                    case "http": {
+                    case "http":
+                    case "https": {
                         String http_server = domain + ((port > 0) ? (":" + port) : "");
                         JSONObject obj = new JSONObject();
                         obj.put("type", "HttpsDoorSetup");
@@ -126,8 +126,6 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                         obj.put("open_query", data);
                         return obj;
                     }
-                    case "ssl": // deprecated
-                    case "tcp:": // deprecated
                     case "mqtt":
                     case "mqtts": {
                         String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
