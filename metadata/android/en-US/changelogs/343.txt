@@ -1,2 +1,4 @@
 * show dialog to temporarly disable wifi checks
-* add support for password protected SSH keys
+* add support for passphrase protected SSH keys
+* fix potential crash on Android 5 when scanning a QR code
+* make sure new setups (e.g. via QR code) have unique names
