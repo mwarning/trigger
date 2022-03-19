@@ -692,7 +692,7 @@ public class Settings {
                 }
             }
             if (found) {
-                name = name.split("~")[0] + "~" + counter;
+                name = proposed + "~" + counter;
                 counter += 1;
             } else {
                 break;
