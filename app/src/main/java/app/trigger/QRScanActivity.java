@@ -105,7 +105,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
             if (kp != null) {
                 JSONObject obj = new JSONObject();
                 obj.put("type", "SshDoorSetup");
-                obj.put("name", "SSH Door");
+                obj.put("name", Settings.getNewName("SSH Door"));
                 obj.put("keypair", SshTools.serializeKeyPair(kp));
                 return obj;
             } else {
@@ -122,7 +122,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                         String http_server = domain + ((port > 0) ? (":" + port) : "");
                         JSONObject obj = new JSONObject();
                         obj.put("type", "HttpsDoorSetup");
-                        obj.put("name", "http_server");
+                        obj.put("name", Settings.getNewName(domain));
                         obj.put("open_query", data);
                         return obj;
                     }
@@ -131,7 +131,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                         String mqtt_server = scheme + "://" + domain + ((port > 0) ? (":" + port) : "");
                         JSONObject obj = new JSONObject();
                         obj.put("type", "MqttDoorSetup");
-                        obj.put("name", domain);
+                        obj.put("name", Settings.getNewName(domain));
                         obj.put("server", mqtt_server);
                         obj.put("command_topic", path);
                         obj.put("open_command", query);
@@ -140,7 +140,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
                     case "ssh": {
                         JSONObject obj = new JSONObject();
                         obj.put("type", "SshDoorSetup");
-                        obj.put("name", domain);
+                        obj.put("name", Settings.getNewName(domain));
                         obj.put("host", domain);
                         obj.put("port", port);
                         obj.put("open_command", query);

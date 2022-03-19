@@ -679,6 +679,28 @@ public class Settings {
         }
     }
 
+    // get a unique name
+    static String getNewName(String proposed) {
+        String name = proposed;
+        int counter = 1;
+        while (true) {
+            boolean found = false;
+            for (Setup setup : setups) {
+                if (setup.getName().equals(name)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                name = name.split("~")[0] + "~" + counter;
+                counter += 1;
+            } else {
+                break;
+            }
+        }
+        return name;
+    }
+
     static int getNewID() {
         int id = 0;
         while (true) {

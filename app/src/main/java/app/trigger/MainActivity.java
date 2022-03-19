@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 Setup setup = getSelectedSetup();
                 JSONObject obj = Settings.toJsonObject(setup);
                 int new_id = Settings.getNewID();
-                String new_name = setup.getName().split("~")[0] + "~" + new_id;
+                String new_name = Settings.getNewName(setup.getName());
                 obj.put("id", new_id);
                 obj.put("name", new_name);
                 setup = Settings.fromJsonObject(obj);
