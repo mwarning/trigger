@@ -40,7 +40,7 @@ public class QRScanActivity extends AppCompatActivity implements BarcodeCallback
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_qrscan);
-        barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcodeScannerView);
+        barcodeView = findViewById(R.id.barcodeScannerView);
 
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (Utils.hasCameraPermission(this)) {
