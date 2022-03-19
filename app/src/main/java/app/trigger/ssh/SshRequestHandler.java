@@ -70,7 +70,7 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
                 break;
         }
 
-        final String username = setup.user.isEmpty() ? "root" : setup.user;
+        final String username = Utils.isEmpty(setup.user) ? "root" : setup.user;
         final String password = setup.password;
         final String hostname = setup.host;
         final KeyPairBean keypair = setup.keypair;
@@ -100,12 +100,16 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
 
             // authentication by key pair
             if (keypair != null && !connection.isAuthenticationComplete()) {
-                if (!tryPublicKey(connection, username, keypair, this.passphrase)) {
-                    if (Utils.isEmpty(this.passphrase)) {
-                        listener.onTaskResult(setup.getId(), ReplyCode.REMOTE_ERROR, "Key pair password was not accepted.");
+                KeyPair kp = decodeKeyPair(setup.keypair, this.passphrase);
+                if (kp != null) {
+                    connection.authenticateWithPublicKey(username, kp);
+                } else {
+                    if (keypair.encrypted) {
+                        listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Key pair passphrase was not accepted.");
                     } else {
-                        // continue with _additional_ password authentication
+                        listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Failed to decode key pair.");
                     }
+                    return;
                 }
             }
 
@@ -173,29 +177,41 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         | ChannelCondition.CLOSED
         | ChannelCondition.EOF;
 
-    private static boolean tryPublicKey(Connection connection, String username, KeyPairBean kp, String passphrase) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyPair pair = null;
+    public static boolean testPassphrase(KeyPairBean kp, String passphrase) {
+        try {
+            if (decodeKeyPair(kp, passphrase) != null) {
+                return true;
+            }
+        } catch (Exception e) {
+        }
+        return false;
+    }
+
+    private static KeyPair decodeKeyPair(KeyPairBean kp, String passphrase)
+            throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+
+        if (Utils.isEmpty(passphrase)) {
+            passphrase = "";
+        }
 
         if (KeyPairBean.KEY_TYPE_IMPORTED.equals(kp.type)) {
             // load specific key using pem format
-            pair = PEMDecoder.decode(new String(kp.privateKey, "UTF-8").toCharArray(), passphrase);
+            return PEMDecoder.decode(new String(kp.privateKey, "UTF-8").toCharArray(), passphrase);
         } else {
             // load using internal generated format
             PrivateKey privKey;
             try {
                 privKey = PubkeyUtils.decodePrivate(kp.privateKey, kp.type, passphrase);
             } catch (Exception e) {
-                Log.e(TAG, "Bad password for key. Authentication failed: " + e);
-                return false;
+                Log.e(TAG, "Bad passphrase for key. Authentication failed: " + e);
+                return null;
             }
 
             PublicKey pubKey = PubkeyUtils.decodePublic(kp.publicKey, kp.type);
 
             // convert key to trilead format
-            pair = new KeyPair(pubKey, privKey);
+            return new KeyPair(pubKey, privKey);
         }
-
-        return connection.authenticateWithPublicKey(username, pair);
     }
 
     @Override

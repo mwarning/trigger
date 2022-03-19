@@ -40,6 +40,7 @@ import java.net.NetworkInterface;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import app.trigger.DoorState.StateCode;
 import app.trigger.https.HttpsRequestHandler;
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private Bitmap state_unknown_default_image;
 
     private int ignore_wifi_check_for_setup_id = -1;
-    private String ssh_passphrase = "";
+    private HashMap<Integer, String> ssh_passphrases_cache = new HashMap<>();
 
     public enum Action {
         open_door,
@@ -453,13 +454,34 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         return true;
     }
 
-    private boolean checkSshPassword(Setup setup, Action action) {
+    private boolean checkSshPassphrase(Setup setup, Action action) {
         if (setup instanceof SshDoorSetup) {
-            SshDoorSetup s = (SshDoorSetup) setup;
-            if (s.keypair == null || !s.keypair.encrypted || ssh_passphrase.length() != 0) {
+            SshDoorSetup door = (SshDoorSetup) setup;
+            Integer id = door.getId();
+
+            // check if passphrase is needed
+            if (door.keypair == null || !door.keypair.encrypted) {
                 return true;
             }
 
+            // try specific passphrase
+            if (ssh_passphrases_cache.containsKey(id)) {
+                String passphrase = ssh_passphrases_cache.get(id);
+                if (SshRequestHandler.testPassphrase(door.keypair, passphrase)) {
+                    return true;
+                }
+            }
+
+            // try other passphrases
+            for (String passphrase : ssh_passphrases_cache.values()) {
+                if (SshRequestHandler.testPassphrase(door.keypair, passphrase)) {
+                    showMessage("Use previous passphrase");
+                    ssh_passphrases_cache.put(id, passphrase);
+                    return true;
+                }
+            }
+
+            // ask for passphrase
             Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog_ssh_passphrase);
 
@@ -468,8 +490,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             Button okButton = dialog.findViewById(R.id.OkButton);
 
             okButton.setOnClickListener((View v) -> {
-                ssh_passphrase = passphraseEditText.getText().toString();
-                callRequestHandler(action);
+                String passphrase = passphraseEditText.getText().toString();
+                if (SshRequestHandler.testPassphrase(door.keypair, passphrase)) {
+                    ssh_passphrases_cache.put(id, passphrase);
+                    showMessage("Passphrase accepted");
+                    callRequestHandler(action);
+                } else {
+                    showMessage("Passphrase invalid");
+                }
                 dialog.cancel();
             });
 
@@ -479,8 +507,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
             dialog.show();
             return false;
-        } else {
-            ssh_passphrase = "";
         }
 
         return true;
@@ -490,10 +516,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         Setup setup = getSelectedSetup();
 
         if (!checkConnectedWifi(setup, action)) {
+            changeUI(StateCode.DISABLED);
             return;
         }
 
-        if (!checkSshPassword(setup, action)) {
+        if (!checkSshPassphrase(setup, action)) {
+            changeUI(StateCode.DISABLED);
             return;
         }
 
@@ -501,7 +529,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             HttpsRequestHandler handler = new HttpsRequestHandler(this, (HttpsDoorSetup) setup, action);
             handler.start();
         } else if (setup instanceof SshDoorSetup) {
-            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action, this.ssh_passphrase);
+            String passphrase = ssh_passphrases_cache.get(setup.getId());
+            SshRequestHandler handler = new SshRequestHandler(this, (SshDoorSetup) setup, action, passphrase);
             handler.start();
         } else if (setup instanceof BluetoothDoorSetup) {
             BluetoothRequestHandler handler = new BluetoothRequestHandler(this, (BluetoothDoorSetup) setup, action);
