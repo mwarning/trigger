@@ -345,7 +345,9 @@ public class Settings {
                 Class<?> type = field.getType();
                 Object value = field.get(setup);
 
-                if (type == String.class) {
+                if (name.endsWith("_tmp")) {
+                    // field is not meant to be stored
+                } else if (type == String.class) {
                     obj.put(name, (String) value);
                 } else if (type == Boolean.class) {
                     obj.put(name, (Boolean) value);
@@ -389,7 +391,9 @@ public class Settings {
         for (Field field : fields) {
             if (field.getName().equals(name)) {
                 Class<?> type = field.getType();
-                if (type == String.class && value_type == String.class) {
+                if (name.endsWith("_tmp")) {
+                    // field is not meant to be loaded
+                } else if (type == String.class && value_type == String.class) {
                     field.set(setup, value);
                 } else if (type == Boolean.class && value_type == Boolean.class) {
                     field.set(setup, (Boolean) value);
@@ -578,8 +582,8 @@ public class Settings {
             try {
                 String value = sharedPreferences.getString(key, "");
 
-                if (name.equals("type")) {
-                    // ignore, object field is read only
+                if (name.equals("type") || name.endsWith("_tmp")) {
+                    // ignore, object field is not meant to be stored
                 } else if (type == String.class) {
                     field.set(setup, value);
                 } else if (type == Boolean.class) {

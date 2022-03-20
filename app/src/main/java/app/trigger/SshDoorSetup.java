@@ -35,6 +35,7 @@ public class SshDoorSetup implements Setup {
     public String ssids;
 
     public int timeout; // milliseconds
+    public String passphrase_tmp;
 
     public SshDoorSetup(int id, String name) {
         this.id = id;
@@ -128,5 +129,9 @@ public class SshDoorSetup implements Setup {
     @Override
     public boolean canRing() {
         return !Utils.isEmpty(ring_command);
+    }
+
+    boolean needsPassphrase() {
+        return this.keypair != null && this.keypair.encrypted;
     }
 }

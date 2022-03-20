@@ -32,7 +32,6 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
     private final OnTaskCompleted listener;
     private final SshDoorSetup setup;
     private final Action action;
-    private final String passphrase;
 
     static {
         Log.d(TAG, "Ed25519Provider.insertIfNeeded2");
@@ -40,11 +39,10 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
         Ed25519Provider.insertIfNeeded();
     }
 
-    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action, String passphrase) {
+    public SshRequestHandler(OnTaskCompleted listener, SshDoorSetup setup, Action action) {
         this.listener = listener;
         this.setup = setup;
         this.action = action;
-        this.passphrase = passphrase;
     }
 
     public void run() {
@@ -100,11 +98,12 @@ public class SshRequestHandler extends Thread implements ConnectionMonitor {
 
             // authentication by key pair
             if (keypair != null && !connection.isAuthenticationComplete()) {
-                KeyPair kp = decodeKeyPair(setup.keypair, this.passphrase);
+                KeyPair kp = decodeKeyPair(setup.keypair, setup.passphrase_tmp);
                 if (kp != null) {
                     connection.authenticateWithPublicKey(username, kp);
                 } else {
                     if (keypair.encrypted) {
+                        setup.passphrase_tmp = ""; // reset (incorrect) passphrase
                         listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Key pair passphrase was not accepted.");
                     } else {
                         listener.onTaskResult(setup.getId(), ReplyCode.LOCAL_ERROR, "Failed to decode key pair.");
