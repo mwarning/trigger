@@ -465,15 +465,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             // try other passphrases
             for (Setup s : Settings.getSetups()) {
                 if (s instanceof SshDoorSetup) {
-                    continue;
-                }
-
-                SshDoorSetup ss = (SshDoorSetup) s;
-                if (ss.needsPassphrase() && !Utils.isEmpty(ss.passphrase_tmp)) {
-                    if (SshRequestHandler.testPassphrase(door.keypair, ss.passphrase_tmp)) {
-                        showMessage("Reuse passphrase from " + door.getName());
-                        door.passphrase_tmp = ss.passphrase_tmp;
-                        return true;
+                    SshDoorSetup ss = (SshDoorSetup) s;
+                    if (ss.needsPassphrase() && !Utils.isEmpty(ss.passphrase_tmp)) {
+                        if (SshRequestHandler.testPassphrase(door.keypair, ss.passphrase_tmp)) {
+                            showMessage("Reuse passphrase from " + door.getName());
+                            door.passphrase_tmp = ss.passphrase_tmp;
+                            return true;
+                        }
                     }
                 }
             }
