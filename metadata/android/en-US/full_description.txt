@@ -3,10 +3,12 @@ Supported are Generic HTTPS/SSH/MQTT/Bluetooth and the Nuki SmartLock.
 
 Features:
 
-* Manage multiple doors
-* QR-Code support
-* Door setup backup
-* Custom door state pictures
-* Pin TLS certificates and set SSH keys
-* Auto-select door setup by WiFi SSID
-* Display returned text from door
+* Generic HTTPS, SSH, Bluetooth and MQTT support
+* Support for Nuki SmartLock
+* Multiple door profiles
+* Auto select profiles by connected WiFi
+* HTTPS server/client certificate support
+* SSH key generation (ED25519, RSA,...) and passphrase support
+* Custom status images
+* QR code support
+* Backup support
