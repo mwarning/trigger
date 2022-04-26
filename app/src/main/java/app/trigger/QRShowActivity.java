@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 
 public class QRShowActivity extends AppCompatActivity {
+    private static final String TAG = "QRShowActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
