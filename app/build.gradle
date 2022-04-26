@@ -19,7 +19,7 @@ android {
     flavorDimensions "store"
     productFlavors {
         google {
-            applicationId 'app.trigger'
+            applicationId 'app.door_trigger'
         }
         fdroid {
             applicationId 'com.example.trigger'
