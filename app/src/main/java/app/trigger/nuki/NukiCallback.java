@@ -59,11 +59,12 @@ abstract class NukiCallback extends BluetoothGattCallback {
                 case BluetoothProfile.STATE_CONNECTED:
                     gatt.discoverServices();
                     break;
-                case BluetoothProfile.STATE_DISCONNECTED:
-                    closeConnection(gatt);
-                    break;
                 case BluetoothProfile.STATE_CONNECTING:
+                    break:
+                case BluetoothProfile.STATE_DISCONNECTED:
                 case BluetoothProfile.STATE_DISCONNECTING:
+                default:
+                    closeConnection(gatt);
                     break;
             }
         } else {
