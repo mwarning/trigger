@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import app.trigger.DoorReply.ReplyCode;
 import app.trigger.Log;
+import app.trigger.Utils;
 import app.trigger.OnTaskCompleted;
 
 
@@ -46,28 +47,41 @@ abstract class NukiCallback extends BluetoothGattCallback {
      * of waiting for the other side to close the connection
     */
     protected void closeConnection(BluetoothGatt gatt) {
+        Log.d(TAG, "closeConnection");
         gatt.close();
         NukiRequestHandler.bluetooth_in_use.set(false);
     }
 
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-        //Log.i(TAG, "status: " + getGattStatus(status) + ", newState: " + newState);
+        Log.d(TAG, "onConnectionStateChange, status: " +  NukiRequestHandler.getGattStatus(status)
+            + ", newState: " + NukiRequestHandler.getGattStatus(newState));
 
         if (status == GATT_SUCCESS) {
+            Log.d(TAG, "status: GATT_SUCCESS");
             switch (newState) {
                 case BluetoothProfile.STATE_CONNECTED:
+                    Log.d(TAG, "newState: BluetoothProfile.STATE_CONNECTED");
                     gatt.discoverServices();
                     break;
                 case BluetoothProfile.STATE_CONNECTING:
-                    break:
+                    Log.d(TAG, "newState: BluetoothProfile.STATE_CONNECTING");
+                    break;
                 case BluetoothProfile.STATE_DISCONNECTED:
+                    Log.d(TAG, "newState: BluetoothProfile.STATE_DISCONNECTED");
+                    closeConnection(gatt);
+                    break;
                 case BluetoothProfile.STATE_DISCONNECTING:
+                    Log.d(TAG, "newState: BluetoothProfile.STATE_DISCONNECTING");
+                    closeConnection(gatt);
+                    break;
                 default:
+                    Log.d(TAG, "newState: unknown");
                     closeConnection(gatt);
                     break;
             }
         } else {
+            Log.d(TAG, "status:" + NukiRequestHandler.getGattStatus(status));
             closeConnection(gatt);
             this.listener.onTaskResult(
                 setup_id, ReplyCode.REMOTE_ERROR, "Connection error: " + NukiRequestHandler.getGattStatus(status)
@@ -77,6 +91,7 @@ abstract class NukiCallback extends BluetoothGattCallback {
 
     @Override
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+        Log.d(TAG, "onServicesDiscovered");
         if (status == GATT_SUCCESS) {
             BluetoothGattService service = gatt.getService(this.service_uuid);
             if (service == null) {
@@ -123,7 +138,7 @@ abstract class NukiCallback extends BluetoothGattCallback {
 
     @Override
     public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-        //Log.i(TAG, "uiid: " + descriptor.getUuid() + ": " + Utils.byteArrayToHexString(descriptor.getValue()));
+        Log.d(TAG, "onDescriptorWrite, uiid: " + descriptor.getUuid() + ": " + Utils.byteArrayToHexString(descriptor.getValue()));
         if (status == GATT_SUCCESS) {
             onConnected(gatt, descriptor.getCharacteristic());
         } else {

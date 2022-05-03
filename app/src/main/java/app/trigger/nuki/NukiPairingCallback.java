@@ -32,7 +32,7 @@ class NukiPairingCallback extends NukiCallback {
     byte[] uuid;
     byte[] own_nonce = new byte[0];
 
-    int challenge = 0;
+    boolean challenge_received = false;
 
     NukiPairingCallback(int setup_id, OnTaskCompleted listener, NukiDoorSetup setup) {
         super(setup_id, listener, PAIRING_SERVICE_UUID, PAIRING_GDIO_XTERISTIC_UUID);
@@ -43,6 +43,8 @@ class NukiPairingCallback extends NukiCallback {
     }
 
     public void onConnected(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+        Log.d(TAG, "onConnected");
+
         if (!this.setup.shared_key.isEmpty()) {
             this.listener.onTaskResult(setup_id, ReplyCode.LOCAL_ERROR, "Already paired to some device!");
             closeConnection(gatt);
@@ -60,7 +62,8 @@ class NukiPairingCallback extends NukiCallback {
 
     @Override
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-        //Log.i(TAG, "uiid: " + characteristic.getUuid() + ": " + Utils.byteArrayToHexString(characteristic.getValue()));
+        Log.d(TAG, "onCharacteristicChanged, uiid: " + characteristic.getUuid() + ": " + Utils.byteArrayToHexString(characteristic.getValue()));
+
         if (data == null) {
             data = characteristic.getValue();
         } else {
@@ -75,10 +78,12 @@ class NukiPairingCallback extends NukiCallback {
         }
 
         if (m instanceof NukiCommand.NukiError) {
+            Log.d(TAG, "NukiCommand.NukiError");
             NukiCommand.NukiError ne = (NukiCommand.NukiError) m;
             this.listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, ne.asString());
             closeConnection(gatt);
         } else if (m instanceof NukiCommand.NukiPublicKey) {
+            Log.d(TAG, "NukiCommand.NukiPublicKey");
             NukiCommand.NukiPublicKey npk = (NukiCommand.NukiPublicKey) m;
             nuki_public_key = npk.public_key;
 
@@ -98,9 +103,10 @@ class NukiPairingCallback extends NukiCallback {
 
             shared_key = NukiRequestHandler.getSharedKey(nuki_public_key, secret_key);
         } else if (m instanceof NukiCommand.NukiChallenge) {
+            Log.d(TAG, "NukiCommand.NukiChallenge challenge_received: " + challenge_received);
             NukiCommand.NukiChallenge nc = (NukiCommand.NukiChallenge) m;
-            if (challenge == 0) {
-                challenge = 1;
+            if (challenge_received == false) {
+                challenge_received = true;
                 //Log.i(TAG, "NukiCommand: NukiChallenge: nonce: " + Utils.byteArrayToHexString(nuki_nonce));
 
                 byte[] valueR = NukiTools.concat(public_key, nuki_public_key, nc.nonce);
@@ -146,8 +152,8 @@ class NukiPairingCallback extends NukiCallback {
                 }
             }
         } else if (m instanceof NukiCommand.NukiAuthID) {
+            Log.d(TAG, "NukiCommand.NukiAuthID: auth_id: " + auth_id);
             NukiCommand.NukiAuthID nai = (NukiCommand.NukiAuthID) m;
-            Log.d(TAG, "NukiAuthID: auth_id: " + nai.auth_id);
             auth_id = nai.auth_id;
             uuid = nai.uuid;
 
@@ -176,6 +182,7 @@ class NukiPairingCallback extends NukiCallback {
                 return;
             }
         } else if (m instanceof NukiCommand.NukiStatus) {
+            Log.d(TAG, "NukiCommand.NukiStatus");
             NukiCommand.NukiStatus ns = (NukiCommand.NukiStatus) m;
             if (ns.status != 0) {
                 this.listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, "Pairing failed.");

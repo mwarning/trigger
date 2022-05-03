@@ -23,6 +23,7 @@ class NukiReadLockStateCallback extends NukiCallback {
     }
 
     public void onConnected(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+        Log.d(TAG, "onConnected");
         NukiCommand.NukiRequest nr = new NukiCommand.NukiRequest(0x0c);
         byte[] request = NukiRequestHandler.encrypt_message(this.shared_key, this.auth_id, nr.generate(), null);
         characteristic.setValue(request);
@@ -35,7 +36,7 @@ class NukiReadLockStateCallback extends NukiCallback {
 
     @Override
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-        //Log.i(TAG, "uiid: " + characteristic.getUuid() + ": " + Utils.byteArrayToHexString(characteristic.getValue()));
+        Log.d(TAG, "onCharacteristicChanged, uiid: " + characteristic.getUuid() + ": " + Utils.byteArrayToHexString(characteristic.getValue()));
         if (data == null) {
             data = characteristic.getValue();
         } else {
@@ -46,6 +47,7 @@ class NukiReadLockStateCallback extends NukiCallback {
         NukiCommand m = NukiRequestHandler.parse(message);
 
         if (m == null) {
+            Log.d(TAG, "NukiCommand is null");
             return;
         } else {
             data = null;

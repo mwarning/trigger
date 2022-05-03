@@ -27,6 +27,7 @@ class NukiLockActionCallback extends NukiCallback {
     }
 
     public void onConnected(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+        Log.d(TAG, "onConnected");
         NukiCommand.NukiRequest nr = new NukiCommand.NukiRequest(0x04);
         byte[] request = NukiRequestHandler.encrypt_message(this.shared_key, this.auth_id, nr.generate(), null);
         characteristic.setValue(request);
@@ -39,7 +40,7 @@ class NukiLockActionCallback extends NukiCallback {
 
     @Override
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-        //Log.i(TAG, "uiid: " + characteristic.getUuid() + ": " + Utils.byteArrayToHexString(characteristic.getValue()));
+        Log.d(TAG, "onCharacteristicChanged, uiid: " + characteristic.getUuid() + ": " + Utils.byteArrayToHexString(characteristic.getValue()));
         if (data == null) {
             data = characteristic.getValue();
         } else {
@@ -50,12 +51,14 @@ class NukiLockActionCallback extends NukiCallback {
         NukiCommand command = NukiRequestHandler.parse(message);
 
         if (command == null) {
+            Log.d(TAG, "NukiCommand is null");
             return;
         } else {
             data = null;
         }
 
         if (command instanceof NukiCommand.NukiChallenge) {
+            Log.d(TAG, "NukiCommand.NukiChallenge");
             NukiCommand.NukiChallenge nc = (NukiCommand.NukiChallenge) command;
             NukiCommand.NukiLockAction nla = new NukiCommand.NukiLockAction(this.lock_action, this.app_id, 0x00, nc.nonce);
             byte[] response = NukiRequestHandler.encrypt_message(this.shared_key, this.auth_id, nla.generate(), null);
@@ -67,12 +70,14 @@ class NukiLockActionCallback extends NukiCallback {
                 closeConnection(gatt);
             }
         } else if (command instanceof NukiCommand.NukiStatus) {
+            Log.d(TAG, "NukiCommand.NukiStatus");
             NukiCommand.NukiStatus ns = (NukiCommand.NukiStatus) command;
             if (ns.status == NukiCommand.NukiStatus.STATUS_COMPLETE) {
                 // do not wait until the Nuki closes the connection
                 closeConnection(gatt);
             }
         } else if (command instanceof NukiCommand.NukiStates) {
+            Log.d(TAG, "NukiCommand.NukiStates");
             NukiCommand.NukiStates ns = (NukiCommand.NukiStates) command;
             String extra = "";
             if (ns.battery_critical == 0x01) {
@@ -80,6 +85,7 @@ class NukiLockActionCallback extends NukiCallback {
             }
             listener.onTaskResult(setup_id, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra);
         } else if (command instanceof NukiCommand.NukiError) {
+            Log.d(TAG, "NukiCommand.NukiError");
             NukiCommand.NukiError ne = (NukiCommand.NukiError) command;
             this.listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, ne.asString());
             closeConnection(gatt);
