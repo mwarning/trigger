@@ -403,9 +403,13 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             ignore_wifi_check_for_setup_id = -1;
         }
 
+        if (!setup.getWiFiRequired()) {
+            return true;
+        }
+
         boolean wifi_connected = WifiTools.isConnected();
 
-        if (!wifi_connected && setup.getWiFiRequired()) {
+        if (!wifi_connected) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("WiFi Disabled");
             builder.setMessage("WiFi disabled - ignore?");
