@@ -407,29 +407,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
             return true;
         }
 
-        boolean wifi_connected = WifiTools.isConnected();
-
-        if (!wifi_connected) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("WiFi Disabled");
-            builder.setMessage("WiFi disabled - ignore?");
-
-            builder.setPositiveButton("Yes", (DialogInterface dialog, int id) -> {
-                ignore_wifi_check_for_setup_id = setup.getId();
-                // trigger aggain
-                callRequestHandler(action);
-                dialog.cancel();
-            });
-
-            builder.setNegativeButton("No", (DialogInterface dialog, int id) -> {
-                dialog.cancel();
-            });
-
-            builder.show();
-            return false;
-        }
-
-        if (wifi_connected) {
+        if (WifiTools.isConnected()) {
             String ssids = setup.getWiFiSSIDs();
             String current_ssid = WifiTools.getCurrentSSID();
 
@@ -452,6 +430,24 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
                 builder.show();
                 return false;
             }
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("WiFi Disabled");
+            builder.setMessage("WiFi disabled - ignore?");
+
+            builder.setPositiveButton("Yes", (DialogInterface dialog, int id) -> {
+                ignore_wifi_check_for_setup_id = setup.getId();
+                // trigger aggain
+                callRequestHandler(action);
+                dialog.cancel();
+            });
+
+            builder.setNegativeButton("No", (DialogInterface dialog, int id) -> {
+                dialog.cancel();
+            });
+
+            builder.show();
+            return false;
         }
 
         return true;
