@@ -470,7 +470,6 @@
         <ListPreference
             android:key="qos"
             android:title="MQTT Quality Of Service"
-            android:summary="%s"
             android:entries="@array/MqttQosNames"
             android:entryValues="@array/MqttQosValues"/>
 
