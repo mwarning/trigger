@@ -157,8 +157,13 @@ public class SetupActivity extends PreferenceActivity {
             etp.setSummary(getSummaryValue(key, value));
         } else if (p instanceof ListPreference) {
             ListPreference lp = (ListPreference) p;
+            // show value as summary
+            lp.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+                preference.setSummary(getSummaryValue(key, newValue.toString()));
+                return true;
+            });
+            lp.setSummary(getSummaryValue(key, value));
             lp.setValue(value);
-            // set summary field to "%s" in xml
         } else {
             Log.w(TAG, "setText(): Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: " + key);
         }
