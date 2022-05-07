@@ -33,10 +33,12 @@
             android:defaultValue="true"
             android:persistent="false" />
 
-        <EditTextPreference
+        <ListPreference
             android:key="method"
             android:title="HTTP Method"
             android:persistent="false"
+            android:entries="@array/HttpMethods"
+            android:entryValues="@array/HttpMethods"
             android:inputType="textNoSuggestions" />
 
         <EditTextPreference
