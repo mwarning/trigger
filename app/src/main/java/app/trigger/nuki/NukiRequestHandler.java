@@ -28,10 +28,6 @@ import app.trigger.Log;
 import app.trigger.Utils;
 
 import static android.bluetooth.BluetoothDevice.TRANSPORT_LE;
-import static android.bluetooth.BluetoothGatt.GATT_FAILURE;
-import static android.bluetooth.BluetoothGatt.GATT_INSUFFICIENT_ENCRYPTION;
-import static android.bluetooth.BluetoothGatt.GATT_READ_NOT_PERMITTED;
-import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
 
 
 public class NukiRequestHandler extends Thread {
@@ -171,12 +167,26 @@ public class NukiRequestHandler extends Thread {
         }
     }
 
+    public static String getGattState(int state) {
+        switch (state) {
+            case BluetoothGatt.STATE_DISCONNECTED: return "STATE_DISCONNECTED";
+            case BluetoothGatt.STATE_CONNECTING: return "STATE_CONNECTING";
+            case BluetoothGatt.STATE_CONNECTED: return "STATE_CONNECTED";
+            case BluetoothGatt.STATE_DISCONNECTING: return "STATE_DISCONNECTING";
+            default:
+                return Integer.toString(state);
+        }
+    }
+
     public static String getGattStatus(int status) {
         switch (status) {
-            case GATT_SUCCESS: return "GATT_SUCCESS";
-            case GATT_FAILURE: return "GATT_FAILURE";
-            case GATT_INSUFFICIENT_ENCRYPTION: return "GATT_INSUFFICIENT_ENCRYPTION";
-            case GATT_READ_NOT_PERMITTED: return "GATT_READ_NOT_PERMITTED";
+            case BluetoothGatt.GATT_SUCCESS: return "GATT_SUCCESS";
+            case BluetoothGatt.GATT_FAILURE: return "GATT_FAILURE";
+            case BluetoothGatt.GATT_INSUFFICIENT_ENCRYPTION: return "GATT_INSUFFICIENT_ENCRYPTION";
+            case BluetoothGatt.GATT_READ_NOT_PERMITTED: return "GATT_READ_NOT_PERMITTED";
+            case BluetoothGatt.GATT_CONNECTION_CONGESTED: return "GATT_CONNECTION_CONGESTED";
+            case BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED: return "GATT_REQUEST_NOT_SUPPORTED";
+            case BluetoothGatt.GATT_WRITE_NOT_PERMITTED: return "GATT_WRITE_NOT_PERMITTED";
             case 19: return "DISCONNECTED_BY_DEVICE";
             case 133: return "DEVICE_NOT_FOUND";
             case 8: return "CONNECTION_TIMEOUT";

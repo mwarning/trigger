@@ -54,34 +54,28 @@ abstract class NukiCallback extends BluetoothGattCallback {
 
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-        Log.d(TAG, "onConnectionStateChange, status: " +  NukiRequestHandler.getGattStatus(status)
-            + ", newState: " + NukiRequestHandler.getGattStatus(newState));
+        Log.d(TAG, "onConnectionStateChange, status: "
+            +  NukiRequestHandler.getGattStatus(status)
+            + ", newState: " + NukiRequestHandler.getGattState(newState));
 
         if (status == GATT_SUCCESS) {
-            Log.d(TAG, "status: GATT_SUCCESS");
             switch (newState) {
-                case BluetoothProfile.STATE_CONNECTED:
-                    Log.d(TAG, "newState: BluetoothProfile.STATE_CONNECTED");
+                case BluetoothGatt.STATE_CONNECTED:
                     gatt.discoverServices();
                     break;
-                case BluetoothProfile.STATE_CONNECTING:
-                    Log.d(TAG, "newState: BluetoothProfile.STATE_CONNECTING");
+                case BluetoothGatt.STATE_CONNECTING:
                     break;
-                case BluetoothProfile.STATE_DISCONNECTED:
-                    Log.d(TAG, "newState: BluetoothProfile.STATE_DISCONNECTED");
+                case BluetoothGatt.STATE_DISCONNECTED:
                     closeConnection(gatt);
                     break;
-                case BluetoothProfile.STATE_DISCONNECTING:
-                    Log.d(TAG, "newState: BluetoothProfile.STATE_DISCONNECTING");
+                case BluetoothGatt.STATE_DISCONNECTING:
                     closeConnection(gatt);
                     break;
                 default:
-                    Log.d(TAG, "newState: unknown");
                     closeConnection(gatt);
                     break;
             }
         } else {
-            Log.d(TAG, "status:" + NukiRequestHandler.getGattStatus(status));
             closeConnection(gatt);
             this.listener.onTaskResult(
                 setup_id, ReplyCode.REMOTE_ERROR, "Connection error: " + NukiRequestHandler.getGattStatus(status)
