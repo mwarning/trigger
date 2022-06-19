@@ -32,7 +32,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -65,7 +66,8 @@
         <activity
             android:name=".ssh.SshKeyPairActivity"
             android:label="@string/manage_ssh_key_pair"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".ssh.KeyPairActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -74,7 +76,8 @@
         <activity
             android:name=".mqtt.MqttClientKeyPairActivity"
             android:label="Manage Client Private Key"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".mqtt.MqttPrivateClientKeyActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -83,7 +86,8 @@
         <activity
             android:name=".https.CertificateActivity"
             android:label="@string/manage_tls_certificate"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".https.CertificateActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -92,7 +96,8 @@
         <activity
             android:name=".ImageActivity"
             android:label="Select Image"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".ImageActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
