@@ -82,8 +82,6 @@ object Utils {
         return true
     }
 
-    @kotlin.jvm.JvmStatic
-    @Throws(IOException::class)
     fun readInputStreamWithTimeout(`is`: InputStream, maxLength: Int, timeoutMillis: Int): String {
         val buffer = ByteArray(maxLength)
         var bufferOffset = 0
@@ -102,8 +100,6 @@ object Utils {
         return String(ret)
     }
 
-    @kotlin.jvm.JvmStatic
-    @Throws(CertificateException::class, KeyStoreException::class, IOException::class, NoSuchAlgorithmException::class, KeyManagementException::class)
     fun getSocketFactoryWithCertificate(cert: Certificate?): SSLSocketFactory {
         val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
         keyStore.load(null, null)
@@ -115,8 +111,6 @@ object Utils {
         return sslContext.socketFactory
     }
 
-    @kotlin.jvm.JvmStatic
-    @Throws(CertificateException::class, KeyStoreException::class, IOException::class, NoSuchAlgorithmException::class, KeyManagementException::class)
     fun getSocketFactoryWithCertificateAndClientKey(cert: Certificate?, clientCertificate: Certificate, privateKey: PrivateKey?): SSLSocketFactory {
         val TEMPORARY_KEY_PASSWORD = UUID.randomUUID().toString().replace("-", "")
         val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
@@ -146,8 +140,6 @@ object Utils {
         return size
     }
 
-    @kotlin.jvm.JvmStatic
-    @Throws(IOException::class)
     fun readFile(ctx: Context, uri: Uri?): ByteArray {
         val size = getFileSize(ctx, uri).toInt()
         val `is` = ctx.contentResolver.openInputStream(uri!!)
@@ -161,16 +153,12 @@ object Utils {
         return data
     }
 
-    @kotlin.jvm.JvmStatic
-    @Throws(IOException::class)
     fun writeFile(ctx: Context, uri: Uri?, data: ByteArray?) {
         val fos = ctx.contentResolver.openOutputStream(uri!!)
         fos!!.write(data)
         fos.close()
     }
 
-    @kotlin.jvm.JvmStatic
-    @Throws(URISyntaxException::class)
     fun createSocketAddress(addr: String): InetSocketAddress {
         val has_scheme = addr.contains("://")
         val scheme_addr: String
@@ -196,8 +184,6 @@ object Utils {
      *
      * Schemas like "https://" etc. are preserved.
      */
-    @kotlin.jvm.JvmStatic
-    @Throws(URISyntaxException::class)
     fun rebuildAddress(addr: String, default_port: Int): String {
         val has_scheme = addr.contains("://")
         val scheme_addr: String
@@ -307,12 +293,10 @@ object Utils {
     }
 */
     // non empty string
-    @kotlin.jvm.JvmStatic
     fun isEmpty(str: String?): Boolean {
         return str == null || str.isEmpty()
     }
 
-    @kotlin.jvm.JvmStatic
     fun hexStringToByteArray(s: String?): ByteArray {
         if (s == null) {
             return ByteArray(0)
@@ -346,8 +330,6 @@ object Utils {
         return -1
     }
 
-    private val HEX_ARRAY = "0123456789ABCDEF".toCharArray()
-    @kotlin.jvm.JvmStatic
     fun byteArrayToHexString(bytes: ByteArray?): String {
         if (bytes == null) {
             return ""

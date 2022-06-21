@@ -14,7 +14,6 @@ object Log {
         }
     }
 
-    @kotlin.jvm.JvmStatic
     fun d(context: Any, message: String) {
         if (BuildConfig.DEBUG) {
             val tag = contextString(context)
@@ -22,7 +21,6 @@ object Log {
         }
     }
 
-    @kotlin.jvm.JvmStatic
     fun w(context: Any, message: String) {
         if (BuildConfig.DEBUG) {
             val tag = contextString(context)
@@ -30,7 +28,6 @@ object Log {
         }
     }
 
-    @kotlin.jvm.JvmStatic
     fun i(context: Any, message: String) {
         if (BuildConfig.DEBUG) {
             val tag = contextString(context)
@@ -38,7 +35,6 @@ object Log {
         }
     }
 
-    @kotlin.jvm.JvmStatic
     fun e(context: Any, message: String) {
         if (BuildConfig.DEBUG) {
             val tag = contextString(context)

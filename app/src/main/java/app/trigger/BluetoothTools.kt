@@ -21,7 +21,6 @@ object BluetoothTools {
     val isSupported: Boolean
         get() = adapter != null
 
-    @kotlin.jvm.JvmStatic
     fun createRfcommSocket(device: BluetoothDevice): BluetoothSocket? {
         var tmp: BluetoothSocket? = null
         try {
