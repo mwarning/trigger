@@ -115,6 +115,8 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Server not reachable.")
         } catch (ce: ConnectException) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Failed to connect.")
+        } catch (uhe: UnknownHostException) {
+            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, uhe.message ?: uhe.toString())
         } catch (se: SocketException) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Not connected to network.")
             //} catch (java.security.cert.CertPathValidatorException e) {
