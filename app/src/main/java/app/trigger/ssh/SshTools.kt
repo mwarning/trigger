@@ -13,10 +13,12 @@ import java.security.KeyPair
 
 object SshTools {
     private const val TAG = "SshTools"
+
     fun serializeKeyPair(keypair: KeyPairBean?): String? {
         if (keypair == null) {
             return ""
         }
+
         try {
             val obj = JSONObject()
             obj.put("type", keypair.type)
@@ -88,15 +90,16 @@ object SshTools {
         // then save original file contents into our database
         try {
             val keyBytes = ByteArrayOutputStream()
-            var line: String
+            var line: String?
             var inKey = false
+
             while (reader.readLine().also { line = it } != null) {
                 if (line == PubkeyUtils.PKCS8_START) {
                     inKey = true
                 } else if (line == PubkeyUtils.PKCS8_END) {
                     break
                 } else if (inKey) {
-                    keyBytes.write(line.toByteArray(charset("US-ASCII")))
+                    keyBytes.write(line!!.toByteArray(charset("US-ASCII")))
                 }
             }
             if (keyBytes.size() > 0) {
@@ -118,16 +121,16 @@ object SshTools {
     }
 
     fun parsePrivateKeyPEM(keyData: String): KeyPairBean? {
-        var kp: KeyPair
-        if (readPKCS8Key(keyData.toByteArray()).also { kp = it!! } != null) {
-            val algorithm = convertAlgorithmName(kp.private.algorithm)
-            return KeyPairBean(algorithm, kp.private.encoded, kp.public.encoded, false)
+        val kp2 = readPKCS8Key(keyData.toByteArray())
+        if (kp2 != null) {
+            val algorithm = convertAlgorithmName(kp2.private.algorithm)
+            return KeyPairBean(algorithm, kp2.private.encoded, kp2.public.encoded, false)
         } else {
             try {
                 val struct = PEMDecoder.parsePEM(keyData.toCharArray())
                 val encrypted = PEMDecoder.isPEMEncrypted(struct)
                 return if (!encrypted) {
-                    kp = PEMDecoder.decode(struct, null)
+                    val kp = PEMDecoder.decode(struct, null)
                     val algorithm = convertAlgorithmName(kp.private.algorithm)
                     KeyPairBean(algorithm, kp.private.encoded, kp.public.encoded, encrypted)
                 } else {
@@ -141,5 +144,5 @@ object SshTools {
     }
 
     // helper class that holds the content of the old id_rsa/id_rsa.pub file content (PEM format)
-    private class KeyPairData internal constructor(val prvkey: ByteArray, val pubkey: ByteArray) : Serializable
+    private class KeyPairData(val prvkey: ByteArray, val pubkey: ByteArray) : Serializable
 }
