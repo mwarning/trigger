@@ -189,13 +189,13 @@ object NukiTools {
     }
 */
     fun read_i16(buffer: ByteArray, offset: Int): Int {
-        return ((if ((buffer[offset] as Int and 0x80) == 0) 1 else -1) * (buffer[offset] as Int and 0x7f)
-                + (buffer[offset + 1] as Int and 0xff shl 8))
+        return ((if ((buffer[offset].toInt() and 0x80) == 0) 1 else -1) * (buffer[offset].toInt() and 0x7f)
+                + (buffer[offset + 1].toInt() and 0xff shl 8))
     }
 
     fun read16(buffer: ByteArray, offset: Int): Int {
-        return ((buffer[offset] as Int and 0xff)
-                + (buffer[offset + 1] as Int and 0xff shl 8))
+        return ((buffer[offset].toInt() and 0xff)
+                + (buffer[offset + 1].toInt() and 0xff shl 8))
     }
 
     fun write16(buffer: ByteArray, offset: Int, value: Int) {
@@ -204,10 +204,10 @@ object NukiTools {
     }
 
     fun read32_app_id(data: ByteArray, offset: Int): Long {
-        return ((data[offset + 3] as Long and 0xff)
-                + (data[offset + 2] as Long and 0xff shl 8)
-                + (data[offset + 1] as Long and 0xff shl 16)
-                + (data[offset + 0] as Long and 0xff shl 24))
+        return ((data[offset + 3].toLong() and 0xff)
+                + (data[offset + 2].toLong() and 0xff shl 8)
+                + (data[offset + 1].toLong() and 0xff shl 16)
+                + (data[offset + 0].toLong() and 0xff shl 24))
     }
 
     fun write32_app_id(data: ByteArray, offset: Int, value: Long) {
@@ -218,10 +218,10 @@ object NukiTools {
     }
 
     fun read32_auth_id(data: ByteArray, offset: Int): Long {
-        return ((data[offset + 0] as Long and 0xff)
-                + (data[offset + 1] as Long and 0xff shl 8)
-                + (data[offset + 2] as Long and 0xff shl 16)
-                + (data[offset + 3] as Long and 0xff shl 24))
+        return ((data[offset + 0].toLong() and 0xff)
+                + (data[offset + 1].toLong() and 0xff shl 8)
+                + (data[offset + 2].toLong() and 0xff shl 16)
+                + (data[offset + 3].toLong() and 0xff shl 24))
     }
 
     fun write32_auth_id(data: ByteArray, offset: Int, value: Long) {
@@ -263,7 +263,7 @@ object NukiTools {
         val polynomial = 0x1021 // 0001 0000 0010 0001  (0, 5, 12)
         for (j in offset until count) {
             for (i in 0..7) {
-                val bit = data[j] as Int shr 7 - i and 1 == 1
+                val bit = data[j].toInt() shr 7 - i and 1 == 1
                 val c15 = crc shr 15 and 1 == 1
                 crc = crc shl 1
                 if (c15 xor bit) crc = crc xor polynomial
