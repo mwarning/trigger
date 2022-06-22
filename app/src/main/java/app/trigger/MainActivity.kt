@@ -375,23 +375,20 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         return true
     }
 
-    private fun checkSshPassphrase(setup: Setup?, action: Action): Boolean {
+    private fun checkSshPassphrase(setup: Setup, action: Action): Boolean {
         if (setup is SshDoorSetup) {
-            val door = setup
-
             // check if passphrase is not needed
-            if (!door.needsPassphrase() || !Utils.isEmpty(door.passphrase_tmp)) {
+            if (!setup.needsPassphrase() || !Utils.isEmpty(setup.passphrase_tmp)) {
                 return true
             }
 
             // try other passphrases
             for (s in Settings.setups) {
                 if (s is SshDoorSetup) {
-                    val ss = s as SshDoorSetup
-                    if (ss.needsPassphrase() && ss.passphrase_tmp.isNotEmpty()) {
-                        if (SshRequestHandler.testPassphrase(door.keypair, ss.passphrase_tmp)) {
-                            showMessage("Reuse passphrase from ${door.name}")
-                            door.passphrase_tmp = ss.passphrase_tmp
+                    if (s.needsPassphrase() && s.passphrase_tmp.isNotEmpty()) {
+                        if (SshRequestHandler.testPassphrase(setup.keypair, s.passphrase_tmp)) {
+                            showMessage("Reuse passphrase from ${setup.name}")
+                            setup.passphrase_tmp = s.passphrase_tmp
                             return true
                         }
                     }
@@ -407,8 +404,8 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             val okButton = dialog.findViewById<Button>(R.id.OkButton)
             okButton.setOnClickListener { v: View? ->
                 val passphrase = passphraseEditText.text.toString()
-                if (SshRequestHandler.testPassphrase(door.keypair, passphrase)) {
-                    door.passphrase_tmp = passphrase
+                if (SshRequestHandler.testPassphrase(setup.keypair, passphrase)) {
+                    setup.passphrase_tmp = passphrase
                     showMessage("Passphrase accepted")
                     callRequestHandler(action)
                 } else {
