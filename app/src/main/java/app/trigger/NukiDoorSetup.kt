@@ -89,6 +89,7 @@ class NukiDoorSetup(override var id: Int, override var name: String) : Setup {
             val setup = NukiDoorSetup(id, name)
 
             setup.device_name = obj.optString("device_name", "")
+            setup.user_name = obj.optString("user_name", "")
             setup.shared_key = obj.optString("shared_key", "")
             setup.auth_id = obj.optLong("auth_id", 0)
             setup.app_id = obj.optLong("app_id", 2342)
