@@ -73,7 +73,7 @@ object Settings {
 
         // update from 1.3.0/1.3.1 to 1.4.0
         if (db_version == "1.3.0" || db_version == "1.3.1") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.4.0")
+            Log.i("Settings", "Update database format from $db_version to 1.4.0")
             var id = 0
             while (id < 10) {
                 val prefix = String.format("item_%03d_", id)
@@ -104,7 +104,7 @@ object Settings {
         }
 
         if (db_version == "1.4.0") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.6.0")
+            Log.i("Settings", "Update database format from $db_version to 1.6.0")
             var id = 0
             while (id < 10) {
                 val prefix = String.format("item_%03d_", id)
@@ -121,7 +121,7 @@ object Settings {
         }
 
         if (db_version == "1.6.0") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.7.0")
+            Log.i("Settings", "Update database format from $db_version to 1.7.0")
             var id = 0
             while (id < 10) {
                 val prefix = String.format("item_%03d_", id)
@@ -143,7 +143,7 @@ object Settings {
         }
 
         if (db_version == "1.7.0") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.7.1")
+            Log.i("Settings", "Update database format from $db_version to 1.7.1")
             // nothing to change
             setups.clear()
             sharedPreferences!!.edit().putString("db_version", "1.7.1").commit()
@@ -151,7 +151,7 @@ object Settings {
         }
 
         if (db_version == "1.7.1") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.8.0")
+            Log.i("Settings", "Update database format from $db_version to 1.8.0")
             // convert settings from key based scheme to json
             var setups = getAllSetups_pre_172()
             for (setup in setups) {
@@ -164,7 +164,7 @@ object Settings {
         }
 
         if (db_version == "1.8.0") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.9.0")
+            Log.i("Settings", "Update database format from $db_version to 1.9.0")
             // nothing to change
             setups.clear()
             sharedPreferences!!.edit().putString("db_version", "1.9.0").commit()
@@ -172,7 +172,7 @@ object Settings {
         }
 
         if (db_version == "1.9.0") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.9.1")
+            Log.i("Settings", "Update database format from $db_version to 1.9.1")
             // nothing to change
             setups.clear()
             sharedPreferences!!.edit().putString("db_version", "1.9.1").commit()
@@ -180,7 +180,7 @@ object Settings {
         }
 
         if (db_version == "1.9.1") {
-            Log.i("Settings", "Update database format from " + db_version + " to 1.9.2")
+            Log.i("Settings", "Update database format from $db_version to 1.9.2")
             setups.clear()
             // convert keypair format
             val e = sharedPreferences!!.edit()
@@ -212,7 +212,7 @@ object Settings {
                         "2.2.5", "3.0.0", "3.0.1", "3.1.0", "3.1.1", "3.1.2", "3.1.3", "3.2.0",
                         "3.2.1")) {
             val new_version = "3.2.2"
-            Log.i(TAG, "Update database format from " + db_version + " to " + new_version)
+            Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             setups.clear()
             sharedPreferences!!.edit().putString("db_version", new_version).commit()
@@ -221,7 +221,7 @@ object Settings {
 
         if (db_version in setOf("3.2.2")) {
             val new_version = "3.3.0"
-            Log.i(TAG, "Update database format from " + db_version + " to " + new_version)
+            Log.i(TAG, "Update database format from $db_version to $new_version")
             setups.clear()
             // convert keypair format
             val e = sharedPreferences!!.edit()
@@ -249,7 +249,7 @@ object Settings {
 
         if (db_version in setOf("3.3.0", "3.3.1", "3.3.2", "3.3.3", "3.3.4", "3.3.5")) {
             val new_version = "3.3.6"
-            Log.i(TAG, "Update database format from " + db_version + " to " + new_version)
+            Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             setups.clear()
             sharedPreferences!!.edit().putString("db_version", new_version).commit()
