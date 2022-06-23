@@ -24,22 +24,25 @@ import app.trigger.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
+
 class NukiRequestHandler(private val listener: OnTaskCompleted, private val setup: NukiDoorSetup, private val action: MainActivity.Action) : Thread() {
-    private val context: Context
-    fun getAddress(adapter: BluetoothAdapter, device_name: String): String? {
+    private fun getAddress(adapter: BluetoothAdapter, device_name: String): String? {
         val pairedDevices = adapter.bondedDevices
         var address = ""
+
         for (device in pairedDevices) {
             if (device.name != null && device.name == device_name
                     || device.address.uppercase(Locale.getDefault()) == device_name.uppercase(Locale.getDefault())) {
                 address = device.address
             }
         }
+
         if (address.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
             return null
+        } else {
+            return address
         }
-        return address
     }
 
     override fun run() {
@@ -77,15 +80,18 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not found.")
             return
         }
+
         if (isEmpty(setup.shared_key) && action === MainActivity.Action.fetch_state) {
             // ignore query for door state - not paired yet
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
             return
         }
+
         if (!bluetooth_in_use.compareAndSet(false, true)) {
             // setting the variable failed
             return
         }
+
         val callback: NukiCallback
         if (isEmpty(setup.shared_key)) {
             // initiate paring
@@ -101,12 +107,13 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             MainActivity.Action.fetch_state -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
             else -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
         }
-        val gatt: BluetoothGatt?
-        gatt = if (Build.VERSION.SDK_INT >= 23) {
-            device.connectGatt(context, false, callback, BluetoothDevice.TRANSPORT_LE)
+
+        val gatt: BluetoothGatt? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            device.connectGatt(listener as Context, false, callback, BluetoothDevice.TRANSPORT_LE)
         } else {
-            device.connectGatt(context, false, callback)
+            device.connectGatt(listener as Context, false, callback)
         }
+
         if (gatt == null) {
             // failed to start connection
             bluetooth_in_use.set(false)
@@ -116,10 +123,12 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
     companion object {
         private const val TAG = "NukiRequestHandler"
         private var sodium: Sodium? = null
+
         fun parse(data: ByteArray?): NukiCommand? {
             if (data == null || data.size < 2) {
                 return null
             }
+
             val command = NukiTools.read16(data, 0)
             return when (command) {
                 0x0001 -> {
@@ -294,20 +303,24 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             if (msg == null || msg.size < min_msg_length) {
                 return null
             }
+
             val length = NukiTools.read16(msg, nonce_length + 4)
             if (msg.size != header_length + length) {
                 return null
             }
+
             val nonce = ByteArray(nonce_length)
             System.arraycopy(msg, 0, nonce, 0, nonce.size)
             val auth_id = NukiTools.read32_auth_id(msg, nonce.size)
             val encrypted = ByteArray(length)
             System.arraycopy(msg, nonce_length + 4 + 2, encrypted, 0, encrypted.size)
             val decrypted = ByteArray(length - Sodium.crypto_secretbox_macbytes())
+
             if (Sodium.crypto_secretbox_open_easy(decrypted, encrypted, encrypted.size, nonce, shared_key) != 0) {
                 Log.e("decrypt_message", "crypto_secretbox_easy failed")
                 return null
             }
+
             if (decrypted.size < 6) {
                 return null
             }
@@ -397,7 +410,6 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
     }
 
     init {
-        context = listener as Context
         if (sodium == null) {
             // load libsodium for JNI access
             sodium = NaCl.sodium()
