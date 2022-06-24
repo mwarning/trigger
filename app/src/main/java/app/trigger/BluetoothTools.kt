@@ -16,10 +16,13 @@ object BluetoothTools {
         adapter = BluetoothAdapter.getDefaultAdapter()
     }
 
-    val isEnabled: Boolean
-        get() = adapter != null && adapter!!.isEnabled
-    val isSupported: Boolean
-        get() = adapter != null
+    fun isEnabled(): Boolean {
+        return adapter != null && adapter!!.isEnabled
+    }
+
+    fun isSupported(): Boolean {
+        return adapter != null
+    }
 
     fun createRfcommSocket(device: BluetoothDevice): BluetoothSocket? {
         var tmp: BluetoothSocket? = null
