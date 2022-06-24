@@ -22,6 +22,7 @@ import java.net.URI
 
 class QRScanActivity : AppCompatActivity(), BarcodeCallback {
     private lateinit var barcodeView: DecoratedBarcodeView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qrscan)
@@ -68,7 +69,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_REQUEST_CODE) {
+        if (requestCode == CAMERA_REQUEST_CODE && grantResults.isNotEmpty()) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startScan()
             } else {
