@@ -439,6 +439,7 @@ class SetupActivity : PreferenceActivity() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_FINE_LOCATION_PERMISSION -> if (Utils.allGranted(grantResults)) {
                 // permissions granted
