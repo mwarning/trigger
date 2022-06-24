@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     }
 
     // helper class for spinner
-    private class SpinnerItem(val id: Int, val name: String, val ssids: String?) {
+    private class SpinnerItem(val id: Int, val name: String, val ssids: String) {
         override fun toString(): String {
             return name
         }
@@ -176,9 +176,11 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val context = this.applicationContext
+
         WifiTools.init(context)
         BluetoothTools.init(context)
         Settings.init(context)
+
         val res = resources
         state_open_default_image = BitmapFactory.decodeResource(res, R.drawable.state_open)
         state_closed_default_image = BitmapFactory.decodeResource(res, R.drawable.state_closed)
@@ -194,6 +196,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed)
         updateSpinner(true)
+
         Log.d(TAG, "Security.insertProviderAt(new OpenSSLProvider()")
         Security.insertProviderAt(OpenSSLProvider(), 1)
     }
@@ -213,7 +216,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         super.onPause()
     }
 
-    private fun showMessage(message: String?) {
+    private fun showMessage(message: String) {
         val context = applicationContext
         // show centered text
         val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
@@ -334,7 +337,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
-    private fun checkConnectedWifi(setup: Setup?, action: Action): Boolean {
+    private fun checkConnectedWifi(setup: Setup, action: Action): Boolean {
         if (setup == null || setup.id == ignore_wifi_check_for_setup_id) {
             return true
         } else {
@@ -366,7 +369,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             builder.setMessage("WiFi disabled - ignore?")
             builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
                 ignore_wifi_check_for_setup_id = setup.id
-                // trigger aggain
+                // trigger again
                 callRequestHandler(action)
                 dialog.cancel()
             }
@@ -424,6 +427,11 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
     private fun callRequestHandler(action: Action) {
         val setup = getSelectedSetup()
+        if (setup == null) {
+            changeUI(StateCode.DISABLED)
+            return
+        }
+
         if (!checkConnectedWifi(setup, action)) {
             changeUI(StateCode.DISABLED)
             return
