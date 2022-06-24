@@ -362,7 +362,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 return false
             }
         } else {
-            val builder = AlertDialog.Builder(this)
             builder.setTitle("WiFi Disabled")
             builder.setMessage("WiFi disabled - ignore?")
             builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->

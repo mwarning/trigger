@@ -9,6 +9,7 @@ import java.io.IOException
 import java.lang.Exception
 import java.util.*
 
+
 class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val setup: BluetoothDoorSetup, private val action: MainActivity.Action) : Thread() {
     private var socket: BluetoothSocket? = null
     override fun run() {
@@ -16,19 +17,20 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Internal Error")
             return
         }
+
         val adapter = BluetoothAdapter.getDefaultAdapter()
         if (adapter == null) {
             listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Device does not support Bluetooth")
             return
         }
+
         if (!adapter.isEnabled) {
             // request to enable
             listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Bluetooth is disabled.")
             return
         }
-        var request = ""
-        var response = ""
-        request = when (action) {
+
+        val request = when (action) {
             MainActivity.Action.open_door -> setup.open_query
             MainActivity.Action.ring_door -> setup.ring_query
             MainActivity.Action.close_door -> setup.close_query
@@ -65,7 +67,7 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
             val tmpOut = socket!!.outputStream
             tmpOut.write(request.toByteArray())
             tmpOut.flush()
-            response = try {
+            val response = try {
                 val buffer = ByteArray(512)
                 val bytes = tmpIn.read(buffer)
                 String(buffer, 0, bytes)
