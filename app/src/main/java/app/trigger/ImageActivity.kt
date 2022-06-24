@@ -77,13 +77,16 @@ class ImageActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == READ_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            if (data != null && data.data != null) {
-                updateImage(data.data)
+            if (data != null) {
+                val d = data.data
+                if (d != null) {
+                    updateImage(d)
+                }
             }
         }
     }
 
-    fun updateImage(uri: Uri?) {
+    private fun updateImage(uri: Uri) {
         val maxSize = 800
         try {
             val data = Utils.readFile(this, uri)
