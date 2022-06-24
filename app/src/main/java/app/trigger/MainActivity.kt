@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     private lateinit var state_closed_default_image: Bitmap
     private lateinit var state_disabled_default_image: Bitmap
     private lateinit var state_unknown_default_image: Bitmap
+    private lateinit var builder: AlertDialog.Builder
     private var ignore_wifi_check_for_setup_id = -1
 
     enum class Action {
@@ -188,6 +189,9 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         lockButton = findViewById(R.id.Lock)
         ringButton = findViewById(R.id.Ring)
         unlockButton = findViewById(R.id.Unlock)
+
+        builder = AlertDialog.Builder(this)
+
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed)
         updateSpinner(true)
         Log.d(TAG, "Security.insertProviderAt(new OpenSSLProvider()")
@@ -345,7 +349,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             val ssids = setup.getWiFiSSIDs()
             val current_ssid = WifiTools.getCurrentSSID()
             if (ssids.isNotEmpty() && !WifiTools.matchSSID(ssids, current_ssid)) {
-                val builder = AlertDialog.Builder(this)
                 builder.setTitle("Wrong WiFi")
                 builder.setMessage("Connected to wrong network ('$current_ssid') - ignore?")
                 builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
