@@ -30,8 +30,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
 import android.provider.OpenableColumns
 import android.net.Uri
+import android.os.Build
 import android.text.Html
 import android.util.Base64
+import androidx.annotation.RequiresApi
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -53,24 +55,36 @@ import javax.net.ssl.TrustManagerFactory
 
 
 object Utils {
-    fun hasFineLocationPermission(activity: Activity?): Boolean {
+    fun hasFineLocationPermission(activity: Activity): Boolean {
         return ContextCompat.checkSelfPermission(
-                activity!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun hasCameraPermission(activity: Activity?): Boolean {
+    fun hasCameraPermission(activity: Activity): Boolean {
         return ContextCompat.checkSelfPermission(
-                activity!!, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun requestFineLocationPermission(activity: Activity?, request_code: Int) {
-        ActivityCompat.requestPermissions(activity!!, arrayOf(
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun hasBluetoothConnectPermission(activity: Activity): Boolean {
+        return ContextCompat.checkSelfPermission(
+            activity, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun requestFineLocationPermission(activity: Activity, request_code: Int) {
+        ActivityCompat.requestPermissions(activity, arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION), request_code)
     }
 
-    fun requestCameraPermission(activity: Activity?, request_code: Int) {
-        ActivityCompat.requestPermissions(activity!!, arrayOf(
+    fun requestCameraPermission(activity: Activity, request_code: Int) {
+        ActivityCompat.requestPermissions(activity, arrayOf(
                 Manifest.permission.CAMERA), request_code)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun requestBluetoothConnectPermission(activity: Activity, request_code: Int) {
+        ActivityCompat.requestPermissions(activity, arrayOf(
+            Manifest.permission.BLUETOOTH_CONNECT), request_code)
     }
 
     fun allGranted(grantResults: IntArray): Boolean {

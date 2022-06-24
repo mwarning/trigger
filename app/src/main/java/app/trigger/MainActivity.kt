@@ -1,5 +1,6 @@
 package app.trigger
 
+import android.Manifest
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.app.Dialog
@@ -9,6 +10,7 @@ import app.trigger.DoorReply
 import app.trigger.DoorState
 import android.bluetooth.BluetoothAdapter
 import android.content.*
+import android.content.pm.PackageManager
 import app.trigger.DoorReply.ReplyCode
 import android.graphics.BitmapFactory
 import android.view.animation.Animation
@@ -19,6 +21,7 @@ import org.conscrypt.OpenSSLProvider
 import android.net.wifi.WifiManager
 import android.net.NetworkInfo
 import android.net.NetworkInfo.DetailedState
+import android.os.Build
 import android.os.Looper
 import app.trigger.ssh.SshRequestHandler
 import app.trigger.https.HttpsRequestHandler
@@ -32,6 +35,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import java.lang.Exception
 import java.security.Security
@@ -425,6 +429,19 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         return true
     }
 
+    private fun checkBluetoothScanPermissions(setup: Setup, action: Action): Boolean {
+        if (setup is BluetoothDoorSetup || setup is NukiDoorSetup) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!Utils.hasBluetoothConnectPermission(this)) {
+                    Utils.requestBluetoothConnectPermission(this, BLUETOOTH_CONNECT_REQUEST_CODE)
+                    return false
+                }
+            }
+        }
+
+        return true
+    }
+
     private fun callRequestHandler(action: Action) {
         val setup = getSelectedSetup()
         if (setup == null) {
@@ -438,6 +455,11 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
 
         if (!checkSshPassphrase(setup, action)) {
+            changeUI(StateCode.DISABLED)
+            return
+        }
+
+        if (!checkBluetoothScanPermissions(setup, action)) {
             changeUI(StateCode.DISABLED)
             return
         }
@@ -460,6 +482,17 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         } else {
             // hm, invalid setup
             changeUI(StateCode.DISABLED)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == BLUETOOTH_CONNECT_REQUEST_CODE && grantResults.isNotEmpty()) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showMessage("Permission granted - Please try again.")
+            } else {
+                showMessage("Bluetooth scan permissions required for using Bluetooth.")
+            }
         }
     }
 
@@ -573,5 +606,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
     companion object {
         private const val TAG = "MainActivity"
+        private const val BLUETOOTH_CONNECT_REQUEST_CODE = 0x01
     }
 }
