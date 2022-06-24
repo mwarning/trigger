@@ -1,1 +1,2 @@
 * convert codebase to kotlin
+* request bluetooth scan permissions for Android 12
