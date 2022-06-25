@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 
 class NukiRequestHandler(private val listener: OnTaskCompleted, private val setup: NukiDoorSetup, private val action: MainActivity.Action) : Thread() {
-    private fun getAddress(adapter: BluetoothAdapter, device_name: String): String? {
+    private fun getAddress(adapter: BluetoothAdapter, device_name: String): String {
         val pairedDevices = adapter.bondedDevices
         var address = ""
 
@@ -37,12 +37,7 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             }
         }
 
-        if (address.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
-            return null
-        } else {
-            return address
-        }
+        return address
     }
 
     override fun run() {
@@ -57,24 +52,29 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Bluetooth Low Energy is not supported.")
             return
         }
+
         val adapter = BluetoothAdapter.getDefaultAdapter()
         if (adapter == null || !adapter.isEnabled) {
             listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Bluetooth is disabled.")
             return
         }
+
         if (setup.device_name.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No device name set.")
             return
         }
+
         if (setup.user_name.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No user name set.")
             return
         }
+
         val address = getAddress(adapter, setup.device_name)
-        if (address == null) {
+        if (address.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No device found.")
             return
         }
+
         val device = adapter.getRemoteDevice(address)
         if (device == null) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not found.")
@@ -83,7 +83,7 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
 
         if (isEmpty(setup.shared_key) && action === MainActivity.Action.fetch_state) {
             // ignore query for door state - not paired yet
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
             return
         }
 
