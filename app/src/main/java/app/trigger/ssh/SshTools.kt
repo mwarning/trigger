@@ -11,6 +11,7 @@ import java.io.*
 import java.lang.Exception
 import java.security.KeyPair
 
+
 object SshTools {
     private const val TAG = "SshTools"
 
@@ -114,7 +115,7 @@ object SshTools {
 
     private fun convertAlgorithmName(algorithm: String): String {
         return if ("EdDSA" == algorithm) {
-            KeyPairBean.Companion.KEY_TYPE_ED25519
+            KeyPairBean.KEY_TYPE_ED25519
         } else {
             algorithm
         }
@@ -134,7 +135,7 @@ object SshTools {
                     val algorithm = convertAlgorithmName(kp.private.algorithm)
                     KeyPairBean(algorithm, kp.private.encoded, kp.public.encoded, encrypted)
                 } else {
-                    KeyPairBean(KeyPairBean.Companion.KEY_TYPE_IMPORTED,  keyData.toByteArray(), ByteArray(0), encrypted)
+                    KeyPairBean(KeyPairBean.KEY_TYPE_IMPORTED,  keyData.toByteArray(), ByteArray(0), encrypted)
                 }
             } catch (e: IOException) {
                 Log.e(TAG, "Problem parsing imported private key: $e")

@@ -27,7 +27,7 @@ internal class GenerateIdentityTask(var listener: OnTaskCompleted) : AsyncTask<A
 
     private fun convertAlgorithmName(algorithm: String): String {
         return if ("EdDSA" == algorithm) {
-            KeyPairBean.Companion.KEY_TYPE_ED25519
+            KeyPairBean.KEY_TYPE_ED25519
         } else {
             algorithm
         }
@@ -41,17 +41,17 @@ internal class GenerateIdentityTask(var listener: OnTaskCompleted) : AsyncTask<A
         keypair = try {
             val type = params[0] as String
             if (type == "ED25519") {
-                createKeyPair(KeyPairBean.Companion.KEY_TYPE_ED25519, 256)
+                createKeyPair(KeyPairBean.KEY_TYPE_ED25519, 256)
             } else if (type == "ECDSA-384") {
-                createKeyPair(KeyPairBean.Companion.KEY_TYPE_EC, 384)
+                createKeyPair(KeyPairBean.KEY_TYPE_EC, 384)
             } else if (type == "ECDSA-521") {
-                createKeyPair(KeyPairBean.Companion.KEY_TYPE_EC, 521)
+                createKeyPair(KeyPairBean.KEY_TYPE_EC, 521)
             } else if (type == "RSA-2048") {
-                createKeyPair(KeyPairBean.Companion.KEY_TYPE_RSA, 2048)
+                createKeyPair(KeyPairBean.KEY_TYPE_RSA, 2048)
             } else if (type == "RSA-4096") {
-                createKeyPair(KeyPairBean.Companion.KEY_TYPE_RSA, 4096)
+                createKeyPair(KeyPairBean.KEY_TYPE_RSA, 4096)
             } else if (type == "DSA-1024") {
-                createKeyPair(KeyPairBean.Companion.KEY_TYPE_DSA, 1024)
+                createKeyPair(KeyPairBean.KEY_TYPE_DSA, 1024)
             } else {
                 return "Unknown key type: $type"
             }
@@ -80,11 +80,10 @@ internal class GenerateIdentityTask(var listener: OnTaskCompleted) : AsyncTask<A
 
             //Log.d(TAG, "PrivateKey: " + priv.getAlgorithm() + " " + priv.getFormat() + " " + priv.getEncoded().length);
             //Log.d(TAG, "PublicKey: " + pub.getAlgorithm() + " " + pub.getFormat() + " " + pub.getEncoded().length);
-            val nickname = ""
             val secret = "" // password for encrypted key
 
             //Log.d(TAG, "private: " + PubkeyUtils.formatKey(priv));
-            Log.d(TAG, "public: " + PubkeyUtils.formatKey(pub)) // public: Key[algorithm=EdDSA, format=X.509, bytes=44]
+            Log.d(TAG, "public: ${PubkeyUtils.formatKey(pub)}") // public: Key[algorithm=EdDSA, format=X.509, bytes=44]
             val privateKey = PubkeyUtils.getEncodedPrivate(priv, secret).clone()
             val publicKey = pub.encoded.clone()
             return KeyPairBean(type, privateKey, publicKey, false)
