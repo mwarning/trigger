@@ -17,6 +17,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import java.lang.Exception
 
+
 class MqttClientKeyPairActivity : AppCompatActivity() {
     private var preference : MqttClientKeyPairPreference? = null // hack
     private lateinit var builder: AlertDialog.Builder
@@ -41,7 +42,7 @@ class MqttClientKeyPairActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mqtt_client_keypair)
-        preference = MqttClientKeyPairPreference.Companion.self // hack, TODO: pass serialized key in bundle
+        preference = MqttClientKeyPairPreference.self // hack, TODO: pass serialized key in bundle
         keypair = preference!!.getKeyPair()
         clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         builder = AlertDialog.Builder(this)
@@ -59,6 +60,7 @@ class MqttClientKeyPairActivity : AppCompatActivity() {
 
         // toggle between both checkboxes
         useFilesystemCheckBox.setOnClickListener(View.OnClickListener { v: View? -> useClipboardCheckBox.setChecked(!useFilesystemCheckBox.isChecked()) })
+
         exportPrivateKeyButton.setOnClickListener(View.OnClickListener { v: View? ->
             if (keypair == null) {
                 showErrorMessage("No Key", "No key loaded to export.")
@@ -75,6 +77,7 @@ class MqttClientKeyPairActivity : AppCompatActivity() {
                 startActivityForResult(intent, EXPORT_PRIVATE_KEY_CODE)
             }
         })
+
         importPrivateKeyButton.setOnClickListener(View.OnClickListener { v: View? ->
             if (useClipboardCheckBox.isChecked()) {
                 if (clipboard.hasPrimaryClip()) {
@@ -97,11 +100,13 @@ class MqttClientKeyPairActivity : AppCompatActivity() {
                 startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE)
             }
         })
+
         okButton.setOnClickListener(View.OnClickListener { v: View? ->
             // update the SwitchPreference
             preference!!.setKeyPair(keypair)
             finish()
         })
+
         deleteButton.setOnClickListener(View.OnClickListener { v: View? ->
             builder.setTitle("Confirm")
             builder.setMessage("Really remove client private key?")
@@ -117,33 +122,37 @@ class MqttClientKeyPairActivity : AppCompatActivity() {
             val alert = builder.create()
             alert.show()
         })
+
         cancelButton.setOnClickListener(View.OnClickListener { v: View? ->
             // persist your value here
             finish()
         })
+
         updateKeyInfo(keypair)
     }
 
-    private fun exportPrivateKey(uri: Uri?) {
-        if (keypair == null) {
+    private fun exportPrivateKey(uri: Uri) {
+        val kp = keypair
+
+        if (kp == null) {
             showErrorMessage("No Key", "No key loaded to export.")
-            return
-        }
-        try {
-            writeFile(this, uri, keypair!!.openSSHPrivateKey!!.toByteArray())
-            Toast.makeText(applicationContext, "Done. Wrote private key: " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            showErrorMessage("Error", e.message)
+        } else {
+            try {
+                writeFile(this, uri, kp.openSSHPrivateKey!!.toByteArray())
+                Toast.makeText(applicationContext, "Done. Wrote private key: ${uri.lastPathSegment}", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                showErrorMessage("Error", e.message)
+            }
         }
     }
 
-    private fun importPrivateKey(uri: Uri?) {
+    private fun importPrivateKey(uri: Uri) {
         try {
             val privateKeyPEM = String(readFile(this, uri))
             val kp = SshTools.parsePrivateKeyPEM(privateKeyPEM)
                     ?: throw Exception("Not a valid key!")
             updateKeyInfo(kp)
-            Toast.makeText(applicationContext, "Done. Read " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Done. Read ${uri.lastPathSegment}", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             showErrorMessage("Error", e.message)
         }
@@ -151,15 +160,17 @@ class MqttClientKeyPairActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (resultCode != RESULT_OK) {
             return
         }
-        if (data == null || data.data == null) {
-            return
-        }
-        when (requestCode) {
-            EXPORT_PRIVATE_KEY_CODE -> exportPrivateKey(data.data)
-            IMPORT_PRIVATE_KEY_CODE -> importPrivateKey(data.data)
+
+        val d = data?.data
+        if (d != null) {
+            when (requestCode) {
+                EXPORT_PRIVATE_KEY_CODE -> exportPrivateKey(d)
+                IMPORT_PRIVATE_KEY_CODE -> importPrivateKey(d)
+            }
         }
     }
 
