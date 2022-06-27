@@ -443,15 +443,15 @@ object Settings {
             ) ?: return null
 
             // get empty setup object to fill
-            setup = if (type == HttpsDoorSetup.Companion.type) {
+            setup = if (type == HttpsDoorSetup.type) {
                 HttpsDoorSetup(id, "")
-            } else if (type == SshDoorSetup.Companion.type) {
+            } else if (type == SshDoorSetup.type) {
                 SshDoorSetup(id, "")
-            } else if (type == BluetoothDoorSetup.Companion.type) {
+            } else if (type == BluetoothDoorSetup.type) {
                 BluetoothDoorSetup(id, "")
-            } else if (type == NukiDoorSetup.Companion.type) {
+            } else if (type == NukiDoorSetup.type) {
                 NukiDoorSetup(id, "")
-            } else if (type == MqttDoorSetup.Companion.type) {
+            } else if (type == MqttDoorSetup.type) {
                 MqttDoorSetup(id, "")
             } else {
                 Log.e(TAG, "Found unknown setup type: $type")
@@ -594,7 +594,7 @@ object Settings {
 
     fun countNames(name: String): Int {
         var count = 0
-        for (setup in setups!!) {
+        for (setup in setups) {
             if (setup.name == name) {
                 count += 1
             }
