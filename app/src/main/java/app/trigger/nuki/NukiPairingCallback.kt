@@ -31,6 +31,7 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
             closeConnection(gatt)
             return
         }
+
         val nr = NukiCommand.NukiRequest(0x03)
         characteristic.setValue(NukiRequestHandler.Companion.crc_calc_and_add(nr.generate()))
         val ok = gatt.writeCharacteristic(characteristic)
@@ -41,18 +42,20 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
     }
 
     override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-        Log.d(TAG, "onCharacteristicChanged, uiid: " + characteristic.uuid + ": " + byteArrayToHexString(characteristic.value))
+        Log.d(TAG, "onCharacteristicChanged, uiid: ${characteristic.uuid}: ${byteArrayToHexString(characteristic.value)}")
         data = if (data == null) {
             characteristic.value
         } else {
             NukiTools.concat(data!!, characteristic.value)
         }
-        val m: NukiCommand? = NukiRequestHandler.parse(NukiRequestHandler.Companion.crc_check_and_strip(data))
+
+        val m: NukiCommand? = NukiRequestHandler.parse(NukiRequestHandler.crc_check_and_strip(data))
         if (m == null) {
             return
         } else {
             data = ByteArray(0)
         }
+
         if (m is NukiCommand.NukiError) {
             Log.d(TAG, "NukiCommand.NukiError")
             listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, m.asString())
@@ -66,14 +69,14 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
 
             // send own public key
             val pk = NukiCommand.NukiPublicKey(public_key!!)
-            characteristic.setValue(NukiRequestHandler.Companion.crc_calc_and_add(pk.generate()))
+            characteristic.setValue(NukiRequestHandler.crc_calc_and_add(pk.generate()))
             val ok = gatt.writeCharacteristic(characteristic)
             if (!ok) {
                 Log.e(TAG, "writeCharacteristic failed for NukiPublicKey")
                 closeConnection(gatt)
                 return
             }
-            shared_key = NukiRequestHandler.Companion.getSharedKey(nuki_public_key, secret_key)
+            shared_key = NukiRequestHandler.getSharedKey(nuki_public_key, secret_key)
         } else if (m is NukiCommand.NukiChallenge) {
             Log.d(TAG, "NukiCommand.NukiChallenge challenge_received: $challenge_received")
             val nc = m
@@ -90,7 +93,7 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
 
                 // send authenticator
                 val naa = NukiCommand.NukiAuthAuthentication(authenticator)
-                characteristic.setValue(NukiRequestHandler.Companion.crc_calc_and_add(naa.generate()))
+                characteristic.setValue(NukiRequestHandler.crc_calc_and_add(naa.generate()))
                 val ok = gatt.writeCharacteristic(characteristic)
                 if (!ok) {
                     Log.e(TAG, "writeCharacteristic failed for NukiAuthAuthentication")
@@ -106,14 +109,14 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
                 }
                 val valueR = NukiTools.concat(NukiTools.from8(id_type), NukiTools.from32_app_id(app_id), NukiTools.nameToBytes(user_name, 32), own_nonce, nc.nonce)
                 val authenticator = ByteArray(Sodium.crypto_auth_hmacsha256_bytes())
-                if (Sodium.crypto_auth_hmacsha256(authenticator, valueR, valueR!!.size, shared_key) != 0) {
+                if (Sodium.crypto_auth_hmacsha256(authenticator, valueR, valueR.size, shared_key) != 0) {
                     Log.e(TAG, "crypto_auth_hmacsha256 failed")
                     closeConnection(gatt)
                     return
                 }
                 val nad =
                     NukiCommand.NukiAuthData(authenticator, id_type, app_id, user_name, own_nonce)
-                characteristic.setValue(NukiRequestHandler.Companion.crc_calc_and_add(nad.generate()))
+                characteristic.setValue(NukiRequestHandler.crc_calc_and_add(nad.generate()))
                 val ok = gatt.writeCharacteristic(characteristic)
                 if (!ok) {
                     Log.e(TAG, "writeCharacteristic failed for NukiAuthData")
@@ -136,13 +139,13 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
             val shared_key: ByteArray? = NukiRequestHandler.getSharedKey(nuki_public_key, secret_key)
             val valueR = NukiTools.concat(NukiTools.from32_auth_id(auth_id), nai.nonce)
             val authenticator = ByteArray(Sodium.crypto_auth_hmacsha256_bytes())
-            if (Sodium.crypto_auth_hmacsha256(authenticator, valueR, valueR!!.size, shared_key) != 0) {
+            if (Sodium.crypto_auth_hmacsha256(authenticator, valueR, valueR.size, shared_key) != 0) {
                 Log.e(TAG, "crypto_auth_hmacsha256 failed")
                 closeConnection(gatt)
                 return
             }
             val naidc = NukiCommand.NukiAuthIdConfirm(authenticator, auth_id)
-            characteristic.setValue(NukiRequestHandler.Companion.crc_calc_and_add(naidc.generate()))
+            characteristic.setValue(NukiRequestHandler.crc_calc_and_add(naidc.generate()))
             val ok = gatt.writeCharacteristic(characteristic)
             if (!ok) {
                 Log.e(TAG, "writeCharacteristic failed for NukiAuthIdConfirm")

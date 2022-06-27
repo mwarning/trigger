@@ -22,8 +22,8 @@ internal abstract class NukiCallback(protected val setup_id: Int, protected val 
 
     override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
         Log.d(TAG, "onConnectionStateChange, status: "
-                + NukiRequestHandler.Companion.getGattStatus(status)
-                + ", newState: " + NukiRequestHandler.Companion.getGattState(newState))
+                + NukiRequestHandler.getGattStatus(status)
+                + ", newState: " + NukiRequestHandler.getGattState(newState))
         if (status == BluetoothGatt.GATT_SUCCESS) {
             when (newState) {
                 BluetoothGatt.STATE_CONNECTED -> gatt.discoverServices()
@@ -35,7 +35,7 @@ internal abstract class NukiCallback(protected val setup_id: Int, protected val 
         } else {
             closeConnection(gatt)
             listener.onTaskResult(
-                    setup_id, ReplyCode.REMOTE_ERROR, "Connection error: " + NukiRequestHandler.Companion.getGattStatus(status)
+                    setup_id, ReplyCode.REMOTE_ERROR, "Connection error: " + NukiRequestHandler.getGattStatus(status)
             )
         }
     }
@@ -79,18 +79,19 @@ internal abstract class NukiCallback(protected val setup_id: Int, protected val 
         } else {
             closeConnection(gatt)
             listener.onTaskResult(
-                    setup_id, ReplyCode.LOCAL_ERROR, "Client not found: " + NukiRequestHandler.Companion.getGattStatus(status)
+                    setup_id, ReplyCode.LOCAL_ERROR, "Client not found: " + NukiRequestHandler.getGattStatus(status)
             )
         }
     }
 
     override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
         Log.d(TAG, "onDescriptorWrite, uiid: " + descriptor.uuid + ": " + byteArrayToHexString(descriptor.value))
+
         if (status == BluetoothGatt.GATT_SUCCESS) {
             onConnected(gatt, descriptor.characteristic)
         } else {
             closeConnection(gatt)
-            Log.e(TAG, "failed to write to client: " + NukiRequestHandler.Companion.getGattStatus(status))
+            Log.e(TAG, "failed to write to client: " + NukiRequestHandler.getGattStatus(status))
         }
     }
 
