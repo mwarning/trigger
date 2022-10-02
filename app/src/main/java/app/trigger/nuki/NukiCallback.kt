@@ -35,36 +35,40 @@ internal abstract class NukiCallback(protected val setup_id: Int, protected val 
         } else {
             closeConnection(gatt)
             listener.onTaskResult(
-                    setup_id, ReplyCode.REMOTE_ERROR, "Connection error: " + NukiRequestHandler.getGattStatus(status)
+                    setup_id, ReplyCode.REMOTE_ERROR, "Connection error: ${NukiRequestHandler.getGattStatus(status)}"
             )
         }
     }
 
     override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
         Log.d(TAG, "onServicesDiscovered")
+
         if (status == BluetoothGatt.GATT_SUCCESS) {
             val service = gatt.getService(service_uuid)
             if (service == null) {
+                Log.d(TAG, "Service not found: $service_uuid")
                 closeConnection(gatt)
                 listener.onTaskResult(
-                        setup_id, ReplyCode.REMOTE_ERROR, "Service not found: " + service_uuid
+                        setup_id, ReplyCode.REMOTE_ERROR, "Service not found: $service_uuid"
                 )
                 return
             }
             val characteristic = service.getCharacteristic(characteristic_uuid)
             if (characteristic == null) {
+                Log.d(TAG, "Characteristic not found: $characteristic_uuid")
                 closeConnection(gatt)
                 listener.onTaskResult(
-                        setup_id, ReplyCode.REMOTE_ERROR, "Characteristic not found: " + characteristic_uuid
+                        setup_id, ReplyCode.REMOTE_ERROR, "Characteristic not found: $characteristic_uuid"
                 )
                 return
             }
             gatt.setCharacteristicNotification(characteristic, true)
             val descriptor = characteristic.getDescriptor(CCC_DESCRIPTOR_UUID)
             if (descriptor == null) {
+                Log.d(TAG, "Descriptor not found: $CCC_DESCRIPTOR_UUID")
                 closeConnection(gatt)
                 listener.onTaskResult(
-                        setup_id, ReplyCode.REMOTE_ERROR, "Descriptor not found: " + CCC_DESCRIPTOR_UUID
+                        setup_id, ReplyCode.REMOTE_ERROR, "Descriptor not found: $CCC_DESCRIPTOR_UUID"
                 )
                 return
             }
@@ -77,21 +81,22 @@ internal abstract class NukiCallback(protected val setup_id: Int, protected val 
                 closeConnection(gatt)
             }
         } else {
+            Log.d(TAG, "Client not found: ${NukiRequestHandler.getGattStatus(status)}")
             closeConnection(gatt)
             listener.onTaskResult(
-                    setup_id, ReplyCode.LOCAL_ERROR, "Client not found: " + NukiRequestHandler.getGattStatus(status)
+                    setup_id, ReplyCode.LOCAL_ERROR, "Client not found: ${NukiRequestHandler.getGattStatus(status)}"
             )
         }
     }
 
     override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-        Log.d(TAG, "onDescriptorWrite, uiid: " + descriptor.uuid + ": " + byteArrayToHexString(descriptor.value))
+        Log.d(TAG, "onDescriptorWrite, uiid: ${descriptor.uuid}: ${byteArrayToHexString(descriptor.value)}")
 
         if (status == BluetoothGatt.GATT_SUCCESS) {
             onConnected(gatt, descriptor.characteristic)
         } else {
+            Log.e(TAG, "failed to write to client: ${NukiRequestHandler.getGattStatus(status)}")
             closeConnection(gatt)
-            Log.e(TAG, "failed to write to client: " + NukiRequestHandler.getGattStatus(status))
         }
     }
 
