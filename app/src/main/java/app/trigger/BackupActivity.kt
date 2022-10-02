@@ -1,26 +1,15 @@
 package app.trigger
 
-import android.preference.PreferenceActivity
+import android.app.Activity
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.preference.Preference
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.app.AlertDialog
 import org.json.JSONObject
-import android.preference.SwitchPreference
-import android.preference.Preference.OnPreferenceChangeListener
-import android.preference.Preference.OnPreferenceClickListener
-import android.net.NetworkInfo
-import android.net.NetworkInfo.DetailedState
-import android.preference.PreferenceGroup
-import android.preference.PreferenceCategory
-import android.preference.EditTextPreference
-import android.preference.ListPreference
-import android.preference.CheckBoxPreference
 import android.net.Uri
 import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import java.lang.Exception
 
 
@@ -40,38 +29,40 @@ class BackupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_backup)
         builder = AlertDialog.Builder(this)
-        importButton = findViewById<Button>(R.id.ImportButton)
-        exportButton = findViewById<Button>(R.id.ExportButton)
-        importButton.setOnClickListener(View.OnClickListener { v: View? ->
+        importButton = findViewById(R.id.ImportButton)
+        exportButton = findViewById(R.id.ExportButton)
+        importButton.setOnClickListener { v: View? ->
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "application/json"
-            startActivityForResult(intent, READ_REQUEST_CODE)
-        })
-        exportButton.setOnClickListener(View.OnClickListener { v: View? ->
+            importFileLauncher.launch(intent)
+        }
+        exportButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.putExtra(Intent.EXTRA_TITLE, "trigger-backup.json")
             intent.type = "application/json"
-            startActivityForResult(intent, WRITE_REQUEST_CODE)
-        })
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_OK) {
-            return
-        }
-        if (data == null || data.data == null) {
-            return
-        }
-        when (requestCode) {
-            READ_REQUEST_CODE -> importSetups(data.data)
-            WRITE_REQUEST_CODE -> exportSetups(data.data)
+            exportFileLauncher.launch(intent)
         }
     }
 
-    private fun exportSetups(uri: Uri?) {
+    private var importFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri = intent.data ?: return@registerForActivityResult
+            importSetups(uri)
+        }
+    }
+
+    private var exportFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri: Uri = intent.data ?: return@registerForActivityResult
+            exportSetups(uri)
+        }
+    }
+
+    private fun exportSetups(uri: Uri) {
         try {
             val obj = JSONObject()
             var count = 0
@@ -88,7 +79,7 @@ class BackupActivity : AppCompatActivity() {
         }
     }
 
-    private fun importSetups(uri: Uri?) {
+    private fun importSetups(uri: Uri) {
         try {
             val data = Utils.readFile(this, uri)
             val json_data = JSONObject(
@@ -108,10 +99,5 @@ class BackupActivity : AppCompatActivity() {
         } catch (e: Exception) {
             showErrorMessage("Error", e.toString())
         }
-    }
-
-    companion object {
-        private const val READ_REQUEST_CODE = 0x01
-        private const val WRITE_REQUEST_CODE = 0x02
     }
 }
