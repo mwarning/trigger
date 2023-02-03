@@ -16,7 +16,7 @@ Features:
 
 ![image](docs/screenshot_states.png)
 
-(door status open/closed/unknown/no-wifi and also some different buttons)
+(more [Screenshots](docs/screenshots.md))
 
 Any help, bugfixes, new features, translations are much welcome.
 
