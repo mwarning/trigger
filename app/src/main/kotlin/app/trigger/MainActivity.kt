@@ -511,18 +511,18 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
         if (hasSetupSelected) {
             editMenuItem.isEnabled = true
-            editMenuItem.icon.alpha = 255
+            editMenuItem.icon!!.alpha = 255
             showQrMenuItem.isEnabled = true
-            showQrMenuItem.icon.alpha = 255
+            showQrMenuItem.icon!!.alpha = 255
             cloneMenuItem.isEnabled = true
-            cloneMenuItem.icon.alpha = 255
+            cloneMenuItem.icon!!.alpha = 255
         } else {
             editMenuItem.isEnabled = false
-            editMenuItem.icon.alpha = 130
+            editMenuItem.icon!!.alpha = 130
             showQrMenuItem.isEnabled = false
-            showQrMenuItem.icon.alpha = 130
+            showQrMenuItem.icon!!.alpha = 130
             cloneMenuItem.isEnabled = false
-            cloneMenuItem.icon.alpha = 130
+            cloneMenuItem.icon!!.alpha = 130
         }
         return true
     }
