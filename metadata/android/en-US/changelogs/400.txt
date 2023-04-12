@@ -1,2 +1,3 @@
-* convert codebase to kotlin
+* convert codebase to Kotlin
 * request bluetooth scan permissions for Android 12
+* support adaptive and monochrome launcher icon
