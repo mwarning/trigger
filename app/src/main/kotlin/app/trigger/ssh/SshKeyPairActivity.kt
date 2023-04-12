@@ -130,7 +130,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             } else {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
-                //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa.pub");
+                intent.putExtra(Intent.EXTRA_TITLE, "id_${keypair!!.type}.pub")
                 intent.type = "*/*"
                 startActivityForResult(intent, EXPORT_PUBLIC_KEY_CODE)
             }
@@ -147,7 +147,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             } else {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
-                //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
+                intent.putExtra(Intent.EXTRA_TITLE, "id_${keypair!!.type}")
                 intent.type = "*/*"
                 startActivityForResult(intent, EXPORT_PRIVATE_KEY_CODE)
             }
