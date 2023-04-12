@@ -35,6 +35,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
     private lateinit var keyTypeSpinner: Spinner
     private var keypair: KeyPairBean? = null
     private var keyGenInProgress = false
+
     private fun showErrorMessage(title: String, message: String?) {
         builder.setTitle(title)
         builder.setMessage(message)
@@ -61,25 +62,31 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         publicKey = findViewById(R.id.PublicKey)
         registerAddress = findViewById(R.id.RegisterAddress)
         keyTypeSpinner = findViewById(R.id.KeyTypeSpinner)
+
         val self = this
         val dataAdapter = ArrayAdapter(this,
-                android.R.layout.simple_spinner_item,
-                resources.getStringArray(R.array.SshKeyTypes)
+            android.R.layout.simple_spinner_item,
+            resources.getStringArray(R.array.SshKeyTypes)
         )
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        keyTypeSpinner.setAdapter(dataAdapter)
+        keyTypeSpinner.adapter = dataAdapter
         keyTypeSpinner.setSelection(0)
         registerAddress.setText(
-                intent.getStringExtra("register_url")
+            intent.getStringExtra("register_url")
         )
 
         // toggle between both checkboxes
-        useClipboardCheckBox.setOnClickListener(View.OnClickListener { v: View? -> useFilesystemCheckBox.setChecked(!useClipboardCheckBox.isChecked()) })
+        useClipboardCheckBox.setOnClickListener { v: View? ->
+            useFilesystemCheckBox.isChecked = !useClipboardCheckBox.isChecked
+        }
 
         // toggle between both checkboxes
-        useFilesystemCheckBox.setOnClickListener(View.OnClickListener { v: View? -> useClipboardCheckBox.setChecked(!useFilesystemCheckBox.isChecked()) })
-        registerButton.setOnClickListener(View.OnClickListener { v: View? ->
-            val address = registerAddress.getText().toString()
+        useFilesystemCheckBox.setOnClickListener { v: View? ->
+            useClipboardCheckBox.isChecked = !useFilesystemCheckBox.isChecked
+        }
+
+        registerButton.setOnClickListener { v: View? ->
+            val address = registerAddress.text.toString()
             if (address.isEmpty()) {
                 showErrorMessage("Address Empty", "Address and port needed to send public key to destination.")
             } else if (keypair == null) {
@@ -88,8 +95,9 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 val task = RegisterIdentityTask(self, address, keypair!!)
                 task.start()
             }
-        })
-        createButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        createButton.setOnClickListener { v: View? ->
             if (keyGenInProgress) {
                 showErrorMessage("Busy", "Key generation already in progress. Please wait.")
             } else {
@@ -109,11 +117,12 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                     GenerateIdentityTask(self).execute(type)
                 }
             }
-        })
-        exportPublicKeyButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        exportPublicKeyButton.setOnClickListener { v: View? ->
             if (keypair == null) {
                 showErrorMessage("No Key", "No key loaded to export.")
-            } else if (useClipboardCheckBox.isChecked()) {
+            } else if (useClipboardCheckBox.isChecked) {
                 val publicKey = keypair!!.openSSHPublicKey
                 val clip = ClipData.newPlainText(keypair!!.description, publicKey)
                 clipboard.setPrimaryClip(clip)
@@ -125,11 +134,12 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 intent.type = "*/*"
                 startActivityForResult(intent, EXPORT_PUBLIC_KEY_CODE)
             }
-        })
-        exportPrivateKeyButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        exportPrivateKeyButton.setOnClickListener { v: View? ->
             if (keypair == null) {
                 showErrorMessage("No Key", "No key loaded to export.")
-            } else if (useClipboardCheckBox.isChecked()) {
+            } else if (useClipboardCheckBox.isChecked) {
                 val privateKey = keypair!!.openSSHPrivateKey
                 val clip = ClipData.newPlainText(keypair!!.description, privateKey)
                 clipboard.setPrimaryClip(clip)
@@ -141,9 +151,10 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 intent.type = "*/*"
                 startActivityForResult(intent, EXPORT_PRIVATE_KEY_CODE)
             }
-        })
-        importPrivateKeyButton.setOnClickListener(View.OnClickListener { v: View? ->
-            if (useClipboardCheckBox.isChecked()) {
+        }
+
+        importPrivateKeyButton.setOnClickListener { v: View? ->
+            if (useClipboardCheckBox.isChecked) {
                 if (clipboard.hasPrimaryClip()) {
                     val privateKey = clipboard.primaryClip!!.getItemAt(0).text.toString()
                     val kp = SshTools.parsePrivateKeyPEM(privateKey)
@@ -163,13 +174,15 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 intent.type = "*/*"
                 startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE)
             }
-        })
-        okButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        okButton.setOnClickListener { v: View? ->
             // persist your value here
             preference!!.keyPair = self.keypair
             self.finish()
-        })
-        deleteButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        deleteButton.setOnClickListener { v: View? ->
             builder.setTitle("Confirm")
             builder.setMessage("Really remove key pair?")
             builder.setCancelable(false) // not necessary
@@ -182,11 +195,12 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             // create dialog box
             val alert = builder.create()
             alert.show()
-        })
-        cancelButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        cancelButton.setOnClickListener { v: View? ->
             // persist your value here
             self.finish()
-        })
+        }
         updateKeyInfo(preference!!.keyPair)
     }
 
@@ -269,7 +283,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             deleteButton.isEnabled = true
             exportPublicKeyButton.isEnabled = true
             exportPrivateKeyButton.isEnabled = true
-            publicKey.setText(keypair!!.openSSHPublicKey)
+            publicKey.text = keypair!!.openSSHPublicKey
             tv.text = keypair!!.description
             tv.text = res.getString(R.string.public_key, keypair!!.description)
         }
