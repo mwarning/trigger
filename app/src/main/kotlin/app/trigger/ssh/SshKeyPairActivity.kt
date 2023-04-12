@@ -223,7 +223,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
         try {
             writeFile(this, uri, keypair!!.openSSHPublicKey!!.toByteArray())
-            Toast.makeText(applicationContext, "Done. Wrote public key: " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Done. Wrote public key.", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             showErrorMessage("Error", e.message)
         }
@@ -236,7 +236,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
         try {
             writeFile(this, uri, keypair!!.openSSHPrivateKey!!.toByteArray())
-            Toast.makeText(applicationContext, "Done. Wrote private key: " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Done. Wrote private key.", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             showErrorMessage("Error", e.message)
         }
@@ -248,7 +248,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             val kp = SshTools.parsePrivateKeyPEM(privateKeyPEM)
                     ?: throw Exception("Not a valid key!")
             updateKeyInfo(kp)
-            Toast.makeText(applicationContext, "Done. Read " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Done", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             showErrorMessage("Error", e.message)
         }
