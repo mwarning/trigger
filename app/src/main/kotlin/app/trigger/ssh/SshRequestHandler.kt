@@ -8,6 +8,7 @@ import app.trigger.*
 import com.trilead.ssh2.*
 import java.io.IOException
 import java.lang.Exception
+import java.net.SocketTimeoutException
 import java.security.KeyPair
 
 
@@ -20,13 +21,7 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
                 or ChannelCondition.EOF)
 
         fun testPassphrase(kp: KeyPairBean?, passphrase: String): Boolean {
-            try {
-                if (kp != null && decodeKeyPair(kp, passphrase) != null) {
-                    return true
-                }
-            } catch (e: Exception) {
-            }
-            return false
+            return kp != null && decodeKeyPair(kp, passphrase) != null
         }
 
         private fun decodeKeyPair(kp: KeyPairBean, passphrase: String): KeyPair? {
@@ -120,53 +115,66 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
         try {
             connection = Connection(hostname, port)
             connection.addConnectionMonitor(this)
-            /*
+
             val connectionInfo = connection.connect(
-                    null,  // host key verifier
-                    2000,  // connect timeout
-                    3000 // key exchange timeout
+                null,  // host key verifier
+                2000,  // connect timeout
+                3000 // key exchange timeout
             )
-             */
 
             // authentication by key pair
-            if (keypair != null && !connection.isAuthenticationComplete) {
+            if (keypair != null) {
                 val kp = decodeKeyPair(keypair, setup.passphrase_tmp)
                 if (kp != null) {
-                    connection.authenticateWithPublicKey(username, kp)
+                    if (connection.authenticateWithPublicKey(username, kp)) {
+                        // login successful
+                    } else {
+                        listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Key was not accepted.")
+                        return
+                    }
                 } else {
                     if (keypair.encrypted) {
                         setup.passphrase_tmp = "" // reset (incorrect) passphrase
                         listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Key pair passphrase was not accepted.")
+                        return
                     } else {
                         listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Failed to decode key pair.")
-                    }
-                    return
-                }
-            }
-
-            // authentication by password
-            if (password.isNotEmpty() && !connection.isAuthenticationComplete) {
-                if (connection.isAuthMethodAvailable(username, "password")) {
-                    if (!connection.authenticateWithPassword(username, password)) {
-                        listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Password was not accepted.")
                         return
                     }
                 }
             }
 
-            // try without authentication
-            if (password.isEmpty() && !connection.isAuthenticationComplete) {
-                if (connection.authenticateWithNone(username)) {
-                    // login successful
+            // authentication by password
+            else if (password.isNotEmpty()) {
+                if (connection.isAuthMethodAvailable(username, "password")) {
+                    if (connection.authenticateWithPassword(username, password)) {
+                        // login successful
+                    } else {
+                        listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Password was not accepted.")
+                        return
+                    }
                 } else {
-                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Login without credentials failed.")
+                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Host does not support password authentication.")
                     return
                 }
             }
+
+            // try without authentication
+            else if (password.isEmpty()) {
+                if (connection.authenticateWithNone(username)) {
+                    // login successful
+                } else {
+                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Login without any credentials failed.")
+                    return
+                }
+            }
+
+            // final check
             if (!connection.isAuthenticationComplete) {
                 listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Authentication failed.")
                 return
             }
+
             session = connection.openSession()
             val buffer = ByteArray(1000)
 
@@ -183,6 +191,8 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
             } else {
                 listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, output)
             }
+        } catch (e: SocketTimeoutException) {
+            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Connection timeout. Connected to the right network?")
         } catch (e: Exception) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, e.message!!)
             Log.e(TAG, "Problem in SSH connection thread during authentication: $e")
