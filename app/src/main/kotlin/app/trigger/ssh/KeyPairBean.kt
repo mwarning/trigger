@@ -17,13 +17,8 @@ import java.util.*
 * The public key is derived/extracted if needed.
 */
 class KeyPairBean(val type: String, val privateKey: ByteArray, val publicKey: ByteArray, val encrypted: Boolean) : Serializable {
-    /*
-    var type: String? = null
-    var privateKey: ByteArray
-    var publicKey: ByteArray
-    var encrypted = false
-    */
     var nickname = ""
+
     val openSSHPublicKey: String?
         get() {
             try {
