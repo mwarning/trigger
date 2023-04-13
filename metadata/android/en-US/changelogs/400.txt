@@ -1,3 +1,5 @@
 * convert codebase to Kotlin
 * request bluetooth scan permissions for Android 12
 * support adaptive and monochrome launcher icon
+* fix require WiFi for SSH door setup
+* change license to GPL-3.0-or-later
