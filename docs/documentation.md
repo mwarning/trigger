@@ -27,7 +27,7 @@ HTTP(s) links may also contain a username and password to be used for basic acce
 
 ## Import SSH Key As QR-Code
 
-Use e.g. `qrencode -t ansiutf8 < .ssh/id_ed25519` to show an SSH private key as QR-Code. Scan with trigger and add the server address, user, command etc..
+Use e.g. `qrencode -t ansiutf8 < ~/.ssh/id_ed25519` to show an SSH private key as QR-Code. Scan with trigger and add the server address, user, command etc..
 
 ## Limit SSH Access To The Server
 
