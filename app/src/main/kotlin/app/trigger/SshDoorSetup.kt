@@ -34,7 +34,7 @@ class SshDoorSetup(override var id: Int, override var name: String) : Setup {
     var timeout = 5000 // milliseconds
     var passphrase_tmp = ""
 
-    override fun getWiFiRequired(): Boolean = false
+    override fun getWiFiRequired(): Boolean = require_wifi
     override fun getWiFiSSIDs(): String = ssids
 
     override fun getStateImage(state: StateCode?): Bitmap? {
