@@ -90,15 +90,19 @@ object PubkeyUtils {
     }
 
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
-    fun decodePrivate(encoded: ByteArray?, keyType: String?): PrivateKey {
+    fun decodePrivate(encoded: ByteArray?, keyType: String): PrivateKey {
         val privKeySpec = PKCS8EncodedKeySpec(encoded)
         val kf = KeyFactory.getInstance(keyType)
         return kf.generatePrivate(privKeySpec)
     }
 
     @Throws(Exception::class)
-    fun decodePrivate(encoded: ByteArray?, keyType: String?, secret: String?): PrivateKey {
-        return if (secret != null && secret.isNotEmpty()) decodePrivate(decrypt(encoded, secret), keyType) else decodePrivate(encoded, keyType)
+    fun decodePrivate(encoded: ByteArray?, keyType: String, secret: String?): PrivateKey {
+        if (secret != null && secret.isNotEmpty()) {
+            return decodePrivate(decrypt(encoded, secret), keyType)
+        } else {
+            return decodePrivate(encoded, keyType)
+        }
     }
 
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
@@ -207,7 +211,7 @@ object PubkeyUtils {
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
     fun recoverKeyPair(encoded: ByteArray?): KeyPair {
         val algo = getAlgorithmForOid(getOidFromPkcs8Encoded(encoded))
-        val privKeySpec: KeySpec = PKCS8EncodedKeySpec(encoded)
+        val privKeySpec = PKCS8EncodedKeySpec(encoded)
         val kf = KeyFactory.getInstance(algo)
         val priv = kf.generatePrivate(privKeySpec)
         return KeyPair(recoverPublicKey(kf, priv), priv)
