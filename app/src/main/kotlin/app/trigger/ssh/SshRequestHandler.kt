@@ -6,7 +6,11 @@ import com.trilead.ssh2.crypto.PEMDecoder
 import com.trilead.ssh2.crypto.keys.Ed25519Provider
 import app.trigger.*
 import com.trilead.ssh2.*
-import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.lang.Exception
 import java.net.SocketTimeoutException
 import java.security.KeyPair
@@ -17,8 +21,13 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
         private const val TAG = "SshRequestHandler"
         private const val conditions = (ChannelCondition.STDOUT_DATA
                 or ChannelCondition.STDERR_DATA
+                or ChannelCondition.EXIT_STATUS
                 or ChannelCondition.CLOSED
                 or ChannelCondition.EOF)
+        private const val exitConditions = (ChannelCondition.EOF
+                or ChannelCondition.EXIT_STATUS
+                or ChannelCondition.TIMEOUT
+                or ChannelCondition.CLOSED)
 
         fun testPassphrase(kp: KeyPairBean?, passphrase: String): Boolean {
             return kp != null && decodeKeyPair(kp, passphrase) != null
@@ -43,27 +52,39 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
             }
         }
 
-        private fun read(session: Session?, buffer: ByteArray, start: Int, len: Int, timeout_ms: Int): Int {
+        private fun read(session: Session?, buffer: ByteArray, start: Int, len: Int, timeout_ms: Long): Int {
             var bytesRead = 0
             if (session == null) return 0
             val stdout = session.stdout
             val stderr = session.stderr
-            val newConditions = session.waitForCondition(conditions, timeout_ms.toLong())
 
-            if (newConditions and ChannelCondition.STDOUT_DATA != 0) {
-                bytesRead = stdout.read(buffer, start, len)
-            }
+            runBlocking {
+                withTimeout(timeout_ms) {
+                    while (true) {
+                        val newConditions = withContext(Dispatchers.IO) {
+                            session.waitForCondition(conditions, timeout_ms)
+                        }
 
-            if (newConditions and ChannelCondition.STDERR_DATA != 0) {
-                val discard = ByteArray(256)
-                while (stderr.available() > 0) {
-                    stderr.read(discard)
-                    //Log.e(TAG, "stderr: " + (new String(discard)));
+                        if (newConditions and ChannelCondition.STDOUT_DATA != 0) {
+                            val read = withContext(Dispatchers.IO) { stdout.read(buffer, start + bytesRead, len - bytesRead) }
+                            bytesRead += read
+                        }
+
+                        if (newConditions and ChannelCondition.STDERR_DATA != 0) {
+                            val discard = ByteArray(256)
+                            withContext(Dispatchers.IO) {
+                                while (stderr.available() > 0) {
+                                    stderr.read(discard)
+                                    //Log.e(TAG, "stderr: " + (new String(discard)));
+                                }
+                            }
+                        }
+
+                        if (newConditions and exitConditions != 0) {
+                            break
+                        }
+                    }
                 }
-            }
-
-            if (newConditions and ChannelCondition.EOF != 0) {
-                throw IOException("Remote end closed connection")
             }
 
             return bytesRead
@@ -183,7 +204,7 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
             session.execCommand(command)
 
             // read stdout (drop stderr)
-            val bytes_read = read(session, buffer, 0, buffer.size, setup.timeout)
+            val bytes_read = read(session, buffer, 0, buffer.size, setup.timeout.toLong())
             val output = String(buffer, 0, bytes_read)
             val ret = session.exitStatus
             if (ret == null || ret == 0) {
@@ -193,6 +214,8 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
             }
         } catch (e: SocketTimeoutException) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Connection timeout. Connected to the right network?")
+        } catch (e: TimeoutCancellationException) {
+            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Command timeout after ${setup.timeout} ms")
         } catch (e: Exception) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, e.message!!)
             Log.e(TAG, "Problem in SSH connection thread during authentication: $e")
