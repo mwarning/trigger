@@ -10,7 +10,7 @@ import org.json.JSONObject
 class NukiDoorSetup(override var id: Int, override var name: String) : Setup {
     override val type = Companion.type
     var device_name = ""
-    var user_name = ""
+    var user_name = "user"
     var shared_key = ""
     var auth_id: Long = 0
     var app_id: Long = 2342
