@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="app.trigger">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- For WiFi access -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Read WiFi SSID (ACCESS_COARSE_LOCATION was sufficient before Android 10) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <!-- For Bluetooth access -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" android:minSdkVersion="31" />
 
     <!-- For Bluetooth Low Energy (BLE) access -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <!-- Check if communication is possible -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- Scan Qr-Code -->
+    <!-- Scan QR-Code -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <!-- For MQTT -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -33,8 +37,6 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,32 +45,24 @@
         </activity>
         <activity
             android:name=".SetupActivity"
-            android:label="@string/action_edit"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:label="@string/action_edit" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/action_about"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:label="@string/action_about" />
         <activity
             android:name=".QRShowActivity"
             android:exported="true"
-            android:label="@string/action_export"
-            android:screenOrientation="portrait" />
+            android:label="@string/action_export" />
         <activity
             android:name=".QRScanActivity"
-            android:label="@string/action_import"
-            android:screenOrientation="portrait" />
+            android:label="@string/action_import" />
         <activity
             android:name=".BackupActivity"
             android:label="@string/action_backup"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ssh.SshKeyPairActivity"
             android:label="@string/manage_ssh_key_pair"
-            android:screenOrientation="portrait"
             android:exported="false">
             <intent-filter>
                 <action android:name=".ssh.KeyPairActivity" />
@@ -78,7 +72,6 @@
         <activity
             android:name=".mqtt.MqttClientKeyPairActivity"
             android:label="Manage Client Private Key"
-            android:screenOrientation="portrait"
             android:exported="false">
             <intent-filter>
                 <action android:name=".mqtt.MqttPrivateClientKeyActivity" />
@@ -88,7 +81,6 @@
         <activity
             android:name=".https.CertificateActivity"
             android:label="@string/manage_tls_certificate"
-            android:screenOrientation="portrait"
             android:exported="false">
             <intent-filter>
                 <action android:name=".https.CertificateActivity" />
@@ -98,7 +90,6 @@
         <activity
             android:name=".ImageActivity"
             android:label="Select Image"
-            android:screenOrientation="portrait"
             android:exported="false">
             <intent-filter>
                 <action android:name=".ImageActivity" />
