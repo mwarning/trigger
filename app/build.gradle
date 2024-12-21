@@ -20,8 +20,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    
-    flavorDimensions "store"
+
+    flavorDimensions += "store"
 
     productFlavors {
         google {
@@ -53,7 +53,6 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
     implementation 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:2.0.2'
     implementation 'com.google.zxing:core:3.4.0'
-
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
