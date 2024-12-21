@@ -11,8 +11,12 @@ class AboutActivity : PreferenceActivity() {
         addPreferencesFromResource(R.xml.about)
         val context = this.applicationContext
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val version = Settings.app_version
         val versionPref = findPreference("prefVersion")
-        versionPref.summary = version
+
+        versionPref.summary = if (BuildConfig.DEBUG) {
+            BuildConfig.VERSION_NAME + " (debug)"
+        } else {
+            BuildConfig.VERSION_NAME
+        }
     }
 }
