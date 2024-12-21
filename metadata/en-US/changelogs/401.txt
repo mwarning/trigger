@@ -1,0 +1,1 @@
+* update to SDK version 35 (Android 15)
