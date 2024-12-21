@@ -9,7 +9,6 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import android.os.Build
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import android.content.pm.PackageManager
-import kotlin.Throws
 import org.json.JSONException
 import app.trigger.ssh.SshTools
 import com.journeyapps.barcodescanner.BarcodeResult
@@ -84,7 +83,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
             val kp = SshTools.parsePrivateKeyPEM(data)
             if (kp != null) {
                 val obj = JSONObject()
-                obj.put("type", SshDoorSetup.type)
+                obj.put("type", SshDoorSetup.TYPE)
                 obj.put("name", Settings.getNewName("SSH Door"))
                 obj.put("keypair", SshTools.serializeKeyPair(kp))
                 return obj
@@ -100,7 +99,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
                     "http", "https" -> {
                         val http_server = domain + if (port > 0) ":$port" else ""
                         val obj = JSONObject()
-                        obj.put("type", HttpsDoorSetup.type)
+                        obj.put("type", HttpsDoorSetup.TYPE)
                         obj.put("name", Settings.getNewName(domain))
                         obj.put("open_query", data)
                         return obj
@@ -108,7 +107,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
                     "mqtt", "mqtts" -> {
                         val mqtt_server = scheme + "://" + domain + if (port > 0) ":$port" else ""
                         val obj = JSONObject()
-                        obj.put("type", MqttDoorSetup.type)
+                        obj.put("type", MqttDoorSetup.TYPE)
                         obj.put("name", Settings.getNewName(domain))
                         obj.put("server", mqtt_server)
                         obj.put("command_topic", path)
@@ -117,7 +116,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
                     }
                     "ssh" -> {
                         val obj = JSONObject()
-                        obj.put("type", SshDoorSetup.type)
+                        obj.put("type", SshDoorSetup.TYPE)
                         obj.put("name", Settings.getNewName(domain))
                         obj.put("host", domain)
                         obj.put("port", port)

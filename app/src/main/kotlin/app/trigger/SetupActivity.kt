@@ -42,10 +42,8 @@ class SetupActivity : PreferenceActivity() {
         var i = count - 1
         while (i > 0) {
             val p = preferenceScreen.getPreference(i) as PreferenceGroup
-            if (p != null) {
-                groups.add(p)
-                preferenceScreen.removePreference(p)
-            }
+            groups.add(p)
+            preferenceScreen.removePreference(p)
             i -= 1
         }
         return groups
@@ -122,14 +120,10 @@ class SetupActivity : PreferenceActivity() {
 
     private fun setMainGroupTitle(name: String?) {
         val pc = findPreference("main_category") as PreferenceCategory
-        if (pc != null) {
-            if (name!!.length > 0) {
-                pc.title = name
-            } else {
-                pc.setTitle(R.string.new_entry)
-            }
+        if (name!!.isNotEmpty()) {
+            pc.title = name
         } else {
-            Log.e(TAG, "setMainGroupTitle(): Cannot find main_category")
+            pc.setTitle(R.string.new_entry)
         }
     }
 
@@ -281,23 +275,23 @@ class SetupActivity : PreferenceActivity() {
             if (type == setup.type) {
                 // no door type change
                 true
-            } else if (type == HttpsDoorSetup.type) {
+            } else if (type == HttpsDoorSetup.TYPE) {
                 setup = HttpsDoorSetup(setup.id, getText("name"))
                 loadSetup()
                 true
-            } else if (type == SshDoorSetup.type) {
+            } else if (type == SshDoorSetup.TYPE) {
                 setup = SshDoorSetup(setup.id, getText("name"))
                 loadSetup()
                 true
-            } else if (type == BluetoothDoorSetup.type) {
+            } else if (type == BluetoothDoorSetup.TYPE) {
                 setup = BluetoothDoorSetup(setup.id, getText("name"))
                 loadSetup()
                 true
-            } else if (type == NukiDoorSetup.type) {
+            } else if (type == NukiDoorSetup.TYPE) {
                 setup = NukiDoorSetup(setup.id, getText("name"))
                 loadSetup()
                 true
-            } else if (type == MqttDoorSetup.type) {
+            } else if (type == MqttDoorSetup.TYPE) {
                 setup = MqttDoorSetup(setup.id, getText("name"))
                 loadSetup()
                 true
@@ -423,7 +417,7 @@ class SetupActivity : PreferenceActivity() {
         val exists = Settings.idExists(setup.id)
         if (exists && count > 1 || !exists && count > 0) {
             showErrorMessage("Entry Exists", "Name already exists.")
-        } else if (setup.name == null || setup.name.isEmpty()) {
+        } else if (setup.name.isEmpty()) {
             showErrorMessage("Invalid Name", "Door name is not set.")
         } else {
             Settings.addSetup(setup)

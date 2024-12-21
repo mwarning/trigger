@@ -109,10 +109,10 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
         }
 
         val command = when (action) {
-            MainActivity.Action.open_door -> setup.open_command
-            MainActivity.Action.close_door -> setup.close_command
-            MainActivity.Action.ring_door -> setup.ring_command
-            MainActivity.Action.fetch_state -> setup.state_command
+            MainActivity.Action.OPEN_DOOR -> setup.open_command
+            MainActivity.Action.CLOSE_DOOR -> setup.close_command
+            MainActivity.Action.RING_DOOR -> setup.ring_command
+            MainActivity.Action.FETCH_STATE -> setup.state_command
         }
 
         val username = if (isEmpty(setup.user)) "root" else setup.user

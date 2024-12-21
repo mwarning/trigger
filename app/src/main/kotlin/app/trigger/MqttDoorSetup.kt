@@ -10,7 +10,7 @@ import java.security.cert.Certificate
 
 
 class MqttDoorSetup(override var id: Int, override var name: String) : Setup {
-    override val type = Companion.type
+    override val type = Companion.TYPE
     var require_wifi = false
     var username = ""
     var password = ""
@@ -96,7 +96,7 @@ class MqttDoorSetup(override var id: Int, override var name: String) : Setup {
     }
 
     companion object {
-        const val type = "MqttDoorSetup"
+        const val TYPE = "MqttDoorSetup"
 
         fun fromJSONObject(obj: JSONObject): MqttDoorSetup {
             val id = obj.getInt("id")

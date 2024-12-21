@@ -31,10 +31,10 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
         }
 
         val request = when (action) {
-            MainActivity.Action.open_door -> setup.open_query
-            MainActivity.Action.ring_door -> setup.ring_query
-            MainActivity.Action.close_door -> setup.close_query
-            MainActivity.Action.fetch_state -> setup.status_query
+            MainActivity.Action.OPEN_DOOR -> setup.open_query
+            MainActivity.Action.RING_DOOR -> setup.ring_query
+            MainActivity.Action.CLOSE_DOOR -> setup.close_query
+            MainActivity.Action.FETCH_STATE -> setup.status_query
         }
         if (request.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")

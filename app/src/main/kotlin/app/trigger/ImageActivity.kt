@@ -32,25 +32,25 @@ class ImageActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
-        preference = ImagePreference.Companion.self // hack, TODO: pass serialized bitmap in bundle
+        preference = ImagePreference.self // hack, TODO: pass serialized bitmap in bundle
         image = preference!!.image
         imageView = findViewById(R.id.selectedImage)
         builder = AlertDialog.Builder(this)
         setButton = findViewById(R.id.SetButton)
         selectButton = findViewById(R.id.SelectButton)
         deleteButton = findViewById(R.id.DeleteButton)
-        selectButton.setOnClickListener(View.OnClickListener { _: View? ->
+        selectButton.setOnClickListener { _: View? ->
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
             startActivityForResult(intent, READ_IMAGE_REQUEST)
-        })
-        setButton.setOnClickListener(View.OnClickListener { _: View? ->
+        }
+        setButton.setOnClickListener { _: View? ->
             // persist your value here
             preference!!.image = image
             finish()
-        })
-        deleteButton.setOnClickListener(View.OnClickListener { _: View? ->
+        }
+        deleteButton.setOnClickListener { _: View? ->
             builder.setTitle("Confirm")
             builder.setMessage("Really remove image?")
             builder.setCancelable(false) // not necessary
@@ -64,7 +64,7 @@ class ImageActivity : AppCompatActivity() {
             // create dialog box
             val alert = builder.create()
             alert.show()
-        })
+        }
         updateImageView()
     }
 

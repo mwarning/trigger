@@ -31,16 +31,16 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val setu
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "MQTT broker address not set.")
             return
         }
-        if (action === MainActivity.Action.fetch_state && setup.status_topic.isEmpty()) {
+        if (action === MainActivity.Action.FETCH_STATE && setup.status_topic.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
             return
         }
-        if ((action === MainActivity.Action.open_door || action === MainActivity.Action.ring_door || action === MainActivity.Action.close_door)
+        if ((action === MainActivity.Action.OPEN_DOOR || action === MainActivity.Action.RING_DOOR || action === MainActivity.Action.CLOSE_DOOR)
                 && setup.command_topic.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No command topic set.")
             return
         }
-        if (action === MainActivity.Action.close_door && setup.close_command.isEmpty()) {
+        if (action === MainActivity.Action.CLOSE_DOOR && setup.close_command.isEmpty()) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No close command set.")
             return
         }
@@ -124,23 +124,23 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val setu
             client.setCallback(this)
             client.connect(opts)
             when (action) {
-                MainActivity.Action.fetch_state ->                     // subscribe
+                MainActivity.Action.FETCH_STATE ->                     // subscribe
                     client.subscribe(setup.status_topic)
-                MainActivity.Action.open_door -> {
+                MainActivity.Action.OPEN_DOOR -> {
                     // publish
                     val open = MqttMessage(setup.open_command.toByteArray())
                     open.isRetained = setup.retained
                     open.qos = setup.qos
                     client.publish(setup.command_topic, open)
                 }
-                MainActivity.Action.ring_door -> {
+                MainActivity.Action.RING_DOOR -> {
                     // publish
                     val ring = MqttMessage(setup.ring_command.toByteArray())
                     ring.isRetained = setup.retained
                     ring.qos = setup.qos
                     client.publish(setup.command_topic, ring)
                 }
-                MainActivity.Action.close_door -> {
+                MainActivity.Action.CLOSE_DOOR -> {
                     // publish
                     val close = MqttMessage(setup.close_command.toByteArray())
                     close.isRetained = setup.retained

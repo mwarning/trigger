@@ -10,7 +10,7 @@ import org.json.JSONObject
 
 
 class HttpsDoorSetup(override var id: Int, override var name: String) : Setup {
-    override val type = Companion.type
+    override val type = Companion.TYPE
 
     var require_wifi = false
     var method = "GET"
@@ -101,7 +101,7 @@ class HttpsDoorSetup(override var id: Int, override var name: String) : Setup {
     }
 
     companion object {
-        const val type = "HttpsDoorSetup"
+        const val TYPE = "HttpsDoorSetup"
 
         fun fromJSONObject(obj: JSONObject): HttpsDoorSetup {
             val id = obj.getInt("id")

@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 
 class BluetoothDoorSetup(override var id: Int, override var name: String) : Setup {
-    override val type = Companion.type
+    override val type = Companion.TYPE
     var device_name = ""
     var service_uuid = ""
     var open_query = ""
@@ -73,7 +73,7 @@ class BluetoothDoorSetup(override var id: Int, override var name: String) : Setu
     }
 
     companion object {
-        const val type = "BluetoothDoorSetup"
+        const val TYPE = "BluetoothDoorSetup"
 
         fun fromJSONObject(obj: JSONObject): BluetoothDoorSetup {
             val id = obj.getInt("id")

@@ -353,15 +353,15 @@ object Settings {
     fun fromJsonObject(obj: JSONObject): Setup? {
         val type = obj.optString("type", "")
 
-        if (type == HttpsDoorSetup.type) {
+        if (type == HttpsDoorSetup.TYPE) {
             return HttpsDoorSetup.fromJSONObject(obj)
-        } else if (type == SshDoorSetup.type) {
+        } else if (type == SshDoorSetup.TYPE) {
             return SshDoorSetup.fromJSONObject(obj)
-        } else if (type == MqttDoorSetup.type) {
+        } else if (type == MqttDoorSetup.TYPE) {
             return MqttDoorSetup.fromJSONObject(obj)
-        } else if (type == BluetoothDoorSetup.type) {
+        } else if (type == BluetoothDoorSetup.TYPE) {
             return BluetoothDoorSetup.fromJSONObject(obj)
-        } else if (type == NukiDoorSetup.type) {
+        } else if (type == NukiDoorSetup.TYPE) {
             return NukiDoorSetup.fromJSONObject(obj)
         } else {
             return null
@@ -441,15 +441,15 @@ object Settings {
             ) ?: return null
 
             // get empty setup object to fill
-            setup = if (type == HttpsDoorSetup.type) {
+            setup = if (type == HttpsDoorSetup.TYPE) {
                 HttpsDoorSetup(id, "")
-            } else if (type == SshDoorSetup.type) {
+            } else if (type == SshDoorSetup.TYPE) {
                 SshDoorSetup(id, "")
-            } else if (type == BluetoothDoorSetup.type) {
+            } else if (type == BluetoothDoorSetup.TYPE) {
                 BluetoothDoorSetup(id, "")
-            } else if (type == NukiDoorSetup.type) {
+            } else if (type == NukiDoorSetup.TYPE) {
                 NukiDoorSetup(id, "")
-            } else if (type == MqttDoorSetup.type) {
+            } else if (type == MqttDoorSetup.TYPE) {
                 MqttDoorSetup(id, "")
             } else {
                 Log.e(TAG, "Found unknown setup type: $type")

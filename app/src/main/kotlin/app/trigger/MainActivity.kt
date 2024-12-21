@@ -1,13 +1,10 @@
 package app.trigger
 
-import android.Manifest
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.app.Dialog
 import android.graphics.Bitmap
 import app.trigger.DoorState.StateCode
-import app.trigger.DoorReply
-import app.trigger.DoorState
 import android.bluetooth.BluetoothAdapter
 import android.content.*
 import android.content.pm.PackageManager
@@ -26,16 +23,13 @@ import android.os.Looper
 import app.trigger.ssh.SshRequestHandler
 import app.trigger.https.HttpsRequestHandler
 import app.trigger.bluetooth.BluetoothRequestHandler
-import app.trigger.NukiDoorSetup
 import app.trigger.nuki.NukiRequestHandler
-import app.trigger.MqttDoorSetup
 import app.trigger.mqtt.MqttRequestHandler
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import java.lang.Exception
 import java.security.Security
@@ -58,10 +52,10 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     private var ignore_wifi_check_for_setup_id = -1
 
     enum class Action {
-        open_door,
-        close_door,
-        ring_door,  // ring the door bell
-        fetch_state // fetch the door state
+        OPEN_DOOR,
+        CLOSE_DOOR,
+        RING_DOOR,  // ring the door bell
+        FETCH_STATE // fetch the door state
     }
 
     // helper class for spinner
@@ -138,7 +132,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             override fun onItemSelected(parent: AdapterView<*>?, view: View, pos: Int, id: Long) {
                 if (check++ > 0) {
                     updateButtons()
-                    callRequestHandler(Action.fetch_state)
+                    callRequestHandler(Action.FETCH_STATE)
                 }
             }
 
@@ -229,7 +223,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     }
 
     // listen for connectivity changes
-    var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (isInitialStickyBroadcast) {
                 // do nothing if the receiver was just initialized
@@ -243,36 +237,36 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 if (state == DetailedState.CONNECTED || state == DetailedState.DISCONNECTED) {
                     // WifiTools.isConnected() will take a while until it returns true
                     val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({ callRequestHandler(Action.fetch_state) }, 1000)
+                    handler.postDelayed({ callRequestHandler(Action.FETCH_STATE) }, 1000)
                 }
             }
 
             if (intent.action == BluetoothAdapter.ACTION_STATE_CHANGED) {
                 val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1)
                 if (state == BluetoothAdapter.STATE_ON || state == BluetoothAdapter.STATE_OFF) {
-                    callRequestHandler(Action.fetch_state)
+                    callRequestHandler(Action.FETCH_STATE)
                 }
             }
         }
     }
 
     fun onUpdateState(view: View?) {
-        callRequestHandler(Action.fetch_state)
+        callRequestHandler(Action.FETCH_STATE)
     }
 
     fun doUnlock(view: View?) {
         unlockButton.startAnimation(pressed)
-        callRequestHandler(Action.open_door)
+        callRequestHandler(Action.OPEN_DOOR)
     }
 
     fun doLock(view: View?) {
         lockButton.startAnimation(pressed)
-        callRequestHandler(Action.close_door)
+        callRequestHandler(Action.CLOSE_DOOR)
     }
 
     fun doRing(view: View?) {
         ringButton.startAnimation(pressed)
-        callRequestHandler(Action.ring_door)
+        callRequestHandler(Action.RING_DOOR)
     }
 
     private fun changeUI(state: StateCode?) {
@@ -342,7 +336,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     }
 
     private fun checkConnectedWifi(setup: Setup, action: Action): Boolean {
-        if (setup == null || setup.id == ignore_wifi_check_for_setup_id) {
+        if (setup.id == ignore_wifi_check_for_setup_id) {
             return true
         } else {
             ignore_wifi_check_for_setup_id = -1
@@ -498,7 +492,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
     override fun onStart() {
         super.onStart()
-        callRequestHandler(Action.fetch_state)
+        callRequestHandler(Action.FETCH_STATE)
     }
 
     // Show/Hide menu items

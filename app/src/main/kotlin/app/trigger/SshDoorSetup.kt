@@ -2,14 +2,13 @@ package app.trigger
 
 import android.graphics.Bitmap
 import app.trigger.DoorState.StateCode
-import app.trigger.https.HttpsTools
 import app.trigger.ssh.KeyPairBean
 import app.trigger.ssh.SshTools
 import org.json.JSONObject
 
 
 class SshDoorSetup(override var id: Int, override var name: String) : Setup {
-    override val type = Companion.type
+    override val type = Companion.TYPE
 
     var require_wifi = false
     var keypair: KeyPairBean? = null
@@ -105,7 +104,7 @@ class SshDoorSetup(override var id: Int, override var name: String) : Setup {
     }
 
     companion object {
-        const val type = "SshDoorSetup"
+        const val TYPE = "SshDoorSetup"
 
         fun fromJSONObject(obj: JSONObject): SshDoorSetup {
             val id = obj.getInt("id")

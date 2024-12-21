@@ -8,7 +8,7 @@ import org.json.JSONObject
 
 
 class NukiDoorSetup(override var id: Int, override var name: String) : Setup {
-    override val type = Companion.type
+    override val type = Companion.TYPE
     var device_name = ""
     var user_name = "user"
     var shared_key = ""
@@ -81,7 +81,7 @@ class NukiDoorSetup(override var id: Int, override var name: String) : Setup {
     }
 
     companion object {
-        const val type = "NukiDoorSetup"
+        const val TYPE = "NukiDoorSetup"
 
         fun fromJSONObject(obj: JSONObject): NukiDoorSetup {
             val id = obj.getInt("id")

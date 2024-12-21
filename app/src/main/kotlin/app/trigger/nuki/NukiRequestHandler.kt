@@ -43,7 +43,7 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
     override fun run() {
         if (bluetooth_in_use.get()) {
             Log.w(TAG, "Bluetooth busy => abort action")
-            if (action !== MainActivity.Action.fetch_state) {
+            if (action !== MainActivity.Action.FETCH_STATE) {
                 listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Bluetooth device is busy.")
             }
             return
@@ -81,7 +81,7 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             return
         }
 
-        if (isEmpty(setup.shared_key) && action === MainActivity.Action.fetch_state) {
+        if (isEmpty(setup.shared_key) && action === MainActivity.Action.FETCH_STATE) {
             // ignore query for door state - not paired yet
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
             return
@@ -98,13 +98,13 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             callback = NukiPairingCallback(setup.id, listener, setup)
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Start Pairing.")
         } else when (action) {
-            MainActivity.Action.open_door -> callback = NukiLockActionCallback(setup.id, listener, setup, 0x01 /*unlock*/)
-            MainActivity.Action.ring_door -> {
+            MainActivity.Action.OPEN_DOOR -> callback = NukiLockActionCallback(setup.id, listener, setup, 0x01 /*unlock*/)
+            MainActivity.Action.RING_DOOR -> {
                 listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Bell not supported.")
                 return
             }
-            MainActivity.Action.close_door -> callback = NukiLockActionCallback(setup.id, listener, setup, 0x02 /*lock*/)
-            MainActivity.Action.fetch_state -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
+            MainActivity.Action.CLOSE_DOOR -> callback = NukiLockActionCallback(setup.id, listener, setup, 0x02 /*lock*/)
+            MainActivity.Action.FETCH_STATE -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
             else -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
         }
 
