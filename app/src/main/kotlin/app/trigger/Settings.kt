@@ -1,12 +1,10 @@
 package app.trigger
 
-import android.preference.PreferenceManager
 import org.json.JSONObject
 import android.content.*
 import app.trigger.ssh.KeyPairBean
 import android.content.pm.PackageManager
-import kotlin.Throws
-import org.json.JSONException
+import androidx.preference.PreferenceManager
 import app.trigger.ssh.SshTools
 import app.trigger.https.HttpsTools
 import java.lang.Exception
@@ -31,7 +29,7 @@ object Settings {
     private fun getApplicationVersion(context: Context): String {
         try {
             val info = context.packageManager.getPackageInfo(context.packageName, 0)
-            return info.versionName
+            return info.versionName!!
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -49,7 +47,7 @@ object Settings {
             val url = sharedPreferences!!.getString("prefUrl", "")
             val token = sharedPreferences!!.getString("prefToken", "")
             val ignore = sharedPreferences!!.getBoolean("prefIgnore", false)
-            if (name!!.length > 0) {
+            if (name!!.isNotEmpty()) {
                 val setup = HttpsDoorSetup(0, name)
                 setup.open_query = "$url?action=open&token=$token"
                 setup.close_query = "$url?action=close&token=$token"
@@ -83,7 +81,7 @@ object Settings {
                     val token = sharedPreferences!!.getString(prefix + "token", "")
                     val ssids = sharedPreferences!!.getString(prefix + "ssids", "")
                     val ignore = sharedPreferences!!.getBoolean(prefix + "ignore", false)
-                    if (name != null && name.isNotEmpty()) {
+                    if (!name.isNullOrEmpty()) {
                         val setup = HttpsDoorSetup(id, name)
                         setup.open_query = "$url?action=open&token=$token"
                         setup.close_query = "$url?action=close&token=$token"
