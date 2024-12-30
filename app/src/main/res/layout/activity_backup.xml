@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/root"
-    android:layout_height="match_parent"
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="fill_parent"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -20,7 +18,6 @@
 
         <Button
             android:id="@+id/ImportButton"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -28,7 +25,6 @@
 
         <Button
             android:id="@+id/ExportButton"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

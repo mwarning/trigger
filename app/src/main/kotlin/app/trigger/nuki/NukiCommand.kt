@@ -62,7 +62,7 @@ open class NukiCommand(var command: Int) {
     }
 
     internal class NukiStatus(var status: Int) : NukiCommand(0x000E) {
-        fun generate(): ByteArray? {
+        fun generate(): ByteArray {
             return NukiTools.concat(NukiTools.from16(command), NukiTools.from8(status))
         }
 
@@ -78,8 +78,7 @@ open class NukiCommand(var command: Int) {
         constructor(lock_action: Int, app_id: Long, flags: Int, nonce: ByteArray?) : this(lock_action, app_id, flags, null, nonce) {}
 
         fun generate(): ByteArray? {
-            val name_suffix_padded: ByteArray?
-            name_suffix_padded = if (name_suffix == null) {
+            val name_suffix_padded = if (name_suffix == null) {
                 ByteArray(0)
             } else {
                 NukiTools.nameToBytes(name_suffix, 20)
@@ -94,7 +93,7 @@ open class NukiCommand(var command: Int) {
         }
     }
 
-    internal class NukiAuthAuthentication(var authenticator: ByteArray) : NukiCommand(0x0005) {
+    internal class NukiAuthAuthentication(private var authenticator: ByteArray) : NukiCommand(0x0005) {
         fun generate(): ByteArray? {
             return NukiTools.concat(NukiTools.from16(command), authenticator)
         }

@@ -83,8 +83,8 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
             val kp = SshTools.parsePrivateKeyPEM(data)
             if (kp != null) {
                 val obj = JSONObject()
-                obj.put("type", SshDoorSetup.TYPE)
-                obj.put("name", Settings.getNewName("SSH Door"))
+                obj.put("type", SshDoor.TYPE)
+                obj.put("name", Settings.getNewDoorName("SSH Door"))
                 obj.put("keypair", SshTools.serializeKeyPair(kp))
                 return obj
             } else {
@@ -99,16 +99,16 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
                     "http", "https" -> {
                         val http_server = domain + if (port > 0) ":$port" else ""
                         val obj = JSONObject()
-                        obj.put("type", HttpsDoorSetup.TYPE)
-                        obj.put("name", Settings.getNewName(domain))
+                        obj.put("type", HttpsDoor.TYPE)
+                        obj.put("name", Settings.getNewDoorName(domain))
                         obj.put("open_query", data)
                         return obj
                     }
                     "mqtt", "mqtts" -> {
                         val mqtt_server = scheme + "://" + domain + if (port > 0) ":$port" else ""
                         val obj = JSONObject()
-                        obj.put("type", MqttDoorSetup.TYPE)
-                        obj.put("name", Settings.getNewName(domain))
+                        obj.put("type", MqttDoor.TYPE)
+                        obj.put("name", Settings.getNewDoorName(domain))
                         obj.put("server", mqtt_server)
                         obj.put("command_topic", path)
                         obj.put("open_command", query)
@@ -116,8 +116,8 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
                     }
                     "ssh" -> {
                         val obj = JSONObject()
-                        obj.put("type", SshDoorSetup.TYPE)
-                        obj.put("name", Settings.getNewName(domain))
+                        obj.put("type", SshDoor.TYPE)
+                        obj.put("name", Settings.getNewDoorName(domain))
                         obj.put("host", domain)
                         obj.put("port", port)
                         obj.put("open_command", query)
@@ -138,10 +138,10 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
         try {
             val obj = decodeSetup(result.text)
             // give entry a new id
-            obj.put("id", Settings.getNewID())
+            obj.put("id", Settings.getNewDoorIdentifier())
             val setup = Settings.fromJsonObject(obj)
             if (setup != null) {
-                Settings.addSetup(setup)
+                Settings.addDoor(setup)
                 Toast.makeText(this, "Added ${setup.name}", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_LONG).show()

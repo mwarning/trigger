@@ -14,10 +14,12 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import app.trigger.Log
+import app.trigger.SetupActivity
+import app.trigger.SshDoor
 import java.lang.Exception
 
 class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompleted, GenerateIdentityTask.OnTaskCompleted {
-    private var preference: SshKeyPairPreference? = null // hack
+    private lateinit var sshDoor: SshDoor
     private lateinit var builder: AlertDialog.Builder
     private lateinit var clipboard: ClipboardManager
     private lateinit var createButton: Button
@@ -36,17 +38,25 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
     private var keypair: KeyPairBean? = null
     private var keyGenInProgress = false
 
-    private fun showErrorMessage(title: String, message: String?) {
+    private fun showErrorMessageDialog(title: String, message: String?) {
         builder.setTitle(title)
-        builder.setMessage(message)
+        builder.setMessage(message ?: "")
         builder.setPositiveButton(android.R.string.ok, null)
         builder.show()
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (SetupActivity.currentDoor is SshDoor) {
+            sshDoor = SetupActivity.currentDoor as SshDoor
+        } else {
+            // not expected to happen
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_keypair)
-        preference = SshKeyPairPreference.self // hack, TODO: pass serialized key in bundle
         clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         builder = AlertDialog.Builder(this)
         createButton = findViewById(R.id.CreateButton)
@@ -63,7 +73,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         registerAddress = findViewById(R.id.RegisterAddress)
         keyTypeSpinner = findViewById(R.id.KeyTypeSpinner)
 
-        val self = this
+        //val self = this
         val dataAdapter = ArrayAdapter(this,
             android.R.layout.simple_spinner_item,
             resources.getStringArray(R.array.SshKeyTypes)
@@ -76,33 +86,33 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         )
 
         // toggle between both checkboxes
-        useClipboardCheckBox.setOnClickListener { v: View? ->
+        useClipboardCheckBox.setOnClickListener {
             useFilesystemCheckBox.isChecked = !useClipboardCheckBox.isChecked
         }
 
         // toggle between both checkboxes
-        useFilesystemCheckBox.setOnClickListener { v: View? ->
+        useFilesystemCheckBox.setOnClickListener {
             useClipboardCheckBox.isChecked = !useFilesystemCheckBox.isChecked
         }
 
-        registerButton.setOnClickListener { v: View? ->
+        registerButton.setOnClickListener {
             val address = registerAddress.text.toString()
             if (address.isEmpty()) {
-                showErrorMessage("Address Empty", "Address and port needed to send public key to destination.")
+                showErrorMessageDialog("Address Empty", "Address and port needed to send public key to destination.")
             } else if (keypair == null) {
-                showErrorMessage("Key Pair Empty", "No public key available to register.")
+                showErrorMessageDialog("Key Pair Empty", "No public key available to register.")
             } else {
-                val task = RegisterIdentityTask(self, address, keypair!!)
+                val task = RegisterIdentityTask(this, address, keypair!!)
                 task.start()
             }
         }
 
-        createButton.setOnClickListener { v: View? ->
+        createButton.setOnClickListener {
             if (keyGenInProgress) {
-                showErrorMessage("Busy", "Key generation already in progress. Please wait.")
+                showErrorMessageDialog("Busy", "Key generation already in progress. Please wait.")
             } else {
                 keyGenInProgress = true
-                val type = when (self.keyTypeSpinner!!.selectedItemPosition) {
+                val type = when (this.keyTypeSpinner.selectedItemPosition) {
                     0 -> "ED25519"
                     1 -> "ECDSA-384"
                     2 -> "ECDSA-521"
@@ -114,14 +124,14 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                     }
                 }
                 if (type.isNotEmpty()) {
-                    GenerateIdentityTask(self).execute(type)
+                    GenerateIdentityTask(this).execute(type)
                 }
             }
         }
 
-        exportPublicKeyButton.setOnClickListener { v: View? ->
+        exportPublicKeyButton.setOnClickListener {
             if (keypair == null) {
-                showErrorMessage("No Key", "No key loaded to export.")
+                showErrorMessageDialog("No Key", "No key loaded to export.")
             } else if (useClipboardCheckBox.isChecked) {
                 val publicKey = keypair!!.openSSHPublicKey
                 val clip = ClipData.newPlainText(keypair!!.description, publicKey)
@@ -138,7 +148,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
 
         exportPrivateKeyButton.setOnClickListener { v: View? ->
             if (keypair == null) {
-                showErrorMessage("No Key", "No key loaded to export.")
+                showErrorMessageDialog("No Key", "No key loaded to export.")
             } else if (useClipboardCheckBox.isChecked) {
                 val privateKey = keypair!!.openSSHPrivateKey
                 val clip = ClipData.newPlainText(keypair!!.description, privateKey)
@@ -153,7 +163,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             }
         }
 
-        importPrivateKeyButton.setOnClickListener { v: View? ->
+        importPrivateKeyButton.setOnClickListener {
             if (useClipboardCheckBox.isChecked) {
                 if (clipboard.hasPrimaryClip()) {
                     val privateKey = clipboard.primaryClip!!.getItemAt(0).text.toString()
@@ -176,13 +186,13 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             }
         }
 
-        okButton.setOnClickListener { v: View? ->
+        okButton.setOnClickListener {
             // persist your value here
-            preference!!.keyPair = self.keypair
-            self.finish()
+            sshDoor.keypair = sshDoor.keypair
+            finish()
         }
 
-        deleteButton.setOnClickListener { v: View? ->
+        deleteButton.setOnClickListener {
             builder.setTitle("Confirm")
             builder.setMessage("Really remove key pair?")
             builder.setCancelable(false) // not necessary
@@ -197,11 +207,11 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             alert.show()
         }
 
-        cancelButton.setOnClickListener { v: View? ->
+        cancelButton.setOnClickListener {
             // persist your value here
-            self.finish()
+            finish()
         }
-        updateKeyInfo(preference!!.keyPair)
+        updateKeyInfo(sshDoor.keypair)
     }
 
     override fun onGenerateIdentityTaskCompleted(message: String?, keypair: KeyPairBean?) {
@@ -218,27 +228,27 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
 
     private fun exportPublicKey(uri: Uri?) {
         if (keypair == null) {
-            showErrorMessage("No Key Pair", "No key loaded to export.")
+            showErrorMessageDialog("No Key Pair", "No key loaded to export.")
             return
         }
         try {
             writeFile(this, uri, keypair!!.openSSHPublicKey!!.toByteArray())
             Toast.makeText(applicationContext, "Done. Wrote public key.", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            showErrorMessage("Error", e.message)
+            showErrorMessageDialog("Error", e.message)
         }
     }
 
     private fun exportPrivateKey(uri: Uri?) {
         if (keypair == null) {
-            showErrorMessage("No Key", "No key loaded to export.")
+            showErrorMessageDialog("No Key", "No key loaded to export.")
             return
         }
         try {
             writeFile(this, uri, keypair!!.openSSHPrivateKey!!.toByteArray())
             Toast.makeText(applicationContext, "Done. Wrote private key.", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            showErrorMessage("Error", e.message)
+            showErrorMessageDialog("Error", e.message)
         }
     }
 
@@ -250,7 +260,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             updateKeyInfo(kp)
             Toast.makeText(applicationContext, "Done", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            showErrorMessage("Error", e.message)
+            showErrorMessageDialog("Error", e.message)
         }
     }
 

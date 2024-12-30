@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.app.Dialog
 import android.graphics.Bitmap
-import app.trigger.DoorState.StateCode
+import app.trigger.DoorStatus.StateCode
 import android.bluetooth.BluetoothAdapter
 import android.content.*
 import android.content.pm.PackageManager
@@ -37,7 +37,7 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity(), OnTaskCompleted {
-    private var hasSetupSelected = false
+    private var hasDoorSelected = false
     private lateinit var stateImage: ImageView
     private lateinit var lockButton: ImageButton
     private lateinit var ringButton: ImageButton
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     private lateinit var state_disabled_default_image: Bitmap
     private lateinit var state_unknown_default_image: Bitmap
     private lateinit var builder: AlertDialog.Builder
-    private var ignore_wifi_check_for_setup_id = -1
+    private var ignore_wifi_check_for_door_id = -1
 
     enum class Action {
         OPEN_DOOR,
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
 
         // keep previous selection
-        val current = getSelectedSetup()
+        val current = getSelectedDoor()
         if (current != null) {
             i = 0
             for (item in items) {
@@ -100,29 +100,28 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
-    private fun getSelectedSetup(): Setup? {
+    private fun getSelectedDoor(): Door? {
         val item = spinner.selectedItem as SpinnerItem?
         return if (item != null) {
-            Settings.getSetup(item.id)
+            Settings.getDoor(item.id)
         } else {
             null
         }
     }
 
-    private fun getSelectedSetupId(): Int  {
+    private fun getSelectedDoorId(): Int  {
         val item = spinner.selectedItem as SpinnerItem?
         return item?.id ?: -1
     }
 
     private fun updateSpinner(match_ssid: Boolean) {
-        val setups = Settings.setups
         val items = ArrayList<SpinnerItem>()
-        for (setup in setups) {
-            items.add(SpinnerItem(setup.id, setup.name, setup.getWiFiSSIDs()))
+        for (door in Settings.doors) {
+            items.add(SpinnerItem(door.id, door.name, door.getWiFiSSIDs()))
         }
 
         // sort items by name
-        items.sortWith(Comparator { s1: SpinnerItem, s2: SpinnerItem -> s1.name.compareTo(s2.name) })
+        items.sortWith { s1: SpinnerItem, s2: SpinnerItem -> s1.name.compareTo(s2.name) }
         val selection = getPreferredSpinnerIndex(items, match_ssid)
         val adapter = ArrayAdapter(this, R.layout.main_spinner, items)
         spinner.adapter = adapter
@@ -142,28 +141,28 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
 
         // something is selected
-        hasSetupSelected = (spinner.selectedItemPosition != AccessibilityEvent.INVALID_POSITION)
+        hasDoorSelected = (spinner.selectedItemPosition != AccessibilityEvent.INVALID_POSITION)
 
         updateButtons()
     }
 
     // hide lock/unlock/ring buttons if there is no action behind them
     private fun updateButtons() {
-        val setup = getSelectedSetup()
+        val door = getSelectedDoor()
 
-        if (setup == null || setup.canClose()) {
+        if (door == null || door.canClose()) {
             lockButton.visibility = View.VISIBLE
         } else {
             lockButton.visibility = View.GONE
         }
 
-        if (setup == null || setup.canOpen()) {
+        if (door == null || door.canOpen()) {
             unlockButton.visibility = View.VISIBLE
         } else {
             unlockButton.visibility = View.GONE
         }
 
-        if (setup == null || setup.canRing()) {
+        if (door == null || door.canRing()) {
             ringButton.visibility = View.VISIBLE
         } else {
             ringButton.visibility = View.GONE
@@ -173,17 +172,15 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val context = this.applicationContext
 
-        WifiTools.init(context)
-        BluetoothTools.init(context)
-        Settings.init(context)
+        WifiTools.init(applicationContext)
+        BluetoothTools.init(applicationContext)
+        Settings.init(applicationContext)
 
-        val res = resources
-        state_open_default_image = BitmapFactory.decodeResource(res, R.drawable.state_open)
-        state_closed_default_image = BitmapFactory.decodeResource(res, R.drawable.state_closed)
-        state_disabled_default_image = BitmapFactory.decodeResource(res, R.drawable.state_disabled)
-        state_unknown_default_image = BitmapFactory.decodeResource(res, R.drawable.state_unknown)
+        state_open_default_image = BitmapFactory.decodeResource(resources, R.drawable.state_open)
+        state_closed_default_image = BitmapFactory.decodeResource(resources, R.drawable.state_closed)
+        state_disabled_default_image = BitmapFactory.decodeResource(resources, R.drawable.state_disabled)
+        state_unknown_default_image = BitmapFactory.decodeResource(resources, R.drawable.state_unknown)
         spinner = findViewById(R.id.selection_spinner)
         stateImage = findViewById(R.id.stateImage)
         lockButton = findViewById(R.id.Lock)
@@ -194,6 +191,11 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
         pressed = AnimationUtils.loadAnimation(this, R.anim.pressed)
         updateSpinner(true)
+
+        findViewById<ImageView>(R.id.stateImage).setOnClickListener {
+            // update door state
+            callRequestHandler(Action.FETCH_STATE)
+        }
 
         Log.d(TAG, "Security.insertProviderAt(new OpenSSLProvider()")
         Security.insertProviderAt(OpenSSLProvider(), 1)
@@ -250,10 +252,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
-    fun onUpdateState(view: View?) {
-        callRequestHandler(Action.FETCH_STATE)
-    }
-
     fun doUnlock(view: View?) {
         unlockButton.startAnimation(pressed)
         callRequestHandler(Action.OPEN_DOOR)
@@ -295,14 +293,14 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 unlockButton.isEnabled = true
             }
             else -> {
-                Log.e(TAG, "unhandled state")
+                Log.e(TAG, "Invalid Door Status ${state}")
             }
         }
 
         // use custom image
-        val setup = getSelectedSetup()
-        if (setup != null) {
-            val custom = setup.getStateImage(state)
+        val door = getSelectedDoor()
+        if (door != null) {
+            val custom = door.getStateImage(state)
             if (custom != null) {
                 image = custom
             }
@@ -316,14 +314,14 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     }
 
     // can be called multiple times by the same task
-    override fun onTaskResult(setup_id: Int, code: ReplyCode, message: String) {
+    override fun onTaskResult(door_id: Int, code: ReplyCode, message: String) {
         runOnUiThread {
-            val setup = getSelectedSetup()
-            if (setup == null || setup.id != setup_id) {
+            val door = getSelectedDoor()
+            if (door == null || door.id != door_id) {
                 // probably some late result that does not matter anymore
                 return@runOnUiThread
             }
-            val state = setup.parseReply(DoorReply(code, message))
+            val state = door.parseReply(DoorReply(code, message))
 
             // change state image
             changeUI(state.code)
@@ -335,25 +333,25 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
-    private fun checkConnectedWifi(setup: Setup, action: Action): Boolean {
-        if (setup.id == ignore_wifi_check_for_setup_id) {
+    private fun checkConnectedWifi(door: Door, action: Action): Boolean {
+        if (door.id == ignore_wifi_check_for_door_id) {
             return true
         } else {
-            ignore_wifi_check_for_setup_id = -1
+            ignore_wifi_check_for_door_id = -1
         }
 
-        if (!setup.getWiFiRequired()) {
+        if (!door.getWiFiRequired()) {
             return true
         }
 
         if (WifiTools.isConnected()) {
-            val ssids = setup.getWiFiSSIDs()
+            val ssids = door.getWiFiSSIDs()
             val current_ssid = WifiTools.getCurrentSSID()
             if (ssids.isNotEmpty() && !WifiTools.matchSSID(ssids, current_ssid)) {
                 builder.setTitle("Wrong WiFi")
                 builder.setMessage("Connected to wrong network ('$current_ssid') - ignore?")
                 builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
-                    ignore_wifi_check_for_setup_id = setup.id
+                    ignore_wifi_check_for_door_id = door.id
                     // trigger again
                     callRequestHandler(action)
                     dialog.cancel()
@@ -366,7 +364,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             builder.setTitle("WiFi Disabled")
             builder.setMessage("WiFi disabled - ignore?")
             builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
-                ignore_wifi_check_for_setup_id = setup.id
+                ignore_wifi_check_for_door_id = door.id
                 // trigger again
                 callRequestHandler(action)
                 dialog.cancel()
@@ -378,20 +376,20 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         return true
     }
 
-    private fun checkSshPassphrase(setup: Setup, action: Action): Boolean {
-        if (setup is SshDoorSetup) {
+    private fun checkSshPassphrase(door: Door, action: Action): Boolean {
+        if (door is SshDoor) {
             // check if passphrase is not needed
-            if (!setup.needsPassphrase() || !Utils.isEmpty(setup.passphrase_tmp)) {
+            if (!door.needsPassphrase() || !Utils.isEmpty(door.passphrase_tmp)) {
                 return true
             }
 
             // try other passphrases
-            for (s in Settings.setups) {
-                if (s is SshDoorSetup) {
+            for (s in Settings.doors) {
+                if (s is SshDoor) {
                     if (s.needsPassphrase() && s.passphrase_tmp.isNotEmpty()) {
-                        if (SshRequestHandler.testPassphrase(setup.keypair, s.passphrase_tmp)) {
-                            showMessage("Reuse passphrase from ${setup.name}")
-                            setup.passphrase_tmp = s.passphrase_tmp
+                        if (SshRequestHandler.testPassphrase(door.keypair, s.passphrase_tmp)) {
+                            showMessage("Reuse passphrase from ${door.name}")
+                            door.passphrase_tmp = s.passphrase_tmp
                             return true
                         }
                     }
@@ -407,8 +405,8 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             val okButton = dialog.findViewById<Button>(R.id.OkButton)
             okButton.setOnClickListener { v: View? ->
                 val passphrase = passphraseEditText.text.toString()
-                if (SshRequestHandler.testPassphrase(setup.keypair, passphrase)) {
-                    setup.passphrase_tmp = passphrase
+                if (SshRequestHandler.testPassphrase(door.keypair, passphrase)) {
+                    door.passphrase_tmp = passphrase
                     showMessage("Passphrase accepted")
                     callRequestHandler(action)
                 } else {
@@ -423,8 +421,8 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         return true
     }
 
-    private fun checkBluetoothScanPermissions(setup: Setup, action: Action): Boolean {
-        if (setup is BluetoothDoorSetup || setup is NukiDoorSetup) {
+    private fun checkBluetoothScanPermissions(door: Door, action: Action): Boolean {
+        if (door is BluetoothDoor || door is NukiDoor) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (!Utils.hasBluetoothConnectPermission(this)) {
                     Utils.requestBluetoothConnectPermission(this, BLUETOOTH_CONNECT_REQUEST_CODE)
@@ -437,44 +435,44 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     }
 
     private fun callRequestHandler(action: Action) {
-        val setup = getSelectedSetup()
-        if (setup == null) {
+        val door = getSelectedDoor()
+        if (door == null) {
             changeUI(StateCode.DISABLED)
             return
         }
 
-        if (!checkConnectedWifi(setup, action)) {
+        if (!checkConnectedWifi(door, action)) {
             changeUI(StateCode.DISABLED)
             return
         }
 
-        if (!checkSshPassphrase(setup, action)) {
+        if (!checkSshPassphrase(door, action)) {
             changeUI(StateCode.DISABLED)
             return
         }
 
-        if (!checkBluetoothScanPermissions(setup, action)) {
+        if (!checkBluetoothScanPermissions(door, action)) {
             changeUI(StateCode.DISABLED)
             return
         }
 
-        if (setup is HttpsDoorSetup) {
-            val handler = HttpsRequestHandler(this, setup, action)
+        if (door is HttpsDoor) {
+            val handler = HttpsRequestHandler(this, door, action)
             handler.start()
-        } else if (setup is SshDoorSetup) {
-            val handler = SshRequestHandler(this, setup, action)
+        } else if (door is SshDoor) {
+            val handler = SshRequestHandler(this, door, action)
             handler.start()
-        } else if (setup is BluetoothDoorSetup) {
-            val handler = BluetoothRequestHandler(this, setup, action)
+        } else if (door is BluetoothDoor) {
+            val handler = BluetoothRequestHandler(this, door, action)
             handler.start()
-        } else if (setup is NukiDoorSetup) {
-            val handler = NukiRequestHandler(this, setup, action)
+        } else if (door is NukiDoor) {
+            val handler = NukiRequestHandler(this, door, action)
             handler.start()
-        } else if (setup is MqttDoorSetup) {
-            val handler = MqttRequestHandler(this, setup, action)
+        } else if (door is MqttDoor) {
+            val handler = MqttRequestHandler(this, door, action)
             handler.start()
         } else {
-            // hm, invalid setup
+            // hm, invalid door
             changeUI(StateCode.DISABLED)
         }
     }
@@ -503,7 +501,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         val showQrMenuItem = menu.findItem(R.id.action_show_qr)
         val cloneMenuItem = menu.findItem(R.id.action_clone)
 
-        if (hasSetupSelected) {
+        if (hasDoorSelected) {
             editMenuItem.isEnabled = true
             editMenuItem.icon!!.alpha = 255
             showQrMenuItem.isEnabled = true
@@ -524,32 +522,32 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     /*
     private void connectNextWifi() {
         // collect app configured SSIDs
-        ArrayList<Setup> setups = Settings.getAllSetups();
+        ArrayList<Door> doors = Settings.getAllDoors();
         ArrayList<String> ssids = new ArrayList();
 
-        for (Setup setup : setups) {
-            ssids.addAll(splitCommaSeparated(setup.getWiFiSSIDs()));
+        for (door : doors) {
+            ssids.addAll(splitCommaSeparated(door.getWiFiSSIDs()));
         }
 
         wifi.connectBestOf(ssids);
         updateSpinner();
     }
 */
-    override fun onOptionsItemSelected(menu_item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = menu_item.itemId
+        val id = item.itemId
         if (id == R.id.action_edit) {
-            val setup_id = getSelectedSetupId()
+            val door_id = getSelectedDoorId()
             val i = Intent(this, SetupActivity::class.java)
-            i.putExtra("setup_id", setup_id)
+            i.putExtra("door_id", door_id)
             startActivity(i)
             return true
         }
         if (id == R.id.action_new) {
             val i = Intent(this, SetupActivity::class.java)
-            i.putExtra("setup_id", -1)
+            i.putExtra("door_id", -1)
             startActivity(i)
             return true
         }
@@ -559,16 +557,16 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             return true
         }
         if (id == R.id.action_scan_qr) {
-            val setup_id = getSelectedSetupId()
+            val door_id = getSelectedDoorId()
             val i = Intent(this, QRScanActivity::class.java)
-            i.putExtra("setup_id", setup_id)
+            i.putExtra("door_id", door_id)
             startActivity(i)
             return true
         }
         if (id == R.id.action_show_qr) {
-            val setup_id = getSelectedSetupId()
+            val door_id = getSelectedDoorId()
             val i = Intent(this, QRShowActivity::class.java)
-            i.putExtra("setup_id", setup_id)
+            i.putExtra("door_id", door_id)
             startActivity(i)
             return true
         }
@@ -579,15 +577,17 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
         if (id == R.id.action_clone) {
             try {
-                var setup = getSelectedSetup()
-                if (setup != null) {
-                    val obj = Settings.toJsonObject(setup)
-                    val new_id = Settings.getNewID()
-                    val new_name = Settings.getNewName(setup.name)
+                var door = getSelectedDoor()
+                if (door != null) {
+                    val obj = Settings.toJsonObject(door)
+                    val new_id = Settings.getNewDoorIdentifier()
+                    val new_name = Settings.getNewDoorName(door.name)
                     obj!!.put("id", new_id)
                     obj.put("name", new_name)
-                    setup = Settings.fromJsonObject(obj)
-                    Settings.addSetup(setup)
+                    door = Settings.fromJsonObject(obj)
+                    if (door != null) {
+                        Settings.addDoor(door)
+                    }
                     updateSpinner(false)
                 }
             } catch (e: Exception) {
@@ -595,7 +595,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             }
             return true
         }
-        return super.onOptionsItemSelected(menu_item)
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

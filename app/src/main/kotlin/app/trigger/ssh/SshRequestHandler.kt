@@ -16,7 +16,7 @@ import java.net.SocketTimeoutException
 import java.security.KeyPair
 
 
-class SshRequestHandler(private val listener: OnTaskCompleted, private val setup: SshDoorSetup, private val action: MainActivity.Action) : Thread(), ConnectionMonitor {
+class SshRequestHandler(private val listener: OnTaskCompleted, private val setup: SshDoor, private val action: MainActivity.Action) : Thread(), ConnectionMonitor {
     companion object {
         private const val TAG = "SshRequestHandler"
         private const val conditions = (ChannelCondition.STDOUT_DATA

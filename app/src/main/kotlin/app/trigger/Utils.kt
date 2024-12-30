@@ -1,31 +1,13 @@
 package app.trigger
 
 import android.Manifest
-import android.preference.PreferenceActivity
-import android.os.Bundle
-import app.trigger.R
-import android.preference.PreferenceManager
-import android.preference.Preference
-import androidx.appcompat.app.AppCompatActivity
-import app.trigger.BackupActivity
 import android.app.Activity
-import org.json.JSONObject
-import app.trigger.Setup
-import android.widget.Toast
 import android.graphics.Bitmap
-import app.trigger.BluetoothDoorSetup
-import app.trigger.DoorState.StateCode
-import app.trigger.DoorReply
-import app.trigger.DoorState
-import android.bluetooth.BluetoothAdapter
-import app.trigger.BluetoothTools
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
+import app.trigger.DoorStatus.StateCode
 import android.content.*
 import app.trigger.DoorReply.ReplyCode
 import android.graphics.BitmapFactory
 import android.content.pm.PackageManager
-import kotlin.Throws
 import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
 import android.provider.OpenableColumns
@@ -35,7 +17,6 @@ import android.text.Html
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.lang.Exception
 import java.net.InetSocketAddress
@@ -43,7 +24,6 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.security.*
 import java.security.cert.Certificate
-import java.security.cert.CertificateException
 import java.util.*
 import java.util.regex.Pattern
 import javax.net.ssl.KeyManagerFactory
@@ -359,7 +339,7 @@ object Utils {
     }
 
     // parse return from HTTP/SSH/MQTT doors
-    fun genericDoorReplyParser(reply: DoorReply, unlocked_pattern: String?, locked_pattern: String?): DoorState {
+    fun genericDoorReplyParser(reply: DoorReply, unlocked_pattern: String?, locked_pattern: String?): DoorStatus {
         // strip HTML from response
         var unlocked_pattern = unlocked_pattern
         var locked_pattern = locked_pattern
@@ -371,25 +351,25 @@ object Utils {
             locked_pattern = ""
         }
         return when (reply.code) {
-            ReplyCode.LOCAL_ERROR, ReplyCode.REMOTE_ERROR -> DoorState(StateCode.UNKNOWN, msg)
+            ReplyCode.LOCAL_ERROR, ReplyCode.REMOTE_ERROR -> DoorStatus(StateCode.UNKNOWN, msg)
             ReplyCode.SUCCESS -> {
                 return try {
                     if (match(reply.message, unlocked_pattern)) {
                         // door unlocked
-                        DoorState(StateCode.OPEN, msg)
+                        DoorStatus(StateCode.OPEN, msg)
                     } else if (match(reply.message, locked_pattern)) {
                         // door locked
-                        DoorState(StateCode.CLOSED, msg)
+                        DoorStatus(StateCode.CLOSED, msg)
                     } else {
-                        DoorState(StateCode.UNKNOWN, msg)
+                        DoorStatus(StateCode.UNKNOWN, msg)
                     }
                 } catch (e: Exception) {
-                    DoorState(StateCode.UNKNOWN, e.toString())
+                    DoorStatus(StateCode.UNKNOWN, e.toString())
                 }
-                DoorState(StateCode.DISABLED, msg)
+                DoorStatus(StateCode.DISABLED, msg)
             }
-            ReplyCode.DISABLED -> DoorState(StateCode.DISABLED, msg)
-            else -> DoorState(StateCode.DISABLED, msg)
+            ReplyCode.DISABLED -> DoorStatus(StateCode.DISABLED, msg)
+            else -> DoorStatus(StateCode.DISABLED, msg)
         }
     }
 }

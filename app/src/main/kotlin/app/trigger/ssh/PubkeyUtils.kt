@@ -64,7 +64,7 @@ object PubkeyUtils {
     private fun encrypt(cleartext: ByteArray, secret: String): ByteArray {
         val salt = ByteArray(SALT_SIZE)
         val ciphertext = Encryptor.encrypt(salt, ITERATIONS, secret, cleartext)
-        val complete = ByteArray(salt.size + ciphertext!!.size)
+        val complete = ByteArray(salt.size + ciphertext.size)
         System.arraycopy(salt, 0, complete, 0, salt.size)
         System.arraycopy(ciphertext, 0, complete, salt.size, ciphertext.size)
         Arrays.fill(salt, 0x00.toByte())
@@ -241,7 +241,7 @@ object PubkeyUtils {
             val generator = params.generator
             val wCoords = EcCore.multiplyPointA(arrayOf(generator.affineX,
                     generator.affineY), ecPriv.s, params)
-            val w = ECPoint(wCoords!![0], wCoords[1])
+            val w = ECPoint(wCoords[0], wCoords[1])
             kf.generatePublic(ECPublicKeySpec(w, params))
         } else {
             throw NoSuchAlgorithmException("Key type must be RSA, DSA, or EC")
@@ -346,8 +346,8 @@ object PubkeyUtils {
         val hex = CharArray(bytes.size * 2)
         var i = 0
         for (b in bytes) {
-            hex[i++] = HEX_DIGITS[b as Int shr 4 and 0x0f]
-            hex[i++] = HEX_DIGITS[b as Int and 0x0f]
+            hex[i++] = HEX_DIGITS[b.toInt() shr 4 and 0x0f]
+            hex[i++] = HEX_DIGITS[b.toInt() and 0x0f]
         }
         return String(hex)
     }

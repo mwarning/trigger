@@ -1,454 +1,746 @@
 package app.trigger
 
-import android.preference.PreferenceActivity
+import android.app.Dialog
+import android.content.*
 import android.os.Bundle
-import android.preference.Preference
-import android.widget.Toast
-import android.graphics.Bitmap
-import app.trigger.ssh.KeyPairBean
-import android.content.DialogInterface
-import android.preference.Preference.OnPreferenceChangeListener
-import android.os.Build
-import android.preference.PreferenceGroup
-import android.preference.PreferenceCategory
-import android.preference.EditTextPreference
-import android.preference.ListPreference
-import android.preference.CheckBoxPreference
-import app.trigger.ssh.SshKeyPairPreference
-import app.trigger.mqtt.MqttClientKeyPairPreference
-import app.trigger.https.CertificatePreference
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import java.lang.Exception
-import java.security.cert.Certificate
-import java.util.ArrayList
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import app.trigger.https.HttpsClientCertificateActivity
+import app.trigger.https.HttpsClientKeyPairActivity
+import app.trigger.https.HttpsServerCertificateActivity
+import app.trigger.mqtt.MqttClientCertificateActivity
+import app.trigger.mqtt.MqttClientKeyPairActivity
+import app.trigger.mqtt.MqttServerCertificateActivity
+import app.trigger.ssh.SshKeyPairActivity
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 
-class SetupActivity : PreferenceActivity() {
-    private var setupGroups: ArrayList<PreferenceGroup>? = null
-    private lateinit var builder: AlertDialog.Builder
-    private lateinit var setup: Setup
-    private fun showErrorMessage(title: String, message: String) {
-        builder.setTitle(title)
-        builder.setMessage(message)
-        builder.setPositiveButton(android.R.string.ok, null)
-        builder.show()
-    }
+class SetupActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    // collect all PreferenceGroups except first
-    private fun collectGroups(): ArrayList<PreferenceGroup> {
-        val groups = ArrayList<PreferenceGroup>()
-        val count = preferenceScreen.preferenceCount
-        var i = count - 1
-        while (i > 0) {
-            val p = preferenceScreen.getPreference(i) as PreferenceGroup
-            groups.add(p)
-            preferenceScreen.removePreference(p)
-            i -= 1
-        }
-        return groups
-    }
+        val door_id = intent.getIntExtra("door_id", -1)
 
-    private fun showGroup(key: String?) {
-        // hide all groups
-        run {
-            var i = 0
-            while (i < setupGroups!!.size) {
-                preferenceScreen.removePreference(setupGroups!![i])
-                i += 1
-            }
-        }
-
-        // show specific group
-        var i = 0
-        while (i < setupGroups!!.size) {
-            if (setupGroups!![i].key == key) {
-                val group = setupGroups!![i]
-                preferenceScreen.addPreference(group)
+        currentDoor = if (door_id == -1) {
+            HttpsDoor(Settings.getNewDoorIdentifier(), "")
+        } else {
+            val selectedDoor = Settings.getDoor(door_id)
+            if (selectedDoor != null) {
+                selectedDoor
+            } else {
+                Log.d(TAG, "door not found $door_id")
+                finish()
                 return
             }
-            i += 1
         }
-        Log.e(TAG, "showGroup(): PreferenceGroup not found: $key")
+
+        initViews()
     }
 
-    fun onSaveButtonClicked(v: View?) {
-        storeSetup()
-    }
+    private fun initViews() {
+        val door = currentDoor ?: return
 
-    fun onDeleteButtonClicked(v: View?) {
-        builder.setTitle(R.string.confirm)
-        builder.setMessage(R.string.really_remove_item)
-        builder.setCancelable(false) // not necessary
-        builder.setPositiveButton(R.string.yes) { dialog: DialogInterface?, id: Int ->
-            Settings.removeSetup(setup.id)
-            // close this dialog and settings
+        title = String.format(getString(R.string.title_door), door.name)
+
+        Log.d(TAG, "initViews() ${door.type}")
+
+        when (door.type) {
+            HttpsDoor.TYPE -> {
+                setContentView(R.layout.activity_setup_https)
+            }
+            SshDoor.TYPE -> {
+                setContentView(R.layout.activity_setup_ssh)
+            }
+            BluetoothDoor.TYPE -> {
+                setContentView(R.layout.activity_setup_bluetooth)
+            }
+            MqttDoor.TYPE -> {
+                setContentView(R.layout.activity_setup_mqtt)
+            }
+            NukiDoor.TYPE -> {
+                setContentView(R.layout.activity_setup_nuki)
+            }
+            else -> {
+                Log.e(TAG, "Invalid door type: ${door.type}")
+                finish()
+                return
+            }
+        }
+
+        setupTextView(R.id.doorNameTextView, R.string.setting_door_name, door.name,
+            { newValue ->
+                if (newValue.isEmpty()) {
+                    Toast.makeText(this, R.string.error_invalid_name, Toast.LENGTH_SHORT).show()
+                } else if (!Settings.isDuplicateName(newValue, door)) {
+                    if (door.name != newValue) {
+                        door.name = newValue
+                        title = newValue
+                        initViews()
+                    }
+                } else {
+                    Toast.makeText(this, R.string.error_duplicate_name, Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        setupSpinner(door.type,
+            R.id.spinnerDoorTypes,
+            R.array.DoorTypeLabels,
+            R.array.DoorTypeValues,
+            object : SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    if (newValue != null && newValue != door.type) {
+                        val existingDoor = Settings.getDoor(door.id)
+                        currentDoor =
+                            if (existingDoor != null && existingDoor.type == newValue) {
+                                existingDoor
+                            } else when (newValue) {
+                                HttpsDoor.TYPE -> {
+                                    HttpsDoor(door.id, door.name)
+                                }
+
+                                SshDoor.TYPE -> {
+                                    SshDoor(door.id, door.name)
+                                }
+
+                                BluetoothDoor.TYPE -> {
+                                    BluetoothDoor(door.id, door.name)
+                                }
+
+                                MqttDoor.TYPE -> {
+                                    MqttDoor(door.id, door.name)
+                                }
+
+                                NukiDoor.TYPE -> {
+                                    NukiDoor(door.id, door.name)
+                                }
+
+                                else -> {
+                                    Log.e("SetupActivity", "Invalid door type: $newValue")
+                                    return
+                                }
+                            }
+                        initViews()
+                    }
+                }
+            })
+
+        if (door is HttpsDoor) {
+            initHttpsViews(door as HttpsDoor)
+        }
+
+        if (door is SshDoor) {
+            initSshViews(door as SshDoor)
+        }
+
+        if (door is BluetoothDoor) {
+            initBluetoothViews(door as BluetoothDoor)
+        }
+
+        if (door is MqttDoor) {
+            initMqttViews(door as MqttDoor)
+        }
+
+        if (door is NukiDoor) {
+            initNukiViews(door as NukiDoor)
+        }
+
+        findViewById<SwitchMaterial>(R.id.openDoorImageSwitch).apply {
+            isChecked = (door.getStateImage(DoorStatus.StateCode.OPEN) != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, ImageActivity::class.java)
+                intent.putExtra("state_code", DoorStatus.StateCode.OPEN.name)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.closedDoorImageSwitch).apply {
+            isChecked = (door.getStateImage(DoorStatus.StateCode.CLOSED) != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, ImageActivity::class.java)
+                intent.putExtra("state_code", DoorStatus.StateCode.CLOSED.name)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.disabledDoorImageSwitch).apply {
+            isChecked = (door.getStateImage(DoorStatus.StateCode.DISABLED) != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, ImageActivity::class.java)
+                intent.putExtra("state_code", DoorStatus.StateCode.DISABLED.name)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.unknownStatusImageSwitch).apply {
+            isChecked = (door.getStateImage(DoorStatus.StateCode.UNKNOWN) != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, ImageActivity::class.java)
+                intent.putExtra("state_code", DoorStatus.StateCode.UNKNOWN.name)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<Button>(R.id.SaveButton).setOnClickListener {
+            if (door.name.isEmpty()) {
+                showMessage(R.string.error_invalid_name)
+            } else {
+                Settings.addDoor(door)
+                if (Settings.saveDatabase(applicationContext)) {
+                    showMessage(R.string.done)
+                    finish()
+                } else {
+                    showMessage(R.string.error)
+                }
+            }
+        }
+
+        findViewById<Button>(R.id.DeleteButton).apply {
+            val door = currentDoor
+            if (door != null && Settings.getDoor(door.id) != null) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    showDeleteDialog()
+                }
+            } else {
+                visibility = View.GONE
+            }
+        }
+
+        findViewById<Button>(R.id.AbortButton).setOnClickListener {
             finish()
         }
-        builder.setNegativeButton(R.string.no) { dialog: DialogInterface, id: Int ->
-            // close this dialog
+    }
+
+    private fun isHttpURL(url: String): Boolean {
+        return url.startsWith("https://") || url.startsWith("http://")
+    }
+
+    private fun initHttpsViews(door: HttpsDoor) {
+        findViewById<CheckBox>(R.id.httpsRequireWLANCheckBox).apply {
+            isChecked = door.require_wifi
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.require_wifi = isChecked
+            }
+        }
+
+        setupSpinner(door.method,
+            R.id.spinnerHttpMethod,
+            R.array.HttpMethodLabels,
+            R.array.HttpMethodValues,
+            object: SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    if (newValue != null) {
+                        door.method = newValue
+                    }
+                }
+            })
+
+        setupTextView(R.id.httpsOpenURLTextView, R.string.setting_https_open_url, door.open_query,
+            { newValue ->
+                if (newValue.isEmpty() || isHttpURL(newValue)) {
+                    door.open_query = newValue
+                    initViews()
+                } else {
+                    showMessage(R.string.error_invalid_url)
+                }
+            })
+
+        setupTextView(R.id.httpsCloseURLTextView, R.string.setting_https_close_url, door.close_query,
+            { newValue ->
+                if (newValue.isEmpty() || isHttpURL(newValue)) {
+                    door.close_query = newValue
+                    initViews()
+                } else {
+                    showMessage(R.string.error_invalid_url)
+                }
+            })
+
+        setupTextView(R.id.httpsRingURLTextView, R.string.setting_https_ring_url, door.ring_query,
+            { newValue ->
+                if (newValue.isEmpty() || isHttpURL(newValue)) {
+                    door.ring_query = newValue
+                    initViews()
+                } else {
+                    showMessage(R.string.error_invalid_url)
+                }
+            })
+
+        setupTextView(R.id.httpsStatusURLTextView, R.string.setting_https_status_url, door.status_query,
+            { newValue ->
+                if (newValue.isEmpty() || isHttpURL(newValue)) {
+                    door.status_query = newValue
+                    initViews()
+                } else {
+                    showMessage(R.string.error_invalid_url)
+                }
+            })
+
+        setupTextView(R.id.replyPatternLockedTextView, R.string.setting_reply_pattern_locked, door.locked_pattern,
+            { newValue ->
+                door.locked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternUnlockedTextView, R.string.setting_reply_pattern_unlocked, door.unlocked_pattern,
+            { newValue ->
+                door.unlocked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.wlanSsidsTextView, R.string.setting_wlan_ssids, door.ssids,
+            { newValue ->
+                door.ssids = newValue
+                initViews()
+            })
+
+        findViewById<CheckBox>(R.id.ignoreCertificateValidityCheckBox).apply {
+            isChecked = door.ignore_certificate
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.ignore_certificate = isChecked
+            }
+        }
+
+        findViewById<CheckBox>(R.id.ignoreCertificateHostnameCheckBox).apply {
+            isChecked = door.ignore_hostname_mismatch
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.ignore_hostname_mismatch = isChecked
+            }
+        }
+
+        findViewById<CheckBox>(R.id.ignoreCertificateDateCheckBox).apply {
+            isChecked = door.ignore_expiration
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.ignore_expiration = isChecked
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.httpsClientCertificateSwitch).apply {
+            isChecked = (door.client_certificate != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, HttpsClientCertificateActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.httpsServerCertificateSwitch).apply {
+            isChecked = (door.server_certificate != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, HttpsServerCertificateActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.httpsClientPrivateKeySwitch).apply {
+            isChecked = (door.client_keypair != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, HttpsClientKeyPairActivity::class.java)
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun initSshViews(door: SshDoor) {
+        findViewById<CheckBox>(R.id.sshRequireWLANCheckBox).apply {
+            isChecked = door.require_wifi
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.require_wifi = isChecked
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.sshKeyPairSwitch).apply {
+            isChecked = (door.keypair != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, SshKeyPairActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        setupTextView(R.id.sshServerAddressTextView, R.string.setting_ssh_server_address, door.host,
+            { newValue ->
+                door.host = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshServerPortTextView, R.string.setting_ssh_server_port, "${door.port}",
+            { newValue ->
+                // TODO
+                door.port = newValue.toInt()
+                initViews()
+            })
+
+        setupTextView(R.id.sshLoginNameTextView, R.string.setting_ssh_login_name, door.user,
+            { newValue ->
+                door.user = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshLoginPasswordTextView, R.string.setting_ssh_login_password, door.password,
+            { newValue ->
+                door.password = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshOpenCommandTextView, R.string.setting_ssh_open_command, door.open_command,
+            { newValue ->
+                door.open_command = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshCloseCommandTextView, R.string.setting_ssh_close_command, door.close_command,
+            { newValue ->
+                door.close_command = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshRingCommandTextView, R.string.setting_ssh_ring_command, door.ring_command,
+            { newValue ->
+                door.ring_command = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshStatusCommandTextView, R.string.setting_ssh_status_command, door.state_command,
+            { newValue ->
+                door.state_command = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.sshCommandTimeoutTextView, R.string.setting_ssh_command_timeout, "${door.timeout}",
+            { newValue ->
+                val timeout = newValue.toIntOrNull()
+                if (timeout == null || timeout < 0 || timeout > 5000) {
+                    showMessage(R.string.invalid_timeout)
+                } else {
+                    door.timeout = newValue.toInt()
+                    initViews()
+                }
+            })
+
+        setupTextView(R.id.wlanSsidsTextView, R.string.setting_wlan_ssids, door.ssids,
+            { newValue ->
+                door.ssids = newValue
+                initViews()
+            })
+    }
+
+    private fun initBluetoothViews(door: BluetoothDoor) {
+        setupTextView(R.id.bluetoothDeviceNameTextView, R.string.setting_bluetooth_device_name, door.device_name,
+            { newValue ->
+                door.device_name = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.bluetoothServiceUuidTextView, R.string.setting_bluetooth_service_uuid, door.service_uuid,
+            { newValue ->
+                door.service_uuid = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternLockedTextView, R.string.setting_reply_pattern_locked, door.locked_pattern,
+            { newValue ->
+                door.locked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternUnlockedTextView, R.string.setting_reply_pattern_unlocked, door.unlocked_pattern,
+            { newValue ->
+                door.unlocked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.bluetoothOpenCommandTextView, R.string.setting_open_command, door.open_query,
+            { newValue ->
+                door.open_query = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.bluetoothCloseCommandTextView, R.string.setting_close_command, door.close_query,
+            { newValue ->
+                door.close_query = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.bluetoothRingCommandTextView, R.string.setting_ring_command, door.ring_query,
+            { newValue ->
+                door.ring_query = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.bluetoothStatusCommandTextView, R.string.setting_status_command, door.status_query,
+            { newValue ->
+                door.status_query = newValue
+                initViews()
+            })
+    }
+
+    private fun initNukiViews(door: NukiDoor) {
+        setupTextView(R.id.nukiLockNameTextView, R.string.setting_nuki_lock_name, door.device_name,
+            { newValue ->
+                door.device_name = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.nukiUserNameTextView, R.string.setting_nuki_user_name, door.user_name,
+            { newValue ->
+                door.user_name = newValue
+                initViews()
+            })
+
+        findViewById<TextView>(R.id.nukiAppIdentifierTextView).text = "${door.app_id}"
+        findViewById<TextView>(R.id.nukiLockIdentifierTextView).text = "${door.auth_id}"
+        findViewById<TextView>(R.id.nukiSharedKeyTextView).text = door.shared_key
+    }
+
+    private fun initMqttViews(door: MqttDoor) {
+        findViewById<CheckBox>(R.id.mqttRequireWLANCheckBox).apply {
+            isChecked = door.require_wifi
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.require_wifi = isChecked
+            }
+        }
+
+        setupTextView(R.id.mqttBrokerAddressTextView, R.string.setting_mqtt_broker_address, door.server,
+            { newValue ->
+                door.server = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.mqttUsernameTextView, R.string.setting_mqtt_username, door.username,
+            { newValue ->
+                door.username = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.mqttPasswordTextView, R.string.setting_mqtt_password, door.password,
+            { newValue ->
+                door.password = newValue
+                initViews()
+            })
+
+
+        setupTextView(R.id.mqttStatusTopicTextView, R.string.setting_mqtt_status_topic, door.status_topic,
+            { newValue ->
+                door.status_topic = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.mqttCommandTopicTextView, R.string.setting_mqtt_command_topic, door.command_topic,
+            { newValue ->
+                door.command_topic = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.mqttOpenCommandTextView, R.string.setting_open_command, door.open_command,
+            { newValue ->
+                door.open_command = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.mqttCloseCommandTextView, R.string.setting_close_command, door.close_command,
+            { newValue ->
+                door.close_command = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.mqttRingCommandTextView, R.string.setting_ring_command, door.ring_command,
+            { newValue ->
+                door.ring_command = newValue
+                initViews()
+            })
+
+       setupSpinner("${door.qos}",
+            R.id.spinnerMqttQos,
+            R.array.MqttQosLabels,
+            R.array.MqttQosValues,
+            object: SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    val qos = newValue?.let { newValue.toIntOrNull() }
+                    if (qos != null) {
+                        door.qos = qos
+                    }
+                }
+            })
+
+        findViewById<CheckBox>(R.id.mqttRetainedCheckBox).apply {
+            isChecked = door.retained
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.retained = isChecked
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.mqttClientCertificateSwitch).apply {
+            isChecked = (door.client_certificate != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, MqttClientCertificateActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.mqttServerCertificateSwitch).apply {
+            isChecked = (door.server_certificate != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, MqttServerCertificateActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<SwitchMaterial>(R.id.mqttClientPrivateKeySwitch).apply {
+            isChecked = (door.client_keypair != null)
+            setOnClickListener {
+                val intent = Intent(applicationContext, MqttClientKeyPairActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+        findViewById<CheckBox>(R.id.ignoreCertificateValidityCheckBox).apply {
+            isChecked = door.ignore_certificate
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.ignore_certificate = isChecked
+            }
+        }
+
+        findViewById<CheckBox>(R.id.ignoreCertificateHostnameCheckBox).apply {
+            isChecked = door.ignore_hostname_mismatch
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.ignore_hostname_mismatch = isChecked
+            }
+        }
+
+        findViewById<CheckBox>(R.id.ignoreCertificateDateCheckBox).apply {
+            isChecked = door.ignore_expiration
+            setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+                door.ignore_expiration = isChecked
+            }
+        }
+
+        setupTextView(R.id.wlanSsidsTextView, R.string.setting_wlan_ssids, door.ssids,
+            { newValue ->
+                door.ssids = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternLockedTextView, R.string.setting_reply_pattern_locked, door.locked_pattern,
+            { newValue ->
+                door.locked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternUnlockedTextView, R.string.setting_reply_pattern_unlocked, door.unlocked_pattern,
+            { newValue ->
+                door.unlocked_pattern = newValue
+                initViews()
+            })
+    }
+
+    private fun setupTextView(textViewId: Int, titleId: Int, currentValue: String, onChange: (newValue: String) -> Unit) {
+        findViewById<TextView>(textViewId).apply {
+            text = currentValue.ifEmpty { getString(R.string.setting_no_value) }
+            setOnClickListener { showStringDialog(titleId, currentValue, onChange) }
+        }
+    }
+
+    private fun showStringDialog(titleId: Int, value: String, onChange: (newValue: String) -> Unit) {
+        Log.d(TAG, "showStringDialog()")
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_change_string)
+        val titleText = dialog.findViewById<TextView>(R.id.ChangeStringTextView)
+        val stringEditText = dialog.findViewById<EditText>(R.id.StringEditText)
+        val cancelButton = dialog.findViewById<Button>(R.id.CancelButton)
+        val okButton = dialog.findViewById<Button>(R.id.OkButton)
+
+        titleText.setText(titleId)
+        stringEditText.setText(value, TextView.BufferType.EDITABLE)
+
+        okButton.setOnClickListener {
+            val newValue = stringEditText.text.toString().trim { it <= ' ' }
+            if (value != newValue) {
+                onChange(newValue)
+            }
+
             dialog.cancel()
         }
 
-        // create dialog box
-        val alert = builder.create()
-        alert.show()
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
-    // a recursive method to find a preference by key
-    private fun findAnyPreference(key: String, group: PreferenceGroup?): Preference? {
-        var group = group
-        if (group == null) {
-            group = preferenceScreen
-        }
-        val count = group!!.preferenceCount
-        var i = 0
-        while (i < count) {
-            var pref = group.getPreference(i)
-            if (pref!!.key == key) {
-                return pref
-            } else if (pref is PreferenceGroup) {
-                pref = findAnyPreference(key, pref)
-                if (pref != null) {
-                    return pref
-                }
-            }
-            i += 1
-        }
-        return null
-    }
+    private fun showDeleteDialog() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_delete_door)
+        val cancelButton = dialog.findViewById<Button>(R.id.CancelButton)
+        val okButton = dialog.findViewById<Button>(R.id.OkButton)
 
-    private fun setMainGroupTitle(name: String?) {
-        val pc = findPreference("main_category") as PreferenceCategory
-        if (name!!.isNotEmpty()) {
-            pc.title = name
-        } else {
-            pc.setTitle(R.string.new_entry)
-        }
-    }
-
-    private fun getSummaryValue(key: String, value: String): String {
-        if (value.isEmpty()) {
-            return resources.getString(R.string.none)
-        }
-        return if (key == "password") {
-            // only show password as star sequences
-            String(CharArray(value.length)).replace("\u0000", "*")
-        } else {
-            value
-        }
-    }
-
-    private fun setText(key: String, value: String) {
-        val p = findAnyPreference(key, null)
-        if (p is EditTextPreference) {
-            val etp = p
-            etp.text = value
-
-            // show value as summary
-            etp.onPreferenceChangeListener = OnPreferenceChangeListener { preference: Preference, newValue: Any ->
-                preference.summary = getSummaryValue(key, newValue.toString())
-                true
-            }
-            etp.summary = getSummaryValue(key, value)
-        } else if (p is ListPreference) {
-            val lp = p
-            // show value as summary
-            lp.onPreferenceChangeListener = OnPreferenceChangeListener { preference: Preference, newValue: Any ->
-                preference.summary = getSummaryValue(key, newValue.toString())
-                true
-            }
-            lp.summary = getSummaryValue(key, value)
-            lp.value = value
-        } else {
-            Log.w(TAG, "setText(): Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: $key")
-        }
-    }
-
-    private fun getText(key: String): String {
-        val p = findAnyPreference(key, null)
-        return if (p is EditTextPreference) {
-            p.text
-        } else if (p is ListPreference) {
-            p.value
-        } else {
-            Log.w(TAG, "getText(): Cannot find EditTextPreference/ListPreference in PreferenceGroup with key: $key")
-            ""
-        }
-    }
-
-    private fun setChecked(key: String, checked: Boolean) {
-        val cbp = findAnyPreference(key, null) as CheckBoxPreference?
-        if (cbp != null) {
-            cbp.isChecked = checked
-        } else {
-            Log.e(TAG, "setChecked(): Cannot find CheckBoxPreference in PreferenceGroup with key: $key")
-        }
-    }
-
-    private fun getChecked(key: String): Boolean {
-        val cbp = findAnyPreference(key, null) as CheckBoxPreference?
-        return if (cbp != null) {
-            cbp.isChecked
-        } else {
-            Log.e(TAG, "getChecked(): Cannot find CheckBoxPreference in PreferenceGroup with key: $key")
-            false
-        }
-    }
-
-    private fun getBitmap(key: String): Bitmap? {
-        val kpp = findAnyPreference(key, null) as ImagePreference?
-        return if (kpp != null) {
-            kpp.image
-        } else {
-            Log.e(TAG, "getBitmap(): Cannot find ImagePreference in PreferenceGroup with key: $key")
-            null
-        }
-    }
-
-    private fun setBitmap(key: String, image: Bitmap?) {
-        val kpp = findAnyPreference(key, null) as ImagePreference?
-        if (kpp != null) {
-            kpp.image = image
-        } else {
-            Log.e(TAG, "setBitmap(): Cannot find ImagePreference in PreferenceGroup with key: $key")
-        }
-    }
-
-    private fun getKeyPairBean(key: String): KeyPairBean? {
-        val preference = findAnyPreference(key, null)
-        return if (preference is SshKeyPairPreference) {
-            preference.keyPair
-        } else if (preference is MqttClientKeyPairPreference) {
-            preference.getKeyPair()
-        } else {
-            Log.e(TAG, "getKeyPair(): Cannot find KeyPairPreference in PreferenceGroup with key: $key")
-            null
-        }
-    }
-
-    private fun setKeyPairBean(key: String, keypair: KeyPairBean?) {
-        val preference = findAnyPreference(key, null)
-        if (preference is SshKeyPairPreference) {
-            preference.keyPair = keypair
-        } else if (preference is MqttClientKeyPairPreference) {
-            preference.setKeyPair(keypair)
-        } else {
-            Log.e(TAG, "setKeyPair(): Cannot find KeyPairPreference in PreferenceGroup with key: $key")
-        }
-    }
-
-    private fun getCertificate(key: String): Certificate? {
-        val cp = findAnyPreference(key, null) as CertificatePreference?
-        return if (cp != null) {
-            cp.certificate
-        } else {
-            Log.e(TAG, "getCertificate(): Cannot find CertificatePreference in PreferenceGroup with key: $key")
-            null
-        }
-    }
-
-    private fun setCertificate(key: String, certificate: Certificate?) {
-        val cp = findAnyPreference(key, null) as CertificatePreference?
-        if (cp != null) {
-            cp.certificate = certificate
-        } else {
-            Log.e(TAG, "setCertificate(): Cannot find CertificatePreference in PreferenceGroup with key: $key")
-        }
-    }
-
-    fun getRegisterUrl(): String {
-        return setup.getRegisterUrl()
-    }
-
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        // Set all field to default values - does not work?
-        // PreferenceManager.setDefaultValues(context, R.xml.settings, false);
-        super.onCreate(savedInstanceState)
-        addPreferencesFromResource(R.xml.setup)
-        setContentView(R.layout.activity_setup)
-
-        // change door type
-        val list_field = findPreference("type") as ListPreference
-        list_field.onPreferenceChangeListener = OnPreferenceChangeListener { _: Preference?, newValue: Any ->
-            val type = newValue.toString()
-            if (type == setup.type) {
-                // no door type change
-                true
-            } else if (type == HttpsDoorSetup.TYPE) {
-                setup = HttpsDoorSetup(setup.id, getText("name"))
-                loadSetup()
-                true
-            } else if (type == SshDoorSetup.TYPE) {
-                setup = SshDoorSetup(setup.id, getText("name"))
-                loadSetup()
-                true
-            } else if (type == BluetoothDoorSetup.TYPE) {
-                setup = BluetoothDoorSetup(setup.id, getText("name"))
-                loadSetup()
-                true
-            } else if (type == NukiDoorSetup.TYPE) {
-                setup = NukiDoorSetup(setup.id, getText("name"))
-                loadSetup()
-                true
-            } else if (type == MqttDoorSetup.TYPE) {
-                setup = MqttDoorSetup(setup.id, getText("name"))
-                loadSetup()
-                true
-            } else {
-                Log.e(TAG, "Unhandled type from selection: $type")
-                false
-            }
-        }
-
-        // update main category title
-        val name_field = findPreference("name") as EditTextPreference
-        name_field.onPreferenceChangeListener = OnPreferenceChangeListener { preference: Preference?, newValue: Any ->
-            val name = newValue.toString()
-            setMainGroupTitle(name)
-            true
-        }
-        builder = AlertDialog.Builder(this)
-        setupGroups = collectGroups()
-        val id = intent.getIntExtra("setup_id", -1)
-        val new_setup = Settings.getSetup(id)
-        if (new_setup != null) {
-            setup = new_setup
-        } else  {
-            // default setup
-            setup = HttpsDoorSetup(Settings.getNewID(), "")
-        }
-
-        // init type selection
-        list_field.value = setup.type
-        loadSetup()
-    }
-
-    private fun loadSetup() {
-        showGroup(setup.type)
-        val fields = setup.javaClass.declaredFields
-        for (field in fields) {
-            try {
-                val accessible = field.isAccessible()
-                field.setAccessible(true)
-                val name = field.name
-                val type = field.type
-                val value = field[setup]
-                if (name == "type" || name == "id" || name == "Companion") {
-                    // ignore for display in preference field
-                } else if (type == String::class.java) {
-                    setText(name, value as String)
-                } else if (type == Int::class.java) {
-                    setText(name, value.toString())
-                } else if (type == Long::class.java) {
-                    setText(name, value.toString())
-                } else if (type == Int::class.javaPrimitiveType) {
-                    setText(name, value.toString())
-                } else if (type == Long::class.javaPrimitiveType) {
-                    setText(name, value.toString())
-                } else if (type == Boolean::class.java) {
-                    setChecked(name, value as Boolean)
-                } else if (type == Boolean::class.javaPrimitiveType) {
-                    setChecked(name, value as Boolean)
-                } else if (type == Bitmap::class.java) {
-                    setBitmap(name, value as Bitmap?)
-                } else if (type == KeyPairBean::class.java) {
-                    setKeyPairBean(name, value as KeyPairBean?)
-                } else if (type == Certificate::class.java) {
-                    setCertificate(name, value as Certificate?)
+        okButton.setOnClickListener {
+            val door = currentDoor
+            if (door != null) {
+                Settings.removeDoor(door.id)
+                if (Settings.saveDatabase(applicationContext)) {
+                    showMessage(R.string.done)
                 } else {
-                    throw Exception("Unhandled type ${type} of field $name")
+                    showMessage(R.string.error)
                 }
-                field.setAccessible(accessible)
-            } catch (e: Exception) {
-                Log.e(TAG, "loadSetup: $e")
-                e.printStackTrace()
             }
+
+            dialog.cancel()
+            finish()
         }
 
-        // update title
-        setMainGroupTitle(setup.name)
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
-    // apply preference fields to setup object fields
-    fun storeSetup() {
-        val fields = setup.javaClass.declaredFields
-        for (field in fields) {
-            val name = field.name
-            val type = field.type
-            val accessible = field.isAccessible()
-            try {
-                field.setAccessible(true)
-                if (name == "id" || name == "type" || name == "Companion") {
-                    // ignore - id is not displayed and type is read only field
-                } else if (findAnyPreference(name, null) == null) {
-                    // ignore
-                    Log.w(TAG, "storeSetup(): Ignore setup field: $name")
-                } else if (type == String::class.java) {
-                    field[setup] = getText(name)
-                } else if (type == Boolean::class.java) {
-                    field[setup] = getChecked(name)
-                } else if (type == Int::class.java) {
-                    field[setup] = getText(name).toInt()
-                } else if (type == Long::class.java) {
-                    field[setup] = getText(name).toLong()
-                } else if (type == Int::class.javaPrimitiveType) {
-                    field[setup] = getText(name).toInt()
-                } else if (type == Long::class.javaPrimitiveType) {
-                    field[setup] = getText(name).toLong()
-                } else if (type == Bitmap::class.java) {
-                    field[setup] = getBitmap(name)
-                } else if (type == KeyPairBean::class.java) {
-                    field[setup] = getKeyPairBean(name)
-                } else if (type == Certificate::class.java) {
-                    field[setup] = getCertificate(name)
-                } else {
-                    Log.e(TAG, "storeSetup: Unhandled type for $name: $type")
+    override fun onResume() {
+        super.onResume()
+        initViews()
+    }
+
+    private fun showMessage(textId: Int) {
+        Toast.makeText(applicationContext, textId, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showMessage(textString: String) {
+        Toast.makeText(applicationContext, textString, Toast.LENGTH_SHORT).show()
+    }
+
+    private interface SpinnerItemSelected {
+        fun call(newValue: String?)
+    }
+
+    private fun setupSpinner(
+        currentValue: String,
+        spinnerId: Int,
+        arrayId: Int,
+        arrayValuesId: Int,
+        callback: SpinnerItemSelected,
+    ) {
+        val arrayValues = resources.getStringArray(arrayValuesId)
+        val spinner = findViewById<Spinner>(spinnerId)
+        val spinnerAdapter = ArrayAdapter.createFromResource(this, arrayId, R.layout.spinner_item_settings)
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_settings)
+
+        spinner.adapter = spinnerAdapter
+        spinner.setSelection(arrayValues.indexOf(currentValue))
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            var check = 0
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                if (pos >= arrayValues.size) {
+                    showMessage("pos out of bounds: $arrayValues")
+                    return
                 }
-            } catch (ex: Exception) {
-                showErrorMessage("Error", "Input for '$name' caused an error: $ex")
-                return
-            } finally {
-                field.setAccessible(accessible)
+                if (check++ > 0) {
+                    callback.call(arrayValues[pos])
+                }
             }
-        }
 
-        val count = Settings.countNames(setup.name)
-        val exists = Settings.idExists(setup.id)
-        if (exists && count > 1 || !exists && count > 0) {
-            showErrorMessage("Entry Exists", "Name already exists.")
-        } else if (setup.name.isEmpty()) {
-            showErrorMessage("Invalid Name", "Door name is not set.")
-        } else {
-            Settings.addSetup(setup)
-
-            // report all done
-            Toast.makeText(applicationContext, "Done", Toast.LENGTH_SHORT).show()
-
-            // needed for SSID matching
-            if (setup.getWiFiSSIDs().isNotEmpty()) {
-                checkFineLocationPermission()
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_FINE_LOCATION_PERMISSION -> if (Utils.allGranted(grantResults)) {
-                // permissions granted
-                Toast.makeText(applicationContext, "Permissions granted - SSID matching should work now.", Toast.LENGTH_SHORT).show()
-            } else {
-                showErrorMessage("Permissions Required", "Cannot match WiFi SSIDs.")
-            }
-        }
-    }
-
-    // SSID matching needs fine location permissions
-    private fun checkFineLocationPermission() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            if (!Utils.hasFineLocationPermission(this)) {
-                Utils.requestFineLocationPermission(this, REQUEST_FINE_LOCATION_PERMISSION)
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // ignore
             }
         }
     }
@@ -456,5 +748,6 @@ class SetupActivity : PreferenceActivity() {
     companion object {
         private const val TAG = "SetupActivity"
         private const val REQUEST_FINE_LOCATION_PERMISSION = 0x01
+        var currentDoor: Door? = null
     }
 }

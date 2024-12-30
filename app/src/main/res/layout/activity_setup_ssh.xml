@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetupActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_10"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_door_name"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/doorNameTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_door_type"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/spinnerDoorTypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Require WLAN"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/sshRequireWLANCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_ssh_server_address"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshServerAddressTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_ssh_server_port"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshServerPortTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_ssh_login_name"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshLoginNameTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_ssh_login_password"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshLoginPasswordTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshOpenCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Close Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshCloseCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ring Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshRingCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshStatusCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Key Pair"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/sshKeyPairSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Command Timeout (ms)"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/sshCommandTimeoutTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WLAN SSIDs"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/wlanSsidsTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_open_door_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/openDoorImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_closed_door_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/closedDoorImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_no_connection_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/disabledDoorImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_unknown_status_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/unknownStatusImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/SaveButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/button_save" />
+
+                <Button
+                    android:id="@+id/DeleteButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/button_delete" />
+
+                <Button
+                    android:id="@+id/AbortButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/button_abort" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetupActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_10"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_door_name"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/doorNameTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_door_type"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/spinnerDoorTypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Require WLAN"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/mqttRequireWLANCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MQTT Broker Address"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttBrokerAddressTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MQTT Broker Username"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttUsernameTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MQTT Broker Password"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttPasswordTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MQTT Status Topic (subscribe)"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttStatusTopicTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MQTT Command Topic (publish)"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttCommandTopicTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttOpenCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Close Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttCloseCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ring Command"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/mqttRingCommandTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="start"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="MQTT Quality Of Service"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/spinnerMqttQos"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Retained"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/mqttRetainedCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_server_certificate"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/mqttServerCertificateSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_client_certificate"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/mqttClientCertificateSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_client_private_key"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/mqttClientPrivateKeySwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Ignore Certificate Validity"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:text="Warning: This disables security"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/ignoreCertificateValidityCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Disable Certificate Hostname Check"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:text="Warning: This disables security"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/ignoreCertificateHostnameCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Disable Certificate Date Check"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:text="Warning: This disables security"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/ignoreCertificateDateCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_reply_pattern_locked"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/replyPatternLockedTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_reply_pattern_unlocked"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/replyPatternUnlockedTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WLAN SSIDs"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/wlanSsidsTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_open_door_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/openDoorImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_closed_door_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/closedDoorImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_no_connection_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/disabledDoorImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/setting_unknown_status_image"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/unknownStatusImageSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    app:thumbTint="?android:textColorSecondary" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_weight="0"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/SaveButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/button_save" />
+
+                <Button
+                    android:id="@+id/DeleteButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/button_delete" />
+
+                <Button
+                    android:id="@+id/AbortButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="@string/button_abort" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

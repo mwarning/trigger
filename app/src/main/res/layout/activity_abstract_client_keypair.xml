@@ -54,7 +54,6 @@
 
             <Button
                 android:id="@+id/ImportPrivateKeyButton"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -63,7 +62,6 @@
 
             <Button
                 android:id="@+id/ExportPrivateKeyButton"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -107,7 +105,6 @@
 
         <Button
             android:id="@+id/DeleteButton"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -116,7 +113,6 @@
 
         <Button
             android:id="@+id/CancelButton"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -125,7 +121,6 @@
 
         <Button
             android:id="@+id/OkButton"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="SetupTypeNames">
+    <string-array name="DoorTypeLabels">
         <item>Generic HTTPS</item>
         <item>Generic SSH</item>
         <item>Generic MQTT</item>
         <item>Generic Bluetooth</item>
         <item>Nuki SmartLock</item>
     </string-array>
-    <string-array translatable="false" name="HttpMethods">
-        <item>GET</item>
-        <item>POST</item>
-        <item>PUT</item>
-    </string-array>
-    <string-array translatable="false" name="SetupTypeValues">
+
+    <string-array translatable="false" name="DoorTypeValues">
         <item>HttpsDoorSetup</item>
         <item>SshDoorSetup</item>
         <item>MqttDoorSetup</item>
         <item>BluetoothDoorSetup</item>
         <item>NukiDoorSetup</item>
     </string-array>
+
+    <string-array translatable="false" name="HttpMethodLabels">
+        <item>GET</item>
+        <item>POST</item>
+        <item>PUT</item>
+    </string-array>
+
+    <string-array translatable="false" name="HttpMethodValues">
+        <item>GET</item>
+        <item>POST</item>
+        <item>PUT</item>
+    </string-array>
+
     <string-array name="SshKeyTypes">
         <item>ED25519</item>
         <item>ECDSA (nistp384)</item>
@@ -26,11 +35,13 @@
         <item>RSA (2048)</item>
         <item>RSA (4096)</item>
     </string-array>
-    <string-array name="MqttQosNames">
+
+    <string-array name="MqttQosLabels">
         <item>Fire and Forget (0)</item>
         <item>At least once (1)</item>
         <item>Exactly once (2)</item>
     </string-array>
+
     <string-array translatable="false" name="MqttQosValues">
         <item>0</item>
         <item>1</item>

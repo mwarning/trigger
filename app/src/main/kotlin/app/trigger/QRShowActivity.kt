@@ -4,11 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import com.google.zxing.BarcodeFormat
-import kotlin.Throws
 import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.google.zxing.WriterException
-import android.view.View
 import android.widget.*
 import java.lang.Exception
 import java.util.ArrayList
@@ -18,8 +16,8 @@ class QRShowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qrshow)
-        val setup_id = intent.getIntExtra("setup_id", -1)
-        val setup = Settings.getSetup(setup_id)
+        val door_id = intent.getIntExtra("door_id", -1)
+        val setup = Settings.getDoor(door_id)
         if (setup != null) {
             title = "$title: ${setup.name}"
             try {
@@ -63,11 +61,11 @@ class QRShowActivity : AppCompatActivity() {
         return obj.toString()
     }
 
-    private fun generateQR(setup: Setup) {
+    private fun generateQR(door: Door) {
         val multiFormatWriter = MultiFormatWriter()
         var data_length = 0
         try {
-            val obj = Settings.toJsonObject(setup) ?: throw Exception("Failed to convert setup to JSON")
+            val obj = Settings.toJsonObject(door) ?: throw Exception("Failed to convert setup to JSON")
             val data = encodeSetup(obj)
             data_length = data.length
 

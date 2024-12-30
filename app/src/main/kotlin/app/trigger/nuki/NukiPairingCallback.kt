@@ -1,16 +1,15 @@
 package app.trigger.nuki
 
 import app.trigger.Utils.byteArrayToHexString
-import app.trigger.Settings.addSetup
+import app.trigger.Settings.addDoor
 import app.trigger.DoorReply.ReplyCode
 import android.bluetooth.BluetoothGattCharacteristic
 import org.libsodium.jni.Sodium
 import android.bluetooth.BluetoothGatt
-import app.trigger.nuki.NukiCommand
 import app.trigger.*
 import java.util.*
 
-internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var setup: NukiDoorSetup) : NukiCallback(setup_id, listener, NukiCallback.Companion.PAIRING_SERVICE_UUID, NukiCallback.Companion.PAIRING_GDIO_XTERISTIC_UUID) {
+internal class NukiPairingCallback(door_id: Int, listener: OnTaskCompleted, var setup: NukiDoor) : NukiCallback(door_id, listener, NukiCallback.Companion.PAIRING_SERVICE_UUID, NukiCallback.Companion.PAIRING_GDIO_XTERISTIC_UUID) {
     var data: ByteArray? = null
     var secret_key: ByteArray? = null
     var public_key: ByteArray? = null
@@ -27,7 +26,7 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
     override fun onConnected(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
         Log.d(TAG, "onConnected")
         if (!setup.shared_key.isEmpty()) {
-            listener.onTaskResult(setup_id, ReplyCode.LOCAL_ERROR, "Already paired to some device!")
+            listener.onTaskResult(door_id, ReplyCode.LOCAL_ERROR, "Already paired to some device!")
             closeConnection(gatt)
             return
         }
@@ -58,7 +57,7 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
 
         if (m is NukiCommand.NukiError) {
             Log.d(TAG, "NukiCommand.NukiError")
-            listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, m.asString())
+            listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, m.asString())
             closeConnection(gatt)
         } else if (m is NukiCommand.NukiPublicKey) {
             Log.d(TAG, "NukiCommand.NukiPublicKey")
@@ -155,7 +154,7 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
         } else if (m is NukiCommand.NukiStatus) {
             Log.d(TAG, "NukiCommand.NukiStatus")
             if (m.status != 0) {
-                listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, "Pairing failed.")
+                listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, "Pairing failed.")
                 closeConnection(gatt)
                 return
             }
@@ -163,11 +162,11 @@ internal class NukiPairingCallback(setup_id: Int, listener: OnTaskCompleted, var
                 setup.auth_id = auth_id
                 setup.app_id = app_id
                 setup.shared_key = byteArrayToHexString(shared_key)
-                addSetup(setup)
-                listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, "Pairing complete.")
+                addDoor(setup)
+                listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, "Pairing complete.")
                 closeConnection(gatt)
             } else {
-                listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, "Failed to set authorization data.")
+                listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, "Failed to set authorization data.")
                 closeConnection(gatt)
             }
         } else {

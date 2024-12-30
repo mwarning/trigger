@@ -1,24 +1,22 @@
-package app.trigger.https
+package app.trigger
 
 import app.trigger.Utils.writeFile
 import app.trigger.Utils.readFile
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import app.trigger.R
 import android.content.Intent
 import android.content.DialogInterface
 import android.view.Gravity
 import android.net.Uri
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import app.trigger.https.CertificateFetchTask
+import app.trigger.https.HttpsTools
 import java.lang.Exception
-import java.nio.charset.Charset
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
 
-class CertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskCompleted {
-    private lateinit var preference : CertificatePreference // hack
+abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskCompleted {
     private lateinit var builder: AlertDialog.Builder
     private lateinit var importButton: Button
     private lateinit var exportButton: Button
@@ -29,31 +27,33 @@ class CertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskComp
     private lateinit var certificateInfo: TextView
     private lateinit var certificateUrl: EditText
     private var certificate: Certificate? = null
-    private val selected_path: String? = null
 
-    override fun onCertificateFetchTaskCompleted(r: CertificateFetchTask.Result) {
-        val cert = r.certificate
+    protected abstract fun getDoor(): Door
+    protected abstract fun getCertificate(): Certificate?
+    protected abstract fun setCertificate(certificate: Certificate?)
+
+    override fun onCertificateFetchTaskCompleted(result: CertificateFetchTask.Result) {
+        val cert = result.certificate
         if (cert != null) {
             certificate = cert
             Toast.makeText(applicationContext, "Done.", Toast.LENGTH_SHORT).show()
             updateCertificateInfo()
         } else {
-            showErrorMessage("Error Fetching Certificate", r.error)
+            showErrorMessage("Error Fetching Certificate", result.error)
         }
     }
+
     private fun showErrorMessage(title: String, message: String?) {
         builder.setTitle(title)
         builder.setMessage(message)
         builder.setPositiveButton(android.R.string.ok, null)
         builder.show()
     }
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_certificate)
-        preference = CertificatePreference.Companion.self!! // hack, TODO: pass serialized key in bundle
-        certificate = preference.certificate
-        val title = findViewById<TextView>(R.id.CertificateTitle)
-        title.text = intent.getStringExtra("certificate_preference_title")
+        setContentView(R.layout.activity_abstract_certificate)
+        certificate = getCertificate()
         builder = AlertDialog.Builder(this)
         importButton = findViewById(R.id.ImportButton)
         exportButton = findViewById(R.id.ExportButton)
@@ -63,19 +63,20 @@ class CertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskComp
         certificateInfo = findViewById(R.id.CertificateInfo)
         certificateUrl = findViewById(R.id.CertificateUrl)
         fetchButton = findViewById(R.id.FetchButton)
-        val self = this
 
+        val door = getDoor()
+        findViewById<TextView>(R.id.CertificateTitle).text = door.name
         // initialize with url for registering
-        certificateUrl.setText(
-                intent.getStringExtra("register_url")
-        )
-        importButton.setOnClickListener(View.OnClickListener { v: View? ->
+        certificateUrl.setText(door.getRegisterUrl())
+
+        importButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "*/*"
             startActivityForResult(intent, READ_REQUEST_CODE)
-        })
-        exportButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        exportButton.setOnClickListener {
             if (certificate == null) {
                 showErrorMessage("No Certificate", "No Certificate loaded to export.")
             } else {
@@ -85,23 +86,25 @@ class CertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskComp
                 intent.type = "*/*"
                 startActivityForResult(intent, WRITE_REQUEST_CODE)
             }
-        })
-        fetchButton.setOnClickListener(View.OnClickListener { v: View? ->
-            val url = certificateUrl.getText().toString()
+        }
+
+        fetchButton.setOnClickListener {
+            val url = certificateUrl.text.toString()
             if (url.isEmpty()) {
                 showErrorMessage("Empty URL", "No URL set to fetch a certificate from.")
             } else if (!url.startsWith("https://")) {
                 showErrorMessage("Invalid URL", "URL needs to start with 'https://'")
             } else {
-                CertificateFetchTask(this@CertificateActivity).execute(url)
+                CertificateFetchTask(this).execute(url)
             }
-        })
-        okButton.setOnClickListener(View.OnClickListener { v: View? ->
-            // update the SwitchPreference switch
-            preference.certificate = certificate
+        }
+
+        okButton.setOnClickListener {
+            setCertificate(certificate)
             finish()
-        })
-        deleteButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        deleteButton.setOnClickListener {
             builder.setTitle("Confirm")
             builder.setMessage("Really remove certificate?")
             builder.setCancelable(false) // not necessary
@@ -115,11 +118,13 @@ class CertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskComp
             // create dialog box
             val alert = builder.create()
             alert.show()
-        })
-        cancelButton.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+
+        cancelButton.setOnClickListener {
             // persist your value here
             finish()
-        })
+        }
+
         updateCertificateInfo()
     }
 
@@ -184,7 +189,7 @@ class CertificateActivity : AppCompatActivity(), CertificateFetchTask.OnTaskComp
                     text += "\n"
                 }
                 text += certificate.toString()
-                certificateInfo.gravity = Gravity.TOP or Gravity.LEFT
+                certificateInfo.gravity = Gravity.TOP or Gravity.START
             }
         } catch (e: Exception) {
             text = e.message.toString()

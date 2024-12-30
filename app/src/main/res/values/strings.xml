@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Trigger</string>
-
     <string name="action_edit">Edit</string>
     <string name="action_new">New</string>
     <string name="action_scan_qr">Scan QR-Code</string>
@@ -15,13 +13,78 @@
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="none">None</string>
-    <string name="really_remove_item">Really remove setup?</string>
 
-    <string name="manage_ssh_key_pair">Manage SSH Key Pair</string>
-    <string name="manage_tls_certificate">Manage TLS Certificate</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_abort">Abort</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_ok">OK</string>
+    <string name="button_save">Save</string>
 
-    <string name="save_button">Save</string>
+    <string name="error_duplicate_name">Duplicate Name</string>
+    <string name="error_invalid_name">Invalid Name</string>
+    <string name="error_invalid_url">Invalid URL</string>
+
+    <string name="setting_door_name">Door Name</string>
+    <string name="setting_door_type">Door Type</string>
+    <string name="setting_open_command">Open Command</string>
+    <string name="setting_close_command">Close Command</string>
+    <string name="setting_ring_command">Open Command</string>
+    <string name="setting_status_command">Status Command</string>
+    <string name="setting_reply_pattern_locked">Reply pattern (locked)</string>
+    <string name="setting_reply_pattern_unlocked">Reply pattern (unlocked)</string>
+    <string name="setting_wlan_ssids">WLAN SSIDs</string>
+    <string name="setting_ignore_certificate_validity">Ignore Certificate Validity</string>
+    <string name="setting_disable_certificate_hostname_check">Disable Certificate Hostname Check</string>
+    <string name="setting_disable_certificate_data_check">Disable Certificate Date Check</string>
+    <string name="warning_this_disables_security">Warning: This disables security"</string>
+
+    <string name="setting_open_door_image">Open Door Image</string>
+    <string name="setting_closed_door_image">Closed Door Image</string>
+    <string name="setting_no_connection_image">No Connection Image</string>
+    <string name="setting_unknown_status_image">Unknown Status Image</string>
+
+    <string name="setting_client_certificate">Client Certificate</string>
+    <string name="setting_server_certificate">Server Certificate</string>
+    <string name="setting_client_private_key">Client Private Key</string>
+
+    <string name="setting_https_open_url">Open URL</string>
+    <string name="setting_https_close_url">Close URL</string>
+    <string name="setting_https_ring_url">Ring URL</string>
+    <string name="setting_https_status_url">Status URL</string>
+
+    <string name="setting_mqtt_broker_address">MQTT Broker Address</string>
+    <string name="setting_mqtt_username">MQTT Username</string>
+    <string name="setting_mqtt_password">MQTT Password</string>
+    <string name="setting_mqtt_status_topic">MQTT Status Topic</string>
+    <string name="setting_mqtt_command_topic">MQTT Command Topic</string>
+
+    <string name="setting_ssh_server_address">Server Address</string>
+    <string name="setting_ssh_server_port">Server Port</string>
+    <string name="setting_ssh_login_name">Login Name</string>
+    <string name="setting_ssh_login_password">Login Password</string>
+    <string name="setting_ssh_open_command">Open Command</string>
+    <string name="setting_ssh_close_command">Close Command</string>
+    <string name="setting_ssh_ring_command">Ring Command</string>
+    <string name="setting_ssh_status_command">Status Command</string>
+    <string name="setting_ssh_command_timeout">Command Timeout (ms)</string>
+
+    <string name="setting_bluetooth_device_name">Lock Name/MAC</string>
+    <string name="setting_bluetooth_service_uuid">Service UUID (optional)</string>
+    <string name="setting_bluetooth_open_command">Open Command</string>
+    <string name="setting_bluetooth_close_command">Close Command</string>
+    <string name="setting_bluetooth_ring_command">Open Command</string>
+    <string name="setting_bluetooth_status_command">State Command</string>
+
+    <string name="setting_nuki_lock_name">Lock Name/MAC</string>
+    <string name="setting_nuki_user_name">User Name</string>
+    <string name="setting_nuki_app_identifier">App identifier (read only)</string>
+    <string name="setting_nuki_lock_identifier">Lock identifier (read only)</string>
+    <string name="setting_nuki_shared_key">Shared Key (read only)</string>
+
+    <string name="title_door">Door: %s</string>
+
+    <string name="error">Error</string>
+    <string name="done">Done</string>
     <string name="remove_button">Remove</string>
     <string name="select_button">Select</string>
     <string name="set_button">Set</string>
@@ -37,38 +100,31 @@
     <string name="ok_button">Ok</string>
     <string name="public_key">Public Key: %s</string>
     <string name="private_key">Private Key: %s</string>
-    <string name="confirm">Confirm</string>
+
+    <string name="menu_about">About</string>
+    <string name="title_license">License</string>
+
+    <string name="app_name_value" translatable="false">Trigger</string>
+    <string name="app_version">Version:</string>
+    <string name="app_website">Website:</string>
+    <string name="app_description">Description:</string>
+    <string name="app_description_value">Open doors with Do It Yourself controls.</string>
+    <string name="app_website_link" translatable="false">https://github.com/mwarning/trigger/</string>
+    <string name="app_license">License:</string>
+    <string name="app_license_value" translatable="false">GPL-3.0-or-later</string>
+
+
+    <string name="dialog_really_remove_door">Really remove door?</string>
 
     <string name="certificate_url">Certificate URL</string>
-    <string name="import_export_path">Import/Export Path</string>
-    <string name="server_certificate">Server Certificate</string>
-    <string name="client_certificate">Client Certificate</string>
 
-    <string name="new_entry">New Entry</string>
-    <string name="setup_title">Setup</string>
 
-    <string name="setup_name">Door Name</string>
-    <string name="setup_name_description">Name of this setting</string>
+    <string name="setting_no_value">None</string>
 
-    <string name="setup_url">URL</string>
-    <string name="setup_url_description">URL of the door system</string>
+    <string name="invalid_timeout">Invalid Timeout</string>
 
-    <string name="setup_token">Token</string>
-    <string name="setup_token_description">Your personal access token</string>
-
-    <string name="setup_ssids">WiFi SSIDs</string>
-    <string name="setup_ssids_description">Auto-Select when connected to a specific network</string>
-
-    <string name="setup_ignore">Ignore Errors</string>
-    <string name="setup_ignore_description">Ignore HTTPS certificate errors</string>
-
-    <string name="version_title">Version</string>
-    <string name="version_number">Unbekannt</string>
-
-    <string name="website_title">Website</string>
-    <string name="website_url">https://github.com/mwarning/trigger</string>
-
-    <string name="license_title">License</string>
-    <string name="license_name">GPL-2</string>
-    <string name="license_url">https://www.gnu.de/documents/gpl-2.0.en.html</string>
+    <string name="manage_tls_client_keypair">Manage Client Private Key</string>
+    <string name="manage_tls_server_certificate">Manage TLS Server Certificate</string>
+    <string name="manage_tls_client_certificate">Manage TLS Client Certificate</string>
+    <string name="manage_ssh_keypair">Manage SSH Key Pair</string>
 </resources>

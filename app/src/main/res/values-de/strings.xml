@@ -13,13 +13,7 @@
 
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
-    <string name="none">Leer</string>
-    <string name="really_remove_item">Wirklich löschen?</string>
 
-    <string name="manage_ssh_key_pair">SSH Schlüsselpaar Verwalten</string>
-    <string name="manage_tls_certificate">TLS Zertifikat Verwalten</string>
-
-    <string name="save_button">Speichern</string>
     <string name="remove_button">Entfernen</string>
     <string name="select_button">Auswählen</string>
     <string name="set_button">Setzen</string>
@@ -35,38 +29,7 @@
     <string name="ok_button">Ok</string>
     <string name="public_key">Public Key: %s</string>
     <string name="private_key">Private Key: %s</string>
-    <string name="confirm">Bestätigen</string>
 
     <string name="certificate_url">Zertifikats URL</string>
-    <string name="import_export_path">Import/Export Pfad</string>
-    <string name="server_certificate">Server Zertifikat</string>
-    <string name="client_certificate">Client Zertifikat</string>
 
-    <string name="new_entry">Neuer Eintrag</string>
-    <string name="setup_title">Setup</string>
-
-    <string name="setup_name">Name</string>
-    <string name="setup_name_description">Name der Einstellung</string>
-
-    <string name="setup_url">URL</string>
-    <string name="setup_url_description">URL zu spincterd</string>
-
-    <string name="setup_token">Token</string>
-    <string name="setup_token_description">Dein persönliches Zugangstoken</string>
-
-    <string name="setup_ssids">WiFi SSIDs</string>
-    <string name="setup_ssids_description">Auto-Auswahl wenn verbunden mit einem Netzwerk</string>
-
-    <string name="setup_ignore">Ignorieren</string>
-    <string name="setup_ignore_description">HTTPS Zertifikatfehler ignorieren</string>
-
-    <string name="version_title">Version</string>
-    <string name="version_number">Unknown</string>
-
-    <string name="website_title">Website</string>
-    <string name="website_url">https://github.com/mwarning/trigger</string>
-
-    <string name="license_title">Lizenz</string>
-    <string name="license_name">GPL-2</string>
-    <string name="license_url">https://www.gnu.de/documents/gpl-2.0.de.html</string>
 </resources>

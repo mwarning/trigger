@@ -7,7 +7,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGatt
 import app.trigger.*
 
-internal class NukiReadLockStateCallback(setup_id: Int, listener: OnTaskCompleted, setup: NukiDoorSetup) : NukiCallback(setup_id, listener, NukiCallback.Companion.KEYTURNER_SERVICE_UUID, NukiCallback.Companion.KEYTURNER_USDIO_XTERISTIC_UUID) {
+internal class NukiReadLockStateCallback(door_id: Int, listener: OnTaskCompleted, setup: NukiDoor) : NukiCallback(door_id, listener, NukiCallback.Companion.KEYTURNER_SERVICE_UUID, NukiCallback.Companion.KEYTURNER_USDIO_XTERISTIC_UUID) {
     var auth_id: Long
     var shared_key: ByteArray
     var data: ByteArray = ByteArray(0)
@@ -47,13 +47,13 @@ internal class NukiReadLockStateCallback(setup_id: Int, listener: OnTaskComplete
                 extra = " (Battery Critical!)"
             }
             listener.onTaskResult(
-                    setup_id, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra
+                    door_id, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra
             )
 
             // do not wait until the Nuki closes the connection
             closeConnection(gatt)
         } else if (m is NukiCommand.NukiError) {
-            listener.onTaskResult(setup_id, ReplyCode.REMOTE_ERROR, m.asString())
+            listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, m.asString())
             closeConnection(gatt)
         } else {
             Log.e(TAG, "Unhandled command.")

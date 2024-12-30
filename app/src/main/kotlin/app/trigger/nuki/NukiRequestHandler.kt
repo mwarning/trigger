@@ -25,7 +25,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 
-class NukiRequestHandler(private val listener: OnTaskCompleted, private val setup: NukiDoorSetup, private val action: MainActivity.Action) : Thread() {
+class NukiRequestHandler(private val listener: OnTaskCompleted, private val setup: NukiDoor, private val action: MainActivity.Action) : Thread() {
     private fun getAddress(adapter: BluetoothAdapter, device_name: String): String {
         val pairedDevices = adapter.bondedDevices
         var address = ""

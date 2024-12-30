@@ -21,37 +21,37 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
-class MqttRequestHandler(private val listener: OnTaskCompleted, private val setup: MqttDoorSetup, private val action: MainActivity.Action) : Thread(), MqttCallback {
+class MqttRequestHandler(private val listener: OnTaskCompleted, private val door: MqttDoor, private val action: MainActivity.Action) : Thread(), MqttCallback {
     override fun run() {
-        if (setup.id < 0) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Internal Error")
+        if (door.id < 0) {
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "Internal Error")
             return
         }
-        if (isEmpty(setup.server)) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "MQTT broker address not set.")
+        if (isEmpty(door.server)) {
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "MQTT broker address not set.")
             return
         }
-        if (action === MainActivity.Action.FETCH_STATE && setup.status_topic.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+        if (action === MainActivity.Action.FETCH_STATE && door.status_topic.isEmpty()) {
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "")
             return
         }
         if ((action === MainActivity.Action.OPEN_DOOR || action === MainActivity.Action.RING_DOOR || action === MainActivity.Action.CLOSE_DOOR)
-                && setup.command_topic.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No command topic set.")
+                && door.command_topic.isEmpty()) {
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "No command topic set.")
             return
         }
-        if (action === MainActivity.Action.CLOSE_DOOR && setup.close_command.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No close command set.")
+        if (action === MainActivity.Action.CLOSE_DOOR && door.close_command.isEmpty()) {
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "No close command set.")
             return
         }
-        if (setup.qos != 0 && setup.qos != 1 && setup.qos != 2) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Invalid QoS value: " + setup.qos)
+        if (door.qos != 0 && door.qos != 1 && door.qos != 2) {
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "Invalid QoS value: ${door.qos}")
             return
         }
         val clientId = MqttClient.generateClientId()
         val opts = MqttConnectOptions()
         val persistence = MemoryPersistence()
-        var address = setup.server
+        var address = door.server
         try {
             if (address.startsWith("mqtt://")) {
                 address = address.replaceFirst("mqtt://".toRegex(), "tcp://")
@@ -59,38 +59,38 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val setu
             } else if (address.startsWith("mqtts://")) {
                 address = address.replaceFirst("mqtts://".toRegex(), "ssl://")
                 address = rebuildAddress(address, 8883)
-            } else if (setup.server.startsWith("tcp://")) {
+            } else if (door.server.startsWith("tcp://")) {
                 address = rebuildAddress(address, 1883)
-            } else if (setup.server.startsWith("ssl://")) {
+            } else if (door.server.startsWith("ssl://")) {
                 address = rebuildAddress(address, 8883)
             } else {
                 throw Exception(
                         "Server address needs to start with 'mqtt://' or 'mqtts://'."
                 )
             }
-            if (!setup.username.isEmpty()) {
-                opts.userName = setup.username
+            if (!door.username.isEmpty()) {
+                opts.userName = door.username
             }
-            if (!setup.password.isEmpty()) {
-                opts.password = setup.password.toCharArray()
+            if (!door.password.isEmpty()) {
+                opts.password = door.password.toCharArray()
             }
 
             // false: broker will not keep messages
             opts.isCleanSession = false
             if (address.startsWith("ssl://")) {
-                opts.isHttpsHostnameVerificationEnabled = !setup.ignore_hostname_mismatch
-                val client_keypair = setup.client_keypair
-                val client_certificate = setup.client_certificate
-                if (setup.server_certificate != null) {
+                opts.isHttpsHostnameVerificationEnabled = !door.ignore_hostname_mismatch
+                val client_keypair = door.client_keypair
+                val client_certificate = door.client_certificate
+                if (door.server_certificate != null) {
                     // use given certificate only
                     if (client_keypair != null && client_certificate != null) {
                         val client_private_key = PubkeyUtils.decodePrivate(
                                 client_keypair.privateKey, client_keypair.type
                         )
                         opts.socketFactory = getSocketFactoryWithCertificateAndClientKey(
-                                setup.server_certificate, setup.client_certificate!!, client_private_key)
+                                door.server_certificate, door.client_certificate!!, client_private_key)
                     } else if (client_keypair == null && client_certificate == null) {
-                        if (setup.ignore_certificate) {
+                        if (door.ignore_certificate) {
                             // disable entire certificate validity
                             val context = SSLContext.getInstance("TLS")
                             context.init(null, arrayOf<X509TrustManager>(object : X509TrustManager {
@@ -101,11 +101,11 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val setu
                                 }
                             }), SecureRandom())
                             opts.socketFactory = context.socketFactory
-                        } else if (setup.ignore_expiration) {
+                        } else if (door.ignore_expiration) {
                             // ignore notBefore/notAfter
                             opts.socketFactory = HttpsTools.getSocketFactoryIgnoreCertificateExpiredException()
                         } else {
-                            opts.socketFactory = getSocketFactoryWithCertificate(setup.server_certificate)
+                            opts.socketFactory = getSocketFactoryWithCertificate(door.server_certificate)
                         }
                     } else {
                         throw Exception("Both client key and client certificate needed.")
@@ -125,44 +125,44 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val setu
             client.connect(opts)
             when (action) {
                 MainActivity.Action.FETCH_STATE ->                     // subscribe
-                    client.subscribe(setup.status_topic)
+                    client.subscribe(door.status_topic)
                 MainActivity.Action.OPEN_DOOR -> {
                     // publish
-                    val open = MqttMessage(setup.open_command.toByteArray())
-                    open.isRetained = setup.retained
-                    open.qos = setup.qos
-                    client.publish(setup.command_topic, open)
+                    val open = MqttMessage(door.open_command.toByteArray())
+                    open.isRetained = door.retained
+                    open.qos = door.qos
+                    client.publish(door.command_topic, open)
                 }
                 MainActivity.Action.RING_DOOR -> {
                     // publish
-                    val ring = MqttMessage(setup.ring_command.toByteArray())
-                    ring.isRetained = setup.retained
-                    ring.qos = setup.qos
-                    client.publish(setup.command_topic, ring)
+                    val ring = MqttMessage(door.ring_command.toByteArray())
+                    ring.isRetained = door.retained
+                    ring.qos = door.qos
+                    client.publish(door.command_topic, ring)
                 }
                 MainActivity.Action.CLOSE_DOOR -> {
                     // publish
-                    val close = MqttMessage(setup.close_command.toByteArray())
-                    close.isRetained = setup.retained
-                    close.qos = setup.qos
-                    client.publish(setup.command_topic, close)
+                    val close = MqttMessage(door.close_command.toByteArray())
+                    close.isRetained = door.retained
+                    close.qos = door.qos
+                    client.publish(door.command_topic, close)
                 }
             }
-            listener.onTaskResult(setup.id, ReplyCode.SUCCESS, "")
+            listener.onTaskResult(door.id, ReplyCode.SUCCESS, "")
         } catch (me: MqttException) {
             //me.getMessage() returns "MqttException" only
-            listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, me.toString())
+            listener.onTaskResult(door.id, ReplyCode.REMOTE_ERROR, me.toString())
         } catch (e: Exception) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, e.message!!)
+            listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, e.message!!)
         }
     }
 
     override fun connectionLost(cause: Throwable) {
-        listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, cause.toString())
+        listener.onTaskResult(door.id, ReplyCode.REMOTE_ERROR, cause.toString())
     }
 
     override fun messageArrived(topic: String, message: MqttMessage) {
-        listener.onTaskResult(setup.id, ReplyCode.SUCCESS, message.toString())
+        listener.onTaskResult(door.id, ReplyCode.SUCCESS, message.toString())
     }
 
     override fun deliveryComplete(token: IMqttDeliveryToken) {
@@ -171,7 +171,7 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val setu
 
     protected fun onPostExecute(result: DoorReply) {
         // already on GUI thread
-        listener.onTaskResult(setup.id, result.code, result.message)
+        listener.onTaskResult(door.id, result.code, result.message)
     }
 
     companion object {

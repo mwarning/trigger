@@ -1,10 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="SetupTypeNames">
-        <item>HTTPS Tür</item>
-        <item>SSH Tür</item>
-        <item>MQTT Tür</item>
-        <item>Bluetooth Tür</item>
-        <item>Nuki Tür</item>
-    </string-array>
-</resources>
+<resources></resources>

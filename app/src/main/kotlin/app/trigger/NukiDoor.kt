@@ -1,51 +1,36 @@
 package app.trigger
 
-import android.graphics.Bitmap
-import app.trigger.DoorState.StateCode
+import app.trigger.DoorStatus.StateCode
 import app.trigger.DoorReply.ReplyCode
 import android.text.Html
 import org.json.JSONObject
 
 
-class NukiDoorSetup(override var id: Int, override var name: String) : Setup {
+class NukiDoor(override var id: Int, override var name: String) : Door() {
     override val type = Companion.TYPE
     var device_name = ""
     var user_name = "user"
     var shared_key = ""
     var auth_id: Long = 0
     var app_id: Long = 2342
-    var open_image: Bitmap? = null
-    var closed_image: Bitmap? = null
-    var unknown_image: Bitmap? = null
-    var disabled_image: Bitmap? = null
 
     override fun getWiFiSSIDs(): String  = ""
     override fun getWiFiRequired(): Boolean = false
 
-    override fun getStateImage(state: StateCode?): Bitmap? {
-        return when (state) {
-            StateCode.OPEN -> open_image
-            StateCode.CLOSED -> closed_image
-            StateCode.DISABLED -> disabled_image
-            StateCode.UNKNOWN -> unknown_image
-            else -> null
-        }
-    }
-
-    override fun parseReply(reply: DoorReply): DoorState {
+    override fun parseReply(reply: DoorReply): DoorStatus {
         val msg = Html.fromHtml(reply.message).toString().trim { it <= ' ' }
         return when (reply.code) {
-            ReplyCode.LOCAL_ERROR, ReplyCode.REMOTE_ERROR -> DoorState(StateCode.UNKNOWN, msg)
+            ReplyCode.LOCAL_ERROR, ReplyCode.REMOTE_ERROR -> DoorStatus(StateCode.UNKNOWN, msg)
             ReplyCode.SUCCESS -> if (reply.message.contains("unlocked")) {
                 // door unlocked
-                DoorState(StateCode.OPEN, msg)
+                DoorStatus(StateCode.OPEN, msg)
             } else if (reply.message.contains("locked")) {
                 // door locked
-                DoorState(StateCode.CLOSED, msg)
+                DoorStatus(StateCode.CLOSED, msg)
             } else {
-                DoorState(StateCode.UNKNOWN, msg)
+                DoorStatus(StateCode.UNKNOWN, msg)
             }
-            ReplyCode.DISABLED -> DoorState(StateCode.DISABLED, msg)
+            ReplyCode.DISABLED -> DoorStatus(StateCode.DISABLED, msg)
         }
     }
 
@@ -83,10 +68,10 @@ class NukiDoorSetup(override var id: Int, override var name: String) : Setup {
     companion object {
         const val TYPE = "NukiDoorSetup"
 
-        fun fromJSONObject(obj: JSONObject): NukiDoorSetup {
+        fun fromJSONObject(obj: JSONObject): NukiDoor {
             val id = obj.getInt("id")
             val name = obj.getString("name")
-            val setup = NukiDoorSetup(id, name)
+            val setup = NukiDoor(id, name)
 
             setup.device_name = obj.optString("device_name", "")
             setup.user_name = obj.optString("user_name", "")

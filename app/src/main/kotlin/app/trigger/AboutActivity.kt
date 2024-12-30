@@ -1,22 +1,26 @@
 package app.trigger
 
-import android.preference.PreferenceActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.preference.Preference
+import android.widget.TextView
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 
-class AboutActivity : PreferenceActivity() {
-    public override fun onCreate(savedInstanceState: Bundle?) {
+
+class AboutActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addPreferencesFromResource(R.xml.about)
-        val context = this.applicationContext
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        val versionPref = findPreference("prefVersion")
+        setContentView(R.layout.activity_about)
+        title = getString(R.string.menu_about)
 
-        versionPref.summary = if (BuildConfig.DEBUG) {
+        findViewById<TextView>(R.id.versionTv).text = if (BuildConfig.DEBUG) {
             BuildConfig.VERSION_NAME + " (debug)"
         } else {
             BuildConfig.VERSION_NAME
+        }
+
+        findViewById<TextView>(R.id.licenseTV).setOnClickListener {
+            val intent = Intent(this, LicenseActivity::class.java)
+            startActivity(intent)
         }
     }
 }

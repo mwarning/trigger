@@ -1,39 +1,23 @@
 package app.trigger
 
-import android.graphics.Bitmap
-import app.trigger.DoorState.StateCode
 import org.json.JSONObject
 
 
-class BluetoothDoorSetup(override var id: Int, override var name: String) : Setup {
+class BluetoothDoor(override var id: Int, override var name: String) : Door() {
     override val type = Companion.TYPE
     var device_name = ""
     var service_uuid = ""
     var open_query = ""
     var close_query = ""
     var ring_query = ""
+    var status_query = ""
     var locked_pattern = "LOCKED"
     var unlocked_pattern = "UNLOCKED"
-    var status_query = ""
-    var open_image: Bitmap? = null
-    var closed_image: Bitmap? = null
-    var unknown_image: Bitmap? = null
-    var disabled_image: Bitmap? = null
 
     override fun getWiFiSSIDs(): String =  ""
     override fun getWiFiRequired(): Boolean = false
 
-    override fun getStateImage(state: StateCode?): Bitmap? {
-        return when (state) {
-            StateCode.OPEN -> open_image
-            StateCode.CLOSED -> closed_image
-            StateCode.DISABLED -> disabled_image
-            StateCode.UNKNOWN -> unknown_image
-            else -> null
-        }
-    }
-
-    override fun parseReply(reply: DoorReply): DoorState {
+    override fun parseReply(reply: DoorReply): DoorStatus {
         return Utils.genericDoorReplyParser(reply, unlocked_pattern, locked_pattern)
     }
 
@@ -75,10 +59,10 @@ class BluetoothDoorSetup(override var id: Int, override var name: String) : Setu
     companion object {
         const val TYPE = "BluetoothDoorSetup"
 
-        fun fromJSONObject(obj: JSONObject): BluetoothDoorSetup {
+        fun fromJSONObject(obj: JSONObject): BluetoothDoor {
             val id = obj.getInt("id")
             val name = obj.getString("name")
-            val setup = BluetoothDoorSetup(id, name)
+            val setup = BluetoothDoor(id, name)
 
             setup.device_name = obj.optString("device_name", "")
             setup.service_uuid = obj.optString("service_uuid", "")

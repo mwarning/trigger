@@ -1,26 +1,28 @@
 package app.trigger
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
-import android.content.DialogInterface
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import app.trigger.DoorStatus.StateCode
 import java.io.ByteArrayOutputStream
-import java.lang.Exception
 
 class ImageActivity : AppCompatActivity() {
-    private var preference : ImagePreference? = null // hack
+    private lateinit var door: Door
+    private lateinit var stateCode: StateCode
+
     private lateinit var builder: AlertDialog.Builder
     private lateinit var setButton: Button
     private lateinit var selectButton: Button
     private lateinit var deleteButton: Button
     private lateinit var imageView: ImageView
-    private var image: Bitmap? = null
+    private var currentImage: Bitmap? = null
 
     private fun showErrorMessage(title: String, message: String) {
         builder.setTitle(title)
@@ -32,30 +34,46 @@ class ImageActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
-        preference = ImagePreference.self // hack, TODO: pass serialized bitmap in bundle
-        image = preference!!.image
+
+        // currentDoor might still not be stored if it is a new one
+        val currentDoor = SetupActivity.currentDoor
+        val codeString = intent.getStringExtra("state_code") ?: ""
+        if (currentDoor == null || codeString.isEmpty()) {
+            // not expected to happen
+            finish()
+            return
+        }
+
+        door = currentDoor
+        stateCode = StateCode.valueOf(codeString)
+        currentImage = door.getStateImage(stateCode)
+
         imageView = findViewById(R.id.selectedImage)
         builder = AlertDialog.Builder(this)
         setButton = findViewById(R.id.SetButton)
         selectButton = findViewById(R.id.SelectButton)
         deleteButton = findViewById(R.id.DeleteButton)
+
         selectButton.setOnClickListener { _: View? ->
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
             startActivityForResult(intent, READ_IMAGE_REQUEST)
         }
+
         setButton.setOnClickListener { _: View? ->
             // persist your value here
-            preference!!.image = image
+            door.setStateImage(stateCode, currentImage)
             finish()
         }
+
         deleteButton.setOnClickListener { _: View? ->
             builder.setTitle("Confirm")
             builder.setMessage("Really remove image?")
             builder.setCancelable(false) // not necessary
             builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, _: Int ->
-                image = null
+                currentImage = null
+                door.setStateImage(stateCode, null)
                 updateImageView()
                 dialog.cancel()
             }
@@ -65,13 +83,13 @@ class ImageActivity : AppCompatActivity() {
             val alert = builder.create()
             alert.show()
         }
+
         updateImageView()
     }
 
     private fun updateImageView() {
-        imageView.setImageBitmap(image)
-        //imageView.setImageDrawable(image);
-        deleteButton.isEnabled = (image != null)
+        imageView.setImageBitmap(currentImage)
+        deleteButton.isEnabled = (currentImage != null)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -111,7 +129,7 @@ class ImageActivity : AppCompatActivity() {
             val success = image.compress(Bitmap.CompressFormat.PNG, 0, byteStream)
             if (success) {
                 //Log.d("ImageActivity", "image: " + inWidth + "/" + inHeight + ", compress.length: " + byteStream.toByteArray().length + ", base64: " + Base64.encodeToString(byteStream.toByteArray(), 0).length());
-                this.image = image
+                currentImage = image
             } else {
                 throw Exception("Cannot compress image")
             }
@@ -123,5 +141,6 @@ class ImageActivity : AppCompatActivity() {
 
     companion object {
         private const val READ_IMAGE_REQUEST = 0x01
+        private const val TAG = "ImageActivity"
     }
 }

@@ -10,7 +10,7 @@ import java.lang.Exception
 import java.util.*
 
 
-class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val setup: BluetoothDoorSetup, private val action: MainActivity.Action) : Thread() {
+class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val setup: BluetoothDoor, private val action: MainActivity.Action) : Thread() {
     private var socket: BluetoothSocket? = null
     override fun run() {
         if (setup.id < 0) {
@@ -45,7 +45,8 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
             var address = ""
             for (device in pairedDevices) {
                 if (device.name != null && device.name == setup.device_name
-                        || device.address == setup.device_name.toUpperCase()) {
+                        || device.address == setup.device_name.uppercase(Locale.ROOT)
+                ) {
                     address = device.address
                 }
             }

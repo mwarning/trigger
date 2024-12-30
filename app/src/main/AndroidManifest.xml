@@ -32,7 +32,7 @@
         tools:replace="android:allowBackup"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/app_name_value"
         android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme" >
         <activity
@@ -45,56 +45,68 @@
         </activity>
         <activity
             android:name=".SetupActivity"
-            android:label="@string/action_edit" />
+            android:label="@string/action_edit"
+            android:exported="false" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/action_about" />
+            android:label="@string/action_about"
+            android:exported="false" />
         <activity
             android:name=".QRShowActivity"
-            android:exported="true"
-            android:label="@string/action_export" />
+            android:label="@string/action_export"
+            android:exported="true" />
         <activity
             android:name=".QRScanActivity"
-            android:label="@string/action_import" />
+            android:label="@string/action_import"
+            android:exported="false" />
         <activity
             android:name=".BackupActivity"
             android:label="@string/action_backup"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
         <activity
             android:name=".ssh.SshKeyPairActivity"
-            android:label="@string/manage_ssh_key_pair"
+            android:label="@string/manage_ssh_keypair"
             android:exported="false">
-            <intent-filter>
-                <action android:name=".ssh.KeyPairActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".mqtt.MqttClientKeyPairActivity"
-            android:label="Manage Client Private Key"
+            android:label="@string/manage_tls_client_keypair"
             android:exported="false">
-            <intent-filter>
-                <action android:name=".mqtt.MqttPrivateClientKeyActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
         <activity
-            android:name=".https.CertificateActivity"
-            android:label="@string/manage_tls_certificate"
+            android:name=".mqtt.MqttServerCertificateActivity"
+            android:label="@string/manage_tls_server_certificate"
             android:exported="false">
-            <intent-filter>
-                <action android:name=".https.CertificateActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+        </activity>
+        <activity
+            android:name=".mqtt.MqttClientCertificateActivity"
+            android:label="@string/manage_tls_client_certificate"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".https.HttpsClientKeyPairActivity"
+            android:label="@string/manage_tls_client_keypair"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".https.HttpsServerCertificateActivity"
+            android:label="@string/manage_tls_server_certificate"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".https.HttpsClientCertificateActivity"
+            android:label="@string/manage_tls_client_certificate"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".LicenseActivity"
+            android:exported="false">
         </activity>
         <activity
             android:name=".ImageActivity"
             android:label="Select Image"
             android:exported="false">
-            <intent-filter>
-                <action android:name=".ImageActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
     </application>
 

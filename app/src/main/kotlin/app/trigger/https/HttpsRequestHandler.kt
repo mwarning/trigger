@@ -16,7 +16,7 @@ import java.security.cert.X509Certificate
 import java.util.*
 import javax.net.ssl.*
 
-class HttpsRequestHandler(private val listener: OnTaskCompleted, private val setup: HttpsDoorSetup, private val action: MainActivity.Action) : Thread() {
+class HttpsRequestHandler(private val listener: OnTaskCompleted, private val setup: HttpsDoor, private val action: MainActivity.Action) : Thread() {
     override fun run() {
         if (setup.id < 0) {
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Internal Error")
