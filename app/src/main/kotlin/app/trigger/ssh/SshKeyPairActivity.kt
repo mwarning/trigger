@@ -30,7 +30,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
     private lateinit var useFilesystemCheckBox: CheckBox
     private lateinit var cancelButton: Button
     private lateinit var registerButton: Button
-    private lateinit var okButton: Button
+    private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
     private lateinit var publicKey: TextView
     private lateinit var registerAddress: EditText
@@ -56,7 +56,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             return
         }
 
-        setContentView(R.layout.activity_keypair)
+        setContentView(R.layout.activity_ssh_keypair)
         clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         builder = AlertDialog.Builder(this)
         createButton = findViewById(R.id.CreateButton)
@@ -67,7 +67,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         useFilesystemCheckBox = findViewById(R.id.UseFilesystemCheckBox)
         cancelButton = findViewById(R.id.CancelButton)
         registerButton = findViewById(R.id.RegisterButton)
-        okButton = findViewById(R.id.OkButton)
+        saveButton = findViewById(R.id.SaveButton)
         deleteButton = findViewById(R.id.DeleteButton)
         publicKey = findViewById(R.id.PublicKey)
         registerAddress = findViewById(R.id.RegisterAddress)
@@ -136,7 +136,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 val publicKey = keypair!!.openSSHPublicKey
                 val clip = ClipData.newPlainText(keypair!!.description, publicKey)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(applicationContext, "Done.", Toast.LENGTH_SHORT).show()
+                showMessage(R.string.done)
             } else {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -153,7 +153,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 val privateKey = keypair!!.openSSHPrivateKey
                 val clip = ClipData.newPlainText(keypair!!.description, privateKey)
                 clipboard.setPrimaryClip(clip)
-                Toast.makeText(applicationContext, "Done.", Toast.LENGTH_SHORT).show()
+                showMessage(R.string.done)
             } else {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -169,13 +169,13 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                     val privateKey = clipboard.primaryClip!!.getItemAt(0).text.toString()
                     val kp = SshTools.parsePrivateKeyPEM(privateKey)
                     if (kp != null) {
-                        Toast.makeText(applicationContext, "Done.", Toast.LENGTH_SHORT).show()
+                        showMessage(R.string.done)
                         updateKeyInfo(kp)
                     } else {
-                        Toast.makeText(applicationContext, "Import Failed.", Toast.LENGTH_SHORT).show()
+                        showMessage("Import Failed.")
                     }
                 } else {
-                    Toast.makeText(applicationContext, "Clipboard is empty.", Toast.LENGTH_SHORT).show()
+                    showMessage("Clipboard is empty.")
                 }
             } else {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -186,9 +186,11 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             }
         }
 
-        okButton.setOnClickListener {
+        saveButton.setOnClickListener {
             // persist your value here
-            sshDoor.keypair = sshDoor.keypair
+            Log.d(TAG, "sshDoor.keypair: ${sshDoor.keypair != null}")
+            sshDoor.keypair = keypair
+            showMessage(R.string.done)
             finish()
         }
 
@@ -214,16 +216,24 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         updateKeyInfo(sshDoor.keypair)
     }
 
+    private fun showMessage(textId: Int) {
+        Toast.makeText(applicationContext, textId, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showMessage(textString: String?) {
+        Toast.makeText(applicationContext, textString, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onGenerateIdentityTaskCompleted(message: String?, keypair: KeyPairBean?) {
         keyGenInProgress = false
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+        showMessage(message)
 
         // only set if successful
         keypair?.let { updateKeyInfo(it) }
     }
 
     override fun onRegisterIdentityTaskCompleted(message: String?) {
-        runOnUiThread { Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show() }
+        runOnUiThread { showMessage(message) }
     }
 
     private fun exportPublicKey(uri: Uri?) {
@@ -233,7 +243,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
         try {
             writeFile(this, uri, keypair!!.openSSHPublicKey!!.toByteArray())
-            Toast.makeText(applicationContext, "Done. Wrote public key.", Toast.LENGTH_SHORT).show()
+            showMessage("Done. Wrote public key.")
         } catch (e: Exception) {
             showErrorMessageDialog("Error", e.message)
         }
@@ -246,7 +256,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
         try {
             writeFile(this, uri, keypair!!.openSSHPrivateKey!!.toByteArray())
-            Toast.makeText(applicationContext, "Done. Wrote private key.", Toast.LENGTH_SHORT).show()
+            showMessage("Done. Wrote private key.")
         } catch (e: Exception) {
             showErrorMessageDialog("Error", e.message)
         }
@@ -258,7 +268,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             val kp = SshTools.parsePrivateKeyPEM(privateKeyPEM)
                     ?: throw Exception("Not a valid key!")
             updateKeyInfo(kp)
-            Toast.makeText(applicationContext, "Done", Toast.LENGTH_SHORT).show()
+            showMessage(R.string.done)
         } catch (e: Exception) {
             showErrorMessageDialog("Error", e.message)
         }

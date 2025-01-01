@@ -159,8 +159,15 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/SaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/button_save" />
 
         <Button
             android:id="@+id/DeleteButton"
@@ -168,7 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="@string/remove_button" />
+            android:text="@string/button_delete" />
 
         <Button
             android:id="@+id/CancelButton"
@@ -176,15 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="@string/cancel_button" />
-
-        <Button
-            android:id="@+id/OkButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="@string/ok_button" />
+            android:text="@string/button_abort" />
 
     </LinearLayout>
 
