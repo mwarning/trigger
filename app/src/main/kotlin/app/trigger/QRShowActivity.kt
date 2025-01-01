@@ -8,9 +8,9 @@ import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.google.zxing.WriterException
 import android.widget.*
+import com.google.zxing.EncodeHintType
 import java.lang.Exception
 import java.util.ArrayList
-
 
 class QRShowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +70,8 @@ class QRShowActivity : AppCompatActivity() {
             data_length = data.length
 
             // data has to be a string
-            val bitMatrix = multiFormatWriter.encode(data, BarcodeFormat.QR_CODE, 1080, 1080)
+            val hints =  mapOf(EncodeHintType.CHARACTER_SET to "utf-8")
+            val bitMatrix = multiFormatWriter.encode(data, BarcodeFormat.QR_CODE, 1080, 1080, hints)
             val barcodeEncoder = BarcodeEncoder()
             val bitmap = barcodeEncoder.createBitmap(bitMatrix)
             findViewById<ImageView>(R.id.QRView).setImageBitmap(bitmap)
