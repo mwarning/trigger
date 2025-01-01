@@ -73,7 +73,7 @@ object PubkeyUtils {
     }
 
     @Throws(Exception::class)
-    private fun decrypt(saltAndCiphertext: ByteArray?, secret: String): ByteArray? {
+    private fun decrypt(saltAndCiphertext: ByteArray?, secret: String): ByteArray {
         val salt = ByteArray(SALT_SIZE)
         val ciphertext = ByteArray(saltAndCiphertext!!.size - salt.size)
         System.arraycopy(saltAndCiphertext, 0, salt, 0, salt.size)
