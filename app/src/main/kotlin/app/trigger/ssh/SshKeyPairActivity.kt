@@ -172,10 +172,10 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                         showMessage(R.string.done)
                         updateKeyInfo(kp)
                     } else {
-                        showMessage("Import Failed.")
+                        showMessage(R.string.ssh_key_import_failed)
                     }
                 } else {
-                    showMessage("Clipboard is empty.")
+                    showMessage(R.string.clipboard_is_empty)
                 }
             } else {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)

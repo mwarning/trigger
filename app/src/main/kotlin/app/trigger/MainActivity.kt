@@ -216,12 +216,12 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         super.onPause()
     }
 
+    private fun showMessage(textId: Int) {
+        Toast.makeText(applicationContext, textId, Toast.LENGTH_SHORT).show()
+    }
+
     private fun showMessage(message: String) {
-        val context = applicationContext
-        // show centered text
-        val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
-        //toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show()
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
     // listen for connectivity changes
@@ -407,10 +407,10 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 val passphrase = passphraseEditText.text.toString()
                 if (SshRequestHandler.testPassphrase(door.keypair, passphrase)) {
                     door.passphrase_tmp = passphrase
-                    showMessage("Passphrase accepted")
+                    showMessage(R.string.passphrase_accepted)
                     callRequestHandler(action)
                 } else {
-                    showMessage("Passphrase invalid")
+                    showMessage(R.string.passphrase_invalid)
                 }
                 dialog.cancel()
             }

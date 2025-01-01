@@ -126,4 +126,8 @@
     <string name="manage_tls_server_certificate">Manage TLS Server Certificate</string>
     <string name="manage_tls_client_certificate">Manage TLS Client Certificate</string>
     <string name="manage_ssh_keypair">Manage SSH Key Pair</string>
+    <string name="passphrase_accepted">Passphrase accepted</string>
+    <string name="passphrase_invalid">Passphrase invalid</string>
+    <string name="ssh_key_import_failed">Import Failed</string>
+    <string name="clipboard_is_empty">Clipboard is empty</string>
 </resources>
