@@ -13,11 +13,9 @@ import org.json.JSONException
 import app.trigger.ssh.SshTools
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.google.zxing.ResultPoint
-import com.google.zxing.BarcodeFormat;
-import android.view.View
+import com.google.zxing.BarcodeFormat
 import java.lang.Exception
 import java.net.URI
-
 
 class QRScanActivity : AppCompatActivity(), BarcodeCallback {
     private lateinit var barcodeView: DecoratedBarcodeView
@@ -46,24 +44,16 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
 
     override fun onResume() {
         super.onResume()
-        barcodeView.resume()
+        if (Utils.hasCameraPermission(this)) {
+            barcodeView.resume()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        barcodeView.pause()
-    }
-
-    fun pause(view: View?) {
-        barcodeView.pause()
-    }
-
-    fun resume(view: View?) {
-        barcodeView.resume()
-    }
-
-    fun triggerScan(view: View?) {
-        barcodeView.decodeSingle(this)
+        if (Utils.hasCameraPermission(this)) {
+            barcodeView.pause()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
