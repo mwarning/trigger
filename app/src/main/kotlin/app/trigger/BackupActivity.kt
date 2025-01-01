@@ -69,7 +69,7 @@ class BackupActivity : AppCompatActivity() {
         try {
             val obj = JSONObject()
             var count = 0
-            for (door in Settings.doors) {
+            for (door in Settings.getDoors()) {
                 val json_obj = Settings.toJsonObject(door)
                 json_obj!!.remove("id")
                 obj.put(door.name, json_obj)

@@ -14,10 +14,7 @@ import java.util.*
 
 object Settings {
     private const val TAG = "Settings"
-    //private var sharedPreferences: SharedPreferences? = null
-    var doors = ArrayList<Door>()
-    //private var app_version : String? = null // stored in program
-    private var db_version : String? = null // stored in database
+    private var doors = ArrayList<Door>()
 
     // read file from internal storage
     private fun readInternalFile(filePath: String): ByteArray {
@@ -57,9 +54,9 @@ object Settings {
 
             val array = JSONArray()
             for (door in doors) {
-                val door_obj = toJsonObject(door)
-                if (door_obj != null) {
-                    array.put(door_obj)
+                val doorJson = toJsonObject(door)
+                if (doorJson != null) {
+                    array.put(doorJson)
                 }
             }
             obj.put("doors", array)
@@ -88,8 +85,7 @@ object Settings {
 
             if (db_version != BuildConfig.VERSION_NAME) {
                 Log.w(TAG, "database version (${db_version}) != app version (${BuildConfig.VERSION_NAME})")
-                // TODO
-                //upgradeDB(db_version, db)
+                upgradeDatabase(db_version, obj)
             }
 
             val array = obj.getJSONArray("doors")
@@ -101,6 +97,10 @@ object Settings {
                 }
             }
         }
+    }
+
+    private fun upgradeDatabase(db_version: String, data: JSONObject) {
+        // nothing to do right now
     }
 
     fun toJsonObject(door: Door): JSONObject? {
@@ -135,6 +135,10 @@ object Settings {
         } else {
             null
         }
+    }
+
+    fun getDoors(): ArrayList<Door> {
+        return doors
     }
 
     fun removeDoor(id: Int) {

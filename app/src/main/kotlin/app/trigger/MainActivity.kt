@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
     private fun updateSpinner(match_ssid: Boolean) {
         val items = ArrayList<SpinnerItem>()
-        for (door in Settings.doors) {
+        for (door in Settings.getDoors()) {
             items.add(SpinnerItem(door.id, door.name, door.getWiFiSSIDs()))
         }
 
@@ -384,7 +384,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             }
 
             // try other passphrases
-            for (s in Settings.doors) {
+            for (s in Settings.getDoors()) {
                 if (s is SshDoor) {
                     if (s.needsPassphrase() && s.passphrase_tmp.isNotEmpty()) {
                         if (SshRequestHandler.testPassphrase(door.keypair, s.passphrase_tmp)) {
