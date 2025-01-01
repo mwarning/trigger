@@ -8,7 +8,6 @@ import java.security.KeyPairGenerator
 import java.security.SecureRandom
 
 internal class GenerateIdentityTask(var listener: OnTaskCompleted) : AsyncTask<Any?, Void?, String?>() {
-    //var listener: OnTaskCompleted? = null
     var keypair: KeyPairBean? = null
 
     companion object {
@@ -91,9 +90,5 @@ internal class GenerateIdentityTask(var listener: OnTaskCompleted) : AsyncTask<A
             Log.e(TAG, e.toString())
         }
         return null
-    }
-
-    init {
-        this.listener = listener
     }
 }
