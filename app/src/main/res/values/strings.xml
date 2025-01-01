@@ -130,4 +130,5 @@
     <string name="passphrase_invalid">Passphrase invalid</string>
     <string name="ssh_key_import_failed">Import Failed</string>
     <string name="clipboard_is_empty">Clipboard is empty</string>
+    <string name="old_settings_detected">Trigger 4.0.1 and later does not support the previous internal storage format anymore. Please install the previous version and export the backup. Then install the new version and import the backup.</string>
 </resources>

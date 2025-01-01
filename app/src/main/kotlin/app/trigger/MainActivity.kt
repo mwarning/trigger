@@ -31,6 +31,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.preference.PreferenceManager
 import java.lang.Exception
 import java.security.Security
 import java.util.*
@@ -169,6 +170,16 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
+    private fun checkForOldDatabasePresent() {
+        if (check_for_old_database) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            if (prefs.getString("db_version", null) != null) {
+                showMessage(R.string.old_settings_detected)
+            }
+            check_for_old_database = false;
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -196,6 +207,8 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             // update door state
             callRequestHandler(Action.FETCH_STATE)
         }
+
+        checkForOldDatabasePresent()
 
         Log.d(TAG, "Security.insertProviderAt(new OpenSSLProvider()")
         Security.insertProviderAt(OpenSSLProvider(), 1)
@@ -601,5 +614,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     companion object {
         private const val TAG = "MainActivity"
         private const val BLUETOOTH_CONNECT_REQUEST_CODE = 0x01
+        private var check_for_old_database = true
     }
 }
