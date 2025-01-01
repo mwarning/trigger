@@ -41,7 +41,7 @@ class SetupActivity : AppCompatActivity() {
     private fun initViews() {
         val door = currentDoor ?: return
 
-        title = String.format(getString(R.string.title_door), door.name)
+        title = door.name
 
         Log.d(TAG, "initViews() ${door.type}")
 
@@ -84,7 +84,7 @@ class SetupActivity : AppCompatActivity() {
             })
 
         setupSpinner(door.type,
-            R.id.spinnerDoorTypes,
+            R.id.doorTypesSpinner,
             R.array.DoorTypeLabels,
             R.array.DoorTypeValues,
             object : SpinnerItemSelected {
@@ -126,23 +126,23 @@ class SetupActivity : AppCompatActivity() {
             })
 
         if (door is HttpsDoor) {
-            initHttpsViews(door as HttpsDoor)
+            initHttpsViews(door)
         }
 
         if (door is SshDoor) {
-            initSshViews(door as SshDoor)
+            initSshViews(door)
         }
 
         if (door is BluetoothDoor) {
-            initBluetoothViews(door as BluetoothDoor)
+            initBluetoothViews(door)
         }
 
         if (door is MqttDoor) {
-            initMqttViews(door as MqttDoor)
+            initMqttViews(door)
         }
 
         if (door is NukiDoor) {
-            initNukiViews(door as NukiDoor)
+            initNukiViews(door)
         }
 
         findViewById<SwitchMaterial>(R.id.openDoorImageSwitch).apply {
@@ -225,7 +225,7 @@ class SetupActivity : AppCompatActivity() {
         }
 
         setupSpinner(door.method,
-            R.id.spinnerHttpMethod,
+            R.id.httpMethodSpinner,
             R.array.HttpMethodLabels,
             R.array.HttpMethodValues,
             object: SpinnerItemSelected {
@@ -236,7 +236,7 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
-        setupTextView(R.id.httpsOpenURLTextView, R.string.setting_https_open_url, door.open_query,
+        setupTextView(R.id.httpsOpenUrlTextView, R.string.setting_https_open_url, door.open_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
                     door.open_query = newValue
@@ -246,7 +246,7 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
-        setupTextView(R.id.httpsCloseURLTextView, R.string.setting_https_close_url, door.close_query,
+        setupTextView(R.id.httpsCloseUrlTextView, R.string.setting_https_close_url, door.close_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
                     door.close_query = newValue
@@ -256,7 +256,7 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
-        setupTextView(R.id.httpsRingURLTextView, R.string.setting_https_ring_url, door.ring_query,
+        setupTextView(R.id.httpsRingUrlTextView, R.string.setting_https_ring_url, door.ring_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
                     door.ring_query = newValue
@@ -266,7 +266,7 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
-        setupTextView(R.id.httpsStatusURLTextView, R.string.setting_https_status_url, door.status_query,
+        setupTextView(R.id.httpsStatusUrlTextView, R.string.setting_https_status_url, door.status_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
                     door.status_query = newValue
@@ -364,9 +364,13 @@ class SetupActivity : AppCompatActivity() {
 
         setupTextView(R.id.sshServerPortTextView, R.string.setting_ssh_server_port, "${door.port}",
             { newValue ->
-                // TODO
-                door.port = newValue.toInt()
-                initViews()
+                val port = newValue.toIntOrNull()
+                if (port == null || port < 1 || port >= 65536) {
+                    showMessage(R.string.invalid_port)
+                } else {
+                    door.port = port
+                    initViews()
+                }
             })
 
         setupTextView(R.id.sshLoginNameTextView, R.string.setting_ssh_login_name, door.user,
@@ -411,7 +415,7 @@ class SetupActivity : AppCompatActivity() {
                 if (timeout == null || timeout < 0 || timeout > 5000) {
                     showMessage(R.string.invalid_timeout)
                 } else {
-                    door.timeout = newValue.toInt()
+                    door.timeout = timeout
                     initViews()
                 }
             })
@@ -499,7 +503,7 @@ class SetupActivity : AppCompatActivity() {
             }
         }
 
-        setupTextView(R.id.mqttBrokerAddressTextView, R.string.setting_mqtt_broker_address, door.server,
+        setupTextView(R.id.mqttAddressTextView, R.string.setting_mqtt_address, door.server,
             { newValue ->
                 door.server = newValue
                 initViews()
@@ -549,7 +553,7 @@ class SetupActivity : AppCompatActivity() {
             })
 
        setupSpinner("${door.qos}",
-            R.id.spinnerMqttQos,
+            R.id.mqttQosSpinner,
             R.array.MqttQosLabels,
             R.array.MqttQosValues,
             object: SpinnerItemSelected {
@@ -633,10 +637,9 @@ class SetupActivity : AppCompatActivity() {
     }
 
     private fun setupTextView(textViewId: Int, titleId: Int, currentValue: String, onChange: (newValue: String) -> Unit) {
-        findViewById<TextView>(textViewId).apply {
-            text = currentValue.ifEmpty { getString(R.string.setting_no_value) }
-            setOnClickListener { showStringDialog(titleId, currentValue, onChange) }
-        }
+        val textView = findViewById<TextView>(textViewId)
+        textView.text = currentValue.ifEmpty { getString(R.string.setting_no_value) }
+        (textView.parent as LinearLayout).setOnClickListener { showStringDialog(titleId, currentValue, onChange) }
     }
 
     private fun showStringDialog(titleId: Int, value: String, onChange: (newValue: String) -> Unit) {

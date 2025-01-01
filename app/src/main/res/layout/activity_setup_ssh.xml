@@ -23,12 +23,12 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_door_name"
                     android:textColor="?android:textColorPrimary"
@@ -67,7 +67,7 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerDoorTypes"
+                    android:id="@+id/doorTypesSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Require WLAN"
+                    android:text="@string/setting_require_wlan"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -116,12 +116,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_ssh_server_address"
                     android:textColor="?android:textColorPrimary"
@@ -146,12 +146,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_ssh_server_port"
                     android:textColor="?android:textColorPrimary"
@@ -176,12 +176,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_ssh_login_name"
                     android:textColor="?android:textColorPrimary"
@@ -206,12 +206,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_ssh_login_password"
                     android:textColor="?android:textColorPrimary"
@@ -236,12 +236,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Open Command"
                     android:textColor="?android:textColorPrimary"
@@ -266,12 +266,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Close Command"
                     android:textColor="?android:textColorPrimary"
@@ -296,12 +296,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Ring Command"
                     android:textColor="?android:textColorPrimary"
@@ -326,12 +326,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Status Command"
                     android:textColor="?android:textColorPrimary"
@@ -387,12 +387,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Command Timeout (ms)"
                     android:textColor="?android:textColorPrimary"
@@ -417,14 +417,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="WLAN SSIDs"
+                    android:text="@string/setting_wlan_ssids"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 

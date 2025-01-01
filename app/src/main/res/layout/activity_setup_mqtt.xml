@@ -23,12 +23,12 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_door_name"
                     android:textColor="?android:textColorPrimary"
@@ -67,7 +67,7 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerDoorTypes"
+                    android:id="@+id/doorTypesSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -117,19 +117,19 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="MQTT Broker Address"
+                    android:text="@string/setting_mqtt_address"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
                 <TextView
-                    android:id="@+id/mqttBrokerAddressTextView"
+                    android:id="@+id/mqttAddressTextView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
@@ -147,14 +147,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="MQTT Broker Username"
+                    android:text="@string/setting_mqtt_username"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -177,14 +177,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="MQTT Broker Password"
+                    android:text="@string/setting_mqtt_password"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -207,14 +207,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="MQTT Status Topic (subscribe)"
+                    android:text="@string/setting_mqtt_status_topic"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -237,14 +237,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="MQTT Command Topic (publish)"
+                    android:text="@string/setting_mqtt_command_topic"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -267,14 +267,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Open Command"
+                    android:text="@string/setting_mqtt_open_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -297,14 +297,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Close Command"
+                    android:text="@string/setting_mqtt_close_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -327,14 +327,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ring Command"
+                    android:text="@string/setting_mqtt_ring_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -366,12 +366,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="MQTT Quality Of Service"
+                    android:text="@string/setting_mqtt_qos"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerMqttQos"
+                    android:id="@+id/mqttQosSpinner"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -398,7 +398,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Retained"
+                    android:text="@string/setting_mqtt_retained"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -634,12 +634,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_reply_pattern_locked"
                     android:textColor="?android:textColorPrimary"
@@ -664,12 +664,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_reply_pattern_unlocked"
                     android:textColor="?android:textColorPrimary"
@@ -694,14 +694,14 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="WLAN SSIDs"
+                    android:text="@string/setting_wlan_ssids"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 

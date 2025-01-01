@@ -23,12 +23,12 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_door_name"
                     android:textColor="?android:textColorPrimary"
@@ -67,7 +67,7 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerDoorTypes"
+                    android:id="@+id/doorTypesSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Require WLAN"
+                    android:text="@string/setting_require_wlan"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -130,7 +130,7 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerHttpMethod"
+                    android:id="@+id/httpMethodSpinner"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -148,19 +148,19 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Open URL"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
                 <TextView
-                    android:id="@+id/httpsOpenURLTextView"
+                    android:id="@+id/httpsOpenUrlTextView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
@@ -178,19 +178,19 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Close URL"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
                 <TextView
-                    android:id="@+id/httpsCloseURLTextView"
+                    android:id="@+id/httpsCloseUrlTextView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
@@ -208,19 +208,19 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Ring URL"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
                 <TextView
-                    android:id="@+id/httpsRingURLTextView"
+                    android:id="@+id/httpsRingUrlTextView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
@@ -238,19 +238,19 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Status URL"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
                 <TextView
-                    android:id="@+id/httpsStatusURLTextView"
+                    android:id="@+id/httpsStatusUrlTextView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
@@ -481,12 +481,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_reply_pattern_locked"
                     android:textColor="?android:textColorPrimary"
@@ -511,12 +511,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_reply_pattern_unlocked"
                     android:textColor="?android:textColorPrimary"
@@ -541,12 +541,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_wlan_ssids"
                     android:textColor="?android:textColorPrimary"

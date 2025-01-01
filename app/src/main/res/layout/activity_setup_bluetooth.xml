@@ -23,12 +23,12 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_door_name"
                     android:textColor="?android:textColorPrimary"
@@ -67,7 +67,7 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerDoorTypes"
+                    android:id="@+id/doorTypesSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -85,12 +85,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_bluetooth_device_name"
                     android:textColor="?android:textColorPrimary"
@@ -115,12 +115,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_bluetooth_service_uuid"
                     android:textColor="?android:textColorPrimary"
@@ -145,12 +145,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_bluetooth_open_command"
                     android:textColor="?android:textColorPrimary"
@@ -175,12 +175,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_bluetooth_close_command"
                     android:textColor="?android:textColorPrimary"
@@ -205,12 +205,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_bluetooth_ring_command"
                     android:textColor="?android:textColorPrimary"
@@ -235,12 +235,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_bluetooth_status_command"
                     android:textColor="?android:textColorPrimary"
@@ -265,12 +265,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_reply_pattern_locked"
                     android:textColor="?android:textColorPrimary"
@@ -295,12 +295,12 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/setting_reply_pattern_unlocked"
                     android:textColor="?android:textColorPrimary"
@@ -453,6 +453,7 @@
                 app:dividerColor="?android:textColorSecondary" />
 
             <LinearLayout
+                style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -462,6 +463,7 @@
 
                 <Button
                     android:id="@+id/SaveButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -470,6 +472,7 @@
 
                 <Button
                     android:id="@+id/DeleteButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -478,6 +481,7 @@
 
                 <Button
                     android:id="@+id/AbortButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

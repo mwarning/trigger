@@ -33,6 +33,8 @@
     <string name="setting_reply_pattern_locked">Reply pattern (locked)</string>
     <string name="setting_reply_pattern_unlocked">Reply pattern (unlocked)</string>
     <string name="setting_wlan_ssids">WLAN SSIDs</string>
+    <string name="setting_require_wlan">Require WLAN</string>
+
     <string name="setting_ignore_certificate_validity">Ignore Certificate Validity</string>
     <string name="setting_disable_certificate_hostname_check">Disable Certificate Hostname Check</string>
     <string name="setting_disable_certificate_data_check">Disable Certificate Date Check</string>
@@ -52,11 +54,16 @@
     <string name="setting_https_ring_url">Ring URL</string>
     <string name="setting_https_status_url">Status URL</string>
 
-    <string name="setting_mqtt_broker_address">MQTT Broker Address</string>
+    <string name="setting_mqtt_address">MQTT Broker Address</string>
     <string name="setting_mqtt_username">MQTT Username</string>
     <string name="setting_mqtt_password">MQTT Password</string>
-    <string name="setting_mqtt_status_topic">MQTT Status Topic</string>
-    <string name="setting_mqtt_command_topic">MQTT Command Topic</string>
+    <string name="setting_mqtt_status_topic">MQTT Status Topic (subscribe)</string>
+    <string name="setting_mqtt_command_topic">MQTT Command Topic (publish)</string>
+    <string name="setting_mqtt_open_command">Open Command</string>
+    <string name="setting_mqtt_close_command">Close Command</string>
+    <string name="setting_mqtt_ring_command">Ring Command</string>
+    <string name="setting_mqtt_qos">MQTT Quality Of Service</string>
+    <string name="setting_mqtt_retained">Retained</string>
 
     <string name="setting_ssh_server_address">Server Address</string>
     <string name="setting_ssh_server_port">Server Port</string>
@@ -100,10 +107,8 @@
     <string name="ok_button">Ok</string>
     <string name="public_key">Public Key: %s</string>
     <string name="private_key">Private Key: %s</string>
-
     <string name="menu_about">About</string>
     <string name="title_license">License</string>
-
     <string name="app_name_value" translatable="false">Trigger</string>
     <string name="app_version">Version:</string>
     <string name="app_website">Website:</string>
@@ -112,17 +117,11 @@
     <string name="app_website_link" translatable="false">https://github.com/mwarning/trigger/</string>
     <string name="app_license">License:</string>
     <string name="app_license_value" translatable="false">GPL-3.0-or-later</string>
-
-
     <string name="dialog_really_remove_door">Really remove door?</string>
-
     <string name="certificate_url">Certificate URL</string>
-
-
     <string name="setting_no_value">None</string>
-
     <string name="invalid_timeout">Invalid Timeout</string>
-
+    <string name="invalid_port">Invalid Port</string>
     <string name="manage_tls_client_keypair">Manage Client Private Key</string>
     <string name="manage_tls_server_certificate">Manage TLS Server Certificate</string>
     <string name="manage_tls_client_certificate">Manage TLS Client Certificate</string>
