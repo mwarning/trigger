@@ -188,15 +188,14 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
 
         saveButton.setOnClickListener {
             // persist your value here
-            Log.d(TAG, "sshDoor.keypair: ${sshDoor.keypair != null}")
             sshDoor.keypair = keypair
             showMessage(R.string.done)
             finish()
         }
 
         deleteButton.setOnClickListener {
-            builder.setTitle("Confirm")
-            builder.setMessage("Really remove key pair?")
+            builder.setTitle(R.string.confirm)
+            builder.setMessage(R.string.really_remove_key_pair)
             builder.setCancelable(false) // not necessary
             builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, id: Int ->
                 updateKeyInfo(null)
