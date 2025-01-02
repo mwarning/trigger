@@ -57,6 +57,11 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
         return keypair != null && keypair!!.encrypted
     }
 
+    override fun clone(): Door {
+        val json = toJSONObject()
+        return fromJSONObject(json)
+    }
+
     fun toJSONObject(): JSONObject {
         val obj = JSONObject()
         obj.put("id", id)

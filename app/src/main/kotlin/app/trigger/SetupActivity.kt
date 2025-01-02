@@ -27,7 +27,8 @@ class SetupActivity : AppCompatActivity() {
         } else {
             val selectedDoor = Settings.getDoor(door_id)
             if (selectedDoor != null) {
-                selectedDoor
+                // we work on a copy until saved
+                selectedDoor.clone()
             } else {
                 Log.d(TAG, "door not found $door_id")
                 finish()
@@ -90,36 +91,32 @@ class SetupActivity : AppCompatActivity() {
             object : SpinnerItemSelected {
                 override fun call(newValue: String?) {
                     if (newValue != null && newValue != door.type) {
-                        val existingDoor = Settings.getDoor(door.id)
-                        currentDoor =
-                            if (existingDoor != null && existingDoor.type == newValue) {
-                                existingDoor
-                            } else when (newValue) {
-                                HttpsDoor.TYPE -> {
-                                    HttpsDoor(door.id, door.name)
-                                }
-
-                                SshDoor.TYPE -> {
-                                    SshDoor(door.id, door.name)
-                                }
-
-                                BluetoothDoor.TYPE -> {
-                                    BluetoothDoor(door.id, door.name)
-                                }
-
-                                MqttDoor.TYPE -> {
-                                    MqttDoor(door.id, door.name)
-                                }
-
-                                NukiDoor.TYPE -> {
-                                    NukiDoor(door.id, door.name)
-                                }
-
-                                else -> {
-                                    Log.e("SetupActivity", "Invalid door type: $newValue")
-                                    return
-                                }
+                        currentDoor = when (newValue) {
+                            HttpsDoor.TYPE -> {
+                                HttpsDoor(door.id, door.name)
                             }
+
+                            SshDoor.TYPE -> {
+                                SshDoor(door.id, door.name)
+                            }
+
+                            BluetoothDoor.TYPE -> {
+                                BluetoothDoor(door.id, door.name)
+                            }
+
+                            MqttDoor.TYPE -> {
+                                MqttDoor(door.id, door.name)
+                            }
+
+                            NukiDoor.TYPE -> {
+                                NukiDoor(door.id, door.name)
+                            }
+
+                            else -> {
+                                Log.e("SetupActivity", "Invalid door type: $newValue")
+                                return
+                            }
+                        }
                         initViews()
                     }
                 }
@@ -185,8 +182,7 @@ class SetupActivity : AppCompatActivity() {
             if (door.name.isEmpty()) {
                 showMessage(R.string.error_invalid_name)
             } else {
-                Settings.addDoor(door)
-                if (Settings.saveDatabase(applicationContext)) {
+                if (Settings.addDoor(door)) {
                     showMessage(R.string.done)
                     finish()
                 } else {
@@ -196,13 +192,14 @@ class SetupActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.DeleteButton).apply {
-            val door = currentDoor
-            if (door != null && Settings.getDoor(door.id) != null) {
+            val current = currentDoor
+            if (current != null && Settings.getDoor(current.id) != null) {
                 visibility = View.VISIBLE
                 setOnClickListener {
                     showDeleteDialog()
                 }
             } else {
+                // not saved yet
                 visibility = View.GONE
             }
         }
@@ -680,8 +677,7 @@ class SetupActivity : AppCompatActivity() {
         okButton.setOnClickListener {
             val door = currentDoor
             if (door != null) {
-                Settings.removeDoor(door.id)
-                if (Settings.saveDatabase(applicationContext)) {
+                if (Settings.removeDoor(door.id)) {
                     showMessage(R.string.done)
                 } else {
                     showMessage(R.string.error)

@@ -33,7 +33,12 @@ class BluetoothDoor(override var id: Int, override var name: String) : Door() {
         return !Utils.isEmpty(ring_query)
     }
 
-   fun toJSONObject(): JSONObject {
+    override fun clone(): Door {
+        val json = toJSONObject()
+        return fromJSONObject(json)
+    }
+
+    fun toJSONObject(): JSONObject {
         val obj = JSONObject()
         obj.put("id", id)
         obj.put("name", name)

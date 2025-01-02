@@ -59,4 +59,6 @@ abstract class Door {
     abstract fun canOpen(): Boolean
     abstract fun canClose(): Boolean
     abstract fun canRing(): Boolean
+
+    abstract fun clone(): Door
 }

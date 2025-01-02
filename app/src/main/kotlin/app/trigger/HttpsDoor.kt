@@ -53,6 +53,11 @@ class HttpsDoor(override var id: Int, override var name: String) : Door() {
         return !Utils.isEmpty(ring_query)
     }
 
+    override fun clone(): Door {
+        val json = toJSONObject()
+        return fromJSONObject(json)
+    }
+
     fun toJSONObject(): JSONObject {
         val obj = JSONObject()
         obj.put("id", id)
