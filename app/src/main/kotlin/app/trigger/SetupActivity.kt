@@ -15,7 +15,6 @@ import app.trigger.mqtt.MqttServerCertificateActivity
 import app.trigger.ssh.SshKeyPairActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 
-
 class SetupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +26,8 @@ class SetupActivity : AppCompatActivity() {
         } else {
             val selectedDoor = Settings.getDoor(door_id)
             if (selectedDoor != null) {
-                // we work on a copy until saved
-                selectedDoor.clone()
+                // we work on a clone until saved
+                Settings.fromJsonObject(Settings.toJsonObject(selectedDoor)!!)!!
             } else {
                 Log.d(TAG, "door not found $door_id")
                 finish()
