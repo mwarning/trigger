@@ -110,7 +110,7 @@ class ImageActivity : AppCompatActivity() {
             val data = Utils.readFile(this, uri)
             var image = BitmapFactory.decodeByteArray(data, 0, data.size)
             if (image == null) {
-                showErrorMessage("Error", "Not a supported image format: " + uri!!.lastPathSegment)
+                showErrorMessage("Error", "Not a supported image format: " + uri.lastPathSegment)
                 return
             }
             val inWidth = image.width
