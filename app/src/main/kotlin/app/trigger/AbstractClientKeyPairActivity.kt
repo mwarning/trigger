@@ -194,7 +194,7 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         } else {
             deleteButton.isEnabled = true
             exportPrivateKeyButton.isEnabled = true
-            privateKey.setText(keypair!!.openSSHPublicKey)
+            privateKey.text = keypair!!.openSSHPublicKey
             tv.text = keypair!!.description
             tv.text = res.getString(R.string.private_key, keypair!!.description)
         }
