@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ChangeNameTextView"
+        app:layout_constraintTop_toBottomOf="@+id/ChangeStringTextView"
         app:layout_constraintBottom_toTopOf="@+id/CancelButton"
         android:layout_marginTop="10dp"
         android:layout_marginStart="@dimen/padding_20"

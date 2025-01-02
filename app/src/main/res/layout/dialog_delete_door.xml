@@ -13,7 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/DeleteDoorTextView"
+        app:layout_constraintBottom_toTopOf="@+id/CancelButton"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:textSize="23sp"
