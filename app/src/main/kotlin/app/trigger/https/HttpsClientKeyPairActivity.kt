@@ -19,9 +19,6 @@ class HttpsClientKeyPairActivity : AbstractClientKeyPairActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_mqtt_client_keypair)
-
         if (SetupActivity.currentDoor is HttpsDoor) {
             httpsDoor = SetupActivity.currentDoor as HttpsDoor
         } else {
@@ -29,5 +26,6 @@ class HttpsClientKeyPairActivity : AbstractClientKeyPairActivity() {
             finish()
             return
         }
+        super.onCreate(savedInstanceState)
     }
 }

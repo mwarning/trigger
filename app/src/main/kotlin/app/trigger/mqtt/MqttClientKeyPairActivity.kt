@@ -19,8 +19,6 @@ class MqttClientKeyPairActivity : AbstractClientKeyPairActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         if (SetupActivity.currentDoor is MqttDoor) {
             mqttDoor = SetupActivity.currentDoor as MqttDoor
         } else {
@@ -28,5 +26,6 @@ class MqttClientKeyPairActivity : AbstractClientKeyPairActivity() {
             finish()
             return
         }
+        super.onCreate(savedInstanceState)
     }
 }
