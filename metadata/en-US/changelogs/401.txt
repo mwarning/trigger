@@ -1,5 +1,4 @@
 * update to SDK version 35 (Android 15)
 * remove support for deprecated SharedPreferences
   * caused major rewrite
-  * breaks backwards compatibility!
 * fix UTF-8 character support for QR code export
