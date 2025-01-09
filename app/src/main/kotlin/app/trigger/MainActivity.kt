@@ -184,9 +184,24 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         state_unknown_default_image = BitmapFactory.decodeResource(resources, R.drawable.state_unknown)
         spinner = findViewById(R.id.selection_spinner)
         stateImage = findViewById(R.id.stateImage)
+
         lockButton = findViewById(R.id.Lock)
+        lockButton.setOnClickListener {
+            lockButton.startAnimation(pressed)
+            callRequestHandler(Action.CLOSE_DOOR)
+        }
+
         ringButton = findViewById(R.id.Ring)
+        ringButton.setOnClickListener {
+            ringButton.startAnimation(pressed)
+            callRequestHandler(Action.RING_DOOR)
+        }
+
         unlockButton = findViewById(R.id.Unlock)
+        unlockButton.setOnClickListener {
+            unlockButton.startAnimation(pressed)
+            callRequestHandler(Action.OPEN_DOOR)
+        }
 
         builder = AlertDialog.Builder(this)
 
@@ -251,21 +266,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 }
             }
         }
-    }
-
-    fun doUnlock(view: View?) {
-        unlockButton.startAnimation(pressed)
-        callRequestHandler(Action.OPEN_DOOR)
-    }
-
-    fun doLock(view: View?) {
-        lockButton.startAnimation(pressed)
-        callRequestHandler(Action.CLOSE_DOOR)
-    }
-
-    fun doRing(view: View?) {
-        ringButton.startAnimation(pressed)
-        callRequestHandler(Action.RING_DOOR)
     }
 
     private fun changeUI(state: StateCode?) {

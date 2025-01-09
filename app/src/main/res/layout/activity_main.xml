@@ -14,7 +14,7 @@
     <ImageView
         android:id="@+id/stateImage"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="2"
         android:src="@drawable/state_open" />
@@ -25,7 +25,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:layout_weight="0"
         android:orientation="horizontal">
 
         <ImageButton
@@ -35,8 +34,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:background="@drawable/roundcorners"
-            android:onClick="doLock"
+            android:background="@drawable/rounded_corners"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_lock" />
@@ -48,8 +46,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:background="@drawable/roundcorners"
-            android:onClick="doRing"
+            android:background="@drawable/rounded_corners"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_ring" />
@@ -61,8 +58,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:background="@drawable/roundcorners"
-            android:onClick="doUnlock"
+            android:background="@drawable/rounded_corners"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_unlock" />
