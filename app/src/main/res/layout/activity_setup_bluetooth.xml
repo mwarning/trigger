@@ -463,7 +463,6 @@
 
                 <Button
                     android:id="@+id/SaveButton"
-                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -472,7 +471,6 @@
 
                 <Button
                     android:id="@+id/DeleteButton"
-                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -481,7 +479,6 @@
 
                 <Button
                     android:id="@+id/AbortButton"
-                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
