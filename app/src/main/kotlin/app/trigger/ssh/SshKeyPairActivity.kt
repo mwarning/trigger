@@ -56,8 +56,11 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
             finish()
             return
         }
-
         setContentView(R.layout.activity_ssh_keypair)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         builder = AlertDialog.Builder(this)
         createButton = findViewById(R.id.CreateButton)

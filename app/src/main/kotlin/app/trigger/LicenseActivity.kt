@@ -16,6 +16,9 @@ class LicenseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_license)
         title = getString(R.string.title_license)
 
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         // reading the license file can be slow => use a thread
         Thread {
             try {

@@ -16,12 +16,16 @@ class QRShowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qrshow)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         val door_id = intent.getIntExtra("door_id", -1)
-        val setup = Settings.getDoor(door_id)
-        if (setup != null) {
-            title = "$title: ${setup.name}"
+        val door = Settings.getDoor(door_id)
+        if (door != null) {
+            title = "$title: ${door.name}"
             try {
-                generateQR(setup)
+                generateQR(door)
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()

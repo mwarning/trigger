@@ -49,6 +49,9 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_abstract_client_keypair)
 
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         builder = AlertDialog.Builder(this)
         importPrivateKeyButton = findViewById(R.id.ImportPrivateKeyButton)
@@ -110,8 +113,6 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         okButton.setOnClickListener {
             // update the SwitchPreference
             setKeyPair(keypair)
-            //mqttDoorSetup.client_keypair = keypair
-            //preference!!.setKeyPair(keypair)
             finish()
         }
 
@@ -120,7 +121,6 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
             builder.setMessage("Really remove client private key?")
             builder.setCancelable(false) // not necessary
             builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, _: Int ->
-                //mqttDoorSetup.client_keypair = null
                 setKeyPair(null)
                 updateKeyInfo(null)
                 dialog.cancel()

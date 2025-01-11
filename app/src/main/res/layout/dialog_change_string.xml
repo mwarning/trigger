@@ -38,26 +38,26 @@
         android:textColor="?android:textColorPrimary" />
 
     <Button
-        android:id="@+id/CancelButton"
+        android:id="@+id/OkButton"
         android:layout_width="125dp"
         android:layout_height="@dimen/padding_50"
         android:layout_marginStart="@dimen/padding_50"
         android:layout_marginTop="@dimen/padding_20"
         app:layout_constraintTop_toBottomOf="@+id/StringEditText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/OkButton"
-        android:text="@string/button_cancel" />
+        app:layout_constraintEnd_toStartOf="@+id/CancelButton"
+        android:text="@string/button_ok" />
 
     <Button
-        android:id="@+id/OkButton"
+        android:id="@+id/CancelButton"
         android:layout_width="125dp"
         android:layout_height="@dimen/padding_50"
         android:layout_marginStart="@dimen/padding_50"
         android:layout_marginEnd="@dimen/padding_50"
         android:layout_marginTop="@dimen/padding_20"
         app:layout_constraintTop_toBottomOf="@+id/StringEditText"
-        app:layout_constraintStart_toEndOf="@+id/CancelButton"
+        app:layout_constraintStart_toEndOf="@+id/OkButton"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="@string/button_ok" />
+        android:text="@string/button_cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

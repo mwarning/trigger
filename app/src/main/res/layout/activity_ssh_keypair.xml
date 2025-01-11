@@ -4,24 +4,33 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="8dp"
-    android:paddingTop="8dp"
-    android:paddingRight="8dp"
-    android:paddingBottom="8dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        style="?android:attr/listSeparatorTextViewStyle"
-        android:layout_width="fill_parent"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
+        android:background="?android:windowBackground"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="10dp"
         android:layout_weight="6"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:id="@+id/PublicKeyTextView"
             android:text="@string/public_key"
             android:textAlignment="center"
@@ -30,9 +39,8 @@
 
         <TextView
             android:id="@+id/PublicKey"
-            android:layout_weight="4"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:textAlignment="center"
             android:textIsSelectable="true" />
 
@@ -41,8 +49,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="10dp"
         android:orientation="horizontal" >
 
         <Spinner
@@ -65,9 +73,9 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        style="?android:attr/listSeparatorTextViewStyle"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="10dp">
 
         <EditText
             android:id="@+id/RegisterAddress"
@@ -91,16 +99,15 @@
 
     <LinearLayout
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="10dp"
         android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="horizontal" >
 
             <Button
@@ -131,9 +138,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_weight="1"
-            android:orientation="horizontal" >
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal"
+            android:layout_height="0dp">
 
             <CheckBox
                 android:id="@+id/UseClipboardCheckBox"
@@ -141,24 +151,25 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:text="Use Clipboard" />
+                android:text="@string/button_from_clipboard" />
 
             <CheckBox android:id="@+id/UseFilesystemCheckBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="false"
-                android:text="Use Filesystem" />
+                android:text="@string/button_from_filesystem" />
 
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
         android:orientation="horizontal">
 
         <Button

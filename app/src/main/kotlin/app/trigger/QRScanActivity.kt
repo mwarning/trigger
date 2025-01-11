@@ -23,6 +23,10 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qrscan)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         barcodeView = findViewById(R.id.barcodeScannerView)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (Utils.hasCameraPermission(this)) {

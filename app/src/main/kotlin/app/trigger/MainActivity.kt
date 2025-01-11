@@ -182,6 +182,9 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         WifiTools.init(applicationContext)
         BluetoothTools.init(applicationContext)
         Settings.init(applicationContext)
@@ -525,7 +528,8 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             cloneMenuItem.isEnabled = false
             cloneMenuItem.icon!!.alpha = 130
         }
-        return true
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     /*

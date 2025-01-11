@@ -28,6 +28,10 @@ class BackupActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_backup)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         builder = AlertDialog.Builder(this)
 
         importButton = findViewById(R.id.ImportButton)

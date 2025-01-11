@@ -56,6 +56,10 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_abstract_certificate)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         certificate = getCertificate()
         builder = AlertDialog.Builder(this)
         importButton = findViewById(R.id.ImportButton)
@@ -67,9 +71,8 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
         certificateUrl = findViewById(R.id.CertificateUrl)
         fetchButton = findViewById(R.id.FetchButton)
 
+        // initialize with URL for registering
         val door = getDoor()
-        findViewById<TextView>(R.id.CertificateTitle).text = door.name
-        // initialize with url for registering
         certificateUrl.setText(door.getRegisterUrl())
 
         importButton.setOnClickListener {

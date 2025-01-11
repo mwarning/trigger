@@ -12,6 +12,9 @@ class AboutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_about)
         title = getString(R.string.menu_about)
 
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         findViewById<TextView>(R.id.versionTv).text = if (BuildConfig.DEBUG) {
             BuildConfig.VERSION_NAME + " (debug)"
         } else {

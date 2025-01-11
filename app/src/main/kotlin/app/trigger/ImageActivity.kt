@@ -37,6 +37,9 @@ class ImageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image)
 
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         // currentDoor might still not be stored if it is a new one
         val currentDoor = SetupActivity.currentDoor
         val codeString = intent.getStringExtra("state_code") ?: ""

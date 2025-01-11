@@ -51,9 +51,13 @@ class SetupActivity : AppCompatActivity() {
     private fun initViews() {
         val door = currentDoor ?: return
 
-        title = door.name
-
         Log.d(TAG, "initViews() ${door.type}")
+
+        title = if (door.name.isEmpty()) {
+            getString(R.string.title_door, getString(R.string.setting_no_value))
+        } else {
+            getString(R.string.title_door, door.name)
+        }
 
         when (door.type) {
             HttpsDoor.TYPE -> {
@@ -78,20 +82,21 @@ class SetupActivity : AppCompatActivity() {
             }
         }
 
-        setupTextView(R.id.doorNameTextView, R.string.setting_door_name, door.name,
-            { newValue ->
-                if (newValue.isEmpty()) {
-                    Toast.makeText(this, R.string.error_invalid_name, Toast.LENGTH_SHORT).show()
-                } else if (!Settings.isDuplicateName(newValue, door)) {
-                    if (door.name != newValue) {
-                        door.name = newValue
-                        title = newValue
-                        initViews()
-                    }
-                } else {
-                    Toast.makeText(this, R.string.error_duplicate_name, Toast.LENGTH_SHORT).show()
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        setupTextView(R.id.doorNameTextView, R.string.setting_door_name, door.name) { newValue ->
+            if (newValue.isEmpty()) {
+                Toast.makeText(this, R.string.error_invalid_name, Toast.LENGTH_SHORT).show()
+            } else if (!Settings.isDuplicateName(newValue, door)) {
+                if (door.name != newValue) {
+                    door.name = newValue
+                    initViews()
                 }
-            })
+            } else {
+                Toast.makeText(this, R.string.error_duplicate_name, Toast.LENGTH_SHORT).show()
+            }
+        }
 
         setupSpinner(door.type,
             R.id.doorTypesSpinner,
