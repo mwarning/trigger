@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="action_about">Über</string>
+    <string name="action_backup">Backup</string>
+    <string name="action_clone">Klonen</string>
     <string name="action_edit">Verändern</string>
+    <string name="action_export">Export</string>
+    <string name="action_import">Import</string>
     <string name="action_new">Neu</string>
     <string name="action_scan_qr">Scan QR-Code</string>
     <string name="action_show_qr">Show QR-Code</string>
-    <string name="action_backup">Backup</string>
-    <string name="action_clone">Klonen</string>
-    <string name="action_about">Über</string>
-
-    <string name="action_export">Export</string>
-    <string name="action_import">Import</string>
-
-    <string name="yes">Ja</string>
+    <string name="button_from_clipboard">Von Zwischenablage</string>
+    <string name="button_from_filesystem">Von Dateisystem</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="certificate">Zertifikat</string>
+    <string name="certificate_url">Zertifikats URL</string>
+    <string name="create_button">Erstellen</string>
+    <string name="export_button">Exportieren</string>
+    <string name="export_private_key_button">Export Private Key</string>
+    <string name="export_public_key_button">Export Public Key</string>
+    <string name="fetch_button">Holen</string>
+    <string name="import_button">Importieren</string>
+    <string name="import_private_key_button">Import Private Key</string>
     <string name="no">Nein</string>
-
+    <string name="ok_button">Ok</string>
+    <string name="private_key">Private Key: %s</string>
+    <string name="public_key">Public Key: %s</string>
+    <string name="register_button">Registrieren</string>
     <string name="remove_button">Entfernen</string>
     <string name="select_button">Auswählen</string>
     <string name="set_button">Setzen</string>
-    <string name="import_button">Importieren</string>
-    <string name="export_button">Exportieren</string>
-    <string name="import_private_key_button">Import Private Key</string>
-    <string name="export_public_key_button">Export Public Key</string>
-    <string name="export_private_key_button">Export Private Key</string>
-    <string name="create_button">Erstellen</string>
-    <string name="register_button">Registrieren</string>
-    <string name="fetch_button">Holen</string>
-    <string name="cancel_button">Abbrechen</string>
-    <string name="ok_button">Ok</string>
-    <string name="public_key">Public Key: %s</string>
-    <string name="private_key">Private Key: %s</string>
-
-    <string name="certificate_url">Zertifikats URL</string>
-
+    <string name="yes">Ja</string>
 </resources>
