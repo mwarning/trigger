@@ -1,15 +1,14 @@
 package app.trigger
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import org.json.JSONObject
-import android.content.*
+import app.trigger.https.HttpsTools
 import app.trigger.ssh.KeyPairBean
 import app.trigger.ssh.SshTools
-import app.trigger.https.HttpsTools
-import java.lang.Exception
+import org.json.JSONObject
 import java.security.cert.Certificate
 import java.util.regex.Pattern
-import kotlin.collections.ArrayList
 
 object Settings {
     private const val TAG = "Settings"

@@ -1,17 +1,17 @@
 package app.trigger
 
 import android.app.Activity
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import android.content.Intent
 import android.app.AlertDialog
-import org.json.JSONObject
+import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import java.lang.Exception
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import org.json.JSONObject
 
 class BackupActivity : AppCompatActivity() {
     private lateinit var builder: AlertDialog.Builder

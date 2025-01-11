@@ -1,16 +1,16 @@
 package app.trigger
 
 import android.os.Bundle
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import org.json.JSONObject
+import androidx.appcompat.widget.Toolbar
 import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.journeyapps.barcodescanner.BarcodeEncoder
-import com.google.zxing.WriterException
-import android.widget.*
 import com.google.zxing.EncodeHintType
-import java.lang.Exception
-import java.util.ArrayList
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.WriterException
+import com.journeyapps.barcodescanner.BarcodeEncoder
+import org.json.JSONObject
 
 class QRShowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

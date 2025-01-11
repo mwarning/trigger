@@ -1,12 +1,10 @@
 package app.trigger
 
 import android.bluetooth.BluetoothAdapter
-import app.trigger.BluetoothTools
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
-import android.content.*
+import android.content.Context
 import java.lang.reflect.InvocationTargetException
-
 
 object BluetoothTools {
     private const val TAG = "BluetoothTools"

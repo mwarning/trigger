@@ -12,6 +12,7 @@ import android.content.ClipboardManager
 import android.net.Uri
 import android.view.View
 import android.widget.*
+import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
 import app.trigger.Log
 import app.trigger.SetupActivity

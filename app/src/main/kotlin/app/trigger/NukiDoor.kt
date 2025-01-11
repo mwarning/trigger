@@ -1,8 +1,8 @@
 package app.trigger
 
-import app.trigger.DoorStatus.StateCode
-import app.trigger.DoorReply.ReplyCode
 import android.text.Html
+import app.trigger.DoorReply.ReplyCode
+import app.trigger.DoorStatus.StateCode
 import org.json.JSONObject
 
 

@@ -2,37 +2,38 @@ package app.trigger
 
 import android.Manifest
 import android.app.Activity
-import android.graphics.Bitmap
-import app.trigger.DoorStatus.StateCode
-import android.content.*
-import app.trigger.DoorReply.ReplyCode
-import android.graphics.BitmapFactory
+import android.content.Context
 import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
-import androidx.core.app.ActivityCompat
-import android.provider.OpenableColumns
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.text.Html
 import android.util.Base64
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import app.trigger.DoorReply.ReplyCode
+import app.trigger.DoorStatus.StateCode
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.lang.Exception
 import java.net.InetSocketAddress
 import java.net.URI
 import java.net.URISyntaxException
-import java.security.*
+import java.security.KeyStore
+import java.security.PrivateKey
+import java.security.UnrecoverableKeyException
 import java.security.cert.Certificate
-import java.util.*
+import java.util.UUID
 import java.util.regex.Pattern
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
+
 //import java.util.zip.Deflater;
 //import java.util.zip.Inflater;
-
 
 object Utils {
     fun hasFineLocationPermission(activity: Activity): Boolean {

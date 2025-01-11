@@ -1,18 +1,21 @@
 package app.trigger
 
-import app.trigger.Utils.writeFile
-import app.trigger.Utils.readFile
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.content.Intent
 import android.content.DialogInterface
-import android.view.Gravity
+import android.content.Intent
 import android.net.Uri
-import android.widget.*
+import android.os.Bundle
+import android.view.Gravity
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import app.trigger.Utils.readFile
+import app.trigger.Utils.writeFile
 import app.trigger.https.CertificateFetchTask
 import app.trigger.https.HttpsTools
-import java.lang.Exception
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
 

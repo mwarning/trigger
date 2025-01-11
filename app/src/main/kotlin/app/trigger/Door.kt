@@ -3,7 +3,6 @@ package app.trigger
 import android.graphics.Bitmap
 import app.trigger.DoorStatus.StateCode
 
-
 abstract class Door {
     // internal id
     abstract var id: Int

@@ -1,21 +1,22 @@
 package app.trigger
 
-import app.trigger.Utils.writeFile
-import app.trigger.Utils.readFile
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.content.Intent
-import android.content.DialogInterface
-import app.trigger.ssh.KeyPairBean
 import android.content.ClipData
-import app.trigger.ssh.SshTools
 import android.content.ClipboardManager
+import android.content.DialogInterface
+import android.content.Intent
 import android.net.Uri
-import android.view.View
-import android.widget.*
+import android.os.Bundle
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import java.lang.Exception
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import app.trigger.Utils.readFile
+import app.trigger.Utils.writeFile
+import app.trigger.ssh.KeyPairBean
+import app.trigger.ssh.SshTools
 
 abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
     private lateinit var builder: AlertDialog.Builder

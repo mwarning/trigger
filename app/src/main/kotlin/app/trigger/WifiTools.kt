@@ -1,9 +1,8 @@
 package app.trigger
 
-import android.content.*
-import android.net.wifi.WifiManager
+import android.content.Context
 import android.net.ConnectivityManager
-
+import android.net.wifi.WifiManager
 
 object WifiTools {
     private const val TAG = "WifiTools"

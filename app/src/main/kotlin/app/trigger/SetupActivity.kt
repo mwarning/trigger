@@ -1,11 +1,21 @@
 package app.trigger
 
 import android.app.Dialog
-import android.content.*
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import app.trigger.https.HttpsClientCertificateActivity
 import app.trigger.https.HttpsClientKeyPairActivity
 import app.trigger.https.HttpsServerCertificateActivity

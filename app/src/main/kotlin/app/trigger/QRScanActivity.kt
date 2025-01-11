@@ -1,20 +1,20 @@
 package app.trigger
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import org.json.JSONObject
-import android.widget.Toast
-import com.journeyapps.barcodescanner.BarcodeCallback
-import com.journeyapps.barcodescanner.DecoratedBarcodeView
-import android.os.Build
-import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import android.content.pm.PackageManager
-import org.json.JSONException
+import android.os.Build
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import app.trigger.ssh.SshTools
-import com.journeyapps.barcodescanner.BarcodeResult
-import com.google.zxing.ResultPoint
 import com.google.zxing.BarcodeFormat
-import java.lang.Exception
+import com.google.zxing.ResultPoint
+import com.journeyapps.barcodescanner.BarcodeCallback
+import com.journeyapps.barcodescanner.BarcodeResult
+import com.journeyapps.barcodescanner.DecoratedBarcodeView
+import com.journeyapps.barcodescanner.DefaultDecoderFactory
+import org.json.JSONException
+import org.json.JSONObject
 import java.net.URI
 
 class QRScanActivity : AppCompatActivity(), BarcodeCallback {
