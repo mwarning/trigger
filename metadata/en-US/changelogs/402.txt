@@ -1,4 +1,3 @@
 * make icon rounded
-* fix layout that hides elements on Android 15 / GrapheneOS
 * fix crash in for client-pair activity for HTTPS and MQTT
 * lots of small layout improvements
