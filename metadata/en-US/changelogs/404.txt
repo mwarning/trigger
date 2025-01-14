@@ -1,0 +1,1 @@
+* support separate HTTP method per query
