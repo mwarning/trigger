@@ -28,9 +28,24 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
             MainActivity.Action.RING_DOOR -> setup.ring_query
             MainActivity.Action.CLOSE_DOOR -> setup.close_query
             MainActivity.Action.FETCH_STATE -> setup.status_query
+            else -> ""
         }
 
         if (command.isEmpty()) {
+            // ignore
+            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+            return
+        }
+
+        var method = when (action) {
+            MainActivity.Action.OPEN_DOOR -> setup.open_method
+            MainActivity.Action.RING_DOOR -> setup.ring_method
+            MainActivity.Action.CLOSE_DOOR -> setup.close_method
+            MainActivity.Action.FETCH_STATE -> setup.status_method
+            else -> ""
+        }
+
+        if (method.isEmpty()) {
             // ignore
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
             return
@@ -92,8 +107,9 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
             }
 
             con.connectTimeout = 2500
-            if (!setup.method.isEmpty()) {
-                con.requestMethod = setup.method.uppercase(Locale.getDefault())
+            if (method.isNotEmpty()) {
+                // make sure it is e.g. "GET" instead of "get"
+                con.requestMethod = method.uppercase(Locale.getDefault())
             }
 
             if (con.responseCode == 200) {

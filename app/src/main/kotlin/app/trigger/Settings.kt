@@ -296,8 +296,38 @@ object Settings {
             Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             doors.clear()
+            var id = 0
+            while (id < 10) {
+                try {
+                    val obj = loadSetup(id)
+                    // remove "method" and replace with "open_method",
+                    // "close_method", "ring_method" and "status_method"
+                    if (obj != null && obj.has("type") && obj["type"] == "HttpsDoorSetup") {
+                        if (obj.has("method")) {
+                            obj.put("open_method", obj["method"])
+                            obj.put("close_method", obj["method"])
+                            obj.put("ring_method", obj["method"])
+                            obj.put("status_method", obj["method"])
+                            obj.remove("method")
+                            storeSetup(id, obj)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to rename HTTPS certificate field: $e")
+                }
+                id += 1
+            }
             sharedPreferences.edit().putString("db_version", new_version).commit()
-            //db_version = new_version
+            db_version = new_version
+        }
+
+        if (db_version == "4.0.3") {
+            val new_version = "4.0.4"
+            Log.i(TAG, "Update database format from $db_version to $new_version")
+            // nothing to change
+            doors.clear()
+            sharedPreferences.edit().putString("db_version", new_version).commit()
+            db_version = new_version
         }
     }
 

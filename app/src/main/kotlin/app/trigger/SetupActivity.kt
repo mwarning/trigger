@@ -239,18 +239,6 @@ class SetupActivity : AppCompatActivity() {
             }
         }
 
-        setupSpinner(door.method,
-            R.id.httpMethodSpinner,
-            R.array.HttpMethodLabels,
-            R.array.HttpMethodValues,
-            object: SpinnerItemSelected {
-                override fun call(newValue: String?) {
-                    if (newValue != null) {
-                        door.method = newValue
-                    }
-                }
-            })
-
         setupTextView(R.id.httpsOpenUrlTextView, R.string.setting_https_open_url, door.open_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
@@ -258,6 +246,18 @@ class SetupActivity : AppCompatActivity() {
                     initViews()
                 } else {
                     showMessage(R.string.error_invalid_url)
+                }
+            })
+
+        setupSpinner(door.open_method,
+            R.id.openHttpMethodSpinner,
+            R.array.HttpMethodLabels,
+            R.array.HttpMethodValues,
+            object: SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    if (newValue != null) {
+                        door.open_method = newValue
+                    }
                 }
             })
 
@@ -271,6 +271,18 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
+        setupSpinner(door.close_method,
+            R.id.closeHttpMethodSpinner,
+            R.array.HttpMethodLabels,
+            R.array.HttpMethodValues,
+            object: SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    if (newValue != null) {
+                        door.close_method = newValue
+                    }
+                }
+            })
+
         setupTextView(R.id.httpsRingUrlTextView, R.string.setting_https_ring_url, door.ring_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
@@ -281,6 +293,18 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
+        setupSpinner(door.ring_method,
+            R.id.ringHttpMethodSpinner,
+            R.array.HttpMethodLabels,
+            R.array.HttpMethodValues,
+            object: SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    if (newValue != null) {
+                        door.ring_method = newValue
+                    }
+                }
+            })
+
         setupTextView(R.id.httpsStatusUrlTextView, R.string.setting_https_status_url, door.status_query,
             { newValue ->
                 if (newValue.isEmpty() || isHttpURL(newValue)) {
@@ -288,6 +312,18 @@ class SetupActivity : AppCompatActivity() {
                     initViews()
                 } else {
                     showMessage(R.string.error_invalid_url)
+                }
+            })
+
+        setupSpinner(door.status_method,
+            R.id.statusHttpMethodSpinner,
+            R.array.HttpMethodLabels,
+            R.array.HttpMethodValues,
+            object: SpinnerItemSelected {
+                override fun call(newValue: String?) {
+                    if (newValue != null) {
+                        door.status_method = newValue
+                    }
                 }
             })
 

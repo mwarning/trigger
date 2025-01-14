@@ -126,38 +126,6 @@
                 android:layout_marginBottom="10dp"
                 app:dividerColor="?android:textColorSecondary" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerInParent="true"
-                    android:text="HTTP Method"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="@dimen/title_text_size" />
-
-                <Spinner
-                    android:id="@+id/httpMethodSpinner"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_margin="5dp"
-                    android:textSize="@dimen/options_text_size" />
-
-            </RelativeLayout>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                app:dividerColor="?android:textColorSecondary" />
-
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -180,6 +148,38 @@
                     android:textSize="@dimen/options_text_size" />
 
             </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Open URL Method"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/openHttpMethodSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -218,6 +218,38 @@
                 android:layout_marginBottom="10dp"
                 app:dividerColor="?android:textColorSecondary" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Close URL Method"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/closeHttpMethodSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -248,6 +280,38 @@
                 android:layout_marginBottom="10dp"
                 app:dividerColor="?android:textColorSecondary" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Ring URL Method"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/ringHttpMethodSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -270,6 +334,38 @@
                     android:textSize="@dimen/options_text_size" />
 
             </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:text="Status URL Method"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <Spinner
+                    android:id="@+id/statusHttpMethodSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="5dp"
+                    android:textSize="@dimen/options_text_size" />
+
+            </RelativeLayout>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

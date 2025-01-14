@@ -6,16 +6,18 @@ import app.trigger.ssh.SshTools
 import org.json.JSONObject
 import java.security.cert.Certificate
 
-
 class HttpsDoor(override var id: Int, override var name: String) : Door() {
     override val type = Companion.TYPE
 
     var require_wifi = false
-    var method = "GET"
     var open_query = ""
+    var open_method = "GET"
     var close_query = ""
+    var close_method = "GET"
     var ring_query = ""
+    var ring_method = "GET"
     var status_query = ""
+    var status_method = "GET"
     var ssids = ""
 
     // regex to evaluate the door return message
@@ -59,11 +61,14 @@ class HttpsDoor(override var id: Int, override var name: String) : Door() {
         obj.put("name", name)
         obj.put("type", type)
         obj.put("require_wifi", require_wifi)
-        obj.put("method", method)
         obj.put("open_query", open_query)
+        obj.put("open_method", open_method)
         obj.put("close_query", close_query)
+        obj.put("close_method", close_method)
         obj.put("ring_query", ring_query)
+        obj.put("ring_method", ring_method)
         obj.put("status_query", status_query)
+        obj.put("status_method", status_method)
         obj.put("ssids", ssids)
         obj.put("unlocked_pattern", unlocked_pattern)
         obj.put("locked_pattern", locked_pattern)
@@ -92,16 +97,20 @@ class HttpsDoor(override var id: Int, override var name: String) : Door() {
             val name = obj.getString("name")
             val setup = HttpsDoor(id, name)
 
+            val defaultMethod = obj.optString("method", "GET")
+
             setup.require_wifi = obj.optBoolean("require_wifi", false)
-            setup.method = obj.optString("method", "GET")
             setup.open_query = obj.optString("open_query", "")
+            setup.open_method = obj.optString("open_method", defaultMethod)
             setup.close_query = obj.optString("close_query", "")
+            setup.close_method = obj.optString("close_method", defaultMethod)
             setup.ring_query = obj.optString("ring_query", "")
+            setup.ring_method = obj.optString("ring_method", defaultMethod)
             setup.status_query = obj.optString("status_query", "")
+            setup.status_method = obj.optString("status_method", defaultMethod)
             setup.ssids = obj.optString("ssids", "")
             setup.unlocked_pattern = obj.optString("unlocked_pattern", "UNLOCKED")
             setup.locked_pattern = obj.optString("locked_pattern", "LOCKED")
-
             setup.open_image = Utils.deserializeBitmap(obj.optString("open_image", ""))
             setup.closed_image = Utils.deserializeBitmap(obj.optString("closed_image", ""))
             setup.unknown_image = Utils.deserializeBitmap(obj.optString("unknown_image", ""))
