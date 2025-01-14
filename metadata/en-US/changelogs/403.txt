@@ -1,0 +1,2 @@
+* fix toobar and system status bar overlap (Android 15)
+* fix crash in the Nuki settings
