@@ -78,7 +78,7 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <Spinner
-                    android:id="@+id/spinnerDoorTypes"
+                    android:id="@+id/doorTypesSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
