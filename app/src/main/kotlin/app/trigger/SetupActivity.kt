@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat.requestApplyInsets
 import app.trigger.https.HttpsClientCertificateActivity
 import app.trigger.https.HttpsClientKeyPairActivity
 import app.trigger.https.HttpsServerCertificateActivity
@@ -84,6 +85,9 @@ class SetupActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        // updates insets when door type changes (otherwise the toolbar lands under the system status bar)
+        requestApplyInsets(findViewById<View>(android.R.id.content).rootView)
 
         setupTextView(R.id.doorNameTextView, R.string.setting_door_name, door.name) { newValue ->
             if (newValue.isEmpty()) {
