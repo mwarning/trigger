@@ -98,10 +98,10 @@ object Utils {
         return sslContext.socketFactory
     }
 
-    fun getFileSize(ctx: Context, uri: Uri?): Long {
+    private fun getFileSize(ctx: Context, uri: Uri?): Long {
         val cursor = ctx.contentResolver.query(uri!!, null, null, null, null)
         cursor!!.moveToFirst()
-        val size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
+        val size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE).coerceAtLeast(0))
         cursor.close()
         return size
     }
