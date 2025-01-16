@@ -1,9 +1,10 @@
 package app.trigger
 
-import android.content.pm.PackageManager
+import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import app.trigger.ssh.SshTools
@@ -32,7 +33,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
             if (Utils.hasCameraPermission(this)) {
                 startScan()
             } else {
-                Utils.requestCameraPermission(this, CAMERA_REQUEST_CODE)
+                enabledCameraForResult.launch(Manifest.permission.CAMERA)
             }
         } else {
             startScan()
@@ -60,15 +61,12 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_REQUEST_CODE && grantResults.isNotEmpty()) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startScan()
-            } else {
-                Toast.makeText(this, "Camera permissions required for QR code scan.", Toast.LENGTH_LONG).show()
-                finish()
-            }
+    private val enabledCameraForResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        isGranted -> if (isGranted) {
+            startScan()
+        } else {
+            Toast.makeText(this, R.string.missing_camera_permission, Toast.LENGTH_LONG).show()
+            finish()
         }
     }
 
@@ -154,6 +152,5 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
 
     companion object {
         private const val TAG = "QRScanActivity"
-        private const val CAMERA_REQUEST_CODE = 0x01
     }
 }

@@ -1,5 +1,6 @@
 package app.trigger
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -79,7 +81,7 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "*/*"
-            startActivityForResult(intent, READ_REQUEST_CODE)
+            importFileLauncher.launch(intent)
         }
 
         exportButton.setOnClickListener {
@@ -90,7 +92,7 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.putExtra(Intent.EXTRA_TITLE, "cert.pem")
                 intent.type = "*/*"
-                startActivityForResult(intent, WRITE_REQUEST_CODE)
+                exportFileLauncher.launch(intent)
             }
         }
 
@@ -134,42 +136,43 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
         updateCertificateInfo()
     }
 
-    private fun exportCertificateFile(uri: Uri?) {
+    private fun exportCertificateFile(uri: Uri) {
         if (certificate == null) {
             showErrorMessage("No Certificate", "No Certificate loaded to export.")
         } else try {
             val pem = HttpsTools.serializeCertificate(certificate)
             writeFile(this, uri, pem.toByteArray())
-            Toast.makeText(applicationContext, "Done. Wrote " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Done. Wrote " + uri.lastPathSegment, Toast.LENGTH_SHORT).show()
             updateCertificateInfo()
         } catch (e: Exception) {
             showErrorMessage("Error", e.message)
         }
     }
 
-    private fun importCertificateFile(uri: Uri?) {
+    private fun importCertificateFile(uri: Uri) {
         try {
             val cert = readFile(this, uri)
             certificate = HttpsTools.deserializeCertificate(String(cert, Charsets.UTF_8))
-            Toast.makeText(applicationContext, "Done. Read " + uri!!.lastPathSegment, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Done. Read " + uri.lastPathSegment, Toast.LENGTH_SHORT).show()
             updateCertificateInfo()
         } catch (e: Exception) {
             showErrorMessage("Error", e.message)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_OK) {
-            return
+    private var importFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri = intent.data ?: return@registerForActivityResult
+            importCertificateFile(uri)
         }
+    }
 
-        if (data == null || data.data == null) {
-            return
-        }
-        when (requestCode) {
-            WRITE_REQUEST_CODE -> exportCertificateFile(data.data)
-            READ_REQUEST_CODE -> importCertificateFile(data.data)
+    private var exportFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri: Uri = intent.data ?: return@registerForActivityResult
+            exportCertificateFile(uri)
         }
     }
 
@@ -206,7 +209,5 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
 
     companion object {
         private const val TAG = "CertificateActivity"
-        private const val READ_REQUEST_CODE = 0x01
-        private const val WRITE_REQUEST_CODE = 0x02
     }
 }

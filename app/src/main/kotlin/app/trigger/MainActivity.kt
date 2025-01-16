@@ -1,5 +1,6 @@
 package app.trigger
 
+import android.Manifest
 import android.app.Dialog
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
@@ -7,7 +8,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.NetworkInfo
@@ -32,6 +32,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -437,7 +438,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         if (door is BluetoothDoor || door is NukiDoor) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (!Utils.hasBluetoothConnectPermission(this)) {
-                    Utils.requestBluetoothConnectPermission(this, BLUETOOTH_CONNECT_REQUEST_CODE)
+                    requestBluetoothConnectForResult.launch(Manifest.permission.BLUETOOTH_CONNECT)
                     return false
                 }
             }
@@ -489,14 +490,12 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == BLUETOOTH_CONNECT_REQUEST_CODE && grantResults.isNotEmpty()) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                showMessage("Permission granted - Please try again.")
-            } else {
-                showMessage("Bluetooth scan permissions required for using Bluetooth.")
-            }
+    private val requestBluetoothConnectForResult = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()) {
+        isGranted -> if (isGranted) {
+            showMessage(R.string.permission_granted_try_again)
+        } else {
+            showMessage(R.string.missing_bluetooth_permission)
         }
     }
 
@@ -613,6 +612,5 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
 
     companion object {
         private const val TAG = "MainActivity"
-        private const val BLUETOOTH_CONNECT_REQUEST_CODE = 0x01
     }
 }

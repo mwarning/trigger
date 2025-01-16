@@ -31,16 +31,12 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
+import kotlin.math.absoluteValue
 
 //import java.util.zip.Deflater;
 //import java.util.zip.Inflater;
 
 object Utils {
-    fun hasFineLocationPermission(activity: Activity): Boolean {
-        return ContextCompat.checkSelfPermission(
-                activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
     fun hasCameraPermission(activity: Activity): Boolean {
         return ContextCompat.checkSelfPermission(
                 activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
@@ -50,31 +46,6 @@ object Utils {
     fun hasBluetoothConnectPermission(activity: Activity): Boolean {
         return ContextCompat.checkSelfPermission(
             activity, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-    }
-
-    fun requestFineLocationPermission(activity: Activity, request_code: Int) {
-        ActivityCompat.requestPermissions(activity, arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION), request_code)
-    }
-
-    fun requestCameraPermission(activity: Activity, request_code: Int) {
-        ActivityCompat.requestPermissions(activity, arrayOf(
-                Manifest.permission.CAMERA), request_code)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    fun requestBluetoothConnectPermission(activity: Activity, request_code: Int) {
-        ActivityCompat.requestPermissions(activity, arrayOf(
-            Manifest.permission.BLUETOOTH_CONNECT), request_code)
-    }
-
-    fun allGranted(grantResults: IntArray): Boolean {
-        for (result in grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false
-            }
-        }
-        return true
     }
 
     fun readInputStreamWithTimeout(`is`: InputStream, maxLength: Int, timeoutMillis: Int): String {
