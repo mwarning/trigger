@@ -1,1 +1,2 @@
 * support separate HTTP method per query
+* replace some deprecated permission code
