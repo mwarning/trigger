@@ -1,23 +1,30 @@
 package app.trigger.ssh
 
-import app.trigger.Utils.writeFile
-import app.trigger.Utils.readFile
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import app.trigger.R
-import android.content.Intent
-import android.content.DialogInterface
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.DialogInterface
+import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
-import android.widget.*
-import androidx.appcompat.widget.Toolbar
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import app.trigger.Log
+import app.trigger.R
 import app.trigger.SetupActivity
 import app.trigger.SshDoor
-import java.lang.Exception
+import app.trigger.Utils.readFile
+import app.trigger.Utils.writeFile
 
 class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompleted, GenerateIdentityTask.OnTaskCompleted {
     private lateinit var sshDoor: SshDoor
@@ -146,7 +153,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.putExtra(Intent.EXTRA_TITLE, "id_${keypair!!.type}.pub")
                 intent.type = "*/*"
-                startActivityForResult(intent, EXPORT_PUBLIC_KEY_CODE)
+                exportPublicKeyLauncher.launch(intent)
             }
         }
 
@@ -163,7 +170,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.putExtra(Intent.EXTRA_TITLE, "id_${keypair!!.type}")
                 intent.type = "*/*"
-                startActivityForResult(intent, EXPORT_PRIVATE_KEY_CODE)
+                exportPrivateKeyLauncher.launch(intent)
             }
         }
 
@@ -186,7 +193,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
                 intent.type = "*/*"
-                startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE)
+                importPrivateKeyLauncher.launch(intent)
             }
         }
 
@@ -239,7 +246,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         runOnUiThread { showMessage(message) }
     }
 
-    private fun exportPublicKey(uri: Uri?) {
+    private fun exportPublicKey(uri: Uri) {
         if (keypair == null) {
             showErrorMessageDialog("No Key Pair", "No key loaded to export.")
             return
@@ -252,7 +259,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
     }
 
-    private fun exportPrivateKey(uri: Uri?) {
+    private fun exportPrivateKey(uri: Uri) {
         if (keypair == null) {
             showErrorMessageDialog("No Key", "No key loaded to export.")
             return
@@ -265,7 +272,7 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
     }
 
-    private fun importPrivateKey(uri: Uri?) {
+    private fun importPrivateKey(uri: Uri) {
         try {
             val privateKeyPEM = String(readFile(this, uri))
             val kp = SshTools.parsePrivateKeyPEM(privateKeyPEM)
@@ -277,18 +284,27 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_OK) {
-            return
+    private var importPrivateKeyLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri: Uri = intent.data ?: return@registerForActivityResult
+            importPrivateKey(uri)
         }
-        if (data == null || data.data == null) {
-            return
+    }
+
+    private var exportPublicKeyLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri: Uri = intent.data ?: return@registerForActivityResult
+            exportPublicKey(uri)
         }
-        when (requestCode) {
-            EXPORT_PUBLIC_KEY_CODE -> exportPublicKey(data.data)
-            EXPORT_PRIVATE_KEY_CODE -> exportPrivateKey(data.data)
-            IMPORT_PRIVATE_KEY_CODE -> importPrivateKey(data.data)
+    }
+
+    private var exportPrivateKeyLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri: Uri = intent.data ?: return@registerForActivityResult
+            exportPrivateKey(uri)
         }
     }
 
@@ -314,8 +330,5 @@ class SshKeyPairActivity : AppCompatActivity(), RegisterIdentityTask.OnTaskCompl
 
     companion object {
         private const val TAG = "KeyPairActivity"
-        private const val IMPORT_PRIVATE_KEY_CODE = 0x01
-        private const val EXPORT_PUBLIC_KEY_CODE = 0x02
-        private const val EXPORT_PRIVATE_KEY_CODE = 0x03
     }
 }
