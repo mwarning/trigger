@@ -48,14 +48,14 @@ object Utils {
             activity, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun readInputStreamWithTimeout(`is`: InputStream, maxLength: Int, timeoutMillis: Int): String {
+    fun readInputStreamWithTimeout(iStream: InputStream, maxLength: Int, timeoutMillis: Int): String {
         val buffer = ByteArray(maxLength)
         var bufferOffset = 0
         val maxTimeMillis = System.currentTimeMillis() + timeoutMillis
         while (System.currentTimeMillis() < maxTimeMillis && bufferOffset < buffer.size) {
-            val readLength = Math.min(`is`.available(), buffer.size - bufferOffset)
+            val readLength = Math.min(iStream.available(), buffer.size - bufferOffset)
             // can alternatively use bufferedReader, guarded by isReady():
-            val readResult = `is`.read(buffer, bufferOffset, readLength)
+            val readResult = iStream.read(buffer, bufferOffset, readLength)
             if (readResult == -1) {
                 break
             }
@@ -106,21 +106,21 @@ object Utils {
         return size
     }
 
-    fun readFile(ctx: Context, uri: Uri?): ByteArray {
+    fun readFile(ctx: Context, uri: Uri): ByteArray {
         val size = getFileSize(ctx, uri).toInt()
-        val `is` = ctx.contentResolver.openInputStream(uri!!)
+        val iStream = ctx.contentResolver.openInputStream(uri)
         val buffer = ByteArrayOutputStream()
         var nRead: Int
         val data = ByteArray(size)
-        while (`is`!!.read(data, 0, data.size).also { nRead = it } != -1) {
+        while (iStream!!.read(data, 0, data.size).also { nRead = it } != -1) {
             buffer.write(data, 0, nRead)
         }
-        `is`.close()
+        iStream.close()
         return data
     }
 
-    fun writeFile(ctx: Context, uri: Uri?, data: ByteArray?) {
-        val fos = ctx.contentResolver.openOutputStream(uri!!)
+    fun writeFile(ctx: Context, uri: Uri, data: ByteArray) {
+        val fos = ctx.contentResolver.openOutputStream(uri)
         fos!!.write(data)
         fos.close()
     }
@@ -304,17 +304,17 @@ object Utils {
         }
     }
 
-    private fun match(message: String?, pattern: String): Boolean {
+    private fun match(message: String, pattern: String): Boolean {
         val r = Pattern.compile(pattern)
         val m = r.matcher(message)
         return m.find()
     }
 
     // parse return from HTTP/SSH/MQTT doors
-    fun genericDoorReplyParser(reply: DoorReply, unlocked_pattern: String?, locked_pattern: String?): DoorStatus {
+    fun genericDoorReplyParser(reply: DoorReply, unlocked_pattern_in: String?, locked_pattern_in: String?): DoorStatus {
         // strip HTML from response
-        var unlocked_pattern = unlocked_pattern
-        var locked_pattern = locked_pattern
+        var unlocked_pattern = unlocked_pattern_in
+        var locked_pattern = locked_pattern_in
         val msg = Html.fromHtml(reply.message).toString().trim { it <= ' ' }
         if (unlocked_pattern == null) {
             unlocked_pattern = ""
@@ -338,10 +338,8 @@ object Utils {
                 } catch (e: Exception) {
                     DoorStatus(StateCode.UNKNOWN, e.toString())
                 }
-                DoorStatus(StateCode.DISABLED, msg)
             }
             ReplyCode.DISABLED -> DoorStatus(StateCode.DISABLED, msg)
-            else -> DoorStatus(StateCode.DISABLED, msg)
         }
     }
 }
