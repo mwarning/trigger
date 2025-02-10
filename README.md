@@ -4,21 +4,20 @@ Trigger
 Trigger is an Android App to unlock/lock doors, show the door status and ring a bell.
 
 Features:
- - Generic HTTPS, SSH, Bluetooth/BLE and MQTT support
- - support for Nuki SmartLock
- - multiple door profiles
- - auto select profiles by connected WiFi
- - HTTPS server/client certificate support
- - SSH key generation support (ED25519, RSA,...)
- - custom status images
- - QR code support
- - backup support
+ - Support of HTTPS, SSH, Bluetooth/BLE and MQTT.
+ - Support for Nuki SmartLock.
+ - Multiple door profiles.
+ - Auto select profiles by connected WiFi.
+ - HTTPS server/client certificate support.
+ - SSH key generation support (ED25519, RSA).
+ - Custom status images.
+ - QR code support.
+ - Support of backup.
 
 ![image](docs/screenshot_states.png)
 
 (more [Screenshots](docs/screenshots.md))
 
-Any help, bugfixes, new features, translations are much appreciated.
 
 ## Download
 
@@ -31,6 +30,12 @@ The minimum supported Android version is 5.0.
 ## Documentation
 
 For further feature explanations and How-Tos, see the [Documentation](docs/documentation.md) page.
+
+## Contribution
+
+Any help, bugfixes, new features, translations are much appreciated.
+
+For translations use https://toolate.othing.xyz/projects/trigger/
 
 ## Similar/Related Projects
 
