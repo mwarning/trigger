@@ -1,14 +1,15 @@
-Open or close doors, ring door bells and show the door state.
-Supported are Generic HTTPS/SSH/MQTT/Bluetooth and the Nuki SmartLock.
+Open and close doors, ring door bells and see the door state.
+Supported HTTPS/SSH/MQTT/Bluetooth and the Nuki SmartLock.
 
-Features:
-
-* Generic HTTPS, SSH, Bluetooth and MQTT support
-* Support for Nuki SmartLock
-* Multiple door profiles
-* Auto select profiles by connected WiFi
-* HTTPS server/client certificate support
-* SSH key generation (ED25519, RSA,...) and passphrase support
-* Custom status images
-* QR code support
-* Backup support
+<b>Features:</b>
+<ul>
+<li>Support of HTTPS, SSH, Bluetooth and MQTT.</li>
+<li>Support for Nuki SmartLock.</li>
+<li>Multiple door profiles.</li>
+<li>Auto select profiles by a SSID of connected WiFi.</li>
+<li>HTTPS server/client certificate support.</li>
+<li>SSH key generation (ED25519, RSA) with a passphrase.</li>
+<li>Custom status images.</li>
+<li>QR code support.</li>
+<li>Support of backup.</li>
+</ul>
