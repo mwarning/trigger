@@ -112,4 +112,12 @@
     <string name="error_invalid_url">Неверный URL</string>
     <string name="manage_tls_client_keypair">Управление приватным ключом клиента</string>
     <string name="setting_mqtt_status_topic">Тема MQTT для Состояние (подписаться)</string>
+    <string name="setting_mqtt_command_topic">Тема команды MQTT (опубликовать)</string>
+    <string name="setting_unknown_status_image">Изображение Неизвестного состяния</string>
+    <string name="setting_wlan_ssids">Названия сетей WLAN SSID</string>
+    <string name="ssh_key_import_failed">Импортирование не удалось</string>
+    <string name="title_door">Автор :%s</string>
+    <string name="title_license">Лицензия</string>
+    <string name="warning_this_disables_security">Предупреждение: это отключает безопасность\"</string>
+    <string name="setting_bluetooth_service_uuid">UUID сервиса (необязательно)</string>
 </resources>
