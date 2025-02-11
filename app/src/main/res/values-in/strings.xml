@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="action_about">Tentang aplikasi</string>
     <string name="action_backup">Cadangan</string>
-    <string name="action_scan_qr">Pindai code QR</string>
-    <string name="done">Selesai</string>
-    <string name="error">Kesalahan</string>
-    <string name="clipboard_is_empty">Papan klip kosong</string>
-    <string name="certificate">Sertifikat</string>
-    <string name="button_save">Simpan</string>
     <string name="action_clone">Duplikasi</string>
     <string name="action_edit">Sunting</string>
     <string name="action_export">Ekspor</string>
     <string name="action_import">Impor</string>
     <string name="action_new">Baru</string>
+    <string name="action_scan_qr">Pindai code QR</string>
     <string name="action_show_qr">Tampilkan Kode QR</string>
     <string name="app_description">Keterangan:</string>
     <string name="app_license">Lisensi:</string>
-    <string name="button_delete">Hapus</string>
-    <string name="button_from_clipboard">Dari papan klip</string>
     <string name="app_version">Versi:</string>
     <string name="button_cancel">Membatalkan</string>
-    <string name="action_about">Tentang aplikasi</string>
-    <string name="cancel_button">Membatalkan</string>
+    <string name="button_delete">Hapus</string>
+    <string name="button_from_clipboard">Dari papan klip</string>
     <string name="button_ok">OK</string>
+    <string name="button_save">Simpan</string>
+    <string name="cancel_button">Membatalkan</string>
+    <string name="certificate">Sertifikat</string>
     <string name="certificate_url">URL sertifikat</string>
+    <string name="clipboard_is_empty">Papan klip kosong</string>
     <string name="confirm">Mengonfirmasi</string>
+    <string name="done">Selesai</string>
+    <string name="error">Kesalahan</string>
     <string name="export_button">Ekspor</string>
     <string name="import_button">Impor</string>
 </resources>

@@ -49,8 +49,8 @@
     <string name="manage_tls_client_keypair">Manage Client Private Key</string>
     <string name="manage_tls_server_certificate">Manage TLS Server Certificate</string>
     <string name="menu_about">About</string>
-    <string name="missing_camera_permission">Camera permissions required for QR code scan.</string>
     <string name="missing_bluetooth_permission">Bluetooth scan permissions required for using Bluetooth.</string>
+    <string name="missing_camera_permission">Camera permissions required for QR code scan.</string>
     <string name="no">No</string>
     <string name="ok_button">Ok</string>
     <string name="passphrase_accepted">Passphrase accepted</string>
