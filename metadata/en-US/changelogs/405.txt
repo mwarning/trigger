@@ -1,0 +1,3 @@
+* add Russian translation, thanks tokito@gmail.com
+* add Indonesian translation, thanks yurtpage+translate@gmail.com
+* improve German translation, thanks moritzwarning@web.de
