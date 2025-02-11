@@ -503,25 +503,25 @@ class SetupActivity : AppCompatActivity() {
                 initViews()
             })
 
-        setupTextView(R.id.bluetoothOpenCommandTextView, R.string.setting_open_command, door.open_query,
+        setupTextView(R.id.bluetoothOpenCommandTextView, R.string.setting_bluetooth_open_command, door.open_query,
             { newValue ->
                 door.open_query = newValue
                 initViews()
             })
 
-        setupTextView(R.id.bluetoothCloseCommandTextView, R.string.setting_close_command, door.close_query,
+        setupTextView(R.id.bluetoothCloseCommandTextView, R.string.setting_bluetooth_close_command, door.close_query,
             { newValue ->
                 door.close_query = newValue
                 initViews()
             })
 
-        setupTextView(R.id.bluetoothRingCommandTextView, R.string.setting_ring_command, door.ring_query,
+        setupTextView(R.id.bluetoothRingCommandTextView, R.string.setting_bluetooth_ring_command, door.ring_query,
             { newValue ->
                 door.ring_query = newValue
                 initViews()
             })
 
-        setupTextView(R.id.bluetoothStatusCommandTextView, R.string.setting_status_command, door.status_query,
+        setupTextView(R.id.bluetoothStatusCommandTextView, R.string.setting_bluetooth_status_command, door.status_query,
             { newValue ->
                 door.status_query = newValue
                 initViews()
@@ -585,19 +585,19 @@ class SetupActivity : AppCompatActivity() {
                 initViews()
             })
 
-        setupTextView(R.id.mqttOpenCommandTextView, R.string.setting_open_command, door.open_command,
+        setupTextView(R.id.mqttOpenCommandTextView, R.string.setting_mqtt_open_command, door.open_command,
             { newValue ->
                 door.open_command = newValue
                 initViews()
             })
 
-        setupTextView(R.id.mqttCloseCommandTextView, R.string.setting_close_command, door.close_command,
+        setupTextView(R.id.mqttCloseCommandTextView, R.string.setting_mqtt_close_command, door.close_command,
             { newValue ->
                 door.close_command = newValue
                 initViews()
             })
 
-        setupTextView(R.id.mqttRingCommandTextView, R.string.setting_ring_command, door.ring_command,
+        setupTextView(R.id.mqttRingCommandTextView, R.string.setting_mqtt_ring_command, door.ring_command,
             { newValue ->
                 door.ring_command = newValue
                 initViews()
