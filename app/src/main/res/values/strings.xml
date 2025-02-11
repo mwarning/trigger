@@ -71,7 +71,6 @@
     <string name="setting_bluetooth_status_command">State Command</string>
     <string name="setting_client_certificate">Client Certificate</string>
     <string name="setting_client_private_key">Client Private Key</string>
-    <string name="setting_close_command">Close Command</string>
     <string name="setting_closed_door_image">Closed Door Image</string>
     <string name="setting_disable_certificate_data_check">Disable Certificate Date Check</string>
     <string name="setting_disable_certificate_hostname_check">Disable Certificate Hostname Check</string>
@@ -99,12 +98,10 @@
     <string name="setting_nuki_lock_name">Lock Name/MAC</string>
     <string name="setting_nuki_shared_key">Shared Key (read only)</string>
     <string name="setting_nuki_user_name">User Name</string>
-    <string name="setting_open_command">Open Command</string>
     <string name="setting_open_door_image">Open Door Image</string>
     <string name="setting_reply_pattern_locked">Reply pattern (locked)</string>
     <string name="setting_reply_pattern_unlocked">Reply pattern (unlocked)</string>
     <string name="setting_require_wlan">Require WLAN</string>
-    <string name="setting_ring_command">Open Command</string>
     <string name="setting_server_certificate">Server Certificate</string>
     <string name="setting_ssh_close_command">Close Command</string>
     <string name="setting_ssh_command_timeout">Command Timeout (ms)</string>
@@ -115,7 +112,6 @@
     <string name="setting_ssh_server_address">Server Address</string>
     <string name="setting_ssh_server_port">Server Port</string>
     <string name="setting_ssh_status_command">Status Command</string>
-    <string name="setting_status_command">Status Command</string>
     <string name="setting_unknown_status_image">Unknown Status Image</string>
     <string name="setting_wlan_ssids">WLAN SSIDs</string>
     <string name="ssh_key_import_failed">Import Failed</string>
