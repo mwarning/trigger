@@ -1,5 +1,6 @@
 package app.trigger
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -63,7 +65,7 @@ class ImageActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
-            startActivityForResult(intent, READ_IMAGE_REQUEST)
+            importImageLauncher.launch(intent)
         }
 
         setButton.setOnClickListener { _: View? ->
@@ -109,15 +111,11 @@ class ImageActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == READ_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            if (data != null) {
-                val d = data.data
-                if (d != null) {
-                    updateImage(d)
-                }
-            }
+    private var importImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri = intent.data ?: return@registerForActivityResult
+            updateImage(uri)
         }
     }
 
@@ -157,7 +155,6 @@ class ImageActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val READ_IMAGE_REQUEST = 0x01
         private const val TAG = "ImageActivity"
     }
 }
