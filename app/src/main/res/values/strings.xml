@@ -31,6 +31,7 @@
     <string name="confirm">Confirm</string>
     <string name="create_button">Create</string>
     <string name="dialog_really_remove_door">Really remove door?</string>
+    <string name="dialog_really_remove_image">Really remove image?</string>
     <string name="done">Done</string>
     <string name="error">Error</string>
     <string name="error_duplicate_name">Duplicate Name</string>

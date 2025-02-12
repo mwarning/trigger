@@ -75,8 +75,8 @@ class ImageActivity : AppCompatActivity() {
         }
 
         deleteButton.setOnClickListener { _: View? ->
-            builder.setTitle("Confirm")
-            builder.setMessage("Really remove image?")
+            builder.setTitle(R.string.confirm)
+            builder.setMessage(R.string.dialog_really_remove_image)
             builder.setCancelable(false) // not necessary
             builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, _: Int ->
                 currentImage = null
