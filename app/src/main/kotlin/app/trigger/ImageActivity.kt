@@ -93,8 +93,20 @@ class ImageActivity : AppCompatActivity() {
     }
 
     private fun updateImageView() {
-        imageView.setImageBitmap(currentImage)
-        deleteButton.isEnabled = (currentImage != null)
+        if (currentImage == null) {
+            // show default image
+            val defaultImageResource = when (stateCode) {
+                StateCode.OPEN -> R.drawable.state_open
+                StateCode.CLOSED -> R.drawable.state_closed
+                StateCode.DISABLED -> R.drawable.state_disabled
+                StateCode.UNKNOWN -> R.drawable.state_unknown
+            }
+            imageView.setImageBitmap(BitmapFactory.decodeResource(resources, defaultImageResource))
+            deleteButton.isEnabled = false
+        } else {
+            imageView.setImageBitmap(currentImage)
+            deleteButton.isEnabled = true
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
