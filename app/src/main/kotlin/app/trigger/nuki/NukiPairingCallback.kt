@@ -1,7 +1,7 @@
 package app.trigger.nuki
 
 import app.trigger.Utils.byteArrayToHexString
-import app.trigger.Settings.addDoor
+import app.trigger.Settings
 import app.trigger.DoorReply.ReplyCode
 import android.bluetooth.BluetoothGattCharacteristic
 import org.libsodium.jni.Sodium
@@ -162,7 +162,7 @@ internal class NukiPairingCallback(door_id: Int, listener: OnTaskCompleted, var 
                 setup.auth_id = auth_id
                 setup.app_id = app_id
                 setup.shared_key = byteArrayToHexString(shared_key)
-                addDoor(setup)
+                Settings.storeDoorSetup(setup)
                 listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, "Pairing complete.")
                 closeConnection(gatt)
             } else {

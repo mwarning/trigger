@@ -100,7 +100,7 @@ class BackupActivity : AppCompatActivity() {
                 obj.put("id", Settings.getNewDoorIdentifier())
                 val door = Settings.fromJsonObject(obj)
                 if (door != null) {
-                    Settings.addDoor(door)
+                    Settings.storeDoorSetup(door)
                 }
                 count += 1
             }

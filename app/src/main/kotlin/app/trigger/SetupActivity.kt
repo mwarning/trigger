@@ -200,7 +200,7 @@ class SetupActivity : AppCompatActivity() {
             if (door.name.isEmpty()) {
                 showMessage(R.string.error_invalid_name)
             } else {
-                if (Settings.addDoor(door)) {
+                if (Settings.storeDoorSetup(door)) {
                     showMessage(R.string.done)
                     finish()
                 } else {

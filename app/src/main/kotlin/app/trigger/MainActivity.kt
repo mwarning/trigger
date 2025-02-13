@@ -598,7 +598,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                     obj.put("name", new_name)
                     door = Settings.fromJsonObject(obj)
                     if (door != null) {
-                        Settings.addDoor(door)
+                        Settings.storeDoorSetup(door)
                     }
                     updateSpinner(false)
                 }

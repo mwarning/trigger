@@ -133,7 +133,7 @@ class QRScanActivity : AppCompatActivity(), BarcodeCallback {
             obj.put("id", Settings.getNewDoorIdentifier())
             val setup = Settings.fromJsonObject(obj)
             if (setup != null) {
-                Settings.addDoor(setup)
+                Settings.storeDoorSetup(setup)
                 Toast.makeText(this, "Added ${setup.name}", Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_LONG).show()

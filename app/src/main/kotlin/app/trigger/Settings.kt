@@ -42,7 +42,7 @@ object Settings {
                 if (ignore) {
                     door.ignore_hostname_mismatch = true
                 }
-                addDoor(door)
+                storeDoorSetup(door)
             }
             // remove old entries
             val e = sharedPreferences.edit()
@@ -77,7 +77,7 @@ object Settings {
                         if (ignore) {
                             door.ignore_hostname_mismatch = true
                         }
-                        addDoor(door)
+                        storeDoorSetup(door)
                     } else {
                         removeSetup_pre_172(id)
                     }
@@ -141,7 +141,7 @@ object Settings {
             var doors = getAllSetups_pre_172()
             for (door in doors) {
                 removeSetup_pre_172(door.id)
-                addDoor(door)
+                storeDoorSetup(door)
             }
             doors.clear()
             sharedPreferences.edit().putString("db_version", "1.8.0").commit()
@@ -378,7 +378,7 @@ object Settings {
     }
 
     // add to list and store to preferences
-    fun addDoor(door: Door): Boolean {
+    fun storeDoorSetup(door: Door): Boolean {
         if (door.id < 0) {
             return false
         }
