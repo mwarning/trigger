@@ -57,6 +57,7 @@
             android:layout_marginTop="10dp"
             android:inputType="textUri|textNoSuggestions"
             android:singleLine="true"
+            android:hint="https://example.com"
             android:textAlignment="center" />
 
     </LinearLayout>
