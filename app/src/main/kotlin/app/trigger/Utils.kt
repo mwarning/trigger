@@ -12,7 +12,6 @@ import android.provider.OpenableColumns
 import android.text.Html
 import android.util.Base64
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import app.trigger.DoorReply.ReplyCode
 import app.trigger.DoorStatus.StateCode
@@ -31,7 +30,6 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
-import kotlin.math.absoluteValue
 
 //import java.util.zip.Deflater;
 //import java.util.zip.Inflater;
