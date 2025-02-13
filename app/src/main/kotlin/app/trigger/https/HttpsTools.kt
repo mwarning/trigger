@@ -28,33 +28,28 @@ object HttpsTools {
                 cert.subjectX500Principal.name
     }
 
-    fun serializeCertificate(cert: Certificate?): String {
-        if (cert == null) {
+    fun serializeCertificate(certificate: Certificate?): String {
+        if (certificate == null) {
             return ""
         }
         try {
-            return """
-                -----BEGIN CERTIFICATE-----
-                ${Base64.encodeToString(cert.encoded, Base64.DEFAULT)}
-                -----END CERTIFICATE-----
-                
-                """.trimIndent()
+            return "-----BEGIN CERTIFICATE-----\n${Base64.encodeToString(certificate.encoded, Base64.DEFAULT)}\n-----END CERTIFICATE-----"
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
         return ""
     }
 
-    fun deserializeCertificate(cert: String?): Certificate? {
-        if (cert == null || cert.isEmpty()) {
+    fun deserializeCertificate(certificate: String?): Certificate? {
+        if (certificate.isNullOrEmpty()) {
             return null
         }
         try {
-            val derInputStream = ByteArrayInputStream(cert.toByteArray())
+            val derInputStream = ByteArrayInputStream(certificate.toByteArray())
             val certificateFactory = CertificateFactory.getInstance("X.509") //KeyStore.getDefaultType() => "BKS"
             return certificateFactory.generateCertificate(derInputStream)
         } catch (e: Exception) {
-            Log.e("HttpsTools", e.toString())
+            Log.e(this, e.toString())
         }
         return null
     }
