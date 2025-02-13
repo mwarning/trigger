@@ -30,11 +30,15 @@
     <string name="clipboard_is_empty">Clipboard is empty</string>
     <string name="confirm">Confirm</string>
     <string name="create_button">Create</string>
+    <string name="dialog_really_remove_certificate">Really remove certificate?</string>
+    <string name="dialog_really_remove_client_private_key">Really remove client private key?</string>
     <string name="dialog_really_remove_door">Really remove door?</string>
     <string name="dialog_really_remove_image">Really remove image?</string>
     <string name="done">Done</string>
     <string name="error">Error</string>
     <string name="error_duplicate_name">Duplicate Name</string>
+    <string name="error_empty_clipboard">Clipboard is empty</string>
+    <string name="error_import_failed">Import Failed</string>
     <string name="error_invalid_name">Invalid Name</string>
     <string name="error_invalid_url">Invalid URL</string>
     <string name="export_button">Export</string>

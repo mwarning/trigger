@@ -77,7 +77,7 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
                 val privateKey = keypair!!.openSSHPrivateKey
                 val clip = ClipData.newPlainText(keypair!!.description, privateKey)
                 clipboard.setPrimaryClip(clip)
-                showMessage("Done.")
+                showMessage(R.string.done)
             } else {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -93,13 +93,13 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
                     val privateKey = clipboard.primaryClip!!.getItemAt(0).text.toString()
                     val kp = SshTools.parsePrivateKeyPEM(privateKey)
                     if (kp != null) {
-                        showMessage("Done")
+                        showMessage(R.string.done)
                         updateKeyInfo(kp)
                     } else {
-                        showMessage("Import Failed.")
+                        showMessage(R.string.error_import_failed)
                     }
                 } else {
-                    showMessage("Clipboard is empty.")
+                    showMessage(R.string.error_empty_clipboard)
                 }
             } else {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -117,8 +117,8 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         }
 
         deleteButton.setOnClickListener {
-            builder.setTitle("Confirm")
-            builder.setMessage("Really remove client private key?")
+            builder.setTitle(R.string.confirm)
+            builder.setMessage(R.string.dialog_really_remove_client_private_key)
             builder.setCancelable(false) // not necessary
             builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, _: Int ->
                 setKeyPair(null)

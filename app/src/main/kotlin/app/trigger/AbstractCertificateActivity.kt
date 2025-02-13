@@ -113,8 +113,8 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
         }
 
         deleteButton.setOnClickListener {
-            builder.setTitle("Confirm")
-            builder.setMessage("Really remove certificate?")
+            builder.setTitle(R.string.confirm)
+            builder.setMessage(R.string.dialog_really_remove_certificate)
             builder.setCancelable(false) // not necessary
             builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, id: Int ->
                 certificate = null
