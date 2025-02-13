@@ -1,5 +1,6 @@
 package app.trigger
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.DialogInterface
@@ -10,6 +11,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -83,7 +85,7 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
                 intent.type = "*/*"
-                startActivityForResult(intent, EXPORT_PRIVATE_KEY_CODE)
+                exportPrivateKeyLauncher.launch(intent)
             }
         }
 
@@ -106,7 +108,7 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 //intent.putExtra(Intent.EXTRA_TITLE, "id_rsa");
                 intent.type = "*/*"
-                startActivityForResult(intent, IMPORT_PRIVATE_KEY_CODE)
+                importPrivateKeyLauncher.launch(intent)
             }
         }
 
@@ -167,19 +169,19 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode != RESULT_OK) {
-            return
+    private var importPrivateKeyLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri = intent.data ?: return@registerForActivityResult
+            importPrivateKey(uri)
         }
+    }
 
-        val d = data?.data
-        if (d != null) {
-            when (requestCode) {
-                EXPORT_PRIVATE_KEY_CODE -> exportPrivateKey(d)
-                IMPORT_PRIVATE_KEY_CODE -> importPrivateKey(d)
-            }
+    private var exportPrivateKeyLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data ?: return@registerForActivityResult
+            val uri: Uri = intent.data ?: return@registerForActivityResult
+            exportPrivateKey(uri)
         }
     }
 
@@ -199,10 +201,5 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
             tv.text = keypair!!.description
             tv.text = res.getString(R.string.private_key, keypair!!.description)
         }
-    }
-
-    companion object {
-        private const val IMPORT_PRIVATE_KEY_CODE = 0x01
-        private const val EXPORT_PRIVATE_KEY_CODE = 0x03
     }
 }
