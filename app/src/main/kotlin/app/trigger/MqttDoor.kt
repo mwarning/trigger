@@ -77,6 +77,14 @@ class MqttDoor(override var id: Int, override var name: String) : Door() {
         obj.put("unknown_image", Utils.serializeBitmap(unknown_image))
         obj.put("disabled_image", Utils.serializeBitmap(disabled_image))
 
+        obj.put("server_certificate", HttpsTools.serializeCertificate(server_certificate))
+        obj.put("client_certificate", HttpsTools.serializeCertificate(client_certificate))
+        obj.put("client_keypair", SshTools.serializeKeyPair(client_keypair))
+
+        obj.put("ignore_certificate", ignore_certificate)
+        obj.put("ignore_hostname_mismatch", ignore_hostname_mismatch)
+        obj.put("ignore_expiration", ignore_expiration)
+
         return obj
     }
 
