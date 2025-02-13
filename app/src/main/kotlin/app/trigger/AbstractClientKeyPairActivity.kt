@@ -40,9 +40,13 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
-    protected fun showErrorMessageDialog(title: String, message: String?) {
-        builder.setTitle(title)
-        builder.setMessage(message ?: "")
+    protected fun showMessage(textId: Int) {
+        Toast.makeText(applicationContext, textId, Toast.LENGTH_SHORT).show()
+    }
+
+    protected fun showErrorMessageDialog(message: String?) {
+        builder.setTitle(getString(R.string.error))
+        builder.setMessage(message)
         builder.setPositiveButton(android.R.string.ok, null)
         builder.show()
     }
@@ -74,7 +78,7 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
 
         exportPrivateKeyButton.setOnClickListener {
             if (keypair == null) {
-                showErrorMessageDialog("No Key", "No key loaded to export.")
+                showErrorMessageDialog("No key loaded to export.")
             } else if (useClipboardCheckBox.isChecked) {
                 val privateKey = keypair!!.openSSHPrivateKey
                 val clip = ClipData.newPlainText(keypair!!.description, privateKey)
@@ -146,13 +150,13 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
         val kp = keypair
 
         if (kp == null) {
-            showErrorMessageDialog("No Key", "No key loaded to export.")
+            showErrorMessageDialog("No key loaded to export.")
         } else {
             try {
                 writeFile(this, uri, kp.openSSHPrivateKey!!.toByteArray())
                 showMessage("Done. Wrote private key: ${uri.lastPathSegment}")
             } catch (e: Exception) {
-                showErrorMessageDialog("Error", e.message)
+                showErrorMessageDialog(e.message)
             }
         }
     }
@@ -165,7 +169,7 @@ abstract class AbstractClientKeyPairActivity : AppCompatActivity() {
             updateKeyInfo(kp)
             showMessage("Done. Read ${uri.lastPathSegment}")
         } catch (e: Exception) {
-            showErrorMessageDialog("Error", e.message)
+            showErrorMessageDialog(e.message)
         }
     }
 

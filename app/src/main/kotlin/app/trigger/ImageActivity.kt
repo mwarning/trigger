@@ -28,8 +28,8 @@ class ImageActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private var currentImage: Bitmap? = null
 
-    private fun showErrorMessage(title: String, message: String) {
-        builder.setTitle(title)
+    private fun showErrorMessage(message: String) {
+        builder.setTitle(R.string.error)
         builder.setMessage(message)
         builder.setPositiveButton(android.R.string.ok, null)
         builder.show()
@@ -125,7 +125,7 @@ class ImageActivity : AppCompatActivity() {
             val data = Utils.readFile(this, uri)
             var image = BitmapFactory.decodeByteArray(data, 0, data.size)
             if (image == null) {
-                showErrorMessage("Error", "Not a supported image format: " + uri.lastPathSegment)
+                showErrorMessage("Not a supported image format: " + uri.lastPathSegment)
                 return
             }
             val inWidth = image.width
@@ -150,7 +150,7 @@ class ImageActivity : AppCompatActivity() {
             }
             updateImageView()
         } catch (e: Exception) {
-            showErrorMessage("Error", e.toString())
+            showErrorMessage(e.toString())
         }
     }
 

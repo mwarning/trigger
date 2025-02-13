@@ -41,15 +41,15 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
         val cert = result.certificate
         if (cert != null) {
             certificate = cert
-            Toast.makeText(applicationContext, "Done.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, R.string.done, Toast.LENGTH_SHORT).show()
             updateCertificateInfo()
         } else {
-            showErrorMessage("Error Fetching Certificate", result.error)
+            showErrorMessage("Error Fetching Certificate: ${result.error}")
         }
     }
 
-    private fun showErrorMessage(title: String, message: String?) {
-        builder.setTitle(title)
+    private fun showErrorMessage(message: String?) {
+        builder.setTitle(getString(R.string.error))
         builder.setMessage(message)
         builder.setPositiveButton(android.R.string.ok, null)
         builder.show()
@@ -86,7 +86,7 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
 
         exportButton.setOnClickListener {
             if (certificate == null) {
-                showErrorMessage("No Certificate", "No Certificate loaded to export.")
+                showErrorMessage("No Certificate loaded to export.")
             } else {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -99,9 +99,9 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
         fetchButton.setOnClickListener {
             val url = certificateUrl.text.toString()
             if (url.isEmpty()) {
-                showErrorMessage("Empty URL", "No URL set to fetch a certificate from.")
+                showErrorMessage("No URL set to fetch a certificate from.")
             } else if (!url.startsWith("https://")) {
-                showErrorMessage("Invalid URL", "URL needs to start with 'https://'")
+                showErrorMessage("URL needs to start with 'https://'")
             } else {
                 CertificateFetchTask(this).execute(url)
             }
@@ -138,14 +138,14 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
 
     private fun exportCertificateFile(uri: Uri) {
         if (certificate == null) {
-            showErrorMessage("No Certificate", "No Certificate loaded to export.")
+            showErrorMessage("No Certificate loaded to export.")
         } else try {
             val pem = HttpsTools.serializeCertificate(certificate)
             writeFile(this, uri, pem.toByteArray())
             Toast.makeText(applicationContext, "Done. Wrote " + uri.lastPathSegment, Toast.LENGTH_SHORT).show()
             updateCertificateInfo()
         } catch (e: Exception) {
-            showErrorMessage("Error", e.message)
+            showErrorMessage(e.message)
         }
     }
 
@@ -156,7 +156,7 @@ abstract class AbstractCertificateActivity : AppCompatActivity(), CertificateFet
             Toast.makeText(applicationContext, "Done. Read " + uri.lastPathSegment, Toast.LENGTH_SHORT).show()
             updateCertificateInfo()
         } catch (e: Exception) {
-            showErrorMessage("Error", e.message)
+            showErrorMessage(e.message)
         }
     }
 
