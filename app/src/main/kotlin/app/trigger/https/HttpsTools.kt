@@ -33,7 +33,10 @@ object HttpsTools {
             return ""
         }
         try {
-            return "-----BEGIN CERTIFICATE-----\n${Base64.encodeToString(certificate.encoded, Base64.DEFAULT)}\n-----END CERTIFICATE-----"
+            val prefix = "-----BEGIN CERTIFICATE-----"
+            val mid = Base64.encodeToString(certificate.encoded, Base64.DEFAULT)
+            val suffix = "-----END CERTIFICATE-----"
+            return "${prefix}\n${mid}\n${suffix}"
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
