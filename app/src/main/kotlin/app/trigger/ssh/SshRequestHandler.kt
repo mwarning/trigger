@@ -1,6 +1,5 @@
 package app.trigger.ssh
 
-import app.trigger.Utils.isEmpty
 import app.trigger.DoorReply.ReplyCode
 import com.trilead.ssh2.crypto.PEMDecoder
 import com.trilead.ssh2.crypto.keys.Ed25519Provider
@@ -115,7 +114,7 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
             MainActivity.Action.FETCH_STATE -> setup.state_command
         }
 
-        val username = if (isEmpty(setup.user)) "root" else setup.user
+        val username = setup.user.ifEmpty { "root" }
         val password = setup.password
         val hostname = setup.host
         val keypair = setup.keypair

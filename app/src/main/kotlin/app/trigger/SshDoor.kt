@@ -32,9 +32,7 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
     override fun getWiFiSSIDs(): String = ssids
 
     override fun getRegisterUrl(): String {
-        return if (!Utils.isEmpty(register_url)) {
-            register_url
-        } else host
+        return register_url.ifEmpty { host }
     }
 
     override fun parseReply(reply: DoorReply): DoorStatus {
@@ -42,15 +40,15 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
     }
 
     override fun canOpen(): Boolean {
-        return !Utils.isEmpty(open_command)
+        return open_command.isNotEmpty()
     }
 
     override fun canClose(): Boolean {
-        return !Utils.isEmpty(close_command)
+        return close_command.isNotEmpty()
     }
 
     override fun canRing(): Boolean {
-        return !Utils.isEmpty(ring_command)
+        return ring_command.isNotEmpty()
     }
 
     fun needsPassphrase(): Boolean {

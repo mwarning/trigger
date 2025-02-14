@@ -256,10 +256,6 @@ object Utils {
         }
     }
 */
-    // non empty string
-    fun isEmpty(str: String?): Boolean {
-        return str == null || str.isEmpty()
-    }
 
     fun hexStringToByteArray(s: String?): ByteArray {
         if (s == null) {

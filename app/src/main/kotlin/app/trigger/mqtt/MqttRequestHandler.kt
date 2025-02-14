@@ -2,7 +2,6 @@ package app.trigger.mqtt
 
 import app.trigger.Utils.getSocketFactoryWithCertificateAndClientKey
 import app.trigger.Utils.getSocketFactoryWithCertificate
-import app.trigger.Utils.isEmpty
 import app.trigger.Utils.rebuildAddress
 import app.trigger.DoorReply.ReplyCode
 import app.trigger.https.HttpsTools
@@ -27,7 +26,7 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val door
             listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "Internal Error")
             return
         }
-        if (isEmpty(door.server)) {
+        if (door.server.isEmpty()) {
             listener.onTaskResult(door.id, ReplyCode.LOCAL_ERROR, "MQTT broker address not set.")
             return
         }

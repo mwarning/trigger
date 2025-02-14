@@ -392,7 +392,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     private fun checkSshPassphrase(door: Door, action: Action): Boolean {
         if (door is SshDoor) {
             // check if passphrase is not needed
-            if (!door.needsPassphrase() || !Utils.isEmpty(door.passphrase_tmp)) {
+            if (!door.needsPassphrase() || door.passphrase_tmp.isNotEmpty()) {
                 return true
             }
 

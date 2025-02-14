@@ -1,6 +1,5 @@
 package app.trigger.nuki
 
-import app.trigger.Utils.isEmpty
 import app.trigger.DoorReply.ReplyCode
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -81,7 +80,7 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
             return
         }
 
-        if (isEmpty(setup.shared_key) && action === MainActivity.Action.FETCH_STATE) {
+        if (setup.shared_key.isEmpty() && action === MainActivity.Action.FETCH_STATE) {
             // ignore query for door state - not paired yet
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
             return
@@ -93,7 +92,7 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
         }
 
         val callback: NukiCallback
-        if (isEmpty(setup.shared_key)) {
+        if (setup.shared_key.isEmpty()) {
             // initiate paring
             callback = NukiPairingCallback(setup.id, listener, setup)
             listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Start Pairing.")

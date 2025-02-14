@@ -39,15 +39,15 @@ class MqttDoor(override var id: Int, override var name: String) : Door() {
     }
 
     override fun canOpen(): Boolean {
-        return !Utils.isEmpty(open_command)
+        return open_command.isNotEmpty()
     }
 
     override fun canClose(): Boolean {
-        return !Utils.isEmpty(close_command)
+        return close_command.isNotEmpty()
     }
 
     override fun canRing(): Boolean {
-        return !Utils.isEmpty(ring_command)
+        return ring_command.isNotEmpty()
     }
 
     fun toJSONObject(): JSONObject {

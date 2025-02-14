@@ -3,7 +3,6 @@ package app.trigger.https
 import app.trigger.Utils.getSocketFactoryWithCertificateAndClientKey
 import app.trigger.Utils.getSocketFactoryWithCertificate
 import app.trigger.Utils.readInputStreamWithTimeout
-import app.trigger.Utils.isEmpty
 import app.trigger.DoorReply.ReplyCode
 import app.trigger.ssh.PubkeyUtils
 import android.util.Base64
@@ -117,7 +116,7 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
                 listener.onTaskResult(setup.id, ReplyCode.SUCCESS, result)
             } else {
                 val result = readInputStreamWithTimeout(con.errorStream, 50000, 2500)
-                if (!isEmpty(result)) {
+                if (result.isNotEmpty()) {
                     listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, result)
                 } else {
                     listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, con.responseMessage)

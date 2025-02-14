@@ -44,15 +44,15 @@ class HttpsDoor(override var id: Int, override var name: String) : Door() {
     }
 
     override fun canOpen(): Boolean {
-        return !Utils.isEmpty(open_query)
+        return open_query.isNotEmpty()
     }
 
     override fun canClose(): Boolean {
-        return !Utils.isEmpty(close_query)
+        return close_query.isNotEmpty()
     }
 
     override fun canRing(): Boolean {
-        return !Utils.isEmpty(ring_query)
+        return ring_query.isNotEmpty()
     }
 
     fun toJSONObject(): JSONObject {
