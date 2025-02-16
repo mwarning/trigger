@@ -1,0 +1,3 @@
+* assume door state to be open/closed if the
+  open/close command is successful. This will
+  only work if the reply patterns are set empty.
