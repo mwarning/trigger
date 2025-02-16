@@ -50,6 +50,10 @@ class MqttDoor(override var id: Int, override var name: String) : Door() {
         return ring_command.isNotEmpty()
     }
 
+    override fun canFetchState(): Boolean {
+        return status_topic.isNotEmpty()
+    }
+
     fun toJSONObject(): JSONObject {
         val obj = JSONObject()
         obj.put("id", id)

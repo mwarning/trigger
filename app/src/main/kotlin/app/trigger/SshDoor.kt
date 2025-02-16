@@ -51,6 +51,10 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
         return ring_command.isNotEmpty()
     }
 
+    override fun canFetchState(): Boolean {
+        return state_command.isNotEmpty()
+    }
+
     fun needsPassphrase(): Boolean {
         return keypair != null && keypair!!.encrypted
     }

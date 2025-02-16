@@ -33,6 +33,10 @@ class BluetoothDoor(override var id: Int, override var name: String) : Door() {
         return ring_query.isNotEmpty()
     }
 
+    override fun canFetchState(): Boolean {
+        return status_query.isNotEmpty()
+    }
+
     fun toJSONObject(): JSONObject {
         val obj = JSONObject()
         obj.put("id", id)

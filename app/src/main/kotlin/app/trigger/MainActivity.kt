@@ -447,10 +447,25 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         return true
     }
 
+    private fun canDoAction(door: Door, action: Action): Boolean {
+        return when (action) {
+            Action.OPEN_DOOR -> door.canOpen()
+            Action.CLOSE_DOOR -> door.canClose()
+            Action.RING_DOOR -> door.canRing()
+            Action.FETCH_STATE -> door.canFetchState()
+        }
+    }
+
     private fun callRequestHandler(action: Action) {
         val door = getSelectedDoor()
         if (door == null) {
             changeUI(StateCode.DISABLED)
+            return
+        }
+
+        // check if action is supported
+        if (!canDoAction(door, action)) {
+            // do not change state
             return
         }
 
