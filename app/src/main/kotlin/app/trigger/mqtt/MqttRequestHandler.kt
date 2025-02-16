@@ -127,24 +127,24 @@ class MqttRequestHandler(private val listener: OnTaskCompleted, private val door
                     client.subscribe(door.status_topic)
                 MainActivity.Action.OPEN_DOOR -> {
                     // publish
-                    val open = MqttMessage(door.open_command.toByteArray())
-                    open.isRetained = door.retained
-                    open.qos = door.qos
-                    client.publish(door.command_topic, open)
+                    val message = MqttMessage(door.open_command.toByteArray())
+                    message.isRetained = door.retained
+                    message.qos = door.qos
+                    client.publish(door.command_topic, message)
                 }
                 MainActivity.Action.RING_DOOR -> {
                     // publish
-                    val ring = MqttMessage(door.ring_command.toByteArray())
-                    ring.isRetained = door.retained
-                    ring.qos = door.qos
-                    client.publish(door.command_topic, ring)
+                    val message = MqttMessage(door.ring_command.toByteArray())
+                    message.isRetained = door.retained
+                    message.qos = door.qos
+                    client.publish(door.command_topic, message)
                 }
                 MainActivity.Action.CLOSE_DOOR -> {
                     // publish
-                    val close = MqttMessage(door.close_command.toByteArray())
-                    close.isRetained = door.retained
-                    close.qos = door.qos
-                    client.publish(door.command_topic, close)
+                    val message = MqttMessage(door.close_command.toByteArray())
+                    message.isRetained = door.retained
+                    message.qos = door.qos
+                    client.publish(door.command_topic, message)
                 }
             }
             listener.onTaskResult(door.id, ReplyCode.SUCCESS, "")
