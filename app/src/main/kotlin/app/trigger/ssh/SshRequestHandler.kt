@@ -15,7 +15,8 @@ import java.net.SocketTimeoutException
 import java.security.KeyPair
 
 
-class SshRequestHandler(private val listener: OnTaskCompleted, private val setup: SshDoor, private val action: MainActivity.Action) : Thread(), ConnectionMonitor {
+class SshRequestHandler(private val listener: OnTaskCompleted, private val setup: SshDoor, private val action: MainActivity.Action)
+        : Thread(), ConnectionMonitor {
     companion object {
         private const val TAG = "SshRequestHandler"
         private const val conditions = (ChannelCondition.STDOUT_DATA
@@ -103,7 +104,7 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
 
     override fun run() {
         if (setup.id < 0) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Internal Error")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Internal Error")
             return
         }
 
@@ -121,12 +122,12 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
         val port = setup.port
 
         if (command.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "")
             return
         }
 
         if (hostname.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Server address is empty.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Server address is empty.")
             return
         }
 
@@ -149,16 +150,16 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
                     if (connection.authenticateWithPublicKey(username, kp)) {
                         // login successful
                     } else {
-                        listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Key was not accepted.")
+                        listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Key was not accepted.")
                         return
                     }
                 } else {
                     if (keypair.encrypted) {
                         setup.passphrase_tmp = "" // reset (incorrect) passphrase
-                        listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Key pair passphrase was not accepted.")
+                        listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Key pair passphrase was not accepted.")
                         return
                     } else {
-                        listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Failed to decode key pair.")
+                        listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Failed to decode key pair.")
                         return
                     }
                 }
@@ -170,11 +171,11 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
                     if (connection.authenticateWithPassword(username, password)) {
                         // login successful
                     } else {
-                        listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Password was not accepted.")
+                        listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Password was not accepted.")
                         return
                     }
                 } else {
-                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Host does not support password authentication.")
+                    listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Host does not support password authentication.")
                     return
                 }
             }
@@ -184,14 +185,14 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
                 if (connection.authenticateWithNone(username)) {
                     // login successful
                 } else {
-                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Login without any credentials failed.")
+                    listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Login without any credentials failed.")
                     return
                 }
             }
 
             // final check
             if (!connection.isAuthenticationComplete) {
-                listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Authentication failed.")
+                listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Authentication failed.")
                 return
             }
 
@@ -207,16 +208,16 @@ class SshRequestHandler(private val listener: OnTaskCompleted, private val setup
             val output = String(buffer, 0, bytes_read)
             val ret = session.exitStatus
             if (ret == null || ret == 0) {
-                listener.onTaskResult(setup.id, ReplyCode.SUCCESS, output)
+                listener.onTaskResult(setup.id, action, ReplyCode.SUCCESS, output)
             } else {
-                listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, output)
+                listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, output)
             }
         } catch (e: SocketTimeoutException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Connection timeout. Connected to the right network?")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Connection timeout. Connected to the right network?")
         } catch (e: TimeoutCancellationException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Command timeout after ${setup.timeout} ms")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Command timeout after ${setup.timeout} ms")
         } catch (e: Exception) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, e.message!!)
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, e.message!!)
             Log.e(TAG, "Problem in SSH connection thread during authentication: $e")
         } finally {
             session?.close()

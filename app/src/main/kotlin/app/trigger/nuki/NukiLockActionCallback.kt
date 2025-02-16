@@ -13,7 +13,8 @@ import app.trigger.nuki.NukiCommand.NukiError
 import app.trigger.nuki.NukiCommand.NukiLockAction
 import app.trigger.*
 
-internal class NukiLockActionCallback(door_id: Int, listener: OnTaskCompleted, setup: NukiDoor, lock_action: Int) : NukiCallback(door_id, listener, NukiCallback.Companion.KEYTURNER_SERVICE_UUID, NukiCallback.Companion.KEYTURNER_USDIO_XTERISTIC_UUID) {
+internal class NukiLockActionCallback(door_id: Int, action: MainActivity.Action, listener: OnTaskCompleted, setup: NukiDoor, lock_action: Int)
+        : NukiCallback(door_id, action, listener, KEYTURNER_SERVICE_UUID, KEYTURNER_USDIO_XTERISTIC_UUID) {
     var auth_id: Long
     var app_id: Long
     var lock_action: Int
@@ -70,10 +71,10 @@ internal class NukiLockActionCallback(door_id: Int, listener: OnTaskCompleted, s
             if (ns.battery_critical == 0x01) {
                 extra = " (Battery Critical!)"
             }
-            listener.onTaskResult(door_id, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra)
+            listener.onTaskResult(door_id, action, ReplyCode.SUCCESS, NukiTools.getLockState(ns.lock_state) + extra)
         } else if (command is NukiError) {
             Log.d(TAG, "NukiCommand.NukiError")
-            listener.onTaskResult(door_id, ReplyCode.REMOTE_ERROR, command.asString())
+            listener.onTaskResult(door_id, action, ReplyCode.REMOTE_ERROR, command.asString())
             closeConnection(gatt)
         } else {
             Log.e(TAG, "Unhandled command")

@@ -299,9 +299,13 @@ object Utils {
     }
 
     private fun match(message: String, pattern: String): Boolean {
-        val r = Pattern.compile(pattern)
-        val m = r.matcher(message)
-        return m.find()
+        try {
+            val r = Pattern.compile(pattern)
+            val m = r.matcher(message)
+            return m.find()
+        } catch (e: Exception) {
+            return false
+        }
     }
 
     // parse return from HTTP/SSH/MQTT doors
@@ -309,7 +313,7 @@ object Utils {
         // strip HTML from response
         var unlocked_pattern = unlocked_pattern_in
         var locked_pattern = locked_pattern_in
-        val msg = Html.fromHtml(reply.message).toString().trim { it <= ' ' }
+        val message = Html.fromHtml(reply.message).toString().trim { it <= ' ' }
         if (unlocked_pattern == null) {
             unlocked_pattern = ""
         }
@@ -317,23 +321,26 @@ object Utils {
             locked_pattern = ""
         }
         return when (reply.code) {
-            ReplyCode.LOCAL_ERROR, ReplyCode.REMOTE_ERROR -> DoorStatus(StateCode.UNKNOWN, msg)
+            ReplyCode.LOCAL_ERROR, ReplyCode.REMOTE_ERROR -> DoorStatus(StateCode.UNKNOWN, message)
             ReplyCode.SUCCESS -> {
-                return try {
-                    if (match(reply.message, unlocked_pattern)) {
-                        // door unlocked
-                        DoorStatus(StateCode.OPEN, msg)
-                    } else if (match(reply.message, locked_pattern)) {
-                        // door locked
-                        DoorStatus(StateCode.CLOSED, msg)
-                    } else {
-                        DoorStatus(StateCode.UNKNOWN, msg)
+                if (unlocked_pattern.isEmpty() && locked_pattern.isEmpty()) {
+                    return when (reply.action) {
+                        MainActivity.Action.OPEN_DOOR -> DoorStatus(StateCode.OPEN, message)
+                        MainActivity.Action.CLOSE_DOOR -> DoorStatus(StateCode.CLOSED, message)
+                        else -> DoorStatus(StateCode.UNKNOWN, message)
                     }
-                } catch (e: Exception) {
-                    DoorStatus(StateCode.UNKNOWN, e.toString())
+                }
+                return if (match(reply.message, unlocked_pattern)) {
+                    // door unlocked
+                    DoorStatus(StateCode.OPEN, message)
+                } else if (match(reply.message, locked_pattern)) {
+                    // door locked
+                    DoorStatus(StateCode.CLOSED, message)
+                } else {
+                    DoorStatus(StateCode.UNKNOWN, message)
                 }
             }
-            ReplyCode.DISABLED -> DoorStatus(StateCode.DISABLED, msg)
+            ReplyCode.DISABLED -> DoorStatus(StateCode.DISABLED, message)
         }
     }
 }

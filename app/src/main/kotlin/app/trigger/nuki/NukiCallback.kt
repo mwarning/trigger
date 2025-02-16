@@ -9,7 +9,8 @@ import android.bluetooth.BluetoothGattDescriptor
 import app.trigger.*
 import java.util.*
 
-internal abstract class NukiCallback(protected val door_id: Int, protected val listener: OnTaskCompleted, private val service_uuid: UUID, private val characteristic_uuid: UUID) : BluetoothGattCallback() {
+internal abstract class NukiCallback(protected val door_id: Int, val action: MainActivity.Action, protected val listener: OnTaskCompleted, private val service_uuid: UUID, private val characteristic_uuid: UUID)
+        : BluetoothGattCallback() {
     /*
      * This is mostly called to end the connection quickly instead
      * of waiting for the other side to close the connection
@@ -35,7 +36,7 @@ internal abstract class NukiCallback(protected val door_id: Int, protected val l
         } else {
             closeConnection(gatt)
             listener.onTaskResult(
-                    door_id, ReplyCode.REMOTE_ERROR, "Connection error: ${NukiRequestHandler.getGattStatus(status)}"
+                door_id, action, ReplyCode.REMOTE_ERROR, "Connection error: ${NukiRequestHandler.getGattStatus(status)}"
             )
         }
     }
@@ -49,7 +50,7 @@ internal abstract class NukiCallback(protected val door_id: Int, protected val l
                 Log.d(TAG, "Service not found: $service_uuid")
                 closeConnection(gatt)
                 listener.onTaskResult(
-                        door_id, ReplyCode.REMOTE_ERROR, "Service not found: $service_uuid"
+                    door_id, action, ReplyCode.REMOTE_ERROR, "Service not found: $service_uuid"
                 )
                 return
             }
@@ -58,7 +59,7 @@ internal abstract class NukiCallback(protected val door_id: Int, protected val l
                 Log.d(TAG, "Characteristic not found: $characteristic_uuid")
                 closeConnection(gatt)
                 listener.onTaskResult(
-                        door_id, ReplyCode.REMOTE_ERROR, "Characteristic not found: $characteristic_uuid"
+                    door_id, action, ReplyCode.REMOTE_ERROR, "Characteristic not found: $characteristic_uuid"
                 )
                 return
             }
@@ -68,7 +69,7 @@ internal abstract class NukiCallback(protected val door_id: Int, protected val l
                 Log.d(TAG, "Descriptor not found: $CCC_DESCRIPTOR_UUID")
                 closeConnection(gatt)
                 listener.onTaskResult(
-                        door_id, ReplyCode.REMOTE_ERROR, "Descriptor not found: $CCC_DESCRIPTOR_UUID"
+                    door_id, action, ReplyCode.REMOTE_ERROR, "Descriptor not found: $CCC_DESCRIPTOR_UUID"
                 )
                 return
             }
@@ -84,7 +85,7 @@ internal abstract class NukiCallback(protected val door_id: Int, protected val l
             Log.d(TAG, "Client not found: ${NukiRequestHandler.getGattStatus(status)}")
             closeConnection(gatt)
             listener.onTaskResult(
-                    door_id, ReplyCode.LOCAL_ERROR, "Client not found: ${NukiRequestHandler.getGattStatus(status)}"
+                door_id, action, ReplyCode.LOCAL_ERROR, "Client not found: ${NukiRequestHandler.getGattStatus(status)}"
             )
         }
     }

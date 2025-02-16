@@ -23,7 +23,6 @@ import app.trigger.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-
 class NukiRequestHandler(private val listener: OnTaskCompleted, private val setup: NukiDoor, private val action: MainActivity.Action) : Thread() {
     private fun getAddress(adapter: BluetoothAdapter, device_name: String): String {
         val pairedDevices = adapter.bondedDevices
@@ -43,46 +42,46 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
         if (bluetooth_in_use.get()) {
             Log.w(TAG, "Bluetooth busy => abort action")
             if (action !== MainActivity.Action.FETCH_STATE) {
-                listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Bluetooth device is busy.")
+                listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Bluetooth device is busy.")
             }
             return
         }
         if (!(listener as Context).packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Bluetooth Low Energy is not supported.")
+            listener.onTaskResult(setup.id, action, ReplyCode.DISABLED, "Bluetooth Low Energy is not supported.")
             return
         }
 
         val adapter = BluetoothAdapter.getDefaultAdapter()
         if (adapter == null || !adapter.isEnabled) {
-            listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Bluetooth is disabled.")
+            listener.onTaskResult(setup.id, action, ReplyCode.DISABLED, "Bluetooth is disabled.")
             return
         }
 
         if (setup.device_name.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No device name set.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "No device name set.")
             return
         }
 
         if (setup.user_name.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No user name set.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "No user name set.")
             return
         }
 
         val address = getAddress(adapter, setup.device_name)
         if (address.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "No device found.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "No device found.")
             return
         }
 
         val device = adapter.getRemoteDevice(address)
         if (device == null) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not found.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Device not found.")
             return
         }
 
         if (setup.shared_key.isEmpty() && action === MainActivity.Action.FETCH_STATE) {
             // ignore query for door state - not paired yet
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
             return
         }
 
@@ -94,17 +93,17 @@ class NukiRequestHandler(private val listener: OnTaskCompleted, private val setu
         val callback: NukiCallback
         if (setup.shared_key.isEmpty()) {
             // initiate paring
-            callback = NukiPairingCallback(setup.id, listener, setup)
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Start Pairing.")
+            callback = NukiPairingCallback(setup.id, action, listener, setup)
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Start Pairing.")
         } else when (action) {
-            MainActivity.Action.OPEN_DOOR -> callback = NukiLockActionCallback(setup.id, listener, setup, 0x01 /*unlock*/)
+            MainActivity.Action.OPEN_DOOR -> callback = NukiLockActionCallback(setup.id, action, listener, setup, 0x01 /*unlock*/)
             MainActivity.Action.RING_DOOR -> {
-                listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Bell not supported.")
+                listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Bell not supported.")
                 return
             }
-            MainActivity.Action.CLOSE_DOOR -> callback = NukiLockActionCallback(setup.id, listener, setup, 0x02 /*lock*/)
-            MainActivity.Action.FETCH_STATE -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
-            else -> callback = NukiReadLockStateCallback(setup.id, listener, setup)
+            MainActivity.Action.CLOSE_DOOR -> callback = NukiLockActionCallback(setup.id, action, listener, setup, 0x02 /*lock*/)
+            MainActivity.Action.FETCH_STATE -> callback = NukiReadLockStateCallback(setup.id, action, listener, setup)
+            else -> callback = NukiReadLockStateCallback(setup.id, action, listener, setup)
         }
 
         val gatt: BluetoothGatt? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

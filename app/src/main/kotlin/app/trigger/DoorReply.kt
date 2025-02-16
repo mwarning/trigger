@@ -1,7 +1,7 @@
 package app.trigger
 
 // reply from door
-class DoorReply(val code: ReplyCode, val message: String) {
+class DoorReply(val action: MainActivity.Action, val code: ReplyCode, val message: String) {
     enum class ReplyCode {
         LOCAL_ERROR,  // could establish a connection for some reason
         REMOTE_ERROR,  // the door send some error

@@ -14,19 +14,19 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
     private var socket: BluetoothSocket? = null
     override fun run() {
         if (setup.id < 0) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Internal Error")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Internal Error")
             return
         }
 
         val adapter = BluetoothAdapter.getDefaultAdapter()
         if (adapter == null) {
-            listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Device does not support Bluetooth")
+            listener.onTaskResult(setup.id, action, ReplyCode.DISABLED, "Device does not support Bluetooth")
             return
         }
 
         if (!adapter.isEnabled) {
             // request to enable
-            listener.onTaskResult(setup.id, ReplyCode.DISABLED, "Bluetooth is disabled.")
+            listener.onTaskResult(setup.id, action, ReplyCode.DISABLED, "Bluetooth is disabled.")
             return
         }
 
@@ -36,8 +36,9 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
             MainActivity.Action.CLOSE_DOOR -> setup.close_query
             MainActivity.Action.FETCH_STATE -> setup.status_query
         }
+
         if (request.isEmpty()) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "")
             return
         }
         try {
@@ -51,7 +52,7 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
                 }
             }
             if (address.isEmpty()) {
-                listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
+                listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Device not paired yet.")
                 return
             }
             val device = adapter.getRemoteDevice(address)
@@ -73,13 +74,13 @@ class BluetoothRequestHandler(private val listener: OnTaskCompleted, private val
                 val bytes = tmpIn.read(buffer)
                 String(buffer, 0, bytes)
             } catch (ioe: IOException) {
-                listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Cannot reach remote device.")
+                listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Cannot reach remote device.")
                 return
             }
             socket!!.close()
-            listener.onTaskResult(setup.id, ReplyCode.SUCCESS, response)
+            listener.onTaskResult(setup.id, action, ReplyCode.SUCCESS, response)
         } catch (e: Exception) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, e.toString())
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, e.toString())
         }
     }
 }

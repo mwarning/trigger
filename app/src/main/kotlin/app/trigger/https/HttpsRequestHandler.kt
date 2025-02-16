@@ -18,7 +18,7 @@ import javax.net.ssl.*
 class HttpsRequestHandler(private val listener: OnTaskCompleted, private val setup: HttpsDoor, private val action: MainActivity.Action) : Thread() {
     override fun run() {
         if (setup.id < 0) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Internal Error")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Internal Error")
             return
         }
 
@@ -32,7 +32,7 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
 
         if (command.isEmpty()) {
             // ignore
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "")
             return
         }
 
@@ -46,7 +46,7 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
 
         if (method.isEmpty()) {
             // ignore
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "")
             return
         }
 
@@ -113,31 +113,31 @@ class HttpsRequestHandler(private val listener: OnTaskCompleted, private val set
 
             if (con.responseCode == 200) {
                 val result = readInputStreamWithTimeout(con.inputStream, 50000, 2500)
-                listener.onTaskResult(setup.id, ReplyCode.SUCCESS, result)
+                listener.onTaskResult(setup.id, action, ReplyCode.SUCCESS, result)
             } else {
                 val result = readInputStreamWithTimeout(con.errorStream, 50000, 2500)
                 if (result.isNotEmpty()) {
-                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, result)
+                    listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, result)
                 } else {
-                    listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, con.responseMessage)
+                    listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, con.responseMessage)
                 }
             }
         } catch (mue: MalformedURLException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Malformed URL.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Malformed URL.")
         } catch (e: FileNotFoundException) {
-            listener.onTaskResult(setup.id, ReplyCode.REMOTE_ERROR, "Server responds with an error.")
+            listener.onTaskResult(setup.id, action, ReplyCode.REMOTE_ERROR, "Server responds with an error.")
         } catch (ste: SocketTimeoutException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Server not reachable.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Server not reachable.")
         } catch (ce: ConnectException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Failed to connect.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Failed to connect.")
         } catch (uhe: UnknownHostException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, uhe.message ?: uhe.toString())
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, uhe.message ?: uhe.toString())
         } catch (se: SocketException) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, "Not connected to network.")
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, "Not connected to network.")
             //} catch (java.security.cert.CertPathValidatorException e) {
             //    return new DoorReply(ReplyCode.LOCAL_ERROR, "Certificate validation failed.");
         } catch (e: Exception) {
-            listener.onTaskResult(setup.id, ReplyCode.LOCAL_ERROR, e.toString())
+            listener.onTaskResult(setup.id, action, ReplyCode.LOCAL_ERROR, e.toString())
         }
     }
 

@@ -327,14 +327,14 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     }
 
     // can be called multiple times by the same task
-    override fun onTaskResult(door_id: Int, code: ReplyCode, message: String) {
+    override fun onTaskResult(door_id: Int, action: Action, code: ReplyCode, message: String) {
         runOnUiThread {
             val door = getSelectedDoor()
             if (door == null || door.id != door_id) {
                 // probably some late result that does not matter anymore
                 return@runOnUiThread
             }
-            val state = door.parseReply(DoorReply(code, message))
+            val state = door.parseReply(DoorReply(action, code, message))
 
             // change state image
             changeUI(state.code)
