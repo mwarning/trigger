@@ -71,7 +71,7 @@
     <string name="setting_bluetooth_close_command">Close Command</string>
     <string name="setting_bluetooth_device_name">Lock Name/MAC</string>
     <string name="setting_bluetooth_open_command">Open Command</string>
-    <string name="setting_bluetooth_ring_command">Open Command</string>
+    <string name="setting_bluetooth_ring_command">Ring Command</string>
     <string name="setting_bluetooth_service_uuid">Service UUID (optional)</string>
     <string name="setting_bluetooth_status_command">State Command</string>
     <string name="setting_client_certificate">Client Certificate</string>
