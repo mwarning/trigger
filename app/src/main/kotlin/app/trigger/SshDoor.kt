@@ -20,8 +20,8 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
     var state_command = ""
 
     // regex to evaluate the door return message
-    var unlocked_pattern = "UNLOCKED"
-    var locked_pattern = "LOCKED"
+    var unlocked_pattern = ""
+    var locked_pattern = ""
 
     var register_url = ""
     var ssids = ""
@@ -109,8 +109,8 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
             setup.ring_command = obj.optString("ring_command", "")
             setup.state_command = obj.optString("state_command", "")
 
-            setup.unlocked_pattern = obj.optString("unlocked_pattern", "UNLOCKED")
-            setup.locked_pattern = obj.optString("locked_pattern", "LOCKED")
+            setup.unlocked_pattern = obj.optString("unlocked_pattern", "")
+            setup.locked_pattern = obj.optString("locked_pattern", "")
 
             setup.open_image = Utils.deserializeBitmap(obj.optString("open_image", ""))
             setup.closed_image = Utils.deserializeBitmap(obj.optString("closed_image", ""))

@@ -21,8 +21,8 @@ class MqttDoor(override var id: Int, override var name: String) : Door() {
     var close_command = ""
     var ring_command = ""
     var ssids = ""
-    var locked_pattern = "LOCKED"
-    var unlocked_pattern = "UNLOCKED"
+    var locked_pattern = ""
+    var unlocked_pattern = ""
 
     var server_certificate: Certificate? = null
     var client_certificate: Certificate? = null
@@ -113,8 +113,8 @@ class MqttDoor(override var id: Int, override var name: String) : Door() {
             setup.ring_command = obj.optString("ring_command", "")
             setup.ssids = obj.optString("ssids", "")
 
-            setup.unlocked_pattern = obj.optString("unlocked_pattern", "UNLOCKED")
-            setup.locked_pattern = obj.optString("locked_pattern", "LOCKED")
+            setup.unlocked_pattern = obj.optString("unlocked_pattern", "")
+            setup.locked_pattern = obj.optString("locked_pattern", "")
 
             setup.open_image = Utils.deserializeBitmap(obj.optString("open_image", ""))
             setup.closed_image = Utils.deserializeBitmap(obj.optString("closed_image", ""))

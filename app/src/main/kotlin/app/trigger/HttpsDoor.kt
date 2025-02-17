@@ -21,8 +21,8 @@ class HttpsDoor(override var id: Int, override var name: String) : Door() {
     var ssids = ""
 
     // regex to evaluate the door return message
-    var unlocked_pattern = "UNLOCKED"
-    var locked_pattern = "LOCKED"
+    var unlocked_pattern = ""
+    var locked_pattern = ""
 
     var server_certificate: Certificate? = null
     var client_certificate: Certificate? = null
@@ -113,8 +113,8 @@ class HttpsDoor(override var id: Int, override var name: String) : Door() {
             setup.status_query = obj.optString("status_query", "")
             setup.status_method = obj.optString("status_method", defaultMethod)
             setup.ssids = obj.optString("ssids", "")
-            setup.unlocked_pattern = obj.optString("unlocked_pattern", "UNLOCKED")
-            setup.locked_pattern = obj.optString("locked_pattern", "LOCKED")
+            setup.unlocked_pattern = obj.optString("unlocked_pattern", "")
+            setup.locked_pattern = obj.optString("locked_pattern", "")
             setup.open_image = Utils.deserializeBitmap(obj.optString("open_image", ""))
             setup.closed_image = Utils.deserializeBitmap(obj.optString("closed_image", ""))
             setup.unknown_image = Utils.deserializeBitmap(obj.optString("unknown_image", ""))

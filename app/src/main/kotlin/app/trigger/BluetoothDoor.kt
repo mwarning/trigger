@@ -11,8 +11,8 @@ class BluetoothDoor(override var id: Int, override var name: String) : Door() {
     var close_query = ""
     var ring_query = ""
     var status_query = ""
-    var locked_pattern = "LOCKED"
-    var unlocked_pattern = "UNLOCKED"
+    var locked_pattern = ""
+    var unlocked_pattern = ""
 
     override fun getWiFiSSIDs(): String =  ""
     override fun getWiFiRequired(): Boolean = false
@@ -73,8 +73,8 @@ class BluetoothDoor(override var id: Int, override var name: String) : Door() {
             setup.open_query = obj.optString("open_query", "")
             setup.close_query = obj.optString("close_query", "")
             setup.ring_query = obj.optString("ring_query", "")
-            setup.locked_pattern = obj.optString("locked_pattern", "LOCKED")
-            setup.unlocked_pattern = obj.optString("unlocked_pattern", "UNLOCKED")
+            setup.locked_pattern = obj.optString("locked_pattern", "")
+            setup.unlocked_pattern = obj.optString("unlocked_pattern", "")
             setup.status_query = obj.optString("status_query", "")
 
             setup.open_image = Utils.deserializeBitmap(obj.optString("open_image", ""))
