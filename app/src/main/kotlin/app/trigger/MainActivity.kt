@@ -160,19 +160,19 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     private fun updateButtons() {
         val door = getSelectedDoor()
 
-        if (door == null || door.canClose()) {
+        if (door == null || door.isActionSupported(Action.CLOSE_DOOR)) {
             lockButton.visibility = View.VISIBLE
         } else {
             lockButton.visibility = View.GONE
         }
 
-        if (door == null || door.canOpen()) {
+        if (door == null || door.isActionSupported(Action.OPEN_DOOR)) {
             unlockButton.visibility = View.VISIBLE
         } else {
             unlockButton.visibility = View.GONE
         }
 
-        if (door == null || door.canRing()) {
+        if (door == null || door.isActionSupported(Action.RING_DOOR)) {
             ringButton.visibility = View.VISIBLE
         } else {
             ringButton.visibility = View.GONE
@@ -447,15 +447,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         return true
     }
 
-    private fun canDoAction(door: Door, action: Action): Boolean {
-        return when (action) {
-            Action.OPEN_DOOR -> door.canOpen()
-            Action.CLOSE_DOOR -> door.canClose()
-            Action.RING_DOOR -> door.canRing()
-            Action.FETCH_STATE -> door.canFetchState()
-        }
-    }
-
     private fun callRequestHandler(action: Action) {
         val door = getSelectedDoor()
         if (door == null) {
@@ -464,7 +455,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
 
         // check if action is supported
-        if (!canDoAction(door, action)) {
+        if (!door.isActionSupported(action)) {
             // do not change state
             return
         }

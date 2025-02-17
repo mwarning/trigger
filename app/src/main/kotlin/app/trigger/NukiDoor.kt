@@ -34,20 +34,13 @@ class NukiDoor(override var id: Int, override var name: String) : Door() {
         }
     }
 
-    override fun canOpen(): Boolean {
-        return true
-    }
-
-    override fun canClose(): Boolean {
-        return true
-    }
-
-    override fun canRing(): Boolean {
-        return false
-    }
-
-    override fun canFetchState(): Boolean {
-        return true
+    override fun isActionSupported(action: MainActivity.Action): Boolean {
+        return when (action) {
+            MainActivity.Action.OPEN_DOOR -> true
+            MainActivity.Action.CLOSE_DOOR -> true
+            MainActivity.Action.RING_DOOR -> false
+            MainActivity.Action.FETCH_STATE -> true
+        }
     }
 
     fun toJSONObject(): JSONObject {

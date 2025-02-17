@@ -54,9 +54,6 @@ abstract class Door {
     // the door and determine state
     abstract fun parseReply(reply: DoorReply): DoorStatus
 
-    // To show/hide button
-    abstract fun canOpen(): Boolean
-    abstract fun canClose(): Boolean
-    abstract fun canRing(): Boolean
-    abstract fun canFetchState(): Boolean
+    // To show/hide respective buttons
+    abstract fun isActionSupported(action: MainActivity.Action): Boolean
 }

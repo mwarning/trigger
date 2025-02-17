@@ -38,20 +38,13 @@ class MqttDoor(override var id: Int, override var name: String) : Door() {
         return Utils.genericDoorReplyParser(reply, unlocked_pattern, locked_pattern)
     }
 
-    override fun canOpen(): Boolean {
-        return open_command.isNotEmpty()
-    }
-
-    override fun canClose(): Boolean {
-        return close_command.isNotEmpty()
-    }
-
-    override fun canRing(): Boolean {
-        return ring_command.isNotEmpty()
-    }
-
-    override fun canFetchState(): Boolean {
-        return status_topic.isNotEmpty()
+    override fun isActionSupported(action: MainActivity.Action): Boolean {
+        return when (action) {
+            MainActivity.Action.OPEN_DOOR -> open_command.isNotEmpty()
+            MainActivity.Action.CLOSE_DOOR -> close_command.isNotEmpty()
+            MainActivity.Action.RING_DOOR -> ring_command.isNotEmpty()
+            MainActivity.Action.FETCH_STATE -> status_topic.isNotEmpty()
+        }
     }
 
     fun toJSONObject(): JSONObject {

@@ -21,20 +21,13 @@ class BluetoothDoor(override var id: Int, override var name: String) : Door() {
         return Utils.genericDoorReplyParser(reply, unlocked_pattern, locked_pattern)
     }
 
-    override fun canOpen(): Boolean {
-        return open_query.isNotEmpty()
-    }
-
-    override fun canClose(): Boolean {
-        return close_query.isNotEmpty()
-    }
-
-    override fun canRing(): Boolean {
-        return ring_query.isNotEmpty()
-    }
-
-    override fun canFetchState(): Boolean {
-        return status_query.isNotEmpty()
+    override fun isActionSupported(action: MainActivity.Action): Boolean {
+        return when (action) {
+            MainActivity.Action.OPEN_DOOR -> open_query.isNotEmpty()
+            MainActivity.Action.CLOSE_DOOR -> close_query.isNotEmpty()
+            MainActivity.Action.RING_DOOR -> ring_query.isNotEmpty()
+            MainActivity.Action.FETCH_STATE -> status_query.isNotEmpty()
+        }
     }
 
     fun toJSONObject(): JSONObject {
