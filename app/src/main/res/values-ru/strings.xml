@@ -27,10 +27,15 @@
     <string name="clipboard_is_empty">Буфер обмена пуст</string>
     <string name="confirm">Подтвердить</string>
     <string name="create_button">Создать</string>
+    <string name="dialog_really_remove_certificate">Вы действительно хотите удалить сертификат?</string>
+    <string name="dialog_really_remove_client_private_key">Вы действительно хотите удалить приватный ключ клиента?</string>
     <string name="dialog_really_remove_door">Действительно удалить дверь?</string>
+    <string name="dialog_really_remove_image">Вы действительно хотите удалить изображение?</string>
     <string name="done">Готово</string>
     <string name="error">Ошибка</string>
     <string name="error_duplicate_name">Повторяющееся назвение</string>
+    <string name="error_empty_clipboard">Буфер обмена пуст</string>
+    <string name="error_import_failed">Импортирование не удалось</string>
     <string name="error_invalid_name">Неправильное название</string>
     <string name="error_invalid_url">Неверный URL</string>
     <string name="export_button">Экспортировать</string>
@@ -116,9 +121,4 @@
     <string name="title_license">Лицензия</string>
     <string name="warning_this_disables_security">Предупреждение: это отключает безопасность\"</string>
     <string name="yes">Да</string>
-    <string name="dialog_really_remove_image">Вы действительно хотите удалить изображение?</string>
-    <string name="error_empty_clipboard">Буфер обмена пуст</string>
-    <string name="error_import_failed">Импортирование не удалось</string>
-    <string name="dialog_really_remove_certificate">Вы действительно хотите удалить сертификат?</string>
-    <string name="dialog_really_remove_client_private_key">Вы действительно хотите удалить приватный ключ клиента?</string>
 </resources>
