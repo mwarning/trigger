@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_gravity="center_horizontal"
-        android:text="Change String"
         android:textSize="23sp"
         android:textColor="?android:textColorPrimary" />
 
