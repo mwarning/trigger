@@ -47,7 +47,6 @@ import org.conscrypt.OpenSSLProvider
 import java.security.Security
 
 class MainActivity : AppCompatActivity(), OnTaskCompleted {
-    private var hasDoorSelected = false
     private lateinit var stateImage: ImageView
     private lateinit var lockButton: ImageButton
     private lateinit var ringButton: ImageButton
@@ -150,8 +149,13 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             }
         }
 
-        // something is selected
-        hasDoorSelected = (spinner.selectedItemPosition != AccessibilityEvent.INVALID_POSITION)
+        if (getSelectedDoor() != null) {
+            // door selected
+            changeUI(StateCode.UNKNOWN)
+        } else {
+            // no door selected => "welcome" open door background
+            changeUI(StateCode.OPEN)
+        }
 
         updateButtons()
     }
@@ -518,7 +522,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         val showQrMenuItem = menu.findItem(R.id.action_show_qr)
         val cloneMenuItem = menu.findItem(R.id.action_clone)
 
-        if (hasDoorSelected) {
+        if (getSelectedDoor() != null) {
             editMenuItem.isEnabled = true
             editMenuItem.icon!!.alpha = 255
             showQrMenuItem.isEnabled = true
