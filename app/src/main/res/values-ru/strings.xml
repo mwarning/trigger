@@ -121,4 +121,9 @@
     <string name="title_license">Лицензия</string>
     <string name="warning_this_disables_security">Предупреждение: это отключает безопасность\"</string>
     <string name="yes">Да</string>
+    <string name="dialog_really_remove_image">Вы действительно хотите удалить изображение?</string>
+    <string name="error_empty_clipboard">Буфер обмена пуст</string>
+    <string name="error_import_failed">Импортирование не удалось</string>
+    <string name="dialog_really_remove_certificate">Вы действительно хотите удалить сертификат?</string>
+    <string name="dialog_really_remove_client_private_key">Вы действительно хотите удалить приватный ключ клиента?</string>
 </resources>
