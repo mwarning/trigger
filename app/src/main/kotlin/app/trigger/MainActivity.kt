@@ -292,22 +292,26 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 image = state_open_default_image
                 lockButton.isEnabled = true
                 unlockButton.isEnabled = true
+                ringButton.isEnabled = true
             }
             StateCode.CLOSED -> {
                 image = state_closed_default_image
                 lockButton.isEnabled = true
                 unlockButton.isEnabled = true
+                ringButton.isEnabled = true
             }
             StateCode.DISABLED -> {
                 image = state_disabled_default_image
                 lockButton.isEnabled = false
                 unlockButton.isEnabled = false
+                ringButton.isEnabled = false
             }
             StateCode.UNKNOWN -> {
                 image = state_unknown_default_image
                 // Enabled, in case the API does not support state queries
                 lockButton.isEnabled = true
                 unlockButton.isEnabled = true
+                ringButton.isEnabled = true
             }
             else -> {
                 Log.e(TAG, "Invalid Door Status ${state}")
