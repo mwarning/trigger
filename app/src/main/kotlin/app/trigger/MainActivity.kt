@@ -363,26 +363,26 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             if (ssids.isNotEmpty() && !WifiTools.matchSSID(ssids, current_ssid)) {
                 builder.setTitle("Wrong WiFi")
                 builder.setMessage("Connected to wrong network ('$current_ssid') - ignore?")
-                builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
+                builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, id: Int ->
                     ignore_wifi_check_for_door_id = door.id
                     // trigger again
                     callRequestHandler(action)
                     dialog.cancel()
                 }
-                builder.setNegativeButton("No") { dialog: DialogInterface, id: Int -> dialog.cancel() }
+                builder.setNegativeButton(R.string.no) { dialog: DialogInterface, id: Int -> dialog.cancel() }
                 builder.show()
                 return false
             }
         } else {
             builder.setTitle("WiFi Disabled")
             builder.setMessage("WiFi disabled - ignore?")
-            builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
+            builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, id: Int ->
                 ignore_wifi_check_for_door_id = door.id
                 // trigger again
                 callRequestHandler(action)
                 dialog.cancel()
             }
-            builder.setNegativeButton("No") { dialog: DialogInterface, id: Int -> dialog.cancel() }
+            builder.setNegativeButton(R.string.no) { dialog: DialogInterface, id: Int -> dialog.cancel() }
             builder.show()
             return false
         }
