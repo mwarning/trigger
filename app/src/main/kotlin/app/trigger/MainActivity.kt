@@ -47,7 +47,6 @@ import org.conscrypt.OpenSSLProvider
 import java.security.Security
 
 class MainActivity : AppCompatActivity(), OnTaskCompleted {
-    private var hasDoorSelected = false
     private lateinit var stateImage: ImageView
     private lateinit var lockButton: ImageButton
     private lateinit var ringButton: ImageButton
@@ -150,8 +149,13 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             }
         }
 
-        // something is selected
-        hasDoorSelected = (spinner.selectedItemPosition != AccessibilityEvent.INVALID_POSITION)
+        if (getSelectedDoor() != null) {
+            // door selected
+            changeUI(StateCode.UNKNOWN)
+        } else {
+            // no door selected => "welcome" open door background
+            changeUI(StateCode.OPEN)
+        }
 
         updateButtons()
     }
@@ -288,22 +292,26 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
                 image = state_open_default_image
                 lockButton.isEnabled = true
                 unlockButton.isEnabled = true
+                ringButton.isEnabled = true
             }
             StateCode.CLOSED -> {
                 image = state_closed_default_image
                 lockButton.isEnabled = true
                 unlockButton.isEnabled = true
+                ringButton.isEnabled = true
             }
             StateCode.DISABLED -> {
                 image = state_disabled_default_image
                 lockButton.isEnabled = false
                 unlockButton.isEnabled = false
+                ringButton.isEnabled = false
             }
             StateCode.UNKNOWN -> {
                 image = state_unknown_default_image
                 // Enabled, in case the API does not support state queries
                 lockButton.isEnabled = true
                 unlockButton.isEnabled = true
+                ringButton.isEnabled = true
             }
             else -> {
                 Log.e(TAG, "Invalid Door Status ${state}")
@@ -363,26 +371,26 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             if (ssids.isNotEmpty() && !WifiTools.matchSSID(ssids, current_ssid)) {
                 builder.setTitle("Wrong WiFi")
                 builder.setMessage("Connected to wrong network ('$current_ssid') - ignore?")
-                builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
+                builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, id: Int ->
                     ignore_wifi_check_for_door_id = door.id
                     // trigger again
                     callRequestHandler(action)
                     dialog.cancel()
                 }
-                builder.setNegativeButton("No") { dialog: DialogInterface, id: Int -> dialog.cancel() }
+                builder.setNegativeButton(R.string.no) { dialog: DialogInterface, id: Int -> dialog.cancel() }
                 builder.show()
                 return false
             }
         } else {
             builder.setTitle("WiFi Disabled")
             builder.setMessage("WiFi disabled - ignore?")
-            builder.setPositiveButton("Yes") { dialog: DialogInterface, id: Int ->
+            builder.setPositiveButton(R.string.yes) { dialog: DialogInterface, id: Int ->
                 ignore_wifi_check_for_door_id = door.id
                 // trigger again
                 callRequestHandler(action)
                 dialog.cancel()
             }
-            builder.setNegativeButton("No") { dialog: DialogInterface, id: Int -> dialog.cancel() }
+            builder.setNegativeButton(R.string.no) { dialog: DialogInterface, id: Int -> dialog.cancel() }
             builder.show()
             return false
         }
@@ -518,7 +526,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         val showQrMenuItem = menu.findItem(R.id.action_show_qr)
         val cloneMenuItem = menu.findItem(R.id.action_clone)
 
-        if (hasDoorSelected) {
+        if (getSelectedDoor() != null) {
             editMenuItem.isEnabled = true
             editMenuItem.icon!!.alpha = 255
             showQrMenuItem.isEnabled = true
