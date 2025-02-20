@@ -429,7 +429,6 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
     private fun callRequestHandler(action: Action) {
         val door = getSelectedDoor()
         if (door == null) {
-            changeUI(StateCode.DISABLED)
             return
         }
 
