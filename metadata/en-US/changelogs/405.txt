@@ -5,4 +5,4 @@
 * add Indonesian translation, thanks yurtpage+translate@gmail.com
 * improve German translation, thanks moritzwarning@web.de
 * replace remaining deprecated permission code
-* make more string translatable
+* make more strings translatable
