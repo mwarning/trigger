@@ -284,51 +284,22 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         }
     }
 
-    private fun changeUI(state: StateCode?) {
-        var image: Bitmap? = null
-
-        when (state) {
-            StateCode.OPEN -> {
-                image = state_open_default_image
-                lockButton.isEnabled = true
-                unlockButton.isEnabled = true
-                ringButton.isEnabled = true
-            }
-            StateCode.CLOSED -> {
-                image = state_closed_default_image
-                lockButton.isEnabled = true
-                unlockButton.isEnabled = true
-                ringButton.isEnabled = true
-            }
-            StateCode.DISABLED -> {
-                image = state_disabled_default_image
-                lockButton.isEnabled = false
-                unlockButton.isEnabled = false
-                ringButton.isEnabled = false
-            }
-            StateCode.UNKNOWN -> {
-                image = state_unknown_default_image
-                // Enabled, in case the API does not support state queries
-                lockButton.isEnabled = true
-                unlockButton.isEnabled = true
-                ringButton.isEnabled = true
-            }
-            else -> {
-                Log.e(TAG, "Invalid Door Status ${state}")
-            }
+    private fun changeUI(state: StateCode) {
+        val defaultImage = when (state) {
+            StateCode.OPEN -> state_open_default_image
+            StateCode.CLOSED -> state_closed_default_image
+            StateCode.DISABLED -> state_disabled_default_image
+            StateCode.UNKNOWN -> state_unknown_default_image
         }
 
-        // use custom image
-        val door = getSelectedDoor()
-        if (door != null) {
-            val custom = door.getStateImage(state)
-            if (custom != null) {
-                image = custom
-            }
-        }
+        val customImage = getSelectedDoor()?.getStateImage(state)
 
         // set background image
-        stateImage.setImageBitmap(image)
+        if (customImage != null) {
+            stateImage.setImageBitmap(customImage)
+        } else {
+            stateImage.setImageBitmap(defaultImage)
+        }
 
         // update action bar menu
         invalidateOptionsMenu()
