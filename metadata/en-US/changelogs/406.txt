@@ -1,4 +1,4 @@
 * set door state to open/closed in case
   the open/close command is successful
   * this applies only if the reply patterns are set empty
-* translation improvement
+* translation improvements
