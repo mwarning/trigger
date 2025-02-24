@@ -68,7 +68,7 @@
     <string name="setting_bluetooth_close_command">Команда Закрыть</string>
     <string name="setting_bluetooth_device_name">Название замка или его MAC</string>
     <string name="setting_bluetooth_open_command">Команда Открыть</string>
-    <string name="setting_bluetooth_ring_command">Команда Открыть</string>
+    <string name="setting_bluetooth_ring_command">Команда Звонок</string>
     <string name="setting_bluetooth_service_uuid">UUID сервиса (необязательно)</string>
     <string name="setting_bluetooth_status_command">Команда Состояние</string>
     <string name="setting_client_certificate">Сертификат клиента</string>
