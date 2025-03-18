@@ -24,7 +24,7 @@ class LicenseActivity : AppCompatActivity() {
             try {
                 val buffer = StringBuffer()
                 val reader = BufferedReader(InputStreamReader(assets.open("license.txt")))
-                while (true) {
+                while (reader.ready()) {
                     val line = reader.readLine()
                     if (line != null) {
                         if (line.trim().isEmpty()){
