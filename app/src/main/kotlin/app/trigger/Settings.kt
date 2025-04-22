@@ -321,8 +321,8 @@ object Settings {
             db_version = new_version
         }
 
-        if (db_version in setOf("4.0.3", "4.0.4", "4.0.5")) {
-            val new_version = "4.0.6"
+        if (db_version in setOf("4.0.3", "4.0.4", "4.0.5", "4.0.6")) {
+            val new_version = "4.0.7"
             Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             doors.clear()
