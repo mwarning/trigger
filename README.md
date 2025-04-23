@@ -23,7 +23,6 @@ Features:
 
 [<img src="docs/fdroid.png" alt="Get it on F-Droid" height="90">](https://f-droid.org/packages/com.example.trigger/)
 [<img src="docs/apk.png" alt="Get it on GitHub" height="90">](https://github.com/mwarning/trigger/releases)
-[<img src="docs/gplay.png" alt="Get it on Google Play" height="90">](https://play.google.com/store/apps/details?id=app.door_trigger)
 
 The minimum supported Android version is 5.0.
 
