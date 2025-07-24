@@ -1,3 +1,8 @@
+/*
+* Copyright (C) 2025 The Trigger App Contributors
+* SPDX-License-Identifier: GPL-3.0-or-later
+*/
+
 package app.trigger
 
 import android.app.Activity
