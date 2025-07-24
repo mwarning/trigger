@@ -48,6 +48,6 @@ For translations use https://toolate.othing.xyz/projects/trigger/
 
 ## License
 
-This work is licenced under the GNU General Public License version 2 or later (GPLv2).
+GNU GENERAL PUBLIC LICENSE 3.0 or later, see [license text](LICENSE) or on [spdx.org](https://spdx.org/licenses/GPL-3.0-or-later.html)
 
 Icons: [Googles Material Design](https://material.io/tools/icons/)
