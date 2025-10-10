@@ -119,6 +119,6 @@
     <string name="ssh_key_import_failed">Импортирование не удалось</string>
     <string name="title_door">Автор :%s</string>
     <string name="title_license">Лицензия</string>
-    <string name="warning_this_disables_security">Предупреждение: это отключает безопасность\"</string>
+    <string name="warning_this_disables_security">Предупреждение: это небезопасно</string>
     <string name="yes">Да</string>
 </resources>
