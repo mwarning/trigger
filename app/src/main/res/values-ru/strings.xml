@@ -79,9 +79,13 @@
     <string name="setting_door_name">Название двери</string>
     <string name="setting_door_type">Тип двери</string>
     <string name="setting_https_close_url">URL для Закрыть</string>
+    <string name="setting_https_close_url_method">HTTP метод для URL Закрыть</string>
     <string name="setting_https_open_url">URL для Открыть</string>
+    <string name="setting_https_open_url_method">HTTP метод для URL Открыть</string>
     <string name="setting_https_ring_url">URL для Звонить</string>
+    <string name="setting_https_ring_url_method">HTTP метод для URL Звонить</string>
     <string name="setting_https_status_url">URL для Состояние</string>
+    <string name="setting_https_status_url_method">HTTP метод для URL Состояние</string>
     <string name="setting_ignore_certificate_validity">Игнорирование действительности сертификата</string>
     <string name="setting_mqtt_address">Адрес брокера MQTT</string>
     <string name="setting_mqtt_close_command">Команда Закрыть</string>
@@ -101,8 +105,8 @@
     <string name="setting_nuki_shared_key">Общий ключ (только для чтения)</string>
     <string name="setting_nuki_user_name">Имя пользователя</string>
     <string name="setting_open_door_image">Изображение открытой двери</string>
-    <string name="setting_reply_pattern_locked">Шаблон ответа (закрыто)</string>
-    <string name="setting_reply_pattern_unlocked">Шаблон ответа (открыто)</string>
+    <string name="setting_reply_pattern_locked">Шаблон ответа (для Закрыто)</string>
+    <string name="setting_reply_pattern_unlocked">Шаблон ответа (для Открыто)</string>
     <string name="setting_require_wlan">Только по WLAN</string>
     <string name="setting_server_certificate">Сертификат сервера</string>
     <string name="setting_ssh_close_command">Команда Закрыть</string>
@@ -114,6 +118,7 @@
     <string name="setting_ssh_server_address">Адрес сервера</string>
     <string name="setting_ssh_server_port">Порт сервера</string>
     <string name="setting_ssh_status_command">Команда Состояние</string>
+    <string name="setting_ssh_key_pair">Ключевая пара</string>
     <string name="setting_unknown_status_image">Изображение Неизвестного состояния</string>
     <string name="setting_wlan_ssids">Названия сетей WLAN SSID</string>
     <string name="ssh_key_import_failed">Импортирование не удалось</string>
