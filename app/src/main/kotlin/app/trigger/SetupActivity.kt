@@ -468,7 +468,7 @@ class SetupActivity : AppCompatActivity() {
         setupTextView(R.id.sshCommandTimeoutTextView, R.string.setting_ssh_command_timeout, "${door.timeout}",
             { newValue ->
                 val timeout = newValue.toIntOrNull()
-                if (timeout == null || timeout < 0 || timeout > 5000) {
+                if (timeout == null || timeout < 0 || timeout > 60_000) {
                     showMessage(R.string.invalid_timeout)
                 } else {
                     door.timeout = timeout
