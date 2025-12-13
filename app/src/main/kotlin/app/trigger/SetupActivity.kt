@@ -400,6 +400,18 @@ class SetupActivity : AppCompatActivity() {
             }
         }
 
+        setupTextView(R.id.replyPatternLockedTextView, R.string.setting_reply_pattern_locked, door.locked_pattern,
+            { newValue ->
+                door.locked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternUnlockedTextView, R.string.setting_reply_pattern_unlocked, door.unlocked_pattern,
+            { newValue ->
+                door.unlocked_pattern = newValue
+                initViews()
+            })
+
         setupTextView(R.id.sshServerAddressTextView, R.string.setting_ssh_server_address, door.host,
             { newValue ->
                 door.host = newValue
