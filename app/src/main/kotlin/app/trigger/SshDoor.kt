@@ -68,7 +68,9 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
         obj.put("user", user)
         obj.put("password", password)
         obj.put("host", host)
-        obj.put("port", port)
+        if (port != 22) {
+            obj.put("port", port)
+        }
         obj.put("open_command", open_command)
         obj.put("close_command", close_command)
         obj.put("ring_command", ring_command)
@@ -83,8 +85,9 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
 
         obj.put("register_url", register_url)
         obj.put("ssids", ssids)
-        obj.put("timeout", timeout)
-
+        if (timeout != 5000) {
+            obj.put("timeout", timeout)
+        }
         return obj
     }
 
