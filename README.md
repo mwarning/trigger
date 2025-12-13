@@ -46,6 +46,7 @@ For translations use https://toolate.othing.xyz/projects/trigger/
 * [MetalabDoorWidget](https://github.com/zoff99/MetalabDoorWidget)
 * [HACKS](https://github.com/ktt-ol/hacs)
 * [Stratum0Widget](https://github.com/Valodim/Stratum0Widget)
+* [HTTP Request Shortcuts](https://http-shortcuts.rmy.ch/) [F-Droid](https://f-droid.org/packages/ch.rmy.android.http_shortcuts/) send HTTP Requests from Shortcuts on your Home Screen
 
 ## License
 
