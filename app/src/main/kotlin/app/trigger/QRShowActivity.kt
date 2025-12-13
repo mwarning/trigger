@@ -65,6 +65,14 @@ class QRShowActivity : AppCompatActivity() {
                 if (value.length == 0) {
                     obj.remove(key)
                 }
+            } else if (value is Boolean) {
+                if (!value) {
+                    obj.remove(key)
+                }
+            } else if (value is Number) {
+                if (value == 0) {
+                    obj.remove(key)
+                }
             }
         }
         return obj.toString()
