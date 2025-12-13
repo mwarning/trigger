@@ -145,24 +145,12 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
-        if (door is HttpsDoor) {
-            initHttpsViews(door)
-        }
-
-        if (door is SshDoor) {
-            initSshViews(door)
-        }
-
-        if (door is BluetoothDoor) {
-            initBluetoothViews(door)
-        }
-
-        if (door is MqttDoor) {
-            initMqttViews(door)
-        }
-
-        if (door is NukiDoor) {
-            initNukiViews(door)
+        when (door) {
+            is HttpsDoor -> initHttpsViews(door)
+            is SshDoor -> initSshViews(door)
+            is BluetoothDoor -> initBluetoothViews(door)
+            is MqttDoor -> initMqttViews(door)
+            is NukiDoor -> initNukiViews(door)
         }
 
         findViewById<SwitchMaterial>(R.id.openDoorImageSwitch).apply {

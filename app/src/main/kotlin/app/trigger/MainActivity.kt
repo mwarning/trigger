@@ -458,24 +458,16 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             return
         }
 
-        if (door is HttpsDoor) {
-            val handler = HttpsRequestHandler(this, door, action)
-            handler.start()
-        } else if (door is SshDoor) {
-            val handler = SshRequestHandler(this, door, action)
-            handler.start()
-        } else if (door is BluetoothDoor) {
-            val handler = BluetoothRequestHandler(this, door, action)
-            handler.start()
-        } else if (door is NukiDoor) {
-            val handler = NukiRequestHandler(this, door, action)
-            handler.start()
-        } else if (door is MqttDoor) {
-            val handler = MqttRequestHandler(this, door, action)
-            handler.start()
-        } else {
-            // hm, invalid door
-            changeUI(StateCode.DISABLED)
+        when (door) {
+            is HttpsDoor -> HttpsRequestHandler(this, door, action).start()
+            is SshDoor -> SshRequestHandler(this, door, action).start()
+            is BluetoothDoor -> BluetoothRequestHandler(this, door, action).start()
+            is NukiDoor -> NukiRequestHandler(this, door, action).start()
+            is MqttDoor -> MqttRequestHandler(this, door, action).start()
+            else -> {
+                // hm, invalid door
+                changeUI(StateCode.DISABLED)
+            }
         }
     }
 
