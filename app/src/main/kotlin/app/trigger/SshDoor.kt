@@ -101,7 +101,7 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
             setup.user = obj.optString("user", "")
             setup.password = obj.optString("password", "")
             setup.host = obj.optString("host", "")
-            setup.port = obj.optInt("port", 22)
+            setup.port = obj.optInt("port", 0)
             setup.open_command = obj.optString("open_command", "")
             setup.close_command = obj.optString("close_command", "")
             setup.ring_command = obj.optString("ring_command", "")
@@ -117,7 +117,7 @@ class SshDoor(override var id: Int, override var name: String) : Door() {
 
             setup.register_url = obj.optString("register_url", "")
             setup.ssids = obj.optString("ssids", "")
-            setup.timeout = obj.optInt("timeout", 5000)
+            setup.timeout = obj.optInt("timeout", 0)
 
             return setup
         }
