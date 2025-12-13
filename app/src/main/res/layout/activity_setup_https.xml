@@ -196,7 +196,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/setting_https_close_urlL"
+                    android:text="@string/setting_https_close_url"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
