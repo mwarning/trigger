@@ -82,9 +82,13 @@
     <string name="setting_door_name">Door Name</string>
     <string name="setting_door_type">Door Type</string>
     <string name="setting_https_close_url">Close URL</string>
+    <string name="setting_https_close_url_method">Close URL Method</string>
     <string name="setting_https_open_url">Open URL</string>
+    <string name="setting_https_open_url_method">Open URL Method</string>
     <string name="setting_https_ring_url">Ring URL</string>
+    <string name="setting_https_ring_url_method">Ring URL Method</string>
     <string name="setting_https_status_url">Status URL</string>
+    <string name="setting_https_status_url_method">Status URL Method</string>
     <string name="setting_ignore_certificate_validity">Ignore Certificate Validity</string>
     <string name="setting_mqtt_address">MQTT Broker Address</string>
     <string name="setting_mqtt_close_command">Close Command</string>
@@ -117,6 +121,7 @@
     <string name="setting_ssh_server_address">Server Address</string>
     <string name="setting_ssh_server_port">Server Port</string>
     <string name="setting_ssh_status_command">Status Command</string>
+    <string name="setting_ssh_key_pair">Key Pair</string>
     <string name="setting_unknown_status_image">Unknown Status Image</string>
     <string name="setting_wlan_ssids">WLAN SSIDs</string>
     <string name="ssh_key_import_failed">Import Failed</string>

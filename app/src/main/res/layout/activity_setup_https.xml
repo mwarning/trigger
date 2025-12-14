@@ -134,7 +134,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Open URL"
+                    android:text="@string/setting_https_open_url"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Open URL Method"
+                    android:text="@string/setting_https_open_url_method"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -196,7 +196,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Close URL"
+                    android:text="@string/setting_https_close_url"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Close URL Method"
+                    android:text="@string/setting_https_close_url_method"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -258,7 +258,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ring URL"
+                    android:text="@string/setting_https_ring_url"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -290,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Ring URL Method"
+                    android:text="@string/setting_https_ring_url_method"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -320,7 +320,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Status URL"
+                    android:text="@string/setting_https_status_url"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -352,7 +352,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Status URL Method"
+                    android:text="@string/setting_https_status_url_method"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 

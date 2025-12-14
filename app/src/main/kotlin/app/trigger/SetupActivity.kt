@@ -145,24 +145,12 @@ class SetupActivity : AppCompatActivity() {
                 }
             })
 
-        if (door is HttpsDoor) {
-            initHttpsViews(door)
-        }
-
-        if (door is SshDoor) {
-            initSshViews(door)
-        }
-
-        if (door is BluetoothDoor) {
-            initBluetoothViews(door)
-        }
-
-        if (door is MqttDoor) {
-            initMqttViews(door)
-        }
-
-        if (door is NukiDoor) {
-            initNukiViews(door)
+        when (door) {
+            is HttpsDoor -> initHttpsViews(door)
+            is SshDoor -> initSshViews(door)
+            is BluetoothDoor -> initBluetoothViews(door)
+            is MqttDoor -> initMqttViews(door)
+            is NukiDoor -> initNukiViews(door)
         }
 
         findViewById<SwitchMaterial>(R.id.openDoorImageSwitch).apply {
@@ -411,6 +399,18 @@ class SetupActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+        setupTextView(R.id.replyPatternLockedTextView, R.string.setting_reply_pattern_locked, door.locked_pattern,
+            { newValue ->
+                door.locked_pattern = newValue
+                initViews()
+            })
+
+        setupTextView(R.id.replyPatternUnlockedTextView, R.string.setting_reply_pattern_unlocked, door.unlocked_pattern,
+            { newValue ->
+                door.unlocked_pattern = newValue
+                initViews()
+            })
 
         setupTextView(R.id.sshServerAddressTextView, R.string.setting_ssh_server_address, door.host,
             { newValue ->

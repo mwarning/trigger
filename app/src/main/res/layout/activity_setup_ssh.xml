@@ -254,7 +254,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Open Command"
+                    android:text="@string/setting_ssh_open_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -284,7 +284,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Close Command"
+                    android:text="@string/setting_ssh_close_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -314,7 +314,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ring Command"
+                    android:text="@string/setting_ssh_ring_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -344,7 +344,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Status Command"
+                    android:text="@string/setting_ssh_status_command"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -375,7 +375,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="Key Pair"
+                    android:text="@string/setting_ssh_key_pair"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
@@ -405,7 +405,67 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Command Timeout (ms)"
+                    android:text="@string/setting_reply_pattern_locked"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/replyPatternLockedTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_reply_pattern_unlocked"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/title_text_size" />
+
+                <TextView
+                    android:id="@+id/replyPatternUnlockedTextView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_margin="5dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="@dimen/options_text_size" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    app:dividerColor="?android:textColorSecondary" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setting_ssh_command_timeout"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="@dimen/title_text_size" />
 
