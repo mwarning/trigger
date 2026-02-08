@@ -1,0 +1,3 @@
+* add locked/unlocked pattern for SSH door
+* change SSH door timeout from 5 to 60 seconds 
+* improve Russian translation, thanks tokito@gmail.com
