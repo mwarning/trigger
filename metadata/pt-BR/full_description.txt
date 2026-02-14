@@ -1,0 +1,14 @@
+Abra e feche portas, toque campainhas e veja o estado da porta.
+Suporta HTTPS/SSH/MQTT/Bluetooth e Nuki SmartLock.
+
+<b>Recursos:</b>
+
+* Suporte de HTTPS, SSH, Bluetooth e MQTT.
+* Suporte para Nuki SmartLock.
+* Vários perfis de porta.
+* Selecione automaticamente perfis por um SSID de WiFi conectado.
+* Suporte a certificado de servidor/cliente HTTPS.
+* Geração de chave SSH (ED25519, RSA) com senha.
+* Imagens de status personalizadas.
+* Suporte a código QR.
+* Suporte de backup.
