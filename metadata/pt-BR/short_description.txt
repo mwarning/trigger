@@ -1,0 +1,1 @@
+Abrir portas via HTTPS/SSH/Bluetooth/MQTT.
