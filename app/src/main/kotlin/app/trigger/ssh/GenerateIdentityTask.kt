@@ -45,7 +45,7 @@ internal class GenerateIdentityTask(var listener: OnTaskCompleted) : AsyncTask<A
         keypair = try {
             val type = params[0] as String
             if (type == "ED25519") {
-                createKeyPair(KeyPairBean.KEY_TYPE_ED25519, 256)
+                createKeyPair(KeyPairBean.KEY_TYPE_ED25519, 255)
             } else if (type == "ECDSA-384") {
                 createKeyPair(KeyPairBean.KEY_TYPE_EC, 384)
             } else if (type == "ECDSA-521") {
