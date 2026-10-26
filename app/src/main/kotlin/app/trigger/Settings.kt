@@ -55,7 +55,7 @@ object Settings {
             e.remove("prefToken")
             e.remove("prefIgnore")
             e.putString("db_version", BuildConfig.VERSION_NAME)
-            e.commit()
+            e.apply()
             doors.clear()
             db_version = "1.3.1"
         }
@@ -100,12 +100,12 @@ object Settings {
                 // change type of entry
                 if (sharedPreferences.contains(prefix + "ignore_cert")) {
                     val ignore_cert = sharedPreferences.getBoolean(prefix + "ignore_cert", false)
-                    sharedPreferences.edit().putString(prefix + "ignore_cert", ignore_cert.toString()).commit()
+                    sharedPreferences.edit().putString(prefix + "ignore_cert", ignore_cert.toString()).apply()
                 }
                 id += 1
             }
             doors.clear()
-            sharedPreferences.edit().putString("db_version", "1.6.0").commit()
+            sharedPreferences.edit().putString("db_version", "1.6.0").apply()
             db_version = "1.6.0"
         }
 
@@ -121,13 +121,13 @@ object Settings {
                         val e = sharedPreferences.edit()
                         e.putString(prefix + "ignore_hostname_mismatch", true.toString())
                         e.remove(prefix + "ignore_cert")
-                        e.commit()
+                        e.apply()
                     }
                 }
                 id += 1
             }
             doors.clear()
-            sharedPreferences.edit().putString("db_version", "1.7.0").commit()
+            sharedPreferences.edit().putString("db_version", "1.7.0").apply()
             db_version = "1.7.0"
         }
 
@@ -135,7 +135,7 @@ object Settings {
             Log.i("Settings", "Update database format from $db_version to 1.7.1")
             // nothing to change
             doors.clear()
-            sharedPreferences.edit().putString("db_version", "1.7.1").commit()
+            sharedPreferences.edit().putString("db_version", "1.7.1").apply()
             db_version = "1.7.1"
         }
 
@@ -148,7 +148,7 @@ object Settings {
                 storeDoorSetup(door)
             }
             doors.clear()
-            sharedPreferences.edit().putString("db_version", "1.8.0").commit()
+            sharedPreferences.edit().putString("db_version", "1.8.0").apply()
             db_version = "1.8.0"
         }
 
@@ -156,7 +156,7 @@ object Settings {
             Log.i("Settings", "Update database format from $db_version to 1.9.0")
             // nothing to change
             doors.clear()
-            sharedPreferences.edit().putString("db_version", "1.9.0").commit()
+            sharedPreferences.edit().putString("db_version", "1.9.0").apply()
             db_version = "1.9.0"
         }
 
@@ -164,7 +164,7 @@ object Settings {
             Log.i("Settings", "Update database format from $db_version to 1.9.1")
             // nothing to change
             doors.clear()
-            sharedPreferences.edit().putString("db_version", "1.9.1").commit()
+            sharedPreferences.edit().putString("db_version", "1.9.1").apply()
             db_version = "1.9.1"
         }
 
@@ -190,8 +190,8 @@ object Settings {
                 }
                 id += 1
             }
-            e.commit()
-            sharedPreferences.edit().putString("db_version", "1.9.2").commit()
+            e.apply()
+            sharedPreferences.edit().putString("db_version", "1.9.2").apply()
             db_version = "1.9.2"
         }
 
@@ -204,7 +204,7 @@ object Settings {
             Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             doors.clear()
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
 
@@ -231,8 +231,8 @@ object Settings {
                 }
                 id += 1
             }
-            e.commit()
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            e.apply()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
 
@@ -241,7 +241,7 @@ object Settings {
             Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             doors.clear()
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
 
@@ -266,7 +266,7 @@ object Settings {
                 }
                 id += 1
             }
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
 
@@ -291,7 +291,7 @@ object Settings {
                 }
                 id += 1
             }
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
 
@@ -321,7 +321,7 @@ object Settings {
                 }
                 id += 1
             }
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
 
@@ -330,7 +330,7 @@ object Settings {
             Log.i(TAG, "Update database format from $db_version to $new_version")
             // nothing to change
             doors.clear()
-            sharedPreferences.edit().putString("db_version", new_version).commit()
+            sharedPreferences.edit().putString("db_version", new_version).apply()
             db_version = new_version
         }
     }
@@ -369,7 +369,7 @@ object Settings {
 
     private fun storeSetup(id: Int, json: JSONObject) {
         val key = String.format("item_%03d", id)
-        sharedPreferences.edit().putString(key, json.toString()).commit()
+        sharedPreferences.edit().putString(key, json.toString()).apply()
     }
 
     private fun loadSetup(id: Int): JSONObject? {
@@ -398,7 +398,7 @@ object Settings {
         door.name = name
 
         val key = String.format("item_%03d", door.id)
-        sharedPreferences.edit().putString(key, json.toString()).commit()
+        sharedPreferences.edit().putString(key, json.toString()).apply()
 
         // store to persistent memory
         doors.add(door)
@@ -415,7 +415,7 @@ object Settings {
 
                 // also remove item from storage
                 val key = String.format("item_%03d", id)
-                sharedPreferences.edit().remove(key).commit()
+                sharedPreferences.edit().remove(key).apply()
                 break
             }
         }
@@ -517,7 +517,7 @@ object Settings {
                 e.remove(key)
             }
         }
-        e.commit()
+        e.apply()
     }
 
     private fun loadSetups() {
