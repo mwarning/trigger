@@ -381,6 +381,14 @@ object Settings {
         return JSONObject(json)
     }
 
+    fun storeSpinnerSelectedItemId(selectedItemId: Int) {
+        sharedPreferences.edit().putInt("spinnerSelectedItemId", selectedItemId).apply()
+    }
+
+    fun loadSpinnerSelectedItemId(): Int {
+        return sharedPreferences.getInt("spinnerSelectedItemId", -1)
+    }
+
     // add to list and store to preferences
     fun storeDoorSetup(door: Door): Boolean {
         if (door.id < 0) {

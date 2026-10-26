@@ -94,8 +94,15 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
             }
         }
 
-        // keep previous selection
         val current = getSelectedDoor()
+        if (current == null) {
+            val selected = Settings.loadSpinnerSelectedItemId()
+            if (selected >= 0 && selected < items.size) {
+                return selected
+            }
+        }
+
+        // keep previous selection
         if (current != null) {
             i = 0
             for (item in items) {
@@ -143,6 +150,7 @@ class MainActivity : AppCompatActivity(), OnTaskCompleted {
         spinner.onItemSelectedListener = object : OnItemSelectedListener {
             var check = 0 // prevent triggering on creation
             override fun onItemSelected(parent: AdapterView<*>?, view: View, pos: Int, id: Long) {
+                Settings.storeSpinnerSelectedItemId(pos)
                 if (check++ > 0) {
                     updateButtons()
                     callRequestHandler(Action.FETCH_STATE)
